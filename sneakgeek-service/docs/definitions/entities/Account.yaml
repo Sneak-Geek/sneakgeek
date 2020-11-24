@@ -1,0 +1,47 @@
+type: object
+required:
+  - _id
+  - accountProvider
+  - accountIdByProvider
+  - accountEmailByProvider
+  - isVerified
+  - accessLevel
+properties:
+  _id:
+    $ref: "../common/MongoDbObjectId.yaml"
+  accountProvider:
+    type: string
+    enum: ["facebook", "google", "email"]
+  accountIdByProvider:
+    type: string
+  accountNameByProvider:
+    type: object
+    required:
+      - familyName
+      - givenName
+    properties:
+      familyName:
+        type: string
+        example: "Tran"
+      givenName:
+        type: string
+        example: "Dan"
+      middleName:
+        type: string
+        example: "Van"
+  accountGenderByProvider:
+    type: string
+    example: "male"
+  accountEmailByProvider:
+    type: string
+    format: email
+  accountProfilePicByProvider:
+    type: string
+  isVerified:
+    type: boolean
+  accessLevel:
+    type: number
+  profileId:
+    type: string
+  hashedPassword:
+    type: string

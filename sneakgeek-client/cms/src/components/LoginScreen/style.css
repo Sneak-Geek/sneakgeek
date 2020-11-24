@@ -1,0 +1,76 @@
+.centered {
+  width: 280px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  /* bring your own prefixes */
+  transform: translate(-50%, -70%);
+}
+
+.social-button {
+  color: white;
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  border-radius: 5px;
+  font-size: 14px;
+  border: none;
+  background: none;
+}
+
+.social-button:focus {
+  outline: 0;
+}
+
+.social-button-title {
+  display: inline;
+}
+
+.social-button.facebook {
+  background-color: #0e4d92;
+}
+
+.social-button.google {
+  background-color: #de5246;
+}
+
+.social-icon {
+  margin-left: 5px;
+  margin-right: 10px;
+  font-size: 16px !important;
+}
+
+.horizontal-divider {
+  margin-top: 20px;
+  margin-bottom: 15px;
+}
+
+.email-login-form-wrapper {
+  margin-top: 5px !important;
+  margin-bottom: 5px !important;
+}
+
+.email-login-form {
+  font-size: 14px !important;
+}
+
+.login-button {
+  display: block;
+  margin: auto;
+  width: 50%;
+  margin-top: 20px;
+  color: white;
+  background-color: black;
+  border: none;
+  border-radius: 5px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+.login-button:focus {
+  outline: 0;
+}

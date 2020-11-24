@@ -1,0 +1,55 @@
+type: object
+required:
+  - _id
+  - accountId
+properties:
+  _id:
+    $ref: "../common/MongoDbObjectId.yaml"
+  accountId:
+    $ref: "../common/MongoDbObjectId.yaml"
+  favoriteShoes:
+    type: array
+    items:
+      $ref: "../common/MongoDbObjectId.yaml"
+  favoriteShoeBrand:
+    type: string
+    example: Nike
+  shoeSizeStandard:
+    type: string
+    example: US
+  ownedShoes:
+    type: array
+    items:
+      type: object
+      properties:
+        shoeId:
+          $ref: "../common/MongoDbObjectId.yaml"
+        owned:
+          type: array
+          items:
+            type: object
+            properties:
+              shoeSize:
+                type: string
+              number:
+                type: number
+  userProvidedName:
+    type: object
+    properties:
+      firstName:
+        type: string
+      middleName:
+        type: string
+      lastName:
+        type: string
+  userProvidedAddress:
+    type: string
+  userProvidedGender:
+    type: string
+  userProvidedShoeSize:
+    type: string
+  userProvidedEmail:
+    type: string
+    format: email
+  userProvidedPhoneNumber:
+    type: string

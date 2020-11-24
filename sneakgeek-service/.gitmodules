@@ -1,0 +1,3 @@
+[submodule "tools/elasticsearch-HQ"]
+	path = tools/elasticsearch-HQ
+	url = https://github.com/ElasticHQ/elasticsearch-HQ

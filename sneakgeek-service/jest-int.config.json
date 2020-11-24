@@ -1,0 +1,10 @@
+{
+  "preset": "ts-jest",
+  "verbose": true,
+  "testMatch": ["**/__tests__/integration_tests/**/*.Spec.ts"],
+  "testEnvironment": "node",
+  "setupFiles": ["<rootDir>/__tests__/integration_tests/config/setup.ts"],
+  "forceExit": true,
+  "testTimeout": 30000,
+  "moduleDirectories": ["node_modules", "src"]
+}
