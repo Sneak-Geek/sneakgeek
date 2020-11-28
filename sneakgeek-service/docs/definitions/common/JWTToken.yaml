@@ -1,3 +1,0 @@
-type: string
-example: "jwt-token"
-format: JWTToken

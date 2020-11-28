@@ -1,1 +1,0 @@
-export { SettingsProvider } from './SettingsProvider';
