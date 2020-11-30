@@ -7,7 +7,7 @@ import { ConfigModule } from '@nestjs/config/dist/config.module';
 import { ConfigService } from '@nestjs/config/dist/config.service';
 import { InventoryModule } from './inventory/inventory.module';
 import { SearchModule } from './search/search.module';
-import { AuthService } from './auth/auth.service';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -15,18 +15,20 @@ import { AuthService } from './auth/auth.service';
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         uri: configService.get('MONGO_URL'),
+        useNewUrlParser: true,
       }),
       inject: [ConfigService],
     }),
+    ConfigModule.forRoot(),
     ShoesModule,
     ProfileModule,
     OrderModule,
-    ConfigModule.forRoot(),
     InventoryModule,
     SearchModule,
+    AuthModule,
   ],
   controllers: [],
-  providers: [AuthService],
+  providers: [],
   exports: [],
 })
 export class AppModule {}
