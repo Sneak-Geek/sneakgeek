@@ -10,6 +10,5 @@ import { Shoes, ShoesSchema } from './shoes.schema';
   ],
   providers: [ShoesService],
   controllers: [ShoesController],
-  exports: [MongooseModule],
 })
 export class ShoesModule {}

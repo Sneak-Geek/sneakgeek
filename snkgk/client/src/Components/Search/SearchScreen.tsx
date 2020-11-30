@@ -2,7 +2,7 @@ import {useNavigation} from '@react-navigation/native';
 import React from 'react';
 import {Button, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import RouteNames from '../../navigation/RouteNames';
+import RouteNames from '../../Navigation/RouteNames';
 
 const SearchScreen = () => {
   const navigation = useNavigation();
