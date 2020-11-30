@@ -5,38 +5,35 @@ export type ShoesDocument = Shoes & Document;
 
 @Schema({ timestamps: true })
 export class Shoes {
-  @Prop({ required: true, type: String })
+  @Prop({ type: String, require: true })
   brand: string;
 
-  @Prop(String)
+  @Prop({ type: String })
   category: string;
 
-  @Prop([String])
-  colorway: Array<string>;
+  @Prop({ type: [String] })
+  colorway?: Array<string>;
 
-  @Prop(String)
-  description: string;
+  @Prop({ type: String })
+  description?: string;
 
-  @Prop(Date)
+  @Prop({ type: Date })
   releaseDate: Date;
 
-  @Prop(String)
+  @Prop({ type: String })
   name: string;
 
-  @Prop(String)
-  shoe: string;
-
-  @Prop(String)
+  @Prop({ type: String })
   title: string;
 
-  @Prop(String)
+  @Prop({ type: String })
   styleId: string;
 
-  @Prop(String)
+  @Prop({ type: String })
   imageUrl: string;
 
-  @Prop([String])
-  tags: Array<string>;
+  @Prop({ type: [String] })
+  tags?: Array<string>;
 }
 
 export const ShoesSchema = SchemaFactory.createForClass(Shoes);

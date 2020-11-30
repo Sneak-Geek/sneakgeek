@@ -1,7 +1,7 @@
 import {useNavigation} from '@react-navigation/native';
 import React from 'react';
 import {Button, SafeAreaView} from 'react-native';
-import RouteNames from '../../navigation/RouteNames';
+import RouteNames from '../../Navigation/RouteNames';
 
 const UserSettingsScreen = () => {
   const navigation = useNavigation();
