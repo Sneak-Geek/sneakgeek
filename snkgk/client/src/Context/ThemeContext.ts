@@ -6,11 +6,15 @@ const ThemeContext = React.createContext({
     brandColorPrimary: '#1E2330',
     brandColorSecondary: '#E2603F',
     textColorPrimary: '#000000',
-    textColorSecondary: '#FFFFFF'
+    textColorSecondary: '#FFFFFF',
+    FacebookThemeColor: '#3B5998',
   },
   button: {
     regularHeight: 54,
-    borderRadius: 40
+    borderRadius: 40,
+  },
+  icon: {
+    size: 28,
   },
   text: {
     largeTitle: {
