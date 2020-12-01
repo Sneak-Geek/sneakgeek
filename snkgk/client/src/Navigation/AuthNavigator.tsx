@@ -18,6 +18,9 @@ const AuthNavigator: React.FC<{}> = () => (
         <AuthStack.Screen
           name={RouteNames.SocialAuth}
           component={SocialAuthScreen}
+          options={{
+            header: () => null,
+          }}
         />
         <AuthStack.Screen
           name={RouteNames.EmailLogin}
