@@ -11,6 +11,25 @@ import Media from '../../../Common/Media';
 import {Icon} from 'react-native-elements';
 import ThemeContext from '../../../Context/ThemeContext';
 import FacebookAuthButton from './FacebookAuthButton';
+import GoogleAuthButton from './GoogleAuthButton';
+import AppleAuthButton from './AppleAuthButton';
+import RouteNames from '../../../Navigation/RouteNames';
+import {AppText} from '../../Shared/AppText';
+import Strings from '../../../Common/Strings';
+
+const GoToEmailButton = () => {
+  const navigation = useNavigation();
+  return (
+    <AppText.Subhead
+      style={styles.emailLoginStyle}
+      onPress={(): void => {
+        navigation.navigate(RouteNames.EmailLogin);
+      }}>
+      {Strings.MemberAlready}{' '}
+      <AppText.Callout>{Strings.EmailLogin}</AppText.Callout>
+    </AppText.Subhead>
+  );
+};
 
 const SocialAuthScreen: React.FC<{}> = () => {
   const navigation = useNavigation();
@@ -32,6 +51,9 @@ const SocialAuthScreen: React.FC<{}> = () => {
               </TouchableOpacity>
               <View style={styles.socialButtonContainer}>
                 <FacebookAuthButton />
+                <GoogleAuthButton />
+                <AppleAuthButton />
+                <GoToEmailButton />
               </View>
             </View>
           </SafeAreaView>
@@ -65,6 +87,11 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
+  },
+  emailLoginStyle: {
+    marginTop: 10,
+    textAlign: 'center',
+    color: 'black',
   },
 });
 
