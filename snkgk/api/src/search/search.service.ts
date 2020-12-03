@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
-import mongoose from 'mongoose';
+import * as mongoose from 'mongoose';
 import { QueryBuilder } from './query.builder';
 
 @Injectable()
@@ -11,6 +11,8 @@ export class SearchService {
   constructor(private esService: ElasticsearchService) {}
 
   async initialize() {
+    console.log('Initialization');
+
     const { body } = await this.esService.indices.exists({
       index: SearchService.INDEX_NAME,
       ignore_unavailable: false,
@@ -32,8 +34,18 @@ export class SearchService {
                 releaseDate: { type: 'date' },
                 name: { type: 'text' },
                 styleId: { type: 'text' },
-                imageUrl: { type: 'text' },
                 title: { type: 'text' },
+                tags: { type: 'nested' },
+                media: {
+                  properties: {
+                    gallery: { type: 'text' },
+                    thumbUrl: { type: 'text' },
+                    smallImageUrl: { type: 'text' },
+                    hidden: { type: 'boolean' },
+                  },
+                },
+                retailPrice: { type: 'double' },
+                year: { type: 'number' },
               },
             },
           },
