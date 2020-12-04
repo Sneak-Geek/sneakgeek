@@ -1,38 +1,64 @@
-import {useNavigation} from '@react-navigation/native';
 import React, {useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import RouteNames from '../../Navigation/RouteNames';
+import {Shoes} from '../../Model/Shoes';
 import {search} from '../../Services/SearchService';
+import DropdownSearchResults from './DropdownSearchResults';
+import FullSearchResults from './FullSearchResults';
 import AppSearchBar from './SearchBar';
-
-const FullSearchResults = () => {
-  return <View style={[{flex: 1}]} />;
-};
-
-const DropdownSearchResults = () => {
-  return <></>;
-};
 
 const FilterModal = () => <></>;
 
 const SearchScreen = () => {
-  const navigation = useNavigation();
+  const [searchText, setSearchText] = useState('');
   const [isSearching, setIsSearching] = useState(false);
-  const [searchResult, setSearchResult] = useState([]);
+  const [mainResult, setMainResult] = useState<Shoes[]>([]);
+  const [dropDownResult, setDropdownResult] = useState<Shoes[]>([]);
+  const [currentPage, setCurrentPage] = useState<number>(0);
+
+  const onSearch = (text: string) => {
+    setSearchText(text);
+    setIsSearching(true);
+    if (text.length < 2) {
+      return;
+    }
+    search(currentPage, text).then((s) => {
+      setDropdownResult(s);
+    });
+  };
+
+  const onScrollEnd = () => {
+    const newPage = currentPage + 1;
+    search(newPage, searchText)
+      .then((s) => {
+        setMainResult([...mainResult, ...s]);
+        setCurrentPage(newPage);
+      })
+      .catch(() => {});
+  };
 
   return (
     <SafeAreaView style={styles.rootContainer}>
       <View style={styles.innerContainer}>
         <AppSearchBar
           containerStyle={styles.searchBar}
-          onSearch={(text) => {
-            setIsSearching(true);
-            search(0, text);
+          onSearch={onSearch}
+          onSubmitEditing={() => {
+            setIsSearching(false);
+            setMainResult(dropDownResult);
+          }}
+          onClear={() => {
+            setIsSearching(false);
           }}
         />
-        <View style={{flex: 1, top: 65}}>
-          {isSearching ? <FullSearchResults /> : <DropdownSearchResults />}
+        <View style={styles.searchResultContainer}>
+          {isSearching && <FullSearchResults result={dropDownResult} />}
+          {!isSearching && (
+            <DropdownSearchResults
+              result={mainResult}
+              onScrollEnd={onScrollEnd}
+            />
+          )}
         </View>
         <FilterModal />
       </View>
@@ -54,6 +80,11 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
+  },
+  searchResultContainer: {
+    flex: 1,
+    top: 65,
+    position: 'relative',
   },
 });
 

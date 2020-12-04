@@ -16,6 +16,12 @@ const ThemeContext = React.createContext({
   icon: {
     size: 28,
   },
+  image: {
+    thumbnail: {
+      width: 60,
+      height: 40,
+    },
+  },
   text: {
     largeTitle: {
       fontFamily: 'RobotoCondensed-Bold',

@@ -7,9 +7,16 @@ import ThemeContext from '../../Context/ThemeContext';
 type Props = {
   containerStyle?: StyleProp<ViewStyle>;
   onSearch: (text: string) => void;
+  onSubmitEditing: () => void;
+  onClear: () => void;
 };
 
-const AppSearchBar: React.FC<Props> = ({containerStyle, onSearch}) => {
+const AppSearchBar: React.FC<Props> = ({
+  containerStyle,
+  onSearch,
+  onSubmitEditing,
+  onClear,
+}) => {
   const [searchText, setSearchText] = useState<string>('');
   const onChangeText = (text: string) => {
     setSearchText(text);
@@ -34,8 +41,8 @@ const AppSearchBar: React.FC<Props> = ({containerStyle, onSearch}) => {
               onChangeText(text);
             }}
             onCancel={() => setSearchText('')}
-            onClear={() => {}}
-            onSubmitEditing={() => {}}
+            onClear={onClear}
+            onSubmitEditing={onSubmitEditing}
           />
           <Icon
             name={'tune'}
