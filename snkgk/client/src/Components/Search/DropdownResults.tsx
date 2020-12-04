@@ -6,8 +6,14 @@ import ThemeContext from '../../Context/ThemeContext';
 import {Shoes} from '../../Model/Shoes';
 import RouteNames from '../../Navigation/RouteNames';
 
-const FullSearchResults: React.FC<{result: Shoes[]}> = (props) => {
+const DropdownResults: React.FC<{result: Shoes[]}> = (props) => {
   const navigation = useNavigation();
+  const showShoesDetail = (shoes: Shoes) => {
+    navigation.navigate(RouteNames.ShoesDetail, {
+      shoes: shoes,
+    });
+  };
+
   return (
     <ThemeContext.Consumer>
       {(theme) => (
@@ -17,8 +23,7 @@ const FullSearchResults: React.FC<{result: Shoes[]}> = (props) => {
             data={props.result}
             keyExtractor={(s) => s.stockxId}
             renderItem={({item}) => (
-              <ListItem
-                onPress={() => navigation.navigate(RouteNames.ShoeDetail)}>
+              <ListItem onPress={() => showShoesDetail(item)}>
                 <Image
                   source={{uri: item.media.thumbUrl}}
                   style={theme.image.thumbnail}
@@ -48,4 +53,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FullSearchResults;
+export default DropdownResults;

@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     right: 20,
     left: 20,
-    paddingHorizontal: 20
+    paddingHorizontal: 20,
   },
   buttonStyle: {
     justifyContent: 'center',
@@ -28,26 +28,23 @@ type Props = {
   titleStyle?: StyleProp<TextStyle>;
 };
 
-export const BottomButton = (props: Props) => (
+export const BottomButton = (props: React.PropsWithChildren<Props>) => (
   <ThemeContext.Consumer>
     {(theme) => (
-      <View
-        style={[
-          styles.containerStyle,
-          theme.button,
-          props.style,
-        ]}>
+      <View style={[styles.containerStyle, theme.button, props.style]}>
         <TouchableOpacity
           style={[styles.buttonStyle, {height: theme.button.regularHeight}]}
           onPress={props.onPress}>
-          <AppText.Headline
-            style={[
-              props.titleStyle,
-              styles.titleStyle,
-              {color: theme.color.textColorSecondary},
-            ]}>
-            {props.title}
-          </AppText.Headline>
+          {props.children ?? (
+            <AppText.Headline
+              style={[
+                props.titleStyle,
+                styles.titleStyle,
+                {color: theme.color.textColorSecondary},
+              ]}>
+              {props.title}
+            </AppText.Headline>
+          )}
         </TouchableOpacity>
       </View>
     )}

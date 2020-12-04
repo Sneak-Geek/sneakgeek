@@ -3,8 +3,8 @@ import {StyleSheet, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Shoes} from '../../Model/Shoes';
 import {search} from '../../Services/SearchService';
-import DropdownSearchResults from './DropdownSearchResults';
-import FullSearchResults from './FullSearchResults';
+import FullResults from './FullResults';
+import DropdownResults from './DropdownResults';
 import AppSearchBar from './SearchBar';
 
 const FilterModal = () => <></>;
@@ -52,12 +52,9 @@ const SearchScreen = () => {
           }}
         />
         <View style={styles.searchResultContainer}>
-          {isSearching && <FullSearchResults result={dropDownResult} />}
+          {isSearching && <DropdownResults result={dropDownResult} />}
           {!isSearching && (
-            <DropdownSearchResults
-              result={mainResult}
-              onScrollEnd={onScrollEnd}
-            />
+            <FullResults result={mainResult} onScrollEnd={onScrollEnd} />
           )}
         </View>
         <FilterModal />

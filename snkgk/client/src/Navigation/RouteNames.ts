@@ -3,7 +3,7 @@ const RouteNames = {
   SocialAuth: 'SocialAuth',
   EmailLogin: 'EmailLogin',
   EmailSignUp: 'EmailSignUp',
-  ShoeDetail: 'ShoeDetail',
+  ShoesDetail: 'ShoesDetail',
   Buy: 'Buy',
   Sell: 'Sell',
   Tab: 'Tab',
