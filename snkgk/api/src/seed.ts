@@ -1,13 +1,14 @@
 import { NestFactory } from '@nestjs/core';
-import { ShoesService } from './shoes/shoes.service';
 import { AppModule } from './app.module';
-import * as fs from 'fs';
-import * as path from 'path';
-import { INestApplicationContext, Logger } from '@nestjs/common';
+import { INestApplicationContext } from '@nestjs/common';
 import { SearchService } from './search/search.service';
+import { exec } from 'child_process';
+import { ConfigService } from '@nestjs/config';
+import * as path from 'path';
+import { ShoesService } from './shoes/shoes.service';
+import { ShoesDocument } from './shoes/shoes.schema';
 
 const seedPath = path.join(__dirname, '..', 'seeds', 'shoes.json');
-const rawShoes = JSON.parse(fs.readFileSync(seedPath).toString());
 
 async function seed() {
   const appContext = await NestFactory.createApplicationContext(AppModule, {
@@ -21,39 +22,46 @@ async function seed() {
   appContext.close();
 }
 
-async function seedShoes(appContext: INestApplicationContext) {
-  const shoesService = appContext.get(ShoesService);
-
-  console.log(`Seeding ${rawShoes.length} pairs...`);
-  const result = await shoesService.createMany(rawShoes);
-  console.log(`Seeded ${result.length} pairs!`);
+function seedShoes(appContext: INestApplicationContext) {
+  const configService = appContext.get(ConfigService);
+  return new Promise<void>((resolve, reject) => {
+    const mongoUrl = configService.get('MONGO_URL');
+    exec(
+      `mongoimport ${seedPath} --uri ${mongoUrl} -d snkgk -c shoes --jsonArray --drop`,
+      (err, stdout, stderr) => {
+        if (err) {
+          console.error(stderr);
+          reject(err);
+        } else {
+          console.log(stdout);
+          resolve();
+        }
+      },
+    );
+  });
 }
 
 async function initializeAndIndexShoes(appContext: INestApplicationContext) {
-  console.log(`Indexing shoes...`);
   const searchService = appContext.get(SearchService);
+  const shoeService = appContext.get(ShoesService);
+
+  console.log(`Preparing cursor for indexing`);
+
+  const shoes: Array<ShoesDocument> = [];
+  const cursor = await shoeService.getAllByCursor();
+  await cursor.eachAsync((s) => shoes.push(s));
+
+  console.log(`Indexing ${shoes.length} pairs...`);
 
   // Uncomment if need to drop index
-  // await searchService.drop();
+  await searchService.drop();
 
   await searchService.initialize();
-  await searchService.indexShoes(
-    rawShoes.map((shoe) => ({
-      _id: shoe._id['$oid'],
-      brand: shoe.brand,
-      category: shoe.category,
-      colorway: shoe.colorway,
-      description: shoe.description,
-      gender: shoe.gender,
-      releaseDate: new Date(shoe.releaseDate['$date']),
-      name: shoe.name,
-      styleId: shoe.styleId,
-      imageUrl: shoe.imageUrl?.trim(),
-      title: shoe.title,
-    })),
-  );
+  await searchService.indexShoes(shoes.map((shoe) => shoe.toObject()));
   const count = await searchService.getCount();
   console.log(`Indexed ${count} pairs!`);
+
+  cursor.close();
 }
 
 seed().catch((e) => console.error(e));

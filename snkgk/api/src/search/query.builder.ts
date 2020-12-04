@@ -47,7 +47,7 @@ export class QueryBuilder {
     const must: Array<any> = [
       {
         wildcard: {
-          imageUrl: '?*',
+          'media.thumbUrl': '?*',
         },
       },
     ];
@@ -77,7 +77,7 @@ export class QueryBuilder {
       query: {
         bool: {
           must,
-          filter: [...filter, { exists: { field: 'imageUrl' } }],
+          filter: [...filter, { exists: { field: 'media.thumbUrl' } }],
         },
       },
     };
