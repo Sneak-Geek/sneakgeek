@@ -16,7 +16,7 @@ async function seed() {
   });
 
   await Promise.all([
-    // seedShoes(appContext),
+    seedShoes(appContext),
     initializeAndIndexShoes(appContext),
   ]);
   appContext.close();
