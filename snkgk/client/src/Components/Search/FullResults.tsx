@@ -1,21 +1,22 @@
 import {useNavigation} from '@react-navigation/native';
 import React from 'react';
-import {
-  FlatList,
-  Image,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {FlatList, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import {Shoes} from '../../Model/Shoes';
 import RouteNames from '../../Navigation/RouteNames';
 import {AppText} from '../Shared/AppText';
 
-const DropdownSearchResults: React.FC<{
+const FullResults: React.FC<{
   result: Shoes[];
   onScrollEnd: () => void;
 }> = (props) => {
   const navigation = useNavigation();
+
+  const showShoesDetail = (shoes: Shoes) => {
+    navigation.navigate(RouteNames.ShoesDetail, {
+      shoes: shoes,
+    });
+  };
+
   return (
     <FlatList
       style={styles.listContainer}
@@ -23,22 +24,21 @@ const DropdownSearchResults: React.FC<{
       keyExtractor={(item) => item.stockxId}
       renderItem={({item}) => (
         <TouchableOpacity
-          activeOpacity={0.8}
-          onPress={() => navigation.navigate(RouteNames.ShoeDetail)}>
-          <View style={styles.resultContainer}>
-            <Image
-              source={{uri: item.media.smallImageUrl}}
-              style={styles.image}
-              resizeMode={'cover'}
-            />
-            <AppText.Subhead
-              numberOfLines={2}
-              lineBreakMode={'tail'}
-              ellipsizeMode={'tail'}
-              style={styles.shoeTitle}>
-              {item.title}
-            </AppText.Subhead>
-          </View>
+          style={styles.resultContainer}
+          activeOpacity={0.6}
+          onPress={() => showShoesDetail(item)}>
+          <Image
+            source={{uri: item.media.smallImageUrl}}
+            style={styles.image}
+            resizeMode={'cover'}
+          />
+          <AppText.Subhead
+            numberOfLines={2}
+            lineBreakMode={'tail'}
+            ellipsizeMode={'tail'}
+            style={styles.shoeTitle}>
+            {item.title}
+          </AppText.Subhead>
         </TouchableOpacity>
       )}
       onEndReached={props.onScrollEnd}
@@ -50,6 +50,7 @@ const DropdownSearchResults: React.FC<{
 
 const styles = StyleSheet.create({
   listContainer: {
+    flex: 1,
     marginHorizontal: 8,
   },
   resultContainer: {
@@ -74,4 +75,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DropdownSearchResults;
+export default FullResults;

@@ -1,4 +1,5 @@
 import React from 'react';
+import {Platform} from 'react-native';
 
 const ThemeContext = React.createContext({
   color: {
@@ -12,6 +13,15 @@ const ThemeContext = React.createContext({
   button: {
     regularHeight: 54,
     borderRadius: 40,
+    shadow: Platform.select({
+      android: {elevation: 5},
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: {width: 0.5, height: 0.5},
+        shadowOpacity: 0.1,
+        shadowRadius: 0.5,
+      },
+    }),
   },
   icon: {
     size: 28,
