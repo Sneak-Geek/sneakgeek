@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
 export const ShoeHeaderSummary = (props: {shoe: Shoe}): JSX.Element => (
   <View style={styles.summaryContainer}>
     <Image
-      source={{uri: props.shoe.imageUrl}}
+      source={{uri: props.shoe.media.imageUrl}}
       style={styles.shoeImage}
       resizeMode={'contain'}
     />

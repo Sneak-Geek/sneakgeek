@@ -125,7 +125,7 @@ export class BuyOrders extends React.Component<Props> {
       <TouchableWithoutFeedback onPress={this._onOrderPress.bind(this, order)}>
         <View style={styles.orderContainer}>
           <Image
-            source={{uri: shoe.imageUrl}}
+            source={{uri: shoe.media.imageUrl}}
             style={{width: 100, aspectRatio: 1}}
             resizeMode={'contain'}
           />

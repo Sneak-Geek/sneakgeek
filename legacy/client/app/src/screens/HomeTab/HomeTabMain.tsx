@@ -151,6 +151,8 @@ export class HomeTabMain extends React.Component<Props> {
       const prevState = prevProps.homeCatalogState.state;
       const {homeCatalogState, toggleLoadingIndicator} = this.props;
 
+      // console.log(`Catalog items:`, homeCatalogState.catalogs);
+
       if (prevState === homeCatalogState.state) {
         return;
       }
@@ -241,7 +243,7 @@ export class HomeTabMain extends React.Component<Props> {
                     }}
                   />
                   <Image
-                    source={{uri: shoe.imageUrl}}
+                    source={{uri: shoe.media.imageUrl}}
                     style={{width: 90, aspectRatio: 1, marginHorizontal: 20}}
                     resizeMode={'contain'}
                   />
@@ -324,31 +326,34 @@ export class HomeTabMain extends React.Component<Props> {
   }
 }
 
-const HotShoeLarge = ({shoe, onPress}: ShoeCardProps): JSX.Element => (
-  <TouchableOpacity onPress={onPress}>
-    <View style={styles.hotShoeContainer}>
-      <View style={styles.hotShoeContentContainer}>
-        <Image
-          source={{uri: shoe.imageUrl, cache: 'default'}}
-          style={styles.shoeImage}
-          resizeMode={'contain'}
-        />
-        <AppText.Title3
-          numberOfLines={2}
-          style={styles.hotShoeTitle}
-          ellipsizeMode={'tail'}>
-          {shoe.title}
-        </AppText.Title3>
+const HotShoeLarge = ({shoe, onPress}: ShoeCardProps): JSX.Element => {
+  console.log("Shoe", shoe);
+  return (
+    <TouchableOpacity onPress={onPress}>
+      <View style={styles.hotShoeContainer}>
+        <View style={styles.hotShoeContentContainer}>
+          <Image
+            source={{uri: shoe.media.imageUrl}}
+            style={styles.shoeImage}
+            resizeMode={'contain'}
+          />
+          <AppText.Title3
+            numberOfLines={2}
+            style={styles.hotShoeTitle}
+            ellipsizeMode={'tail'}>
+            {shoe.title}
+          </AppText.Title3>
+        </View>
       </View>
-    </View>
-  </TouchableOpacity>
-);
+    </TouchableOpacity>
+  );
+}
 
 const HotShoeRegular = ({shoe, onPress}: ShoeCardProps): JSX.Element => (
   <TouchableOpacity onPress={onPress}>
     <View style={styles.hotShoeRegularContainer}>
       <Image
-        source={{uri: shoe.imageUrl}}
+        source={{uri: shoe.media.imageUrl}}
         style={{width: 140, height: 120}}
         resizeMode={'contain'}
       />

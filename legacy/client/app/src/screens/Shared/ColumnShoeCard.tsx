@@ -57,7 +57,9 @@ export const ColumnShoeCard = (props: {
     <TouchableOpacity onPress={props.onPress}>
       <View style={styles.container}>
         <Image
-          source={{uri: props.shoe.imageUrl || Constants.imagePlaceholderUrl}}
+          source={{
+            uri: props.shoe.media.imageUrl ?? Constants.imagePlaceholderUrl,
+          }}
           style={styles.cardImage}
           resizeMode={'contain'}
         />

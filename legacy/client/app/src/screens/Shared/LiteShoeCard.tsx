@@ -18,7 +18,7 @@ export const LiteShoeCard = (props: {
           justifyContent: 'center',
         }}>
         <Image
-          source={{uri: props.shoe.imageUrl}}
+          source={{uri: props.shoe.media.imageUrl}}
           style={{width: 120, height: 120}}
           resizeMode={'contain'}
         />
