@@ -3,7 +3,6 @@
 //!
 
 import winston from "winston";
-import * as ApplicationInsights from "applicationinsights";
 
 export enum LogLevel {
   error = "error",
@@ -17,7 +16,6 @@ export enum LogLevel {
 
 export class LogProvider {
   private logger: winston.Logger;
-  private appInsightsClient: ApplicationInsights.TelemetryClient;
 
   private static _instance: LogProvider;
 
@@ -37,28 +35,6 @@ export class LogProvider {
     if (process.env.NODE_ENV !== "production") {
       this.logger.add(new winston.transports.Console());
     }
-
-    // setup application insights
-    ApplicationInsights.setup()
-      .setAutoDependencyCorrelation(true)
-      .setAutoCollectRequests(true)
-      .setAutoCollectPerformance(true)
-      .setAutoCollectExceptions(true)
-      .setAutoCollectDependencies(true)
-      .setAutoCollectConsole(true)
-      .setUseDiskRetryCaching(true)
-      .start();
-
-    this.appInsightsClient = ApplicationInsights.defaultClient;
-    this.appInsightsClient.commonProperties = {
-      environment: process.env.NODE_ENV,
-    };
-
-    this.appInsightsClient.flush({
-      callback: (res) => {
-        this.logger.log(LogLevel.info, "flush app insight test", res.toString());
-      },
-    });
   }
 
   public static get instance(): LogProvider {
@@ -69,22 +45,9 @@ export class LogProvider {
     return this._instance;
   }
 
-  public get telemetryClient(): ApplicationInsights.TelemetryClient {
-    return this.appInsightsClient;
-  }
-
   private log(level: LogLevel, ...message: string[]): void {
     if (process.env.NODE_ENV !== "test") {
       this.logger.log(level, message.join(" "));
-    }
-
-    if (process.env.NODE_ENV !== "local" && process.env.NODE_ENV !== "test") {
-      this.appInsightsClient.trackEvent({
-        name: level,
-        properties: {
-          message: message.join(" "),
-        },
-      });
     }
   }
 

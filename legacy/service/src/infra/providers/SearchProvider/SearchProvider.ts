@@ -187,21 +187,9 @@ export class SearchProvider implements ISearchProvider {
         LogProvider.instance.info(
           `[${TelemetryNamespace.ElasticNS}] :: Successfully initialize ${this.shoeIndexName} index`
         );
-        LogProvider.instance.telemetryClient.trackMetric({
-          name: TelemetryNamespace.ElasticSearchInitTime,
-          value: Date.now() - startTime,
-        });
       } else {
         const error = `[GHN] Failed to initialze index:\n${JSON.stringify(body)}`;
-
         LogProvider.instance.error(error);
-        LogProvider.instance.telemetryClient.trackException({
-          exception: {
-            name: TelemetryNamespace.ElasticSearchFailed,
-            message: error,
-            stack: body,
-          },
-        });
 
         throw new Error(error);
       }

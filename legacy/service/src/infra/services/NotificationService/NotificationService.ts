@@ -12,10 +12,9 @@ import {
   OrderNotificationContent,
 } from "./INotificationService";
 import { BaseExternalApiService } from "../BaseExternalApiService";
-import { LogProvider } from "../../providers";
+import { LogProvider, EnvironmentProvider } from "../../providers";
 import { ObjectId } from "mongodb";
 import { OrderType } from "../../../assets/constants";
-import { EnvironmentProvider } from "../../providers";
 
 export class NotificationBuilder implements INotificationBuilder {
   private title: string;

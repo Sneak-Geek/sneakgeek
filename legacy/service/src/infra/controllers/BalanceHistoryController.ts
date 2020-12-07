@@ -10,15 +10,9 @@ import { IProfileDao, IShoeDao } from "../dao";
 import HttpStatus from "http-status";
 import { IBalanceHistoryDao } from "../dao/BalanceHistoryDao/IBalanceHistoryDao";
 import { Types } from "../../configuration/inversify/inversify.types";
-import { body } from "express-validator";
-import {
-  BankingInfo,
-  BalanceHistoryAction,
-  BalanceHistoryStatus,
-  UserAccount,
-} from "../database";
+import { body, query } from "express-validator";
+import { BankingInfo, BalanceHistoryAction, BalanceHistoryStatus } from "../database";
 import { ObjectId } from "mongodb";
-import { query } from "express-validator";
 import { plainToClass } from "@marcj/marshal";
 import { GetBalanceHistoryFilter } from "../model";
 
@@ -83,8 +77,9 @@ export class BalanceHistoryController {
     )[0];
     let currentBalance = await this._getCurrentBalance(profileId);
 
-    if (getProcessingWithdrawal || (currentBalance <= 0 && amount > currentBalance))
+    if (getProcessingWithdrawal || (currentBalance <= 0 && amount > currentBalance)) {
       return res.status(HttpStatus.BAD_REQUEST).send({ message: "Bad request!" });
+    }
 
     const accountNumberLength = accountNumber.length;
     const lastFourDigits = accountNumber.substring(
@@ -160,10 +155,11 @@ export class BalanceHistoryController {
       updateFilter = { status, prevBalance };
     }
 
-    if (!(balanceHistory.status === BalanceHistoryStatus.PROCESSING))
+    if (!(balanceHistory.status === BalanceHistoryStatus.PROCESSING)) {
       return res
         .status(HttpStatus.BAD_REQUEST)
         .send({ message: "Existed balance status cannot be changed!" });
+    }
 
     await this.balanceHistoryDao.updateBalance(balanceHistoryId, updateFilter);
     return res
@@ -178,7 +174,9 @@ export class BalanceHistoryController {
         status: BalanceHistoryStatus.SUCCEEDED,
       })
     )[0];
-    if (!mostRecentSucceededBalanceHistory) return 0;
+    if (!mostRecentSucceededBalanceHistory) {
+      return 0;
+    }
     return mostRecentSucceededBalanceHistory.action === BalanceHistoryAction.DEPOSIT
       ? mostRecentSucceededBalanceHistory.prevBalance +
           mostRecentSucceededBalanceHistory.amount
