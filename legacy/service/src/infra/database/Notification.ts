@@ -66,12 +66,3 @@ export const NotificationRepository: Repository<Notification> = mongoose.model(
   "Notification",
   NotificationSchema
 );
-
-NotificationRepository.watch().on("change", (data) => {
-  const notificationChangeStreamExecutor = container.get<INotificationChangeStreamExecutor>(
-    Types.NotificationChangeStreamExecutor
-  );
-  if (data.operationType === "insert") {
-    notificationChangeStreamExecutor.executeOnNotificationInsert(data);
-  }
-});

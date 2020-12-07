@@ -33,7 +33,7 @@ export const Types = {
 
   // Provider
   BootstrapProvider: Symbol("BootstrapProvider"),
-  SearchProvider: Symbol("SearchProvider"),
+  SearchService: Symbol("SearchService"),
 
   // Dao
   ProfileDao: Symbol("ProfileDao"),

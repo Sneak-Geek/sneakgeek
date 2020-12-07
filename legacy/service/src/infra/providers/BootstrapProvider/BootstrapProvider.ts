@@ -7,6 +7,7 @@ import {
   Repository,
   Catalogue,
   CatalogType,
+  ShoeSchema,
 } from "../../database";
 import { Types } from "../../../configuration/inversify";
 import mongoose, { Document } from "mongoose";
@@ -85,7 +86,7 @@ export class BootstrapProvider implements IBootstrapProvider {
       process.cwd(),
       "resources",
       "seeds",
-      "azure-shoes-full.json"
+      "shoes-new.json"
     );
     const rawShoes: any[] = JSON.parse(fs.readFileSync(seedPath).toString());
 
@@ -96,10 +97,11 @@ export class BootstrapProvider implements IBootstrapProvider {
       colorway: shoe.colorway,
       description: shoe.description,
       gender: shoe.gender,
-      releaseDate: new Date(shoe.releaseDate["$date"]),
+      releaseDate: shoe.releaseDate ? new Date(shoe.releaseDate["$date"]) : null,
       name: shoe.name,
       styleId: shoe.styleId,
-      imageUrl: shoe.imageUrl?.trim(),
+      media: shoe.media,
+      urlKey: shoe.urlKey,
       title: shoe.title,
     }));
   }
@@ -132,27 +134,27 @@ export class BootstrapProvider implements IBootstrapProvider {
     // this is assuming that shoe data is bootstrapped
     const [hot, nike, jordan, adidas, ranking] = await Promise.all([
       this.shoeRepository
-        .find({ imageUrl: { $ne: "" } })
+        .find({ "media.imageUrl" : { $ne: "" } })
         .sort({ releaseDate: -1 })
         .limit(15)
         .exec(),
       this.shoeRepository
-        .find({ brand: "Nike", imageUrl: { $ne: "" } })
+        .find({ brand: "Nike", "media.imageUrl": { $ne: "" } })
         .sort({ releaseDate: -1 })
         .limit(50)
         .exec(),
       this.shoeRepository
-        .find({ brand: "Jordan", imageUrl: { $ne: "" } })
+        .find({ brand: "Jordan", "media.imageUrl": { $ne: "" } })
         .sort({ releaseDate: -1 })
         .limit(30)
         .exec(),
       this.shoeRepository
-        .find({ brand: "adidas", imageUrl: { $ne: "" } })
+        .find({ brand: "adidas", "media.imageUrl": { $ne: "" } })
         .sort({ releaseDate: -1 })
         .limit(30)
         .exec(),
       this.shoeRepository
-        .find({ imageUrl: { $ne: "" } })
+        .find({ "media.imageUrl": { $ne: "" } })
         .sort({ createdAt: -1 })
         .limit(15)
         .exec(),

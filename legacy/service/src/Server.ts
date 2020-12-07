@@ -15,12 +15,11 @@ import * as Constants from "./assets/constants";
 import { container, asyncBindings, Types } from "./configuration/inversify";
 import {
   IBootstrapProvider,
-  ISearchProvider,
   LogProvider,
-  TelemetryNamespace,
 } from "./infra/providers";
 import path from "path";
 import { DbClient } from "./infra/database";
+import { ISearchService } from "./infra/services";
 
 export default class Server {
   private static _appInstance: express.Application;
@@ -93,6 +92,7 @@ export default class Server {
         // Index data
         await this._initializeIndex();
       } catch (error) {
+        console.log(error);
         LogProvider.instance.error(
           "[ElasticSearch] Error initializing ElasticSearch service",
           JSON.stringify(error, null, 2)
@@ -127,7 +127,7 @@ export default class Server {
 
     await bootstrapProvider.bootstrapUsersData();
     await bootstrapProvider.bootstrapShoesData();
-    // await bootstrapProvider.bootstrapCatalogData();
+    await bootstrapProvider.bootstrapCatalogData();
 
     // bootstrap GHN shipping data
     // await bootstrapProvider.bootstrapShippingService();
@@ -138,7 +138,7 @@ export default class Server {
   private static async _initializeIndex(): Promise<void> {
     LogProvider.instance.info("Initializing search index");
 
-    const searchProvider = this.container.get<ISearchProvider>(Types.SearchProvider);
+    const searchProvider = this.container.get<ISearchService>(Types.SearchService);
     const bootstrapProvider: IBootstrapProvider = this.container.get<IBootstrapProvider>(
       Types.BootstrapProvider
     );
