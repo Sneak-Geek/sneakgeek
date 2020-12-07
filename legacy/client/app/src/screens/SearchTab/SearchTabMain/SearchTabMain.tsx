@@ -239,7 +239,9 @@ export class SearchTabMain extends React.Component<Props, State> {
 
     const renderLeftAvatar = (s: Shoe): JSX.Element => (
       <Image
-        source={s.imageUrl ? {uri: s.imageUrl} : images.ImagePlaceholder}
+        source={
+          s.media.thumbUrl ? {uri: s.media.thumbUrl} : images.ImagePlaceholder
+        }
         style={styles.thumbnail}
         resizeMode={'contain'}
       />

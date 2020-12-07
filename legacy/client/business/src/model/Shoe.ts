@@ -6,7 +6,10 @@ export interface Shoe {
   colorway: string[];
   name: string;
   description?: string;
-  imageUrl?: string;
+  media: {
+    thumbUrl: string;
+    imageUrl: string;
+  };
   shoe: string;
   urlKey: string;
   title: string;

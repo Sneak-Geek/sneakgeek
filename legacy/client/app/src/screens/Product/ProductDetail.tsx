@@ -257,7 +257,7 @@ export class ProductDetail extends React.Component<Props> {
     return (
       <View style={styles.shoeImageContainer}>
         <Image
-          source={{uri: this._shoe.imageUrl}}
+          source={{uri: this._shoe.media.imageUrl}}
           style={{width: '100%', aspectRatio: 2}}
           resizeMode={'contain'}
         />
