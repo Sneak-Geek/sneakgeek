@@ -16,7 +16,7 @@ import {
   IPaymentService,
   PaymentService,
   INotificationService,
-  NotificationService,
+  EmptyNotificationService,
   IAppleAuthService,
   AppleAuthService,
 } from "../../infra/services";
@@ -125,7 +125,7 @@ container.bind<IPaymentService>(Types.PaymentService).to(PaymentService);
 
 container
   .bind<INotificationService>(Types.NotificationService)
-  .to(NotificationService)
+  .to(EmptyNotificationService)
   .inSingletonScope();
 
 // Providers

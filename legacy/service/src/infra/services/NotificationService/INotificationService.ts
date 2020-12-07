@@ -2,6 +2,7 @@
 // ! Copyright (c) 2019 - SneakGeek. All rights reserved
 // !
 
+import { injectable } from "inversify";
 import { ObjectId } from "mongodb";
 import { OrderType } from "../../../assets/constants";
 
@@ -51,5 +52,17 @@ export interface INotificationService {
   ): Promise<any>;
 
   sendNotification<T>(tag: string, body: ApnsNotificationSchema<T>): Promise<any>;
+  builder: INotificationBuilder;
+}
+@injectable()
+export class EmptyNotificationService implements INotificationService {
+  registerDevice(userProfileId: string, installationId: string, platform: string, pushChannel: string): Promise<any> {
+    return Promise.resolve();
+  }
+
+  sendNotification<T>(tag: string, body: ApnsNotificationSchema<T>): Promise<any> {
+    return Promise.resolve();
+  }
+
   builder: INotificationBuilder;
 }
