@@ -13,10 +13,7 @@ import morgan from "morgan";
 import passport from "passport";
 import * as Constants from "./assets/constants";
 import { container, asyncBindings, Types } from "./configuration/inversify";
-import {
-  IBootstrapProvider,
-  LogProvider,
-} from "./infra/providers";
+import { IBootstrapProvider, LogProvider } from "./infra/providers";
 import path from "path";
 import { DbClient } from "./infra/database";
 import { ISearchService } from "./infra/services";

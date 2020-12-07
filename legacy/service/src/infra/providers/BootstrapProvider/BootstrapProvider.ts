@@ -82,12 +82,7 @@ export class BootstrapProvider implements IBootstrapProvider {
   }
 
   public getRawShoesData(): Partial<Shoe>[] {
-    const seedPath = path.join(
-      process.cwd(),
-      "resources",
-      "seeds",
-      "shoes-new.json"
-    );
+    const seedPath = path.join(process.cwd(), "resources", "seeds", "shoes-new.json");
     const rawShoes: any[] = JSON.parse(fs.readFileSync(seedPath).toString());
 
     return rawShoes.map((shoe) => ({
@@ -134,7 +129,7 @@ export class BootstrapProvider implements IBootstrapProvider {
     // this is assuming that shoe data is bootstrapped
     const [hot, nike, jordan, adidas, ranking] = await Promise.all([
       this.shoeRepository
-        .find({ "media.imageUrl" : { $ne: "" } })
+        .find({ "media.imageUrl": { $ne: "" } })
         .sort({ releaseDate: -1 })
         .limit(15)
         .exec(),

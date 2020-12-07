@@ -25,7 +25,7 @@ import {
 import {
   IBootstrapProvider,
   BootstrapProvider,
-  EnvironmentProvider
+  EnvironmentProvider,
 } from "../../infra/providers";
 import {
   UserAccountRepository,
