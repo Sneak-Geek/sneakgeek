@@ -1,0 +1,65 @@
+settings:
+  get:
+    tags:
+      - settings
+    summary: Get app settings
+    description: ""
+    operationId: getSettings
+    parameters:
+      - in: headers
+        name: authorization
+        description: JWT for user authorization
+        required: true
+        schema:
+          $ref: "../definitions/common/JWTToken.yaml"
+    responses:
+      "200":
+        description: Get app settings successfully
+        schema:
+          type: object
+          required:
+            - shoeConditions
+            - boxConditions
+            - sellDuration
+            - shoeSizes
+            - genders
+            - shoeBrands
+            - shoeSizeStandards
+            - faq
+          properties:
+            shoeConditions:
+              type: array
+              items:
+                type: string
+            boxConditions:
+              type: array
+              items:
+                type: string
+            sellDuration:
+              type: array
+              items:
+                type: object
+                required:
+                  - duration
+                  - unit
+                properties:
+                  duration:
+                    type: integer
+                  unit:
+                    type: string
+            shoeSizes:
+              type: object
+            genders:
+              type: array
+              items:
+                type: string
+            shoeBrands:
+              type: array
+              items:
+                type: string
+            shoeSizeStandards:
+              type: array
+              items:
+                type: string
+            faq:
+              type: object
