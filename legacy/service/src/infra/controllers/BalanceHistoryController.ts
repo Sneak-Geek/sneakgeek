@@ -11,11 +11,7 @@ import HttpStatus from "http-status";
 import { IBalanceHistoryDao } from "../dao/BalanceHistoryDao/IBalanceHistoryDao";
 import { Types } from "../../configuration/inversify/inversify.types";
 import { body, query } from "express-validator";
-import {
-  BankingInfo,
-  BalanceHistoryAction,
-  BalanceHistoryStatus,
-} from "../database";
+import { BankingInfo, BalanceHistoryAction, BalanceHistoryStatus } from "../database";
 import { ObjectId } from "mongodb";
 import { plainToClass } from "@marcj/marshal";
 import { GetBalanceHistoryFilter } from "../model";
@@ -178,7 +174,9 @@ export class BalanceHistoryController {
         status: BalanceHistoryStatus.SUCCEEDED,
       })
     )[0];
-    if (!mostRecentSucceededBalanceHistory) { return 0; }
+    if (!mostRecentSucceededBalanceHistory) {
+      return 0;
+    }
     return mostRecentSucceededBalanceHistory.action === BalanceHistoryAction.DEPOSIT
       ? mostRecentSucceededBalanceHistory.prevBalance +
           mostRecentSucceededBalanceHistory.amount

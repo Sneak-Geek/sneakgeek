@@ -56,7 +56,12 @@ export interface INotificationService {
 }
 @injectable()
 export class EmptyNotificationService implements INotificationService {
-  registerDevice(userProfileId: string, installationId: string, platform: string, pushChannel: string): Promise<any> {
+  registerDevice(
+    userProfileId: string,
+    installationId: string,
+    platform: string,
+    pushChannel: string
+  ): Promise<any> {
     return Promise.resolve();
   }
 
