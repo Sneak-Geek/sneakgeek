@@ -33,8 +33,7 @@ import {
   AccountProvider,
 } from "../database";
 import { IAccountDao } from "../dao";
-import { AppleStrategy } from "../providers";
-import { EnvironmentProvider } from "../providers";
+import { AppleStrategy, EnvironmentProvider } from "../providers";
 
 @controller("/api/v1/account")
 export class AccountController {

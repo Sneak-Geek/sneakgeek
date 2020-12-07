@@ -115,11 +115,6 @@ export default class Server {
             serverBootedTime - this._startTime
           }`
         );
-
-        LogProvider.instance.telemetryClient.trackMetric({
-          name: TelemetryNamespace.ServerBootTime,
-          value: serverBootedTime - this._startTime,
-        });
       }
     });
   }
@@ -132,10 +127,10 @@ export default class Server {
 
     await bootstrapProvider.bootstrapUsersData();
     await bootstrapProvider.bootstrapShoesData();
-    await bootstrapProvider.bootstrapCatalogData();
+    // await bootstrapProvider.bootstrapCatalogData();
 
     // bootstrap GHN shipping data
-    await bootstrapProvider.bootstrapShippingService();
+    // await bootstrapProvider.bootstrapShippingService();
 
     LogProvider.instance.info("Bootstrap data completed");
   }
@@ -160,7 +155,7 @@ export default class Server {
     LogProvider.instance.info("Configuring application settings");
 
     // Cors. TODO: configure safe options for access from trusted website only
-    app.use(cors());
+    // app.use(cors());
 
     // Request logging
     app.use(

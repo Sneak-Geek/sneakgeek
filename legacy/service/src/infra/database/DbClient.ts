@@ -9,28 +9,10 @@ export const getDbClient = async (connectionString: string) => {
 
     mongoose.connection.on("error", (e) => {
       LogProvider.instance.error("DB connection initialization error", JSON.stringify(e));
-
-      LogProvider.instance.telemetryClient.trackMetric({
-        name: TelemetryNamespace.DbFailedTime,
-        value: Date.now() - startTime,
-      });
-
-      LogProvider.instance.telemetryClient.trackException({
-        exception: {
-          name: TelemetryNamespace.DbFailedExpcetion,
-          message: "Mongo connection error",
-          stack: e,
-        },
-      });
     });
 
     mongoose.connection.on("open", () => {
       LogProvider.instance.info(`DB connection to ${connectionString} open successfully`);
-
-      LogProvider.instance.telemetryClient.trackMetric({
-        name: TelemetryNamespace.DbBootTime,
-        value: Date.now() - startTime,
-      });
     });
 
     await mongoose.connect(connectionString, {
