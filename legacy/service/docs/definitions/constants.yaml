@@ -1,0 +1,7 @@
+ShoeBrand:
+  type: string
+  enum: ["Jordan", "Nike", "adidas"]
+
+Gender:
+  type: string
+  enum: ["men", "women", "unisex"]

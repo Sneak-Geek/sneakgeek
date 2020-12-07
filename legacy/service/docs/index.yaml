@@ -1,0 +1,40 @@
+swagger: "2.0"
+info:
+  version: 1.0.0
+  title: SneakGeek API
+host: sneakgeek-test.azurewebsites.net
+basePath: /api/v1
+tags:
+  - name: account
+  - name: profile
+  - name: settings
+  - name: shoe
+  - name: product-request
+schemes:
+  - https
+  - http
+paths:
+  /account/get:
+    $ref: "./paths/account.yaml#/get"
+  /account/facebook:
+    $ref: "./paths/account.yaml#/facebook"
+  /account/email-signup:
+    $ref: "./paths/account.yaml#/email-signup"
+  /account/email-login:
+    $ref: "./paths/account.yaml#/email-login"
+  /account/send-confirmation-token:
+    $ref: "./paths/account.yaml#/send-confirmation-token"
+  /account/set-user-password:
+    $ref: "./paths/account.yaml#/set-user-password"
+  /account/verify-token:
+    $ref: "./paths/account.yaml#/verify-token"
+  /profile:
+    $ref: "./paths/profile.yaml#/profile"
+  /profile/update:
+    $ref: "./paths/profile.yaml#/update"
+  /settings:
+    $ref: "./paths/settings.yaml#/settings"
+  /shoe/find:
+    $ref: "./paths/shoe.yaml#/find"
+  /product-request:
+    $ref: "./paths/product_request.yaml#/product-request"

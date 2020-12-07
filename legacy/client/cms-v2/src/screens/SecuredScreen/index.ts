@@ -1,0 +1,1 @@
+export { SecuredScreen } from './SecuredScreen';

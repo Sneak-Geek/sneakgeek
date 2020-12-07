@@ -1,0 +1,22 @@
+find:
+  get:
+    tags:
+      - shoe
+    summary: Find shoes that match filters
+    description: ""
+    operationId: findShoe
+    parameters:
+      - in: query
+        name: title
+        type: string
+      - in: query
+        name: gender
+        type: string
+      - in: query
+        name: brand
+        type: string
+      - in: query
+        name: colorways
+        type: array
+        items:
+          type: string
