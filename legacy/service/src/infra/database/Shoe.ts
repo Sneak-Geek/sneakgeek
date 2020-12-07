@@ -28,7 +28,16 @@ export const ShoeSchema = new mongoose.Schema(
       unique: true,
     },
     styleId: String,
-    imageUrl: String,
+    media: {
+      type: {
+        gallery: [String],
+        imageUrl: String,
+        thumbUrl: String,
+        smallImageUrl: String,
+        hidden: Boolean,
+      },
+    },
+    urlKey: String,
     tags: [String],
   },
   { timestamps: true }
@@ -49,7 +58,14 @@ export type Shoe = Document<{
   shoe: string;
   title: string;
   styleId: string;
-  imageUrl: string;
+  media: {
+    gallery: string[];
+    imageUrl: string;
+    thumbUrl: string;
+    smallImageUrl: string;
+    hidden: boolean;
+  };
+  urlKey: string;
   tags: Array<string>;
 }>;
 

@@ -4,12 +4,12 @@
 
 import * as ElasticSearch from "@elastic/elasticsearch";
 import { Shoe } from "../../database";
-import { ISearchProvider } from "./ISearchProvider";
+import { ISearchService } from "./ISearchService";
 import { injectable, inject } from "inversify";
 import HttpStatus from "http-status";
-import { LogProvider, TelemetryNamespace } from "../LogProvider";
+import { LogProvider, TelemetryNamespace } from "../../providers/LogProvider";
 import { ObjectId } from "mongodb";
-import { EnvironmentProvider } from "../EnvironmentProvider";
+import { EnvironmentProvider } from "../../providers/EnvironmentProvider";
 import { UpdateShoeInput } from "../../model";
 
 export class QueryBuilder {
@@ -61,7 +61,7 @@ export class QueryBuilder {
     const must: Array<any> = [
       {
         wildcard: {
-          imageUrl: "?*",
+          "media.imageUrl": "?*",
         },
       },
     ];
@@ -91,14 +91,7 @@ export class QueryBuilder {
       query: {
         bool: {
           must,
-          filter: [
-            ...filter,
-            {
-              exists: {
-                field: "imageUrl",
-              },
-            },
-          ],
+          filter: [...filter, { exists: { field: "media.thumbUrl" } }],
         },
       },
     };
@@ -106,7 +99,7 @@ export class QueryBuilder {
 }
 
 @injectable()
-export class SearchProvider implements ISearchProvider {
+export class SearchService implements ISearchService {
   private client: ElasticSearch.Client;
   private readonly shoeIndexName = "shoe";
   private readonly nodeEndpoint = EnvironmentProvider.env.ElasticSearchEndpoint;
@@ -141,39 +134,27 @@ export class SearchProvider implements ISearchProvider {
           body: {
             mappings: {
               properties: {
-                id: {
-                  type: "keyword",
+                id: { type: "keyword" },
+                brand: { type: "keyword" },
+                category: { type: "keyword" },
+                colorway: { type: "text" },
+                description: { type: "text" },
+                gender: { type: "keyword" },
+                releaseDate: { type: "date" },
+                name: { type: "text" },
+                styleId: { type: "text" },
+                title: { type: "text" },
+                tags: { type: "nested" },
+                media: {
+                  properties: {
+                    gallery: { type: "text" },
+                    thumbUrl: { type: "text" },
+                    smallImageUrl: { type: "text" },
+                    hidden: { type: "boolean" },
+                  },
                 },
-                brand: {
-                  type: "keyword",
-                },
-                category: {
-                  type: "keyword",
-                },
-                colorway: {
-                  type: "text",
-                },
-                description: {
-                  type: "text",
-                },
-                gender: {
-                  type: "keyword",
-                },
-                releaseDate: {
-                  type: "date",
-                },
-                name: {
-                  type: "text",
-                },
-                styleId: {
-                  type: "text",
-                },
-                imageUrl: {
-                  type: "text",
-                },
-                title: {
-                  type: "text",
-                },
+                retailPrice: { type: "double" },
+                year: { type: "integer" },
               },
             },
           },
@@ -198,7 +179,7 @@ export class SearchProvider implements ISearchProvider {
 
   public async indexShoes(shoes: Partial<Shoe>[]) {
     LogProvider.instance.info(
-      `[GHN] Populating ${this.shoeIndexName} index with ${shoes.length} indices`
+      `[ElasticSearch] Populating ${this.shoeIndexName} index with ${shoes.length} indices`
     );
     // _id is reserved for ElasticSearch
     const indexedShoes = shoes
@@ -214,9 +195,10 @@ export class SearchProvider implements ISearchProvider {
       .reduce((prevValue, currentValue) => [...prevValue, ...currentValue]);
 
     const response = await this.client.bulk({
-      refresh: "true",
+      refresh: true,
       body: indexedShoes,
     });
+
     const { body: bulkResponse } = response;
 
     if (bulkResponse.error) {

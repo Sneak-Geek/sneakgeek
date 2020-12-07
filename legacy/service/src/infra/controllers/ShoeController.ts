@@ -19,12 +19,12 @@ import { ObjectId } from "mongodb";
 import { Types } from "../../configuration/inversify/inversify.types";
 import * as middlewares from "../middlewares";
 import { Gender, Brand } from "../../assets/settings";
-import { Repository, Shoe, BuyOrder, SellOrder } from "../database";
+import { Repository, Shoe } from "../database";
 import mongoose from "mongoose";
-import { ISearchProvider } from "../providers";
 import { IBuyOrderDao, ISellOrderDao, IShoeDao } from "../../infra/dao";
 import { UpdateShoeInput } from "../model";
 import { plainToClass } from "@marcj/marshal";
+import { ISearchService } from "../services";
 
 @controller("/api/v1/shoe")
 export class ShoeController {
@@ -40,8 +40,8 @@ export class ShoeController {
   @inject(Types.SellOrderDao)
   private readonly sellOrderDao!: ISellOrderDao;
 
-  @inject(Types.SearchProvider)
-  private readonly searchProvider: ISearchProvider;
+  @inject(Types.SearchService)
+  private readonly searchService: ISearchService;
 
   @httpGet("/all")
   public async getAllShoes(@response() res: Response) {
@@ -125,7 +125,7 @@ export class ShoeController {
       .split(",")
       .filter((t) => t.length > 0);
 
-    const result = await this.searchProvider.search(page, limit, title, brand, gender);
+    const result = await this.searchService.search(page, limit, title, brand, gender);
 
     return res.status(HttpStatus.OK).send(result);
   }
@@ -194,7 +194,7 @@ export class ShoeController {
   public async updateShoe(@request() req: Request, @response() res: Response) {
     const updateShoeInput = plainToClass(UpdateShoeInput, req.body);
     const updatedShoe = await this.shoeDao.updateShoe(updateShoeInput);
-    await this.searchProvider.updateShoe(updateShoeInput);
+    await this.searchService.updateShoe(updateShoeInput);
     return res.status(HttpStatus.OK).send({
       updatedShoe,
     });

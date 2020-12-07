@@ -1,7 +1,7 @@
 import { Shoe } from "../../database";
 import { UpdateShoeInput } from "../../model";
 
-export interface ISearchProvider {
+export interface ISearchService {
   isPopulated(): Promise<boolean>;
   initialize(): Promise<void>;
   indexShoes(shoes: Partial<Shoe>[]): Promise<void>;

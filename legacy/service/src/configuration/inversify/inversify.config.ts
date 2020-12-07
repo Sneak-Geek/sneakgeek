@@ -19,12 +19,13 @@ import {
   EmptyNotificationService,
   IAppleAuthService,
   AppleAuthService,
+  SearchService,
+  ISearchService,
 } from "../../infra/services";
 import {
   IBootstrapProvider,
   BootstrapProvider,
-  ISearchProvider,
-  SearchProvider,
+  EnvironmentProvider,
 } from "../../infra/providers";
 import {
   UserAccountRepository,
@@ -84,7 +85,6 @@ import {
   INotificationChangeStreamExecutor,
   NotificationChangeStreamExecutor,
 } from "../../infra/executor";
-import { EnvironmentProvider } from "../../infra/providers";
 
 // import @controller meta-data tag
 import "../../infra/controllers/AccountController";
@@ -133,7 +133,7 @@ container
   .bind<IBootstrapProvider>(Types.BootstrapProvider)
   .to(BootstrapProvider)
   .inSingletonScope();
-container.bind<ISearchProvider>(Types.SearchProvider).to(SearchProvider);
+container.bind<ISearchService>(Types.SearchService).to(SearchService);
 
 // Executor
 container
