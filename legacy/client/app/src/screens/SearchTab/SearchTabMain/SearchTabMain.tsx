@@ -129,7 +129,6 @@ export class SearchTabMain extends React.Component<Props, State> {
             <View style={styles.pageContainer}>
               {this._renderSearchResults()}
             </View>
-            {this._renderProductRequest()}
             {this._renderFilterModal()}
           </View>
         )}
@@ -350,25 +349,9 @@ export class SearchTabMain extends React.Component<Props, State> {
   }
 
   private _goToProduct(shoe: Shoe): void {
-    this.props.navigation.push(RouteNames.Product.Name, {
-      screen: RouteNames.Product.ProductDetail,
-      params: {shoe},
+    this.props.navigation.navigate(RouteNames.Product.Name, {
+      shoe,
     });
-  }
-
-  private _renderProductRequest(): JSX.Element {
-    return (
-      <TouchableWithoutFeedback
-        onPress={(): void =>
-          this.props.navigation.push(RouteNames.Tab.SearchTab.ProductRequest)
-        }>
-        <View style={styles.productNotFound}>
-          <AppText.Callout style={{color: themes.AppPrimaryColor}}>
-            {strings.ProductNotFound}
-          </AppText.Callout>
-        </View>
-      </TouchableWithoutFeedback>
-    );
   }
 
   private _renderFilterModal(): JSX.Element {

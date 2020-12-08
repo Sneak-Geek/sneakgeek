@@ -70,24 +70,6 @@ export class ProfileDao implements IProfileDao {
       .exec();
   }
 
-  public async updateSentNotification(
-    profileId: ObjectId,
-    notification: Partial<Notification>
-  ): Promise<void> {
-    await this.profileRepo
-      .findOneAndUpdate(
-        {
-          _id: profileId,
-        },
-        {
-          $push: {
-            notifications: notification,
-          },
-        }
-      )
-      .exec();
-  }
-
   public async updateById(
     profileId: string,
     update: ProfileUpdateInput

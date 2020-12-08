@@ -108,12 +108,17 @@ export class LoginScreen extends React.Component<Props> {
           {!this.props.accountState.account && (
             <View style={{flex: 1, alignItems: 'center', marginBottom: 10}}>
               <TouchableOpacity
-                style={{position: 'absolute', top: 10, right: 10}}>
+                style={{
+                  position: 'absolute',
+                  top: 10,
+                  right: 10,
+                }}>
                 <Icon
                   name={'close'}
                   size={themes.IconSize * 2}
                   color={'white'}
                   onPress={() => this.props.navigation.goBack()}
+                  containerStyle={{backgroundColor: 'transparent'}}
                 />
               </TouchableOpacity>
               <View style={styles.buttonContainer}>

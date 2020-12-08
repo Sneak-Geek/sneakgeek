@@ -76,6 +76,9 @@ const RootStack = (): JSX.Element => (
       <Stack.Screen
         name={RouteNames.Auth.Name}
         component={AuthenticationStack}
+        options={{
+          headerShown: false
+        }}
       />
       <Stack.Screen
         name={RouteNames.Tab.Name}

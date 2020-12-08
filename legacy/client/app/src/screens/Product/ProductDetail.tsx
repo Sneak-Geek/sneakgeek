@@ -77,9 +77,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 0.5,
-    borderColor: 'transparent',
-    borderBottomColor: 'lightgray',
   },
   headerContainer: {
     backgroundColor: 'white',
@@ -97,7 +94,7 @@ const styles = StyleSheet.create({
   },
   shoeTitle: {
     marginTop: 24,
-    marginHorizontal: '15%',
+    marginHorizontal: 20,
     textAlign: 'center',
   },
   shoeDescription: {
@@ -277,83 +274,6 @@ export class ProductDetail extends React.Component<Props> {
     return <View style={{paddingHorizontal: 20}}>{views}</View>;
   }
 
-  private _renderProductReviews(): JSX.Element {
-    const {reviewState, navigation} = this.props;
-    const {state, reviews} = reviewState;
-
-    let content: JSX.Element;
-    if (state === NetworkRequestState.REQUESTING) {
-      content = <ActivityIndicator />;
-    } else if (state === NetworkRequestState.SUCCESS && reviews.length > 0) {
-      <View>
-        {reviews.slice(0, 2).map((review) => (
-          <ReviewItem key={review._id} review={review} />
-        ))}
-      </View>;
-    } else {
-      content = null;
-    }
-
-    return (
-      <View style={{paddingHorizontal: 20, alignItems: 'flex-start'}}>
-        <View style={styles.ratingHeaderContainer}>
-          <AppText.Headline>{strings.Rating.toUpperCase()}</AppText.Headline>
-        </View>
-        {this._renderAddReview()}
-        {content}
-        {reviews.length >= 3 ? (
-          <View style={{flex: 1, flexDirection: 'row-reverse'}}>
-            <AppText.Callout
-              style={{color: '#808080'}}
-              onPress={(): void => {
-                // @ts-ignore
-                navigation.push(RouteNames.Product.AllReviews, {
-                  reviews: reviews,
-                  shoe: this._shoe,
-                });
-              }}>
-              {strings.SeeMore}
-            </AppText.Callout>
-          </View>
-        ) : (
-          <View />
-        )}
-      </View>
-    );
-  }
-
-  private _renderAddReview(): JSX.Element {
-    return (
-      <TouchableOpacity onPress={this._onAddReview.bind(this)}>
-        <View style={styles.addReview}>
-          <Icon
-            name={'edit'}
-            size={themes.IconSize}
-            color={themes.AppPrimaryColor}
-          />
-          <AppText.Body
-            style={{color: themes.AppPrimaryColor, marginHorizontal: 6}}>
-            {strings.AddReview}
-          </AppText.Body>
-        </View>
-      </TouchableOpacity>
-    );
-  }
-
-  private _onAddReview(): void {
-    const {profile, navigation} = this.props;
-    if (
-      profile.userProvidedName &&
-      profile.userProvidedName.firstName &&
-      profile.userProvidedName.lastName
-    ) {
-      // @ts-ignore
-      navigation.push(RouteNames.Product.NewReview, {shoe: this._shoe});
-    } else {
-      this._alertMissingInfo(strings.MissingInfoForReview);
-    }
-  }
-
   private _alertMissingInfo(message: string): void {
     const {navigation} = this.props;
     Alert.alert(strings.AccountInfo, message, [
@@ -392,7 +312,7 @@ export class ProductDetail extends React.Component<Props> {
               shoe={item}
               onPress={(): void =>
                 // @ts-ignore
-                this.props.navigation.push(RouteNames.Product.ProductDetail, {
+                this.props.navigation.push(RouteNames.Product.Name, {
                   shoe: item,
                 })
               }

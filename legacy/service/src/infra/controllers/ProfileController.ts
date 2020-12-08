@@ -62,8 +62,6 @@ export class ProfileController {
   @httpPut(
     "/update",
     AuthMiddleware,
-    body("favoriteShoeBrand").optional().isString().isIn(Settings.ShoeBrand),
-    body("shoeSizeStandard").optional().isString().isIn(Settings.ShoeSizeStandard),
     body("userProvidedAddress.streetAddress").optional().isString(),
     body("userProvidedAddress.ward").optional().isString(),
     body("userProvidedAddress.wardCode").optional().isString(),
@@ -74,19 +72,12 @@ export class ProfileController {
     body("userProvidedPhoneNumber")
       .optional()
       .isMobilePhone("vi-VN", { strictMode: false }),
-    body("userProvidedShoeSize")
-      .optional()
-      .isString()
-      .isIn(
-        Settings.ShoeSize.Adult.concat(Settings.ShoeSize.Kid.GradeSchool)
-          .concat(Settings.ShoeSize.Kid.PreSchool)
-          .concat(Settings.ShoeSize.Kid.Toddler)
-      ),
     body("userProvidedEmail").optional().isEmail(),
     body("userProvidedName.firstName").optional().isString(),
     body("userProvidedName.middleName").optional().isString(),
     body("userProvidedName.lastName").optional().isString(),
     body("userProvidedProfilePic").optional().isString(),
+    body("isSeller").optional().isBoolean(),
     ValidationPassedMiddleware
   )
   public async updateProfileInfo(
@@ -100,52 +91,6 @@ export class ProfileController {
       });
     } else {
       return res.status(HttpStatus.OK).send({ profile });
-    }
-  }
-
-  @httpPost(
-    "/notification/register",
-    AuthMiddleware,
-    body("platform").isIn(Object.keys(NotificationPlatform)),
-    body("pushChannel").isString(),
-    ValidationPassedMiddleware
-  )
-  public async registerDeviceForPushNotification(
-    @request() req: express.Request,
-    @response() res: express.Response
-  ) {
-    const profileId: string = (req.user.profile as ObjectId).toHexString();
-    const installationId = profileId + req.body.pushChannel;
-    const session = await mongoose.startSession();
-    session.startTransaction();
-
-    try {
-      const profile = await this.profileDao.registerDeviceForPushNotification(
-        profileId,
-        installationId,
-        req.body.platform,
-        req.body.pushChannel
-      );
-
-      if (!profile) {
-        return res.status(HttpStatus.NOT_FOUND).send({
-          message: "Cannot find user profile, or profile already registered",
-        });
-      } else {
-        await this.notificationService.registerDevice(
-          profileId,
-          installationId,
-          req.body.platform,
-          req.body.pushChannel
-        );
-        await session.commitTransaction();
-        return res.status(HttpStatus.CREATED).send({ profile });
-      }
-    } catch (error) {
-      await session.abortTransaction();
-      throw error;
-    } finally {
-      session.endSession();
     }
   }
 }
