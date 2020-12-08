@@ -27,7 +27,6 @@ import {
   toCurrencyString,
   convertUsdToVnd,
 } from 'utilities';
-import Humanize from 'humanize-plus';
 import {IAppState} from 'store/AppStore';
 import {
   Account,
@@ -86,7 +85,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     borderBottomColor: themes.DisabledColor,
     borderBottomWidth: 1,
     paddingHorizontal: 10,
@@ -138,13 +136,13 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
     flex: 1,
-    alignItems: 'stretch',
-    justifyContent: 'space-between',
+    alignItems: 'center',
+    justifyContent: 'center',
     paddingHorizontal: '3%',
   },
   bottomButtonStyle: {
     height: themes.RegularButtonHeight,
-    width: Dimensions.get('window').width * 0.45,
+    width: Dimensions.get('window').width * 0.75,
     alignItems: 'center',
     borderRadius: themes.LargeBorderRadius,
     flexDirection: 'row',
@@ -176,7 +174,6 @@ export class ProductDetail extends React.Component<Props> {
   }
 
   private _getShoeData() {
-    this.props.getReviews(this._shoe._id);
     this.props.getShoeInfo(this._shoe._id);
   }
 
@@ -186,10 +183,8 @@ export class ProductDetail extends React.Component<Props> {
         {(insets): JSX.Element => (
           <View
             style={{
-              paddingTop: insets.top,
               ...styles.rootContainer,
             }}>
-            {this._renderHeader(insets.top)}
             <ScrollView
               style={{flex: 1}}
               showsVerticalScrollIndicator={false}
@@ -213,7 +208,6 @@ export class ProductDetail extends React.Component<Props> {
                 {this._renderProductTitle()}
                 {this._renderProductDescription()}
                 {this._renderProductDetail()}
-                {this._renderProductReviews()}
                 {this._renderRelatedShoes()}
               </View>
             </ScrollView>
@@ -223,36 +217,7 @@ export class ProductDetail extends React.Component<Props> {
       </SafeAreaConsumer>
     );
   }
-
-  private _renderHeader(topInsets: number): JSX.Element {
-    return (
-      <HeaderHeightContext.Consumer>
-        {(headerHeight): JSX.Element => {
-          return (
-            <View
-              style={{
-                ...styles.headerContainer,
-                height:
-                  headerHeight > 0
-                    ? headerHeight + topInsets
-                    : themes.IosHeaderHeight,
-              }}>
-              <Icon
-                name={'ios-arrow-back'}
-                type={'ionicon'}
-                size={themes.IconSize}
-                onPress={(): void => this.props.navigation.goBack()}
-                hitSlop={styles.backHitSlop}
-              />
-              <AppText.Title3>{strings.ProductDetail}</AppText.Title3>
-              <Icon name={'share'} type={'feather'} size={themes.IconSize} />
-            </View>
-          );
-        }}
-      </HeaderHeightContext.Consumer>
-    );
-  }
-
+  
   private _renderProductImage(): JSX.Element {
     return (
       <View style={styles.shoeImageContainer}>
@@ -451,10 +416,12 @@ export class ProductDetail extends React.Component<Props> {
   }
 
   private _renderActionButtons(bottom: number): JSX.Element {
+    // TODO: Fix when user information is available
+    const isSell = false;
     const {highestBuyOrder, lowestSellOrder} = this.props.shoeInfoState;
     return (
       <View style={{bottom, ...styles.bottomContainer}}>
-        {this._renderSingleActionButton(
+        {!isSell && this._renderSingleActionButton(
           'Mua',
           () => {
             // @ts-ignore
@@ -467,7 +434,7 @@ export class ProductDetail extends React.Component<Props> {
           },
           lowestSellOrder,
         )}
-        {this._renderSingleActionButton(
+        {isSell && this._renderSingleActionButton(
           'Bán',
           () => {
             // @ts-ignore

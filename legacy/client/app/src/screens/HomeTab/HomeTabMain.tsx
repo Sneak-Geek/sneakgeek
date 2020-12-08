@@ -151,8 +151,6 @@ export class HomeTabMain extends React.Component<Props> {
       const prevState = prevProps.homeCatalogState.state;
       const {homeCatalogState, toggleLoadingIndicator} = this.props;
 
-      // console.log(`Catalog items:`, homeCatalogState.catalogs);
-
       if (prevState === homeCatalogState.state) {
         return;
       }
@@ -182,25 +180,12 @@ export class HomeTabMain extends React.Component<Props> {
         {state === NetworkRequestState.SUCCESS && (
           <ScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.rootContainer}>
-              {this._renderTrendingShoes()}
-              {this._renderRanking()}
               {this._renderByBrand('Nike')}
-              {this._renderImageCatalog(homeCatalogState.catalogs.toppick)}
-              {this._renderByBrand('adidas')}
-              {this._renderImageCatalog(homeCatalogState.catalogs.buynow)}
-              {this._renderByBrand('Jordan')}
+              {this._renderRanking()}
             </View>
           </ScrollView>
         )}
       </SafeAreaView>
-    );
-  }
-
-  private _renderImageCatalog(catalog: Catalog): JSX.Element {
-    return (
-      <View style={styles.catalogImage}>
-        <ImageRatioPreserved source={catalog.coverImage} />
-      </View>
     );
   }
 
@@ -261,30 +246,6 @@ export class HomeTabMain extends React.Component<Props> {
     );
   }
 
-  private _renderTrendingShoes(): JSX.Element {
-    const hotCatalog = this.props.homeCatalogState.catalogs.hot;
-    return (
-      <View style={{marginBottom: 20}}>
-        <AppText.Title1 style={styles.sectionTitle}>
-          {hotCatalog.title}
-        </AppText.Title1>
-        <FlatList
-          horizontal={true}
-          keyExtractor={(itm): string => itm._id}
-          data={hotCatalog.products}
-          renderItem={({item}): JSX.Element => (
-            <HotShoeLarge
-              shoe={item}
-              onPress={this._navigateToProductDetail.bind(this, item)}
-            />
-          )}
-          showsHorizontalScrollIndicator={false}
-          pagingEnabled={true}
-        />
-      </View>
-    );
-  }
-
   private _renderByBrand(brand: 'Nike' | 'adidas' | 'Jordan'): JSX.Element {
     const catalog = this.props.homeCatalogState.catalogs[brand];
     return (
@@ -315,38 +276,12 @@ export class HomeTabMain extends React.Component<Props> {
   }
 
   private _navigateToProductDetail(shoe: Shoe): void {
-    this.props.navigation.push(RouteNames.Product.Name, {
-      screen: RouteNames.Product.ProductDetail,
-      params: {shoe},
-    });
+    this.props.navigation.navigate(RouteNames.Product.Name, { shoe });
   }
 
   private _seeMore(catalog: Catalog): void {
-    this.props.navigation.push(RouteNames.Tab.HomeTab.SeeMore, {catalog});
+    this.props.navigation.push("CatalogSeeMore", {catalog});
   }
-}
-
-const HotShoeLarge = ({shoe, onPress}: ShoeCardProps): JSX.Element => {
-  console.log("Shoe", shoe);
-  return (
-    <TouchableOpacity onPress={onPress}>
-      <View style={styles.hotShoeContainer}>
-        <View style={styles.hotShoeContentContainer}>
-          <Image
-            source={{uri: shoe.media.imageUrl}}
-            style={styles.shoeImage}
-            resizeMode={'contain'}
-          />
-          <AppText.Title3
-            numberOfLines={2}
-            style={styles.hotShoeTitle}
-            ellipsizeMode={'tail'}>
-            {shoe.title}
-          </AppText.Title3>
-        </View>
-      </View>
-    </TouchableOpacity>
-  );
 }
 
 const HotShoeRegular = ({shoe, onPress}: ShoeCardProps): JSX.Element => (
