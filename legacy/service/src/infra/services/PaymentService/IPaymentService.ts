@@ -4,9 +4,8 @@
 
 export interface IPaymentService {
   generateRedirectUrl(
-    transactionType: "intl" | "domestic",
-    orderInfo: string,
-    transactionId: string,
+    paymentType: string,
+    orderId: string,
     totalFee: string,
     baseCallbackUrl: string
   ): string;

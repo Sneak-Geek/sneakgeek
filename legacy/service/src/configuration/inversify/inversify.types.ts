@@ -13,8 +13,8 @@ export const Types = {
   VerificationRepository: Symbol("VerificationRepository"),
   ArticleRepository: Symbol("ArticleRepository"),
   TransactionRepository: Symbol("TransactionRepository"),
-  SellOrderRepository: Symbol("SellOrderRepository"),
-  BuyOrderRepository: Symbol("BuyOrderRepository"),
+  OrderRepository: Symbol("OrderRepository"),
+  InventoryRepository: Symbol("InventoryRepository"),
   ProductRequestRepository: Symbol("ProductRequestRepository"),
   SupportTicketRepository: Symbol("SupportTicketRepository"),
   ReviewRepository: Symbol("ReviewRepository"),
@@ -37,8 +37,8 @@ export const Types = {
 
   // Dao
   ProfileDao: Symbol("ProfileDao"),
-  SellOrderDao: Symbol("SellOrderDao"),
-  BuyOrderDao: Symbol("BuyOrderDao"),
+  OrderDao: Symbol("OrderDao"),
+  InventoryDao: Symbol("InventoryDao"),
   TransactionDao: Symbol("TransactionDao"),
   ReviewDao: Symbol("ReviewDao"),
   AccountDao: Symbol("AccountDao"),

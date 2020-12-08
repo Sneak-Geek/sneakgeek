@@ -3,10 +3,8 @@
 // !
 
 export enum OrderStatus {
-  CANCELED = "CANCELED",
-  DENIED = "DENIED",
+  FAILED = "FAILED",
   PENDING = "PENDING",
-  APPROVED = "APPROVED",
   COMPLETED = "COMPLETED",
 }
 
