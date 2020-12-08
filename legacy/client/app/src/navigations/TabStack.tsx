@@ -28,10 +28,8 @@ import {SellOrderHistory, OrderDetail, BuyOrders} from 'screens/TransactionTab';
 import {ProductRequest} from 'screens/SearchTab';
 import {getDependency, getToken, connect} from 'utilities';
 import {KeyExtensions} from 'common';
-import {IPushNotificationService} from 'services';
 import {IAppState} from 'store/AppStore';
 import {RootStackParams} from './RootStack';
-import {BadgedIcon} from 'screens/Shared';
 
 const Tab = createBottomTabNavigator();
 
@@ -210,28 +208,15 @@ type RootTabProps = {
   }),
 )
 export class TabStack extends React.Component<RootTabProps> {
-  private notificationProvider = getDependency<IPushNotificationService>(
-    KeyExtensions.IPushNotificationService,
-  );
 
   public componentDidMount() {
     const settingsProvider = Factory.getObjectInstance<ISettingsProvider>(
       Keys.ISettingsProvider,
     );
-    this.notificationProvider.initializeListeners();
     settingsProvider.loadServerSettings();
 
     // Get notifications
     this.props.getNotifications();
-  }
-
-  public componentDidUpdate(prevProps: RootTabProps) {
-    if (
-      this.props.pushDeviceToken &&
-      this.props.pushDeviceToken !== prevProps.pushDeviceToken
-    ) {
-      this.notificationProvider.registerDevice(getToken());
-    }
   }
 
   public render() {
@@ -256,14 +241,6 @@ export class TabStack extends React.Component<RootTabProps> {
           options={{
             tabBarIcon: TabBarIcon('search'),
             title: strings.SearchTab,
-          }}
-        />
-        <Tab.Screen
-          name={RouteNames.Tab.TransactionTab.Name}
-          component={TransactionTab}
-          options={{
-            tabBarIcon: TabBarIcon('shopping-cart'),
-            title: strings.TransactionTab,
           }}
         />
         <Tab.Screen
