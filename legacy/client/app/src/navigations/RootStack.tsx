@@ -18,6 +18,8 @@ import {
 } from 'business';
 import {OrderStack} from './OrderStack';
 import {SplashScreen} from 'screens/SplashScreen';
+import { ProductDetail } from 'screens/Product';
+import { strings, themes } from 'resources';
 
 export type RootStackParams = {
   ProductRequest: undefined;
@@ -63,7 +65,7 @@ const Stack = createStackNavigator();
 
 const RootStack = (): JSX.Element => (
   <NavigationContainer>
-    <Stack.Navigator initialRouteName={RouteNames.Splash} headerMode={'none'}>
+    <Stack.Navigator initialRouteName={RouteNames.Splash}>
       <Stack.Screen
         name={RouteNames.Splash}
         component={SplashScreen}
@@ -80,9 +82,17 @@ const RootStack = (): JSX.Element => (
         component={TabStack}
         options={{
           gestureEnabled: false,
+          header: () => null
         }}
       />
-      <Stack.Screen name={RouteNames.Product.Name} component={ProductStack} />
+      <Stack.Screen name={RouteNames.Product.Name} 
+        component={ProductDetail} 
+        options={{
+          title: strings.ProductDetail,
+          headerBackTitleVisible: false,
+          headerTitleStyle: themes.TextStyle.title3
+        }}
+      />
       <Stack.Screen
         name={RouteNames.Order.Name}
         component={OrderStack}

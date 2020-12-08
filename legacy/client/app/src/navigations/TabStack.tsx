@@ -100,27 +100,12 @@ class HomeTab extends React.Component<HomeTabProps> {
               <Image
                 source={images.Logo}
                 style={{
-                  width: themes.IconSize * 1.5,
-                  height: themes.IconSize * 1.5,
+                  width: themes.IconSize * 1.75,
+                  height: themes.IconSize * 1.75,
                   marginLeft: 3,
                 }}
               />
-            ),
-            headerRight: () => (
-              <BadgedIcon
-                count={this.props.notificationCount}
-                onPress={() =>
-                  this.props.navigation.push(
-                    RouteNames.Tab.HomeTab.Notification,
-                  )
-                }
-                hitSlop={themes.IconHitSlop}
-                name={'bell-outline'}
-                type={'material-community'}
-                size={themes.IconSize}
-                containerStyle={{marginRight: 12}}
-              />
-            ),
+            )
           }}
         />
         <HomeStack.Screen
