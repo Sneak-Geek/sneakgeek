@@ -10,3 +10,4 @@ export * from "./PaymentService";
 export * from "./NotificationService";
 export * from "./AppleAuthService";
 export * from "./SearchService";
+export * from "./SearchService";

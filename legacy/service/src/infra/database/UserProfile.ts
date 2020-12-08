@@ -5,7 +5,6 @@
 import mongoose from "mongoose";
 import { Repository, Document } from "./Repository";
 import { Brand, SizeStandard, ShoeSize, NotificationPlatform } from "../../assets";
-import { ObjectId } from "mongodb";
 
 const UserProvidedNameSchema = new mongoose.Schema({
   firstName: String,
@@ -22,32 +21,6 @@ const UserProvidedAddressSchema = new mongoose.Schema({
   city: String,
 });
 
-const NotificationSettingSchema = new mongoose.Schema({
-  tags: {
-    type: [String],
-    required: true,
-  },
-  registeredDevices: {
-    type: [
-      {
-        installationId: {
-          type: String,
-          required: true,
-        },
-        platform: {
-          type: String,
-          enum: NotificationPlatform,
-          required: true,
-        },
-        pushChannel: {
-          type: String,
-          required: true,
-        },
-      },
-    ],
-  },
-});
-
 export const UserProfileSchema = new mongoose.Schema(
   {
     accountId: {
@@ -56,15 +29,6 @@ export const UserProfileSchema = new mongoose.Schema(
       unique: true,
     },
     userProvidedProfilePic: String,
-    favoriteShoeBrand: {
-      type: String,
-      enum: Object.keys(Brand),
-    },
-    shoeSizeStandard: {
-      type: String,
-      default: SizeStandard.US,
-      enum: Object.keys(SizeStandard),
-    },
     userProvidedName: UserProvidedNameSchema,
     userProvidedAddress: UserProvidedAddressSchema,
     userProvidedGender: String,
@@ -75,16 +39,9 @@ export const UserProfileSchema = new mongoose.Schema(
     userProvidedPhoneNumber: {
       type: String,
     },
-    userProvidedShoeSize: {
-      type: String,
-      enum: ShoeSize.Adult,
-    },
-    notificationSetting: {
-      type: NotificationSettingSchema,
-      default: {
-        tags: [],
-        registeredDevices: [],
-      },
+    isSeller: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true, strict: true }
@@ -93,16 +50,12 @@ export const UserProfileSchema = new mongoose.Schema(
 export type UserProfile = Document<{
   accountId: mongoose.Types.ObjectId;
   userProvidedProfilePic: string;
-  favoriteShoeBrand: string;
-  shoeSizeStandard: string;
   userProvidedName: UserName;
   userProvidedAddress: UserAddress;
   userProvidedGender: string;
   userProvidedEmail: string;
   userProvidedPhoneNumber: string;
-  userProvidedShoeSize: string;
-  notificationSetting: NotificationSetting;
-  notifications: Array<Notification>;
+  isSeller: boolean;
 }>;
 
 type UserAddress = Document<{
@@ -118,15 +71,6 @@ type UserName = Document<{
   firstName: string;
   middleName: string;
   lastName: string;
-}>;
-
-type NotificationSetting = Document<{
-  tags: [string];
-  registeredDevices: Array<{
-    installationId: string;
-    platform: string;
-    pushChannel: string;
-  }>;
 }>;
 
 export const UserProfileRepository: Repository<UserProfile> = mongoose.model(
