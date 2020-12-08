@@ -29,7 +29,6 @@ import {AppStore} from 'store/AppStore';
 import {InAppNotification} from 'screens/InAppNotification';
 import {AppLoadingIndicator} from 'screens/AppLoadingIndicator';
 import {IDeviceInfoProvider, DeviceInfoProvider} from 'providers';
-import {IPushNotificationService, PushNotificationService} from 'services';
 import {AppleAuthSdk} from 'common/AppleAuthSdk';
 
 export default function App(): JSX.Element {
@@ -70,10 +69,6 @@ export default function App(): JSX.Element {
     Factory.register<IDeviceInfoProvider>(
       KeyExtensions.IDeviceInfoProvider,
       new DeviceInfoProvider(),
-    );
-    Factory.register<IPushNotificationService>(
-      KeyExtensions.IPushNotificationService,
-      new PushNotificationService(),
     );
   };
 
