@@ -54,13 +54,13 @@ export const strings = {
   SearchTab: 'Tìm kiếm',
   TransactionTab: 'Giao dịch',
   UserTab: 'Tài khoản',
-  AccountInfo: 'Thông tin tài khoản',
+  AccountInfo: 'Thông tin cá nhân',
   PaymentInfo: 'Thông tin thanh toán',
-  AccountBalanceAmount:"Số dư ví SneakGeek hiện tại của bạn là:",
-  Amount: "Số tiền",
-  Bank: "Ngân hàng",
-  AccountNumber: "Số tài khoản",
-  AccountHolderName: "Tên chủ tài khoản",
+  AccountBalanceAmount: 'Số dư ví SneakGeek hiện tại của bạn là:',
+  Amount: 'Số tiền',
+  Bank: 'Ngân hàng',
+  AccountNumber: 'Số tài khoản',
+  AccountHolderName: 'Tên chủ tài khoản',
   NotificationSettings: 'Cài đặt thông báo',
   ShareApplication: 'Chia sẻ ứng dụng',
   InfoAppSetting: 'Các câu hỏi thường gặp',
@@ -120,6 +120,7 @@ export const strings = {
   PaymentSuccess: 'Đã mua thành công sản phẩm',
   BuyHistory: 'Lịch sử mua',
   SellHistory: 'Lịch sử bán',
+  History: 'Lịch sử',
   Selling: 'Đang bán',
   Buying: 'Đang mua',
   Pending: 'Chờ duyệt',
@@ -166,10 +167,12 @@ export const strings = {
   PleaseLogin: 'Xin vui lòng đăng nhập',
   NoAccountPleastLogin:
     'Hiện nay bạn chưa đăng nhập. Xin vui lòng đăng nhập để sử dụng tính năng này',
-  MoneyIsProcessing: "Tiền sẽ được chuyển vào tài khoản của bạn trong vòng 5 đến 10 ngày tới.",
-  MoneyIsProcessingContactingWithSneakGeek: "Lệnh rút tiền đang được thực hiện. Xin vui lòng liên hệ với SneakGeek nếu bạn cần thay đổi thông tin thanh toán.",
-  NoMoneyInSneakGeekWallet: "Ví SneakGeek chưa có tiền.",
-  CannotWithdrawalMoreThanCurrentBalance: "Số tiền rút ra không thể lớn hơn số tiền hiện có.",
-  PleaseProvideAllInformation: "Xin vui lòng điền đủ thông thin chuyển khoản."
-
+  MoneyIsProcessing:
+    'Tiền sẽ được chuyển vào tài khoản của bạn trong vòng 5 đến 10 ngày tới.',
+  MoneyIsProcessingContactingWithSneakGeek:
+    'Lệnh rút tiền đang được thực hiện. Xin vui lòng liên hệ với SneakGeek nếu bạn cần thay đổi thông tin thanh toán.',
+  NoMoneyInSneakGeekWallet: 'Ví SneakGeek chưa có tiền.',
+  CannotWithdrawalMoreThanCurrentBalance:
+    'Số tiền rút ra không thể lớn hơn số tiền hiện có.',
+  PleaseProvideAllInformation: 'Xin vui lòng điền đủ thông thin chuyển khoản.',
 };
