@@ -214,7 +214,7 @@ export class ProductDetail extends React.Component<Props> {
       </SafeAreaConsumer>
     );
   }
-  
+
   private _renderProductImage(): JSX.Element {
     return (
       <View style={styles.shoeImageContainer}>
@@ -336,39 +336,41 @@ export class ProductDetail extends React.Component<Props> {
   }
 
   private _renderActionButtons(bottom: number): JSX.Element {
-    // TODO: Fix when user information is available
-    const isSell = false;
+    const {profile, account} = this.props;
+    const isSell = profile.isSeller && account.isVerified;
     const {highestBuyOrder, lowestSellOrder} = this.props.shoeInfoState;
     return (
       <View style={{bottom, ...styles.bottomContainer}}>
-        {!isSell && this._renderSingleActionButton(
-          'Mua',
-          () => {
-            // @ts-ignore
-            this.props.navigation.push(RouteNames.Order.Name, {
-              screen: RouteNames.Order.NewBuyOrder,
-              params: {
-                shoe: this._shoe,
-              },
-            });
-          },
-          lowestSellOrder,
-        )}
-        {isSell && this._renderSingleActionButton(
-          'Bán',
-          () => {
-            // @ts-ignore
-            this.props.navigation.push(RouteNames.Order.Name, {
-              screen: RouteNames.Order.NewSellOrder,
-              params: {
-                shoe: this._shoe,
-                highestBuyOrder: highestBuyOrder,
-                lowestSellOrder: lowestSellOrder,
-              },
-            });
-          },
-          highestBuyOrder,
-        )}
+        {!isSell &&
+          this._renderSingleActionButton(
+            'Mua',
+            () => {
+              // @ts-ignore
+              this.props.navigation.push(RouteNames.Order.Name, {
+                screen: RouteNames.Order.NewBuyOrder,
+                params: {
+                  shoe: this._shoe,
+                },
+              });
+            },
+            lowestSellOrder,
+          )}
+        {isSell &&
+          this._renderSingleActionButton(
+            'Bán',
+            () => {
+              // @ts-ignore
+              this.props.navigation.push(RouteNames.Order.Name, {
+                screen: RouteNames.Order.NewSellOrder,
+                params: {
+                  shoe: this._shoe,
+                  highestBuyOrder: highestBuyOrder,
+                  lowestSellOrder: lowestSellOrder,
+                },
+              });
+            },
+            highestBuyOrder,
+          )}
       </View>
     );
   }
@@ -383,18 +385,19 @@ export class ProductDetail extends React.Component<Props> {
 
     const isVerified = account?.isVerified;
     const missingAddress =
-      !profile?.userProvidedAddress ||
-      !profile?.userProvidedAddress.city ||
-      !profile?.userProvidedAddress.districtId ||
-      !profile?.userProvidedAddress.wardCode ||
-      !profile?.userProvidedAddress.streetAddress;
+      !profile.isSeller &&
+      (!profile?.userProvidedAddress ||
+        !profile?.userProvidedAddress.city ||
+        !profile?.userProvidedAddress.districtId ||
+        !profile?.userProvidedAddress.wardCode ||
+        !profile?.userProvidedAddress.streetAddress);
 
     let backgroundColor: string;
     let subtitle: string;
     let price: string;
     switch (actionType) {
       case 'Mua':
-        backgroundColor = '#1E2330';
+        backgroundColor = themes.AppPrimaryColor;
         subtitle = 'thấp nhất';
         price = order ? toCurrencyString((order as SellOrder).sellPrice) : '-';
         break;
@@ -405,7 +408,7 @@ export class ProductDetail extends React.Component<Props> {
         price = order ? toCurrencyString((order as BuyOrder).buyPrice) : '-';
     }
 
-    const newOnPress = (): void => {
+    const onPressWrapper = (): void => {
       if (!isAccountAvailable) {
         // @ts-ignore
         navigation.navigate(RouteNames.Auth.Name, {
@@ -423,7 +426,7 @@ export class ProductDetail extends React.Component<Props> {
     };
 
     return (
-      <TouchableOpacity onPress={newOnPress}>
+      <TouchableOpacity onPress={onPressWrapper}>
         <View
           style={{
             backgroundColor,

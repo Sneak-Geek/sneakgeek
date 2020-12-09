@@ -14,14 +14,11 @@ import {
   response,
   httpPost,
 } from "inversify-express-utils";
-import * as Settings from "../../assets/settings";
 import { UserAccount } from "../database";
 import { Types } from "../../configuration/inversify/inversify.types";
 import { AuthMiddleware, ValidationPassedMiddleware } from "../middlewares";
 import mongoose from "mongoose";
-import { NotificationPlatform } from "../../assets/constants";
 import { IProfileDao, IAccountDao } from "../dao";
-import { ObjectId } from "mongodb";
 import { INotificationService } from "../services";
 
 @controller("/api/v1/profile")

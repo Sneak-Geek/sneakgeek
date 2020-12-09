@@ -6,24 +6,27 @@ import {Shoe} from 'business';
 
 const styles = StyleSheet.create({
   summaryContainer: {
-    backgroundColor: themes.AppAccentColor,
-    alignItems: 'flex-start',
+    backgroundColor: 'transparent',
+    alignItems: 'center',
+    justifyContent: 'center',
     flexDirection: 'row',
     borderBottomColor: themes.DisabledColor,
     borderBottomWidth: 1,
     paddingHorizontal: 10,
-    paddingTop: 20,
     paddingBottom: 20,
+    paddingTop: 20,
   },
   titleContainer: {
     flex: 1,
     flexDirection: 'column',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     justifyContent: 'center',
+
   },
   shoeImage: {
     width: 120,
     aspectRatio: 2,
+    alignSelf: 'center'
   },
 });
 

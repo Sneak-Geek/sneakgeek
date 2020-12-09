@@ -21,7 +21,7 @@ import * as middlewares from "../middlewares";
 import { Gender, Brand } from "../../assets/settings";
 import { Repository, Shoe } from "../database";
 import mongoose from "mongoose";
-import { IBuyOrderDao, ISellOrderDao, IShoeDao } from "../../infra/dao";
+import { IShoeDao } from "../../infra/dao";
 import { UpdateShoeInput } from "../model";
 import { plainToClass } from "@marcj/marshal";
 import { ISearchService } from "../services";
@@ -33,12 +33,6 @@ export class ShoeController {
 
   @inject(Types.ShoeDao)
   private readonly shoeDao!: IShoeDao;
-
-  @inject(Types.BuyOrderDao)
-  private readonly buyOrderDao!: IBuyOrderDao;
-
-  @inject(Types.SellOrderDao)
-  private readonly sellOrderDao!: ISellOrderDao;
 
   @inject(Types.SearchService)
   private readonly searchService: ISearchService;
@@ -150,22 +144,16 @@ export class ShoeController {
       });
     }
 
-    const [relatedShoes, lowestSellOrder, highestBuyOrder] = await Promise.all([
-      this.shoeRepo
-        .find({
-          category: shoe.category,
-          imageUrl: { $ne: "" },
-          _id: { $ne: mongoose.Types.ObjectId(shoeId) },
-        })
-        .limit(10),
-      this.sellOrderDao.findLowestSellOrderByShoeId(shoeId),
-      this.buyOrderDao.findHighestBuyOrderByShoeId(shoeId),
-    ]);
+    const relatedShoes = await this.shoeRepo
+      .find({
+        category: shoe.category,
+        imageUrl: { $ne: "" },
+        _id: { $ne: mongoose.Types.ObjectId(shoeId) },
+      })
+      .limit(10);
 
     return res.status(HttpStatus.OK).send({
       relatedShoes,
-      lowestSellOrder,
-      highestBuyOrder,
     });
   }
 

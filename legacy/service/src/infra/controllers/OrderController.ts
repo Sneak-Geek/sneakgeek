@@ -28,7 +28,7 @@ export class OrderController {
   @inject(Types.PaymentService)
   private readonly paymentService!: IPaymentService;
 
-  @inject(Types.SellOrderDao)
+  @inject(Types.InventoryDao)
   private readonly inventoryDao!: IInventoryDao;
 
   @inject(Types.OrderDao)
@@ -102,7 +102,6 @@ export class OrderController {
 
   @httpGet(
     "/shoe-price-size-map",
-    query("orderType").isIn(["SellOrder", "BuyOrder"]),
     query("shoeId").isMongoId(),
     ValidationPassedMiddleware
   )
@@ -111,10 +110,7 @@ export class OrderController {
     @queryParam("shoeId") shoeId: string,
     @response() res: Response
   ) {
-    const results =
-      orderType === "SellOrder"
-        ? await this.sellOrderDao.findLowestSellPriceSizeMap(shoeId)
-        : await this.buyOrderDao.findHighestBuyPriceSizeMap(shoeId);
+    const results = [];
 
     return res.status(HttpStatus.OK).send(results);
   }

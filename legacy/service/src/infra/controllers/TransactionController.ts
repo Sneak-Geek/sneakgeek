@@ -12,14 +12,13 @@ import {
 } from "inversify-express-utils";
 import { inject } from "inversify";
 import {
-  SellOrder,
   Transaction,
   TrackingStatusEnum as TrackingStatus,
   GhnFailureCode,
 } from "../database";
 import { Types } from "../../configuration/inversify";
 import { Request, Response } from "express";
-import { query, body, param } from "express-validator";
+import { query, body } from "express-validator";
 import {
   ValidationPassedMiddleware,
   AccountVerifiedMiddleware,
@@ -44,20 +43,12 @@ import {
 import {
   ITransactionDao,
   INotificationDao,
-  IBuyOrderDao,
-  ISellOrderDao,
   IProfileDao,
 } from "../dao";
 import { LogProvider } from "../providers";
 
 @controller("/api/v1/transaction")
 export class TransactionController {
-  @inject(Types.BuyOrderDao)
-  private readonly buyOrderDao!: IBuyOrderDao;
-
-  @inject(Types.SellOrderDao)
-  private readonly sellOrderDao!: ISellOrderDao;
-
   @inject(Types.ProfileDao)
   private readonly profileDao!: IProfileDao;
 
@@ -104,23 +95,15 @@ export class TransactionController {
           .send(PaymentCallbackResponse.Failure);
       } else {
         // payment succeed
-        await this._updateOrderAndTransactionOnPaymentSuccess(transaction);
       }
 
-      const sellOrder = await this.sellOrderDao.findById(transaction.sellOrderId);
 
       try {
-        this._createNotificationOnPaymentSuccess(sellOrder);
       } catch (error) {
         // can't send notification
       }
 
       // create shipping order from seller to Sneakgeek
-      const shippingOrder = await this._createShippingOrderFromSellerToSnkg(
-        transaction._id.toString(),
-        sellOrder.sellerId
-      );
-      await this.transactionDao.updateOnShippingOrderCreated(transaction, shippingOrder);
 
       return res.status(HttpStatus.OK).send(PaymentCallbackResponse.Success);
     } catch (error) {
@@ -227,17 +210,6 @@ export class TransactionController {
     );
   }
 
-  private _createNotificationOnPaymentSuccess(sellOrder: SellOrder): Promise<any> {
-    return this.notificationDao.createNotification({
-      profileId: sellOrder.sellerId,
-      title: "Chúc mừng! Đơn hàng của bạn đã được mua!",
-      body: 'SneakGeek sẽ "auth check" giày của bạn trong thời gian sớm nhất!',
-      orderId: sellOrder._id,
-      orderType: "SellOrder",
-      notificationType: NotificationType.SELL_ORDER_SUCCESS,
-    });
-  }
-
   private _verifyPaymentCallbackStatus(query: any): boolean {
     const paymentType = query["paymentType"] as "intl" | "domestic";
     const onepayResponseCode = query["vpc_TxnResponseCode"] as string;
@@ -250,20 +222,6 @@ export class TransactionController {
       onepayResponseCode === "0" &&
       secureHash === this.paymentService.hashParams(paymentType, copiedQuery)
     );
-  }
-
-  private async _updateOrderAndTransactionOnPaymentSuccess(
-    transaction: Transaction
-  ): Promise<void> {
-    await Promise.all([
-      this.transactionDao.updatePaymentStatus(transaction._id, {
-        status: PaymentStatus.PROCESSED,
-      }),
-      this.buyOrderDao.updateStatusById(transaction.buyOrderId, OrderStatus.COMPLETED),
-      this.buyOrderDao.updateTransactionId(transaction.buyOrderId, transaction._id),
-      this.sellOrderDao.updateStatusById(transaction.sellOrderId, OrderStatus.COMPLETED),
-      this.sellOrderDao.updateTransactionId(transaction.sellOrderId, transaction._id),
-    ]);
   }
 
   private async _createShippingOrderFromSellerToSnkg(
