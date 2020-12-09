@@ -4,4 +4,4 @@ export type CreateInventoryDto = {
   quantity: number;
   sellerId: string;
   shoeId: string;
-}
+};

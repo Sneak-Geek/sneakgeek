@@ -2,7 +2,13 @@ import { Request, Response } from "express";
 import { body } from "express-validator";
 import HttpStatus from "http-status";
 import { inject } from "inversify";
-import { controller, httpPost, request, requestBody, response } from "inversify-express-utils";
+import {
+  controller,
+  httpPost,
+  request,
+  requestBody,
+  response,
+} from "inversify-express-utils";
 import { Types } from "../../configuration/inversify";
 import { IInventoryDao } from "../dao";
 import { CreateInventoryDto } from "../dao/InventoryDao/CreateInventoryDto";
@@ -26,19 +32,23 @@ export class InventoryController {
     body("shoeSize").isInt({ min: 0 }),
     middlewares.ValidationPassedMiddleware
   )
-  public async sellShoes(@request() req: Request, @requestBody() inventoryBody: CreateInventoryDto, @response() res: Response) {
+  public async sellShoes(
+    @request() req: Request,
+    @requestBody() inventoryBody: CreateInventoryDto,
+    @response() res: Response
+  ) {
     try {
       const user = req.user as UserAccount;
       const profile = user.profile as mongoose.Types.ObjectId;
       const _ = await this.inventoryDao.create({
         sellerId: profile.toString(),
-        ...inventoryBody
+        ...inventoryBody,
       });
 
       return res.status(HttpStatus.OK);
     } catch (error) {
       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
-        message: "Internal server error"
+        message: "Internal server error",
       });
     }
   }

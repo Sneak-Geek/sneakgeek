@@ -100,11 +100,7 @@ export class OrderController {
     );
   }
 
-  @httpGet(
-    "/shoe-price-size-map",
-    query("shoeId").isMongoId(),
-    ValidationPassedMiddleware
-  )
+  @httpGet("/shoe-price-size-map", query("shoeId").isMongoId(), ValidationPassedMiddleware)
   public async getShoePriceSizeMap(
     @queryParam("orderType") orderType: OrderType,
     @queryParam("shoeId") shoeId: string,

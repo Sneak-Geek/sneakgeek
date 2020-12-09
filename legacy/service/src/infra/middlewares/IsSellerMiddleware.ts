@@ -17,13 +17,13 @@ export class IsSellerMiddleware extends BaseMiddleware {
 
     if (!profile) {
       return res.status(HttpStatus.NOT_FOUND).send({
-        message: "Profile not found"
+        message: "Profile not found",
       });
     }
 
     if (!profile.isSeller) {
       return res.status(HttpStatus.FORBIDDEN).send({
-        message: "Profile is not seller"
+        message: "Profile is not seller",
       });
     }
 

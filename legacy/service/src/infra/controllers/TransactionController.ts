@@ -40,11 +40,7 @@ import {
   OrderStatus,
   PaymentCallbackResponse,
 } from "../../assets/constants";
-import {
-  ITransactionDao,
-  INotificationDao,
-  IProfileDao,
-} from "../dao";
+import { ITransactionDao, INotificationDao, IProfileDao } from "../dao";
 import { LogProvider } from "../providers";
 
 @controller("/api/v1/transaction")
@@ -96,7 +92,6 @@ export class TransactionController {
       } else {
         // payment succeed
       }
-
 
       try {
       } catch (error) {

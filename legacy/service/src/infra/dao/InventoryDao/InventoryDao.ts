@@ -30,7 +30,7 @@ export class InventoryDao implements IInventoryDao {
       shoeId: mongoose.Types.ObjectId(inventoryDto.shoeId),
       shoeSize: inventoryDto.shoeSize,
       sellPrice: inventoryDto.sellPrice,
-      quantity: inventoryDto.quantity
+      quantity: inventoryDto.quantity,
     });
   }
 }
