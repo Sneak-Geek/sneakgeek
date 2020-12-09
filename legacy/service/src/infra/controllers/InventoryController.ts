@@ -40,7 +40,13 @@ export class InventoryController {
   ) {
     const user = req.user as UserAccount;
     const profileId = user.profile as mongoose.Types.ObjectId;
-    if (await this.inventoryDao.isDuplicate(profileId.toHexString(), inventoryBody.shoeId, inventoryBody.shoeSize)) {
+    if (
+      await this.inventoryDao.isDuplicate(
+        profileId.toHexString(),
+        inventoryBody.shoeId,
+        inventoryBody.shoeSize
+      )
+    ) {
       return res.status(HttpStatus.BAD_REQUEST).send();
     }
     await this.inventoryDao.create({

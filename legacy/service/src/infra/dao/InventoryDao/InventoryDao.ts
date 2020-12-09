@@ -19,7 +19,13 @@ export class InventoryDao implements IInventoryDao {
   }
 
   public async isDuplicate(profileId: string, shoeId: string, shoeSize: string) {
-      return (await this.inventoryRepository.find({ sellerId: profileId, shoeId, shoeSize }).exec()).length === 1;
+    return (
+      (
+        await this.inventoryRepository
+          .find({ sellerId: profileId, shoeId, shoeSize })
+          .exec()
+      ).length === 1
+    );
   }
 
   public async reduceByOne(inventoryId: string) {
