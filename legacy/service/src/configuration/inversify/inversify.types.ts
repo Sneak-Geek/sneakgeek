@@ -48,6 +48,7 @@ export const Types = {
 
   // Middlewares
   AzCdnMulterMiddlware: Symbol("AzCdnMulterMiddleware"),
+  IsSellerMiddleware: Symbol("IsSellerMiddleware"),
 
   // Executor
   NotificationChangeStreamExecutor: Symbol("NotificationChangeStreamExecutor"),

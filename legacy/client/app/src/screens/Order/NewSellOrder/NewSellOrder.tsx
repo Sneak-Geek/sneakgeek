@@ -92,29 +92,47 @@ export class NewSellOrder extends React.Component<Props, State> {
   }
 
   private _renderInventory() {
+    const inventoryItems = [
+      {
+        title: strings.ShoeSize,
+        displayText: '',
+        onUpdate: (text) => {
+          /* set state here */
+        },
+      },
+      {
+        title: strings.InventoryAmount,
+        displayText: '',
+        onUpdate: (text) => {
+          /* set state here */
+        },
+      },
+      {
+        title: strings.Price,
+        displayText: '',
+        onUpdate: (text) => {
+          /* set state here */
+        },
+      },
+    ];
     return (
       <View style={{padding: 20, flex: 1, flexDirection: 'column'}}>
-        <View style={{ flexDirection:'row', alignItems: 'center', justifyContent: 'space-between'}}>
-          <AppText.SubHeadline>{strings.ShoeSize}</AppText.SubHeadline>
-          <TextInput placeholder={strings.ShoeSize}
-            numberOfLines={1}
-            style={{...themes.TextStyle.body, marginBottom: 20}}
-            keyboardType={'number-pad'} />
-        </View>
-        <View style={{ flexDirection:'row', alignItems: 'center', justifyContent: 'space-between'}}>
-          <AppText.SubHeadline>{strings.InventoryAmount}</AppText.SubHeadline>
-          <TextInput placeholder={strings.InventoryAmount}
-            numberOfLines={1}
-            style={{...themes.TextStyle.body,  marginBottom: 20}}
-            keyboardType={'number-pad'} />
-        </View>
-        <View style={{ flexDirection:'row', alignItems: 'center', justifyContent: 'space-between'}}>
-          <AppText.SubHeadline>{strings.Price}</AppText.SubHeadline>
-          <TextInput placeholder={strings.Price}
-            numberOfLines={1}
-            style={{...themes.TextStyle.body,  marginBottom: 20}}
-            keyboardType={'number-pad'} />
-        </View>
+        {inventoryItems.map((t) => (
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}>
+            <AppText.SubHeadline>{t.title}</AppText.SubHeadline>
+            <TextInput
+              placeholder={t.title}
+              numberOfLines={1}
+              style={{...themes.TextStyle.body, marginBottom: 20}}
+              keyboardType={'number-pad'}
+            />
+          </View>
+        ))}
       </View>
     );
   }

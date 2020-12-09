@@ -3,8 +3,10 @@
 //!
 
 import { Inventory } from "../../database";
+import { CreateInventoryDto } from "./CreateInventoryDto";
 
 export interface IInventoryDao {
   findById(inventoryId: string): Promise<Inventory>;
   reduceByOne(inventoryId: string): Promise<Inventory>;
+  create(inventoryDto: CreateInventoryDto): Promise<Inventory>;
 }

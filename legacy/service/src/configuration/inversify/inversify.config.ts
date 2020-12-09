@@ -80,7 +80,7 @@ import {
   IBalanceHistoryDao,
   BalanceHistoryDao,
 } from "../../infra/dao";
-import { AzCdnMulterMiddlware } from "../../infra/middlewares";
+import { AzCdnMulterMiddlware, IsSellerMiddleware } from "../../infra/middlewares";
 import {
   INotificationChangeStreamExecutor,
   NotificationChangeStreamExecutor,
@@ -116,6 +116,7 @@ container
 
 // Middlewares
 container.bind(Types.AzCdnMulterMiddlware).to(AzCdnMulterMiddlware);
+container.bind(Types.IsSellerMiddleware).to(IsSellerMiddleware);
 
 container
   .bind<IShippingService>(Types.ShippingService)
