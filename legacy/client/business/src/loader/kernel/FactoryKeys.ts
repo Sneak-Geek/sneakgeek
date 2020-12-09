@@ -14,5 +14,6 @@ export const FactoryKeys = {
   ISettingService: Symbol.for("ISettingService"),
   IOrderService: Symbol.for("IOrderService"),
   ICdnService: Symbol.for("ICdnService"),
-  INotificationService: Symbol.for("INotificationService")
+  INotificationService: Symbol.for("INotificationService"),
+  IInventoryService: Symbol.for("IInventoryService")
 };

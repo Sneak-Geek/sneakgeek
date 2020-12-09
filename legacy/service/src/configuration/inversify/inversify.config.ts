@@ -46,10 +46,10 @@ import {
   SupportTicketRepository,
   Review,
   ReviewRepository,
-  SellOrder,
-  SellOrderRepository,
-  BuyOrder,
-  BuyOrderRepository,
+  Order,
+  OrderRepository,
+  Inventory,
+  InventoryRepository,
   Transaction,
   TransactionRepository,
   Notification,
@@ -61,10 +61,10 @@ import {
   BalanceHistory,
 } from "../../infra/database";
 import {
-  ISellOrderDao,
-  SellOrderDao,
-  IBuyOrderDao,
-  BuyOrderDao,
+  IOrderDao,
+  OrderDao,
+  IInventoryDao,
+  InventoryDao,
   ITransactionDao,
   TransactionDao,
   IReviewDao,
@@ -80,7 +80,7 @@ import {
   IBalanceHistoryDao,
   BalanceHistoryDao,
 } from "../../infra/dao";
-import { AzCdnMulterMiddlware } from "../../infra/middlewares";
+import { AzCdnMulterMiddlware, IsSellerMiddleware } from "../../infra/middlewares";
 import {
   INotificationChangeStreamExecutor,
   NotificationChangeStreamExecutor,
@@ -101,6 +101,7 @@ import "../../infra/controllers/TransactionController";
 import "../../infra/controllers/ImageController";
 import "../../infra/controllers/NotificationController";
 import "../../infra/controllers/BalanceHistoryController";
+import "../../infra/controllers/InventoryController";
 
 // Creating new container
 const container = new Container();
@@ -116,6 +117,7 @@ container
 
 // Middlewares
 container.bind(Types.AzCdnMulterMiddlware).to(AzCdnMulterMiddlware);
+container.bind(Types.IsSellerMiddleware).to(IsSellerMiddleware);
 
 container
   .bind<IShippingService>(Types.ShippingService)
@@ -176,13 +178,11 @@ container
   .bind<Repository<Catalogue>>(Types.CatalogueRepository)
   .toConstantValue(CatalogueRepository);
 
-container
-  .bind<Repository<SellOrder>>(Types.SellOrderRepository)
-  .toConstantValue(SellOrderRepository);
+container.bind<Repository<Order>>(Types.OrderRepository).toConstantValue(OrderRepository);
 
 container
-  .bind<Repository<BuyOrder>>(Types.BuyOrderRepository)
-  .toConstantValue(BuyOrderRepository);
+  .bind<Repository<Inventory>>(Types.InventoryRepository)
+  .toConstantValue(InventoryRepository);
 
 container
   .bind<Repository<Transaction>>(Types.TransactionRepository)
@@ -198,8 +198,8 @@ container
 
 // Data Access Objects (DAO)
 container.bind<IReviewDao>(Types.ReviewDao).to(ReviewDao);
-container.bind<ISellOrderDao>(Types.SellOrderDao).to(SellOrderDao);
-container.bind<IBuyOrderDao>(Types.BuyOrderDao).to(BuyOrderDao);
+container.bind<IOrderDao>(Types.OrderDao).to(OrderDao);
+container.bind<IInventoryDao>(Types.InventoryDao).to(InventoryDao);
 container.bind<ITransactionDao>(Types.TransactionDao).to(TransactionDao);
 container.bind<IProfileDao>(Types.ProfileDao).to(ProfileDao);
 container.bind<IAccountDao>(Types.AccountDao).to(AccountDao);

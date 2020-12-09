@@ -19,8 +19,9 @@ export const OrderStack = (): JSX.Element => (
       name={RouteNames.Order.NewSellOrder}
       component={NewSellOrder}
       options={{
-        headerTransparent: true,
-        headerShown: false,
+        headerShown: true,
+        title: strings.NewSell,
+        ...themes.headerStyle
       }}
     />
     <Stack.Screen
@@ -31,22 +32,6 @@ export const OrderStack = (): JSX.Element => (
         headerShown: false,
       }}
     />
-    {/* <Stack.Screen
-      name={RouteNames.Order.SizeSelection}
-      component={SizeSelection}
-      options={{
-        title: strings.ChooseSize,
-        ...themes.headerStyle,
-      }}
-    /> */}
-    {/* <Stack.Screen
-      name={RouteNames.Order.BuyConfirmation}
-      component={BuyConfirmation}
-      options={{
-        title: strings.Checkout,
-        ...themes.headerStyle,
-      }}
-    /> */}
     <Stack.Screen
       name={RouteNames.Order.Payment}
       component={Payment}

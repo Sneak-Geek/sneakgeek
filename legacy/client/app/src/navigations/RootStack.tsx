@@ -85,7 +85,7 @@ const RootStack = (): JSX.Element => (
         component={TabStack}
         options={{
           gestureEnabled: false,
-          header: () => null
+          headerShown: false,
         }}
       />
       <Stack.Screen name={RouteNames.Product.Name} 
@@ -101,6 +101,7 @@ const RootStack = (): JSX.Element => (
         component={OrderStack}
         options={{
           gestureEnabled: false,
+          headerShown: false
         }}
       />
     </Stack.Navigator>

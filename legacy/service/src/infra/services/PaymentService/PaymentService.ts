@@ -23,9 +23,8 @@ export class PaymentService implements IPaymentService {
   private readonly ONEPAY_INTERNATIONAL_HASH_KEY = "A3EFDFABA8653DF2342E8DAC29B51AF0";
 
   public generateRedirectUrl(
-    paymentType: "intl" | "domestic",
-    orderInfo: string,
-    transactionId: string,
+    paymentType: string,
+    orderId: string,
     totalFee: string,
     baseCallbackUrl: string
   ): string {
@@ -37,9 +36,8 @@ export class PaymentService implements IPaymentService {
       vpc_Currency: this.VPC_CURRENCY,
       vpc_Locale: this.VPC_LOCALE,
       vpc_ReturnURL: `${baseCallbackUrl}${this.VPC_CALLBACK_URL}?paymentType=${paymentType}`,
-      // transaction specific params
-      vpc_MerchTxnRef: transactionId,
-      vpc_OrderInfo: orderInfo,
+      vpc_MerchTxnRef: orderId,
+      vpc_OrderInfo: orderId,
       vpc_Amount: `${totalFee}00`,
       vpc_TicketNo: "127.0.0.1",
       AgainLink: "https://google.com",
@@ -54,7 +52,7 @@ export class PaymentService implements IPaymentService {
     return url.format(`${redirectEndpoint}?${new url.URLSearchParams(params).toString()}`);
   }
 
-  public hashParams(paymentType: "intl" | "domestic", params: Object) {
+  public hashParams(paymentType: string, params: Object) {
     const hashKey =
       paymentType === "domestic"
         ? this.ONEPAY_DOMESTIC_HASH_KEY

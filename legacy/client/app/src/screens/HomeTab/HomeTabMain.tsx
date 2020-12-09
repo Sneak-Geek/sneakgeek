@@ -209,6 +209,7 @@ export class HomeTabMain extends React.Component<Props> {
     products: Shoe[],
     startIndex: number,
   ): JSX.Element {
+    console.log("Products", products);
     return (
       <View style={styles.rankingRootContainer}>
         <View style={styles.rankingInnerContainer}>
