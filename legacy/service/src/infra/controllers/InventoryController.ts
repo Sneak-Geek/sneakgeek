@@ -15,6 +15,7 @@ import { CreateInventoryDto } from "../dao/InventoryDao/CreateInventoryDto";
 import { UserAccount } from "../database";
 import * as middlewares from "../middlewares";
 import mongoose from "mongoose";
+import { send } from "q";
 
 @controller("/api/v1/inventory")
 export class InventoryController {
@@ -25,11 +26,11 @@ export class InventoryController {
     "/new",
     middlewares.AuthMiddleware,
     middlewares.AccountVerifiedMiddleware,
-    Types.IsSellerMiddleware,
+    // Types.IsSellerMiddleware,
     body("shoeId").isString(),
     body("quantity").isInt({ min: 0 }),
     body("sellPrice").isInt({ min: 0 }),
-    body("shoeSize").isInt({ min: 0 }),
+    body("shoeSize").isString(),
     middlewares.ValidationPassedMiddleware
   )
   public async sellShoes(
@@ -37,19 +38,15 @@ export class InventoryController {
     @requestBody() inventoryBody: CreateInventoryDto,
     @response() res: Response
   ) {
-    try {
-      const user = req.user as UserAccount;
-      const profile = user.profile as mongoose.Types.ObjectId;
-      const _ = await this.inventoryDao.create({
-        sellerId: profile.toString(),
-        ...inventoryBody,
-      });
-
-      return res.status(HttpStatus.OK);
-    } catch (error) {
-      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
-        message: "Internal server error",
-      });
+    const user = req.user as UserAccount;
+    const profileId = user.profile as mongoose.Types.ObjectId;
+    if (await this.inventoryDao.isDuplicate(profileId.toHexString(), inventoryBody.shoeId, inventoryBody.shoeSize)) {
+      return res.status(HttpStatus.BAD_REQUEST).send();
     }
+    await this.inventoryDao.create({
+      sellerId: profileId.toString(),
+      ...inventoryBody,
+    });
+    return res.status(HttpStatus.OK).send();
   }
 }

@@ -101,6 +101,7 @@ import "../../infra/controllers/TransactionController";
 import "../../infra/controllers/ImageController";
 import "../../infra/controllers/NotificationController";
 import "../../infra/controllers/BalanceHistoryController";
+import "../../infra/controllers/InventoryController";
 
 // Creating new container
 const container = new Container();

@@ -175,5 +175,5 @@ export const strings = {
   CannotWithdrawalMoreThanCurrentBalance:
     'Số tiền rút ra không thể lớn hơn số tiền hiện có.',
   PleaseProvideAllInformation: 'Xin vui lòng điền đủ thông thin chuyển khoản.',
-  InventoryAmount: 'Số lượng'
+  InventoryQuantity: 'Số lượng'
 };

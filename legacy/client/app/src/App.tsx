@@ -20,6 +20,8 @@ import {
   ICdnService,
   CdnService,
   IAppleAuthSdk,
+  IInventoryService,
+  InventoryService
 } from 'business';
 import {Provider} from 'react-redux';
 
@@ -70,6 +72,10 @@ export default function App(): JSX.Element {
     Factory.register<IDeviceInfoProvider>(
       KeyExtensions.IDeviceInfoProvider,
       new DeviceInfoProvider(),
+    );
+    Factory.register<IInventoryService>(
+      KeyExtensions.IInventoryService,
+      new InventoryService()
     );
   };
 

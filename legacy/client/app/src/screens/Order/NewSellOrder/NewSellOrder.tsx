@@ -4,7 +4,7 @@ import {Dimensions, StyleSheet, TextInput, View} from 'react-native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {themes, strings} from 'resources';
 import {ShoeHeaderSummary, BottomButton, AppText} from 'screens/Shared';
-import {Shoe, SellOrder, IOrderService, FactoryKeys, Profile} from 'business';
+import {Shoe, SellOrder, IOrderService, FactoryKeys, Profile, Inventory} from 'business';
 import {RouteProp} from '@react-navigation/native';
 import {RootStackParams} from 'navigations/RootStack';
 import {connect, getToken, getDependency} from 'utilities';
@@ -14,7 +14,7 @@ import {
   toggleIndicator,
 } from 'actions';
 import {styles} from './styles';
-import {CdnService} from 'business/src';
+import {CdnService, IInventoryService} from 'business/src';
 import RouteNames from 'navigations/RouteNames';
 import {IAppState} from 'store/AppStore';
 
@@ -34,7 +34,7 @@ type SellDetailChild = {
 };
 
 type State = {
-  sellOrder: Partial<SellOrder>;
+  inventory: Partial<Inventory>;
 };
 
 @connect(
@@ -62,19 +62,11 @@ export class NewSellOrder extends React.Component<Props, State> {
     this._shoe = this.props.route.params.shoe;
 
     this.state = {
-      sellOrder: {
+      inventory: {
         sellPrice: undefined,
         shoeId: this._shoe._id,
         shoeSize: undefined,
-        isNewShoe: true,
-        productCondition: {
-          boxCondition: undefined,
-          isTainted: false,
-          isOutsoleWorn: false,
-          otherDetail: '',
-          isTorn: false,
-        },
-        pictures: [],
+        quantity: undefined,
       },
     };
   }
@@ -97,21 +89,36 @@ export class NewSellOrder extends React.Component<Props, State> {
         title: strings.ShoeSize,
         displayText: '',
         onUpdate: (text) => {
-          /* set state here */
+          this.setState({
+            inventory: {
+              ...this.state.inventory,
+              shoeSize: text
+            }
+          });
         },
       },
       {
-        title: strings.InventoryAmount,
+        title: strings.InventoryQuantity,
         displayText: '',
         onUpdate: (text) => {
-          /* set state here */
+          this.setState({
+            inventory: {
+              ...this.state.inventory,
+              quantity: parseInt(text, 10) 
+            }
+          })
         },
       },
       {
         title: strings.Price,
         displayText: '',
         onUpdate: (text) => {
-          /* set state here */
+          this.setState({
+            inventory: {
+              ...this.state.inventory,
+              sellPrice: parseInt(text, 10) 
+            }
+          })
         },
       },
     ];
@@ -130,6 +137,7 @@ export class NewSellOrder extends React.Component<Props, State> {
               numberOfLines={1}
               style={{...themes.TextStyle.body, marginBottom: 20}}
               keyboardType={'number-pad'}
+              onChangeText={t.onUpdate}
             />
           </View>
         ))}
@@ -152,36 +160,18 @@ export class NewSellOrder extends React.Component<Props, State> {
 
   private async _sellShoe() {
     const token = getToken();
-    const order = this.state.sellOrder;
-
-    const orderService = getDependency<IOrderService>(
-      FactoryKeys.IOrderService,
-    );
-    const cdnService = getDependency<CdnService>(FactoryKeys.ICdnService);
-    let uploadedPictures: string[] = [];
-    this.props.toggleLoading(true);
-
-    if (order.pictures.length > 0) {
-      try {
-        uploadedPictures = await cdnService.uploadImages(
-          token,
-          order?.pictures.map((i) => ({
-            uri: i,
-            type: 'image/png',
-          })),
-        );
-        order.pictures = uploadedPictures;
-      } catch (error) {
-        this.props.showErrorNotification(strings.ErrorPleaseTryAgain);
-        this.props.toggleLoading(false);
-        return;
-      }
-    }
-
+    const inventory = this.state.inventory;
+    const inventoryService = getDependency<IInventoryService>(FactoryKeys.IInventoryService);
     try {
-      await orderService.createSellOrder(token, order as SellOrder);
+      await inventoryService.createInventory(
+        token,
+        inventory.shoeId,
+        inventory.quantity,
+        inventory.sellPrice,
+        inventory.shoeSize
+      );
       this.props.showSuccessNotification('Đã bán thành công sản phẩm!');
-      this.props.navigation.navigate(RouteNames.Product.ProductDetail);
+      this.props.navigation.goBack();
     } catch (error) {
       this.props.showErrorNotification(
         'Đã có lỗi xảy ra, xin vui lòng thử lại',
@@ -189,16 +179,5 @@ export class NewSellOrder extends React.Component<Props, State> {
     } finally {
       this.props.toggleLoading(false);
     }
-  }
-
-  private _setShoeSize(shoeSize: string): void {
-    this.setState({sellOrder: {...this.state.sellOrder, shoeSize}});
-  }
-
-  private _setShoePrice(sellPrice: number): void {
-    this.setState((prevState) => ({
-      ...prevState,
-      sellOrder: {...prevState.sellOrder, sellPrice},
-    }));
   }
 }

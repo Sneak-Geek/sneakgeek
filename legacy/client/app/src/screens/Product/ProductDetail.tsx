@@ -337,7 +337,7 @@ export class ProductDetail extends React.Component<Props> {
 
   private _renderActionButtons(bottom: number): JSX.Element {
     const {profile, account} = this.props;
-    const isSell = profile.isSeller && account.isVerified;
+    const isSell = account && profile && profile.isSeller && account.isVerified;
     const {highestBuyOrder, lowestSellOrder} = this.props.shoeInfoState;
     return (
       <View style={{bottom, ...styles.bottomContainer}}>
@@ -385,6 +385,7 @@ export class ProductDetail extends React.Component<Props> {
 
     const isVerified = account?.isVerified;
     const missingAddress =
+      profile &&  
       !profile.isSeller &&
       (!profile?.userProvidedAddress ||
         !profile?.userProvidedAddress.city ||

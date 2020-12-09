@@ -10,3 +10,4 @@ export * from "./Address";
 export * from "./Transaction";
 export * from "./Notification";
 export * from "./BalanceHistory";
+export * from "./Inventory";
