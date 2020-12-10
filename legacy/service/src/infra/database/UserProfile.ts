@@ -13,12 +13,8 @@ const UserProvidedNameSchema = new mongoose.Schema({
 });
 
 const UserProvidedAddressSchema = new mongoose.Schema({
-  streetAddress: String,
-  ward: String,
-  wardCode: String,
-  district: String,
-  districtId: Number,
-  city: String,
+  addressLine1: String,
+  addressLine2: String
 });
 
 export const UserProfileSchema = new mongoose.Schema(
@@ -28,7 +24,6 @@ export const UserProfileSchema = new mongoose.Schema(
       ref: "UserAccount",
       unique: true,
     },
-    userProvidedProfilePic: String,
     userProvidedName: UserProvidedNameSchema,
     userProvidedAddress: UserProvidedAddressSchema,
     userProvidedGender: String,
@@ -49,7 +44,6 @@ export const UserProfileSchema = new mongoose.Schema(
 
 export type UserProfile = Document<{
   accountId: mongoose.Types.ObjectId;
-  userProvidedProfilePic: string;
   userProvidedName: UserName;
   userProvidedAddress: UserAddress;
   userProvidedGender: string;
@@ -59,12 +53,8 @@ export type UserProfile = Document<{
 }>;
 
 type UserAddress = Document<{
-  streetAddress: string;
-  ward: string;
-  wardCode: string;
-  district: string;
-  districtId: number;
-  city: string;
+  addressLine1: string,
+  addressLine2: string
 }>;
 
 type UserName = Document<{

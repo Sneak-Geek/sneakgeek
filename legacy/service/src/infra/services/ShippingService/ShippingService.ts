@@ -152,16 +152,16 @@ export class ShippingService extends BaseExternalApiService implements IShipping
 
     const createShippingOrderParams = {
       token: this.GHN_ACCESS_TOKEN,
-      FromDistrictID: senderProfile.userProvidedAddress.districtId,
-      FromWardCode: senderProfile.userProvidedAddress.wardCode,
-      ToDistrictID: receiverProfile.userProvidedAddress.districtId,
-      ToWardCode: receiverProfile.userProvidedAddress.wardCode,
+      // FromDistrictID: senderProfile.userProvidedAddress.districtId,
+      // FromWardCode: senderProfile.userProvidedAddress.wardCode,
+      // ToDistrictID: receiverProfile.userProvidedAddress.districtId,
+      // ToWardCode: receiverProfile.userProvidedAddress.wardCode,
       ClientContactName: senderContactName,
       ClientContactPhone: senderProfile.userProvidedPhoneNumber,
-      ClientAddress: senderProfile.userProvidedAddress.streetAddress,
+      // ClientAddress: senderProfile.userProvidedAddress.streetAddress,
       CustomerName: receiverContactName,
       CustomerPhone: receiverProfile.userProvidedPhoneNumber,
-      ShippingAddress: receiverProfile.userProvidedAddress.streetAddress,
+      // ShippingAddress: receiverProfile.userProvidedAddress.streetAddress,
       NoteCode: this.SHIPPING_NOTE_CODE,
       ServiceID: this.SHIPPING_SERVICE_ID,
       // hard code package info
@@ -174,8 +174,8 @@ export class ShippingService extends BaseExternalApiService implements IShipping
       // return package to sender
       ReturnContactName: senderContactName,
       ReturnContactPhone: senderProfile.userProvidedPhoneNumber,
-      ReturnAddress: senderProfile.userProvidedAddress.streetAddress,
-      ReturnDistrictID: senderProfile.userProvidedAddress.districtId,
+      // ReturnAddress: senderProfile.userProvidedAddress.streetAddress,
+      // ReturnDistrictID: senderProfile.userProvidedAddress.districtId,
       ExternalReturnCode: this.EXTERNAL_RETURN_CODE,
       // AffiliateID: this.AFFILIATE_ID,
     };
@@ -210,8 +210,8 @@ export class ShippingService extends BaseExternalApiService implements IShipping
       `${this.GHN_BASE_URL}/CalculateFee`,
       {
         token: this.GHN_ACCESS_TOKEN,
-        FromDistrictID: senderProfile.userProvidedAddress.districtId,
-        ToDistrictID: AdminProfile.userProvidedAddress.districtId,
+        // FromDistrictID: senderProfile.userProvidedAddress.districtId,
+        // ToDistrictID: AdminProfile.userProvidedAddress.districtId,
         ServiceID: this.SHIPPING_SERVICE_ID,
         Weight: this.PACKAGE_WEIGHT,
       }
@@ -231,8 +231,8 @@ export class ShippingService extends BaseExternalApiService implements IShipping
       `${this.GHN_BASE_URL}/CalculateFee`,
       {
         token: this.GHN_ACCESS_TOKEN,
-        FromDistrictID: AdminProfile.userProvidedAddress.districtId,
-        ToDistrictID: receiverProfile.userProvidedAddress.districtId,
+        // FromDistrictID: AdminProfile.userProvidedAddress.districtId,
+        // ToDistrictID: receiverProfile.userProvidedAddress.districtId,
         ServiceID: this.SHIPPING_SERVICE_ID,
         Weight: this.PACKAGE_WEIGHT,
       }

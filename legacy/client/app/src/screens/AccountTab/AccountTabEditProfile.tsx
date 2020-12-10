@@ -1,5 +1,5 @@
 import React from 'react';
-import {AppText, BottomButton, BottomPicker} from 'screens/Shared';
+import { AppText, BottomButton, BottomPicker } from 'screens/Shared';
 import {
   Profile,
   IAccountService,
@@ -18,19 +18,20 @@ import {
   EmitterSubscription,
   TouchableWithoutFeedback,
 } from 'react-native';
-import {ScrollView, TextInput, StyleSheet} from 'react-native';
+import { ScrollView, TextInput, StyleSheet } from 'react-native';
 import {
   StackNavigationProp,
   HeaderHeightContext,
 } from '@react-navigation/stack';
-import {themes, strings} from 'resources';
-import {SafeAreaConsumer} from 'react-native-safe-area-context';
-import {Icon} from 'react-native-elements';
-import {connect} from 'utilities/ReduxUtilities';
-import {IAppState} from 'store/AppStore';
-import {showSuccessNotification, toggleIndicator} from 'actions';
-import {getToken, getDependency} from 'utilities';
-import {RootStackParams} from 'navigations/RootStack';
+import { themes, strings } from 'resources';
+import { SafeAreaConsumer } from 'react-native-safe-area-context';
+import { Icon } from 'react-native-elements';
+import { connect } from 'utilities/ReduxUtilities';
+import { IAppState } from 'store/AppStore';
+import { showSuccessNotification, toggleIndicator } from 'actions';
+import { getToken, getDependency } from 'utilities';
+import { RootStackParams } from 'navigations/RootStack';
+import _ from "lodash";
 
 const styles = StyleSheet.create({
   headerContainer: {
@@ -164,7 +165,7 @@ type SettingSection = {
       dispatch(updateProfile(profile));
     },
     toggleLoadingIndicator: (isLoading: boolean): void => {
-      dispatch(toggleIndicator({isLoading, message: strings.PleaseWait}));
+      dispatch(toggleIndicator({ isLoading, message: strings.PleaseWait }));
     },
     showNotification: (message: string): void =>
       dispatch(showSuccessNotification(message)),
@@ -172,6 +173,7 @@ type SettingSection = {
 )
 export class AccountTabEditProfile extends React.Component<Props, State> {
   private sectionList: Array<SettingSection> = [];
+  private _addressLine1OnUpdateDelayed: any;
 
   public constructor(props: Props) {
     super(props);
@@ -182,6 +184,8 @@ export class AccountTabEditProfile extends React.Component<Props, State> {
       pickerVisible: false,
       pickerType: undefined,
     };
+
+    this._addressLine1OnUpdateDelayed = _.debounce(this._addressLine1OnUpdate, 2000);
 
     this.sectionList = [
       {
@@ -222,7 +226,7 @@ export class AccountTabEditProfile extends React.Component<Props, State> {
             placeholder: 'Giới tính',
             isPicker: true,
             pickerType: PickerType.GENDER,
-            options: (): string[] => [],
+            options: (): string[] => ['Nam', 'Nữ', 'Khác'],
             value: (profile: Profile): string => profile.userProvidedGender,
             onUpdate: (value: string, profile: Profile): Profile => {
               return Object.assign(profile, {
@@ -254,90 +258,39 @@ export class AccountTabEditProfile extends React.Component<Props, State> {
         ],
       },
       {
-        sectionName: 'Thông tin giày',
-        sectionFields: [
-          {
-            title: 'Cỡ giày',
-            placeholder: 'Cỡ giày',
-            isPicker: true,
-            pickerType: PickerType.SHOE_SIZE,
-            options: (): string[] => [],
-            value: (profile: Profile): string => profile.userProvidedShoeSize,
-            onUpdate: (value: string, profile: Profile): Profile => {
-              return Object.assign(profile, {
-                userProvidedShoeSize: value,
-              });
-            },
-          },
-        ],
-      },
-      {
         sectionName: 'Địa chỉ giao hàng',
         sectionFields: [
           {
-            title: 'Địa chỉ',
-            placeholder: 'Địa chỉ',
+            title: 'Địa chỉ 1',
+            placeholder: 'Đường/phố, quận/huyện, tỉnh/thành phố',
             isPicker: false,
             value: (profile: Profile): string =>
-              profile?.userProvidedAddress?.streetAddress,
+              profile?.userProvidedAddress?.addressLine1,
             onUpdate: (value: string, profile: Profile): Profile => {
+              this._addressLine1OnUpdateDelayed(value);
+
               return Object.assign(profile, {
                 userProvidedAddress: {
                   ...profile.userProvidedAddress,
-                  streetAddress: value,
+                  addressLine1: value,
                 },
               });
             },
           },
           {
-            title: 'Tỉnh/Thành phố',
-            placeholder: 'Tỉnh/Thành phố',
-            isPicker: true,
-            pickerType: PickerType.CITY,
-            options: (): string[] => this._getCities(),
+            title: 'Địa chỉ 2',
+            placeholder: 'Ngõ, ngách, số phòng,...',
+            isPicker: false,
             value: (profile: Profile): string =>
-              profile.userProvidedAddress?.city,
-            onUpdate: (value: string, profile: Profile): Profile => ({
-              ...profile,
-              userProvidedAddress: {
-                ...profile.userProvidedAddress,
-                city: value,
-              },
-            }),
-          },
-          {
-            title: 'Quận/Huyện',
-            placeholder: 'Quận/Huyện',
-            isPicker: true,
-            pickerType: PickerType.DISTRICT,
-            options: (): string[] => this._getDistricts(),
-            value: (profile: Profile): string =>
-              profile.userProvidedAddress?.district,
-            onUpdate: (value: string, profile: Profile): Profile => ({
-              ...profile,
-              userProvidedAddress: {
-                ...profile.userProvidedAddress,
-                district: value,
-                districtId: this._findDistrictId(value),
-              },
-            }),
-          },
-          {
-            title: 'Phường/Xã',
-            placeholder: 'Phường/Xã',
-            isPicker: true,
-            pickerType: PickerType.WARD,
-            options: (): string[] => this._getWards(),
-            value: (profile: Profile): string =>
-              profile.userProvidedAddress?.ward,
-            onUpdate: (value: string, profile: Profile): Profile => ({
-              ...profile,
-              userProvidedAddress: {
-                ...profile.userProvidedAddress,
-                ward: value,
-                wardCode: this._findWardCode(value),
-              },
-            }),
+              profile?.userProvidedAddress?.addressLine2,
+            onUpdate: (value: string, profile: Profile): Profile => {
+              return Object.assign(profile, {
+                userProvidedAddress: {
+                  ...profile.userProvidedAddress,
+                  addressLine2: value,
+                },
+              });
+            },
           },
         ],
       },
@@ -384,11 +337,11 @@ export class AccountTabEditProfile extends React.Component<Props, State> {
 
   public componentDidMount(): void {
     this._keyboardShowListener = Keyboard.addListener('keyboardDidShow', () => {
-      this.setState({shouldShowConfirm: false});
+      this.setState({ shouldShowConfirm: false });
     });
 
     this._keyboardHideListener = Keyboard.addListener('keyboardDidHide', () => {
-      this.setState({shouldShowConfirm: true});
+      this.setState({ shouldShowConfirm: true });
     });
 
     this._initializeAddressSettings();
@@ -409,12 +362,12 @@ export class AccountTabEditProfile extends React.Component<Props, State> {
       this.props.toggleLoadingIndicator(true);
       settingsService
         .getValidShippingAddress(getToken())
-        .then(async ({districts, wards}) => {
+        .then(async ({ districts, wards }) => {
           await settingsProvider.setValue(SettingsKey.GhnShippingAddress, {
             districts,
             wards,
           });
-          this._validShippingAddress = {districts, wards};
+          this._validShippingAddress = { districts, wards };
           this.props.toggleLoadingIndicator(false);
         });
     }
@@ -450,7 +403,7 @@ export class AccountTabEditProfile extends React.Component<Props, State> {
               type={'feather'}
               size={themes.IconSize}
               onPress={(): void =>
-                this.setState({editMode: !this.state.editMode})
+                this.setState({ editMode: !this.state.editMode })
               }
             />
           </View>
@@ -463,8 +416,8 @@ export class AccountTabEditProfile extends React.Component<Props, State> {
     return (
       <View>
         {this.sectionList.map((item, i) => (
-          <View key={i} style={{marginVertical: 15}}>
-            <AppText.Headline style={{marginVertical: 8, marginLeft: 15}}>
+          <View key={i} style={{ marginVertical: 15 }}>
+            <AppText.Headline style={{ marginVertical: 8, marginLeft: 15 }}>
               {item.sectionName}
             </AppText.Headline>
             {this._renderSettings(item.sectionFields)}
@@ -489,7 +442,7 @@ export class AccountTabEditProfile extends React.Component<Props, State> {
               }
             }}>
             <View style={styles.listItem}>
-              <AppText.Body style={{flex: 1}}>{item.title}</AppText.Body>
+              <AppText.Body style={{ flex: 1 }}>{item.title}</AppText.Body>
               {this._renderSetting(item)}
             </View>
           </TouchableWithoutFeedback>
@@ -499,8 +452,8 @@ export class AccountTabEditProfile extends React.Component<Props, State> {
   }
 
   private _renderSetting(item: Setting): JSX.Element {
-    const {updatedInfo, editMode} = this.state;
-    const {profile} = this.props;
+    const { updatedInfo, editMode } = this.state;
+    const { profile } = this.props;
     const textValue =
       updatedInfo && item.value(updatedInfo)
         ? item.value(updatedInfo).toString()
@@ -514,7 +467,7 @@ export class AccountTabEditProfile extends React.Component<Props, State> {
           onChangeText={(value): void => {
             if (updatedInfo) {
               const newProfile = item.onUpdate(value, updatedInfo);
-              this.setState({updatedInfo: newProfile});
+              this.setState({ updatedInfo: newProfile });
             }
           }}
           style={[styles.input, themes.TextStyle.subhead]}
@@ -555,7 +508,7 @@ export class AccountTabEditProfile extends React.Component<Props, State> {
           });
         }}
         onSelectPickerCancel={(): void =>
-          this.setState({pickerVisible: false, pickerType: undefined})
+          this.setState({ pickerVisible: false, pickerType: undefined })
         }
         optionLabelToString={(t): string => t.toString()}
       />
@@ -563,7 +516,7 @@ export class AccountTabEditProfile extends React.Component<Props, State> {
   }
 
   private _renderUpdateButton(): JSX.Element | null {
-    const {shouldShowConfirm, editMode} = this.state;
+    const { shouldShowConfirm, editMode } = this.state;
 
     if (!shouldShowConfirm || !editMode) {
       return null;
@@ -589,57 +542,11 @@ export class AccountTabEditProfile extends React.Component<Props, State> {
     } catch (error) {
       this.props.showNotification('Đã có lỗi khi xảy ra, xin vui lòng thử lại');
     } finally {
-      this.setState({updatedInfo: this.props.profile, editMode: false});
+      this.setState({ updatedInfo: this.props.profile, editMode: false });
     }
   }
 
-  private _findDistrictId(districtName: string): number {
-    return this._validShippingAddress.districts.find(
-      (t) => t.DistrictName === districtName,
-    ).DistrictID;
-  }
+  private _addressLine1OnUpdate(value: string): void {
 
-  private _findWardCode(ward: string): string {
-    const {userProvidedAddress} = this.state.updatedInfo;
-    if (
-      userProvidedAddress &&
-      userProvidedAddress.district &&
-      userProvidedAddress.districtId
-    ) {
-      const wards = this._validShippingAddress.wards.get(
-        userProvidedAddress.districtId,
-      );
-
-      return wards.find((t) => t.WardName === ward).WardCode;
-    }
-
-    return undefined;
-  }
-
-  private _getCities(): string[] {
-    const cities = new Set(
-      this._validShippingAddress.districts.map((t) => t.ProvinceName),
-    );
-    return Array.from(cities).sort();
-  }
-
-  private _getDistricts(): string[] {
-    const selectedCity = this.state.updatedInfo.userProvidedAddress.city;
-
-    return this._validShippingAddress.districts
-      .filter((t) => t.ProvinceName === selectedCity)
-      .map((t) => t.DistrictName)
-      .sort();
-  }
-
-  private _getWards(): string[] {
-    const district = this.state.updatedInfo.userProvidedAddress.district;
-    const districtId = this._validShippingAddress.districts.find(
-      (t) => t.DistrictName === district,
-    ).DistrictID;
-    return this._validShippingAddress.wards
-      .get(districtId)
-      .map((t) => t.WardName)
-      .sort();
   }
 }
