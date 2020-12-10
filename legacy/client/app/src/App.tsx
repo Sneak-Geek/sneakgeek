@@ -20,6 +20,8 @@ import {
   ICdnService,
   CdnService,
   IAppleAuthSdk,
+  IInventoryService,
+  InventoryService
 } from 'business';
 import {Provider} from 'react-redux';
 
@@ -30,6 +32,7 @@ import {InAppNotification} from 'screens/InAppNotification';
 import {AppLoadingIndicator} from 'screens/AppLoadingIndicator';
 import {IDeviceInfoProvider, DeviceInfoProvider} from 'providers';
 import {AppleAuthSdk} from 'common/AppleAuthSdk';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 export default function App(): JSX.Element {
   const [depLoaded, setDepLoaded] = useState(false);
@@ -70,6 +73,10 @@ export default function App(): JSX.Element {
       KeyExtensions.IDeviceInfoProvider,
       new DeviceInfoProvider(),
     );
+    Factory.register<IInventoryService>(
+      KeyExtensions.IInventoryService,
+      new InventoryService()
+    );
   };
 
   useEffect(() => {
@@ -79,7 +86,8 @@ export default function App(): JSX.Element {
   });
 
   return (
-    <Provider store={AppStore}>
+    <SafeAreaProvider>
+      <Provider store={AppStore}>
       {depLoaded ? (
         <>
           <InAppNotification />
@@ -89,6 +97,7 @@ export default function App(): JSX.Element {
       ) : (
         <></>
       )}
-    </Provider>
+    </Provider> 
+    </SafeAreaProvider>
   );
 }

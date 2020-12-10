@@ -90,7 +90,7 @@ export const strings = {
     'Bạn cần thêm thông tin cá nhân trước khi đánh giá sản phẩm',
   AddInfoForReview: 'Thêm thông tin',
   PleaseWait: 'Xin chờ',
-  NewSell: 'Đăng bán sản phẩm',
+  NewSell: 'Bán sản phẩm',
   Sell: 'Bán',
   Deposit: 'Chuyển khoản',
   NewBuyOrder: 'Đăng mua sản phẩm',
@@ -175,4 +175,6 @@ export const strings = {
   CannotWithdrawalMoreThanCurrentBalance:
     'Số tiền rút ra không thể lớn hơn số tiền hiện có.',
   PleaseProvideAllInformation: 'Xin vui lòng điền đủ thông thin chuyển khoản.',
+  InventoryQuantity: 'Số lượng',
+  TopTrending: 'Top Trending',
 };

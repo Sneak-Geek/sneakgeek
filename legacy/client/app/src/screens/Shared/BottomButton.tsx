@@ -9,9 +9,8 @@ const styles = StyleSheet.create({
     flex: 1,
     position: 'absolute',
     bottom: 0,
-    right: 0,
-    left: 0,
-    width: '100%',
+    right: 20,
+    left: 20,
     height: themes.RegularButtonHeight,
   },
   buttonStyle: {

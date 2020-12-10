@@ -5,6 +5,7 @@ export type UserAddress = {
 
 export interface Profile {
     _id: string;
+    isSeller: boolean;
     accountId: string;
     favoriteShoes: string[];
     ownedShoes: Array<{

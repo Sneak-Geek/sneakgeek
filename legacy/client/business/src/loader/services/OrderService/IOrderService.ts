@@ -18,13 +18,18 @@ export type SellOrderEditInput = {
     otherDetail?: boolean;
   };
 };
+export type SizePriceMap = {
+  sellPrice: number;
+  shoeSize: string;
+  inventoryId: string;
+}
 
 export interface IOrderService {
   createSellOrder(token: string, sellOrder: SellOrder): Promise<void>;
-  createBuyOrder(token: string, buyOrder: Partial<BuyOrder>): Promise<void>;
-  getPriceSizeMap: (token: string, orderType: OrderType, shoeId: string) => Promise<{ price: number, size: string }[]>;
+  createBuyOrder(token: string, inventoryId: string): Promise<void>;
+  getPriceSizeMap: (token: string, shoeId: string) => Promise<SizePriceMap[]>;
   getTotalFee: (token: string, sellOrderId: string) => Promise<{ shippingFee: number, shoePrice: number }>;
-  getCheckoutUrlForPurchase: (token: string, paymentType: PaymentType, sellOrderId: string, buyOrderId?: string) => Promise<string>;
+  getCheckoutUrlForPurchase: (token: string, paymentType: PaymentType, inventoryId: string) => Promise<string>;
   getUserPopulatedOrders: (token: string, type: OrderType) => Promise<Array<PopulatedBuyOrder> | Array<PopulatedSellOrder>>;
   getTransactionBySellOrder: (token: string, sellOrderId: string) => Promise<Transaction>;
   getLowestSellOrderAndHighestBuyOrder(token: string, shoeId: string, shoeSize: string): Promise<{

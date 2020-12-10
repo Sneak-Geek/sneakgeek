@@ -55,13 +55,13 @@ const styles = StyleSheet.create({
 )
 export class Payment extends React.Component<Props, State> {
   private orderService: IOrderService;
-  private sellOrder: SellOrder;
   private paymentType: PaymentType;
+  private inventoryId: string;
 
   public constructor(props: Props) {
     super(props);
     this.orderService = getDependency<IOrderService>(FactoryKeys.IOrderService);
-    this.sellOrder = this.props.route.params.sellOrder;
+    this.inventoryId = this.props.route.params.inventoryId;
     this.paymentType = this.props.route.params.paymentType;
 
     this.state = {
@@ -99,7 +99,7 @@ export class Payment extends React.Component<Props, State> {
       const paymentUrl = await this.orderService.getCheckoutUrlForPurchase(
         getToken(),
         this.paymentType,
-        this.sellOrder._id,
+        this.inventoryId,
       );
       this.setState({paymentUrl});
     } catch (error) {
@@ -149,6 +149,9 @@ export class Payment extends React.Component<Props, State> {
       this.props.navigation.navigate(RouteNames.Tab.Name, {
         screen: RouteNames.Tab.TransactionTab.Name,
       });
+    } else if (data === 'failed') {
+      this.props.navigation.goBack();
+      this.props.showMessage('Đã có lỗi xảy ra, xin vui lòng thử lại');
     }
   }
 }

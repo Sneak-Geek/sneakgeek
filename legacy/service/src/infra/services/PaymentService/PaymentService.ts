@@ -6,6 +6,7 @@ import { injectable } from "inversify";
 import { IPaymentService } from "./IPaymentService";
 import crypto from "crypto";
 import url from "url";
+import { Shoe } from "../../database";
 
 @injectable()
 export class PaymentService implements IPaymentService {
@@ -15,7 +16,7 @@ export class PaymentService implements IPaymentService {
   private readonly VPC_ACCESS_CODE = "D67342C2";
   private readonly VPC_MERCHANT = "ONEPAY";
   private readonly VPC_LOCALE = "en";
-  private readonly VPC_CALLBACK_URL = "/api/v1/transaction/payment-callback";
+  private readonly VPC_CALLBACK_URL = "/api/v1/order/payment-callback";
   private readonly ONEPAY_DOMESTIC_URL = "https://mtf.onepay.vn/onecomm-pay/vpc.op";
   private readonly ONEPAY_INTERNATIONAL_URL = "https://mtf.onepay.vn/vpcpay/vpcpay.op";
 
@@ -23,11 +24,11 @@ export class PaymentService implements IPaymentService {
   private readonly ONEPAY_INTERNATIONAL_HASH_KEY = "A3EFDFABA8653DF2342E8DAC29B51AF0";
 
   public generateRedirectUrl(
-    paymentType: "intl" | "domestic",
-    orderInfo: string,
-    transactionId: string,
+    paymentType: string,
+    orderId: string,
     totalFee: string,
-    baseCallbackUrl: string
+    baseCallbackUrl: string,
+    shoeInfo?: Shoe
   ): string {
     const params = {
       vpc_Version: this.VPC_VERSION,
@@ -36,10 +37,9 @@ export class PaymentService implements IPaymentService {
       vpc_Merchant: this.VPC_MERCHANT,
       vpc_Currency: this.VPC_CURRENCY,
       vpc_Locale: this.VPC_LOCALE,
-      vpc_ReturnURL: `${baseCallbackUrl}${this.VPC_CALLBACK_URL}?paymentType=${paymentType}`,
-      // transaction specific params
-      vpc_MerchTxnRef: transactionId,
-      vpc_OrderInfo: orderInfo,
+      vpc_ReturnURL: `${baseCallbackUrl}${this.VPC_CALLBACK_URL}`,
+      vpc_MerchTxnRef: orderId,
+      vpc_OrderInfo: shoeInfo ? shoeInfo.name : orderId,
       vpc_Amount: `${totalFee}00`,
       vpc_TicketNo: "127.0.0.1",
       AgainLink: "https://google.com",
@@ -54,7 +54,7 @@ export class PaymentService implements IPaymentService {
     return url.format(`${redirectEndpoint}?${new url.URLSearchParams(params).toString()}`);
   }
 
-  public hashParams(paymentType: "intl" | "domestic", params: Object) {
+  public hashParams(paymentType: string, params: Object) {
     const hashKey =
       paymentType === "domestic"
         ? this.ONEPAY_DOMESTIC_HASH_KEY
