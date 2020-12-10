@@ -52,7 +52,7 @@ export class InventoryDao implements IInventoryDao {
           $group: {
             _id: "$shoeSize",
             sellPrice: { $first: "$sellPrice" },
-            inventoryId: { $first: "$_id" }
+            inventoryId: { $first: "$_id" },
           },
         },
         {
@@ -60,7 +60,7 @@ export class InventoryDao implements IInventoryDao {
             _id: 0,
             shoeSize: "$_id",
             sellPrice: "$sellPrice",
-            inventoryId: "$inventoryId"
+            inventoryId: "$inventoryId",
           },
         },
       ])

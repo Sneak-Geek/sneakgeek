@@ -5,8 +5,8 @@
 import { Inventory } from "../../database";
 import { CreateInventoryDto } from "./CreateInventoryDto";
 
-export type PriceSizeAgg = { 
-  shoeSize: string; 
+export type PriceSizeAgg = {
+  shoeSize: string;
   sellPrice: number;
   inventoryId: number;
 };
