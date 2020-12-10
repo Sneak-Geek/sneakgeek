@@ -9,7 +9,7 @@ export interface IPaymentService {
     paymentType: string,
     orderId: string,
     totalFee: string,
-    baseCallbackUrl: string
+    baseCallbackUrl: string,
     shoeInfo?: Shoe
   ): string;
 

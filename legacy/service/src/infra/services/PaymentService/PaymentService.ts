@@ -39,7 +39,7 @@ export class PaymentService implements IPaymentService {
       vpc_Locale: this.VPC_LOCALE,
       vpc_ReturnURL: `${baseCallbackUrl}${this.VPC_CALLBACK_URL}`,
       vpc_MerchTxnRef: orderId,
-      vpc_OrderInfo: shoeInfo ? 'Thanh toán' : orderId,
+      vpc_OrderInfo: shoeInfo ? shoeInfo.name : orderId,
       vpc_Amount: `${totalFee}00`,
       vpc_TicketNo: "127.0.0.1",
       AgainLink: "https://google.com",
