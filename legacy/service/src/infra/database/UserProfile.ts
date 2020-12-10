@@ -14,7 +14,7 @@ const UserProvidedNameSchema = new mongoose.Schema({
 
 const UserProvidedAddressSchema = new mongoose.Schema({
   addressLine1: String,
-  addressLine2: String
+  addressLine2: String,
 });
 
 export const UserProfileSchema = new mongoose.Schema(
@@ -53,8 +53,8 @@ export type UserProfile = Document<{
 }>;
 
 type UserAddress = Document<{
-  addressLine1: string,
-  addressLine2: string
+  addressLine1: string;
+  addressLine2: string;
 }>;
 
 type UserName = Document<{

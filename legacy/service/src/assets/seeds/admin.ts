@@ -24,7 +24,7 @@ export const AdminProfile = {
   },
   userProvidedAddress: {
     addressLine1: "14c Ngô Thì Nhậm, Phường Hàng Bài, 1A0206, Quận Hoàn Kiếm, Hà Nội",
-    addressLine2: "Ngách 12/8"
+    addressLine2: "Ngách 12/8",
   },
   userProvidedPhoneNumber: "0947356248",
 };
