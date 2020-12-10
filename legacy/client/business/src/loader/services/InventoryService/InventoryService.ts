@@ -9,4 +9,10 @@ export class InventoryService extends BaseService implements IInventoryService {
       { headers: { authorization: token } }
     )
   }
+
+  public async getSelling() {
+    const { data } = await this.apiClient.getInstance().get("/inventory/selling");
+
+    return data;
+  }
 }

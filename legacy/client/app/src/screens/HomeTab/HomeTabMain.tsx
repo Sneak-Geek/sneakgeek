@@ -11,9 +11,17 @@ import {
   FlatList,
   TouchableWithoutFeedback,
 } from 'react-native';
-import {connect} from 'utilities';
+import {connect, getDependency, toCurrencyString} from 'utilities';
 import {IAppState} from 'store/AppStore';
-import {NetworkRequestState, Catalog, getHomeCatalogs, Shoe} from 'business';
+import {
+  NetworkRequestState,
+  Catalog,
+  getHomeCatalogs,
+  Shoe,
+  SellingInventory,
+  FactoryKeys,
+  IInventoryService,
+} from 'business';
 import {toggleIndicator} from 'actions';
 import {strings, themes} from 'resources';
 import {StackNavigationProp} from '@react-navigation/stack';
@@ -123,9 +131,13 @@ type Props = {
   getHomepageCatalogs(): void;
 };
 
-type ShoeCardProps = {
-  shoe: Shoe;
+type CurrentInventoryProps = {
+  currentInventory: SellingInventory;
   onPress: () => void;
+};
+
+type State = {
+  selling: SellingInventory[];
 };
 
 @connect(
@@ -141,12 +153,22 @@ type ShoeCardProps = {
     },
   }),
 )
-export class HomeTabMain extends React.Component<Props> {
+export class HomeTabMain extends React.Component<Props, State> {
+  state = {
+    selling: new Array<SellingInventory>(),
+  };
+
   public componentDidMount(): void {
+    const inventoryService: IInventoryService = getDependency(
+      FactoryKeys.IInventoryService,
+    );
+    inventoryService
+      .getSelling()
+      .then((inventories) => this.setState({selling: inventories}));
     this.props.getHomepageCatalogs();
   }
 
-  public componentDidUpdate(prevProps: Props): void {
+  public componentDidUpdate(prevProps: Props) {
     if (this.props.navigation.isFocused()) {
       const prevState = prevProps.homeCatalogState.state;
       const {homeCatalogState, toggleLoadingIndicator} = this.props;
@@ -180,8 +202,8 @@ export class HomeTabMain extends React.Component<Props> {
         {state === NetworkRequestState.SUCCESS && (
           <ScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.rootContainer}>
-              {this._renderByBrand('Nike')}
-              {this._renderRanking()}
+              {this._renderCurrentSelling()}
+              {this._renderTopTrending()}
             </View>
           </ScrollView>
         )}
@@ -189,13 +211,13 @@ export class HomeTabMain extends React.Component<Props> {
     );
   }
 
-  private _renderRanking(): JSX.Element {
+  private _renderTopTrending(): JSX.Element {
     const ranking = this.props.homeCatalogState.catalogs.ranking;
 
     return (
       <View>
         <AppText.Title2 style={styles.sectionTitle}>
-          {ranking.title}
+          {strings.TopTrending}
         </AppText.Title2>
         <ScrollView horizontal={true} pagingEnabled={true}>
           {this._renderRankingList(ranking.products.slice(0, 5), 1)}
@@ -209,7 +231,6 @@ export class HomeTabMain extends React.Component<Props> {
     products: Shoe[],
     startIndex: number,
   ): JSX.Element {
-    console.log("Products", products);
     return (
       <View style={styles.rankingRootContainer}>
         <View style={styles.rankingInnerContainer}>
@@ -247,12 +268,12 @@ export class HomeTabMain extends React.Component<Props> {
     );
   }
 
-  private _renderByBrand(brand: 'Nike' | 'adidas' | 'Jordan'): JSX.Element {
-    const catalog = this.props.homeCatalogState.catalogs[brand];
+  private _renderCurrentSelling(): JSX.Element {
+    const catalog = this.props.homeCatalogState.catalogs.Nike;
     return (
       <View style={{marginVertical: 10}}>
         <View style={styles.brandTitleContainer}>
-          <AppText.Title2>{catalog.title}</AppText.Title2>
+          <AppText.Title2>{strings.Selling}</AppText.Title2>
           <AppText.Footnote
             style={{textDecorationLine: 'underline'}}
             onPress={this._seeMore.bind(this, catalog)}>
@@ -262,13 +283,13 @@ export class HomeTabMain extends React.Component<Props> {
         <FlatList
           horizontal={true}
           keyExtractor={(itm): string => itm._id}
-          data={catalog.products.slice(0, 10)}
+          data={this.state.selling}
           style={{marginVertical: 20, paddingLeft: 20}}
           showsHorizontalScrollIndicator={false}
           renderItem={({item}): JSX.Element => (
-            <HotShoeRegular
-              shoe={item}
-              onPress={this._navigateToProductDetail.bind(this, item)}
+            <CurrentInventory
+              currentInventory={item}
+              onPress={this._navigateToProductDetail.bind(this, item.shoe)}
             />
           )}
         />
@@ -277,28 +298,33 @@ export class HomeTabMain extends React.Component<Props> {
   }
 
   private _navigateToProductDetail(shoe: Shoe): void {
-    this.props.navigation.navigate(RouteNames.Product.Name, { shoe });
+    this.props.navigation.navigate(RouteNames.Product.Name, {shoe});
   }
 
   private _seeMore(catalog: Catalog): void {
-    this.props.navigation.push("CatalogSeeMore", {catalog});
+    this.props.navigation.push('CatalogSeeMore', {catalog});
   }
 }
 
-const HotShoeRegular = ({shoe, onPress}: ShoeCardProps): JSX.Element => (
+const CurrentInventory = ({
+  currentInventory,
+  onPress,
+}: CurrentInventoryProps): JSX.Element => (
   <TouchableOpacity onPress={onPress}>
     <View style={styles.hotShoeRegularContainer}>
       <Image
-        source={{uri: shoe.media.imageUrl}}
+        source={{uri: currentInventory.shoe.media.imageUrl}}
         style={{width: 140, height: 120}}
         resizeMode={'contain'}
       />
-      <AppText.Subhead
-        numberOfLines={2}
-        ellipsizeMode={'tail'}
-        style={{marginTop: 25, paddingVertical: 8, paddingHorizontal: 12}}>
-        {shoe.title}
-      </AppText.Subhead>
+      <View style={{marginTop: 25, marginHorizontal: 8, marginBottom: 10}}>
+        <AppText.Subhead numberOfLines={2} ellipsizeMode={'tail'}>
+          {currentInventory.shoe.title}
+        </AppText.Subhead>
+        <AppText.Callout style={{marginTop: 10}}>
+          {toCurrencyString(currentInventory.sellPrice)}
+        </AppText.Callout>
+      </View>
     </View>
   </TouchableOpacity>
 );
