@@ -1,11 +1,19 @@
 import React from 'react';
-import {Shoe,BuyOrder,SellOrder,Profile,IOrderService,FactoryKeys,PaymentType} from 'business';
+import {
+  Shoe,
+  BuyOrder,
+  SellOrder,
+  Profile,
+  IOrderService,
+  FactoryKeys,
+  PaymentType,
+} from 'business';
 import {SafeAreaConsumer} from 'react-native-safe-area-context';
 import {View, ScrollView, FlatList, Dimensions} from 'react-native';
-import { RootStackParams } from 'navigations/RootStack';
+import {RootStackParams} from 'navigations/RootStack';
 import {RouteProp} from '@react-navigation/native';
 import {connect, getToken, getDependency} from 'utilities';
-import { IAppState } from 'store/AppStore';
+import {IAppState} from 'store/AppStore';
 import {
   showErrorNotification,
   showSuccessNotification,
@@ -20,51 +28,52 @@ import {
 } from '@react-navigation/stack';
 import {styles} from './styles';
 import {SizeSelection} from '../';
-import { BuyConfirmation } from '../BuyConfirmation';
-import { OrderSummary } from 'screens/Product/OrderSummary';
+import {BuyConfirmation} from '../BuyConfirmation';
+import {OrderSummary} from 'screens/Product/OrderSummary';
 import RouteNames from 'navigations/RouteNames';
 import ActionSheet from 'react-native-action-sheet';
+import {SizePriceMap} from 'business/src';
 
 type NewBuyOrderChild = {
   render: () => JSX.Element;
   canProceed: () => boolean;
-}
+};
 
 type Props = {
-    profile: Profile;
-    route: RouteProp<RootStackParams, 'NewBuyOrder'>;
-    navigation: StackNavigationProp<RootStackParams, 'NewBuyOrder'>;
-    
-    showErrorNotification: (message: string) => void;
-    showSuccessNotification: (message: string) => void;
-    toggleLoading: (isLoading: boolean) => void;
+  profile: Profile;
+  route: RouteProp<RootStackParams, 'NewBuyOrder'>;
+  navigation: StackNavigationProp<RootStackParams, 'NewBuyOrder'>;
+
+  showErrorNotification: (message: string) => void;
+  showSuccessNotification: (message: string) => void;
+  toggleLoading: (isLoading: boolean) => void;
 };
 
 type State = {
-    highestBuyOrder?: BuyOrder;
-    lowestSellOrder?: SellOrder;
-    newBuyOrder: Partial<BuyOrder>;
-    currentIndex: number;
-    // childComponents: NewBuyOrderChild[];
-    isBuyNow: boolean;
-    shippingFee?: number;
+  buyOrder: {
+    inventoryId: string;
+    shoeSize: string;
+    sellPrice: number;
+  };
+  currentIndex: number;
+  isBuyNow: boolean;
 };
 
 @connect(
-    (state: IAppState) => ({
-        profile: state.UserState.profileState.profile,
-    }),
-    (dispatch: Function) => ({
-        toggleLoading: (isLoading: boolean) => {
-        dispatch(toggleIndicator({isLoading, message: strings.PleaseWait}));
-        },
-        showErrorNotification: (message: string): void => {
-        dispatch(showErrorNotification(message));
-        },
-        showSuccessNotification: (message: string): void => {
-        dispatch(showSuccessNotification(message));
-        },
-    }),
+  (state: IAppState) => ({
+    profile: state.UserState.profileState.profile,
+  }),
+  (dispatch: Function) => ({
+    toggleLoading: (isLoading: boolean) => {
+      dispatch(toggleIndicator({isLoading, message: strings.PleaseWait}));
+    },
+    showErrorNotification: (message: string): void => {
+      dispatch(showErrorNotification(message));
+    },
+    showSuccessNotification: (message: string): void => {
+      dispatch(showSuccessNotification(message));
+    },
+  }),
 )
 export class NewBuyOrder extends React.Component<Props, State> {
   private _shoe: Shoe;
@@ -74,75 +83,59 @@ export class NewBuyOrder extends React.Component<Props, State> {
 
   public constructor(props: Props) {
     super(props);
-    
+
     this.state = {
-      highestBuyOrder: null,
-      lowestSellOrder: null,
-      newBuyOrder: {
-        shoeId: this.props.route.params.shoe._id,
-        shoeSize: undefined,
-        isNewShoe: true,
-        buyPrice: undefined,
+      buyOrder: {
+        inventoryId: null,
+        sellPrice: null,
+        shoeSize: null,
       },
       currentIndex: 0,
       isBuyNow: false,
-      shippingFee: null,
-    }
+    };
 
     this._shoe = this.props.route.params.shoe;
-    this._orderService = getDependency<IOrderService>(FactoryKeys.IOrderService);
+    this._orderService = getDependency<IOrderService>(
+      FactoryKeys.IOrderService,
+    );
 
     this._childComponents = [
-        {
-          render: () => (
-            <SizeSelection
-              key={0}
-              shoe={this._shoe}
-              orderType="SellOrder"
-              onSelectSize={this._setShoeSize.bind(this)}
-            />
-          ),
-          canProceed: (): boolean => {
-            return this.state.newBuyOrder.shoeSize !== undefined;
-          },
+      {
+        render: () => (
+          <SizeSelection
+            key={0}
+            shoe={this._shoe}
+            orderType="SellOrder"
+            onSelectSize={(priceMap) => {
+              this._setShoeSizeAndPrice(priceMap);
+            }}
+          />
+        ),
+        canProceed: (): boolean => {
+          return this.state.buyOrder.shoeSize !== undefined;
         },
-        {
-          render: () => (
-            <BuyConfirmation
-              key={1}
-              highestBuyOrder={this.state.highestBuyOrder}
-              lowestSellOrder={this.state.lowestSellOrder}
-              onSetBuyPrice={this._setBuyPrice.bind(this)}
-            />
-          ),
-          canProceed: (): boolean => {
-            return this.state.newBuyOrder.buyPrice > 0;
-          },
+      },
+      {
+        render: () => (
+          <OrderSummary
+            key={1}
+            onEditShippingInfo={() =>
+              this.props.navigation.navigate(RouteNames.Tab.AccountTab.Name, {
+                screen: RouteNames.Tab.AccountTab.EditProfile,
+              })
+            }
+            userProfile={this.props.profile}
+            shoeSize={this.state.buyOrder.shoeSize}
+            price={this.state.buyOrder.sellPrice}
+            inventoryId={this.state.buyOrder.inventoryId}
+          />
+        ),
+        canProceed: (): boolean => {
+          return true;
         },
-        {
-          render: () => (
-            <OrderSummary
-              key={2}
-              onEditShippingInfo={() =>
-                this.props.navigation.navigate(RouteNames.Tab.AccountTab.Name, {
-                  screen: RouteNames.Tab.AccountTab.EditProfile,
-                })
-              }
-              userProfile={this.props.profile}
-              orderType='BuyOrder'
-              shoeSize={this.state.newBuyOrder.shoeSize}
-              isNewShoe={this.state.newBuyOrder.isNewShoe}
-              price={this.state.newBuyOrder.buyPrice}
-              shippingFee={this.state.shippingFee}
-            />
-          ),
-          canProceed: (): boolean => {
-            return true;
-          }
-        }
-      ];
-    }
-
+      },
+    ];
+  }
 
   public render(): JSX.Element {
     return (
@@ -211,53 +204,19 @@ export class NewBuyOrder extends React.Component<Props, State> {
       ? this.state.currentIndex + 1
       : this.state.currentIndex - 1;
 
-      if (canGoNext && this.state.currentIndex === 0) {
-        this.props.toggleLoading(true);
-        const {
-          lowestSellOrder,
-          highestBuyOrder
-        } = await this._orderService.getLowestSellOrderAndHighestBuyOrder(
-          getToken(),
-          this.state.newBuyOrder.shoeId,
-          this.state.newBuyOrder.shoeSize,
-        );
-        this.setState(
-          {lowestSellOrder, highestBuyOrder, currentIndex: nextIndex},
-          () => {
-            this.props.toggleLoading(false);
-            if (canGoNext || canGoBack) {
-              this._childFlatList.scrollToIndex({
-                index: nextIndex,
-                animated: true,
-              });
-            }
-          }
-        );
-      } else if (canGoNext && this.state.isBuyNow && this.state.currentIndex === this._childComponents.length - 2) {
-        this.props.toggleLoading(true);
-        let shippingFee = (await this._orderService.getTotalFee(getToken(), this.state.lowestSellOrder._id)).shippingFee;
-        this.setState(
-          {shippingFee, currentIndex: nextIndex},
-          () => {
-            this.props.toggleLoading(false);
-            if (canGoNext || canGoBack) {
-              this._childFlatList.scrollToIndex({
-                index: nextIndex,
-                animated: true,
-              });
-            }
-          }
-        )
-      } else if (canGoNext || canGoBack) {
-        this.setState({ currentIndex: nextIndex }, () => {
-          this._childFlatList.scrollToIndex({
-            index: nextIndex,
-            animated: true
-          })
+    if (
+      canGoNext &&
+      this.state.isBuyNow &&
+      this.state.currentIndex === this._childComponents.length - 2
+    ) {
+    } else if (canGoNext || canGoBack) {
+      this.setState({currentIndex: nextIndex}, () => {
+        this._childFlatList.scrollToIndex({
+          index: nextIndex,
+          animated: true,
         });
-      }
-
-    
+      });
+    }
   }
 
   private _renderNewBuyOrderContent(): JSX.Element {
@@ -288,7 +247,9 @@ export class NewBuyOrder extends React.Component<Props, State> {
       <View>
         <BottomButton
           title={(shouldBuyShoe
-            ? (this.state.isBuyNow ? strings.BuyShoe : strings.CreateBuyOrder)
+            ? this.state.isBuyNow
+              ? strings.BuyShoe
+              : strings.CreateBuyOrder
             : strings.Continue
           ).toUpperCase()}
           style={{
@@ -297,28 +258,15 @@ export class NewBuyOrder extends React.Component<Props, State> {
               ? themes.AppSecondaryColor
               : themes.AppDisabledColor,
             borderRadius: themes.LargeBorderRadius,
-            marginLeft: 20,
-            width: Dimensions.get('window').width - 40,
           }}
-          onPress={() => this.state.currentIndex !== this._childComponents.length - 1 ? this._onListScroll() : (this.state.isBuyNow ? this._buyNow() : this._createBuyOrder())}
+          onPress={() =>
+            this.state.currentIndex !== this._childComponents.length - 1
+              ? this._onListScroll()
+              : this._buyNow()
+          }
         />
       </View>
     );
-  }
-
-  private async _createBuyOrder() {
-    this.props.toggleLoading(true);
-    try {
-      await this._orderService.createBuyOrder(getToken(), this.state.newBuyOrder);
-      this.props.showSuccessNotification('Đã đặt mua thành công sản phẩm!');
-      this.props.navigation.navigate(RouteNames.Product.ProductDetail);
-    } catch (error) {
-      this.props.showErrorNotification(
-        'Đã có lỗi xảy ra, xin vui lòng thử lại',
-      );
-    } finally {
-      this.props.toggleLoading(false);
-    }
   }
 
   private _buyNow() {
@@ -347,21 +295,18 @@ export class NewBuyOrder extends React.Component<Props, State> {
   private _purchaseProduct(paymentType: PaymentType): void {
     this.props.navigation.push(RouteNames.Order.Payment, {
       paymentType,
-      sellOrder: this.state.lowestSellOrder,
+      inventoryId: this.state.buyOrder.inventoryId,
     });
   }
 
-
-  private _setShoeSize(shoeSize: string): void {
-    this.setState(
-      {newBuyOrder: {...this.state.newBuyOrder, shoeSize}},
-    );
-  }
-
-  private _setBuyPrice(buyPrice: number, isBuyNow: boolean): void {
+  private _setShoeSizeAndPrice(priceMap: SizePriceMap): void {
     this.setState({
-      newBuyOrder: {...this.state.newBuyOrder, buyPrice},
-      isBuyNow,
-    })
+      buyOrder: {
+        ...this.state.buyOrder,
+        sellPrice: priceMap.sellPrice,
+        inventoryId: priceMap.inventoryId,
+        shoeSize: priceMap.shoeSize,
+      },
+    });
   }
 }

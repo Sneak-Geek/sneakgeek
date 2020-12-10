@@ -43,4 +43,27 @@ export class InventoryDao implements IInventoryDao {
       quantity: inventoryDto.quantity,
     });
   }
+
+  public async getPriceBySize(shoeId: string) {
+    return this.inventoryRepository
+      .aggregate([
+        { $match: { shoeId: mongoose.Types.ObjectId(shoeId) } },
+        {
+          $group: {
+            _id: "$shoeSize",
+            sellPrice: { $first: "$sellPrice" },
+            inventoryId: { $first: "$_id" }
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            shoeSize: "$_id",
+            sellPrice: "$sellPrice",
+            inventoryId: "$inventoryId"
+          },
+        },
+      ])
+      .exec();
+  }
 }

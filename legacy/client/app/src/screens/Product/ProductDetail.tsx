@@ -385,7 +385,7 @@ export class ProductDetail extends React.Component<Props> {
 
     const isVerified = account?.isVerified;
     const missingAddress =
-      profile &&  
+      profile &&
       !profile.isSeller &&
       (!profile?.userProvidedAddress ||
         !profile?.userProvidedAddress.city ||
@@ -427,7 +427,7 @@ export class ProductDetail extends React.Component<Props> {
     };
 
     return (
-      <TouchableOpacity onPress={onPressWrapper}>
+      <TouchableOpacity onPress={onPress}>
         <View
           style={{
             backgroundColor,
