@@ -4,6 +4,7 @@ import HttpStatus from "http-status";
 import { inject } from "inversify";
 import {
   controller,
+  httpGet,
   httpPost,
   request,
   requestBody,
@@ -54,5 +55,11 @@ export class InventoryController {
       ...inventoryBody,
     });
     return res.status(HttpStatus.OK).send();
+  }
+
+  @httpGet("/selling")
+  public async getCurrentlySelling(@response() res: Response) {
+    const result = await this.inventoryDao.getCurrentlySelling();
+    return res.status(HttpStatus.OK).send(result);
   }
 }

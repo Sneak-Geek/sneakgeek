@@ -66,4 +66,41 @@ export class InventoryDao implements IInventoryDao {
       ])
       .exec();
   }
+
+  public async getCurrentlySelling() {
+    return this.inventoryRepository
+      .aggregate([
+        {
+          $group: {
+            _id: "$shoeId",
+            sellPrice: { $min: "$sellPrice" },
+            stock: { $sum: 1 },
+          },
+        },
+        {
+          $match: {
+            stock: { $gt: 0 },
+          },
+        },
+        {
+          $lookup: {
+            from: "shoes",
+            localField: "_id",
+            foreignField: "_id",
+            as: "shoe",
+          },
+        },
+        {
+          $unwind: { path: "$shoe" },
+        },
+        {
+          $project: {
+            _id: 0,
+            shoe: 1,
+            sellPrice: 1,
+          },
+        },
+      ])
+      .exec();
+  }
 }
