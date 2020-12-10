@@ -31,6 +31,7 @@ export const OrderSchema = new mongoose.Schema(
 export type Order = Document<{
   buyerId: ObjectId;
   inventoryId: ObjectId;
+  status: string;
 }>;
 
 export const OrderRepository: Repository<Order> = mongoose.model("Order", OrderSchema);

@@ -4,7 +4,6 @@ import RouteNames from './RouteNames';
 import {AuthenticationStack} from './AuthenticationStack';
 import {TabStack} from './TabStack';
 import {NavigationContainer} from '@react-navigation/native';
-import {ProductStack} from './ProductStack';
 import {
   Shoe,
   Catalog,
@@ -18,8 +17,8 @@ import {
 } from 'business';
 import {OrderStack} from './OrderStack';
 import {SplashScreen} from 'screens/SplashScreen';
-import { ProductDetail } from 'screens/Product';
-import { strings, themes } from 'resources';
+import {ProductDetail} from 'screens/Product';
+import {strings, themes} from 'resources';
 
 export type RootStackParams = {
   ProductRequest: undefined;
@@ -38,7 +37,7 @@ export type RootStackParams = {
   OrderSizeSelection: {shoe: Shoe};
   OrderBuyConfirmation: {shoe: Shoe; size: string; minPrice: number};
   OrderPayment: {
-    sellOrder: SellOrder;
+    inventoryId: string;
     paymentType: PaymentType;
   };
   SellOrderHistory: undefined;
@@ -77,7 +76,7 @@ const RootStack = (): JSX.Element => (
         name={RouteNames.Auth.Name}
         component={AuthenticationStack}
         options={{
-          headerShown: false
+          headerShown: false,
         }}
       />
       <Stack.Screen
@@ -88,12 +87,13 @@ const RootStack = (): JSX.Element => (
           headerShown: false,
         }}
       />
-      <Stack.Screen name={RouteNames.Product.Name} 
-        component={ProductDetail} 
+      <Stack.Screen
+        name={RouteNames.Product.Name}
+        component={ProductDetail}
         options={{
           title: strings.ProductDetail,
           headerBackTitleVisible: false,
-          headerTitleStyle: themes.TextStyle.title3
+          headerTitleStyle: themes.TextStyle.title3,
         }}
       />
       <Stack.Screen
@@ -101,7 +101,7 @@ const RootStack = (): JSX.Element => (
         component={OrderStack}
         options={{
           gestureEnabled: false,
-          headerShown: false
+          headerShown: false,
         }}
       />
     </Stack.Navigator>

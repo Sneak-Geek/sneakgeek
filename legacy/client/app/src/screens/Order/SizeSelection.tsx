@@ -1,5 +1,5 @@
 import React from 'react';
-import {SafeAreaView, StyleSheet, View} from 'react-native';
+import {View} from 'react-native';
 import {SizePricePicker} from 'screens/Shared';
 import {getDependency, connect, getToken} from 'utilities';
 import {
@@ -8,36 +8,23 @@ import {
   SettingsKey,
   Shoe,
   OrderType,
+  SizePriceMap,
 } from 'business';
-import {StackNavigationProp} from '@react-navigation/stack';
-import {RouteProp} from '@react-navigation/native';
-import {RootStackParams} from 'navigations/RootStack';
-import {ShoeHeaderSummary, BottomButton} from 'screens/Shared';
-import {strings, themes} from 'resources';
+import {strings} from 'resources';
 import {toggleIndicator, showErrorNotification} from 'actions';
-import RouteNames from 'navigations/RouteNames';
 import {IOrderService} from 'business/src';
 
-const styles = StyleSheet.create({
-  rootContainer: {
-    backgroundColor: 'white',
-    flex: 1,
-  },
-});
-
 type Props = {
-  // navigation: StackNavigationProp<RootStackParams>;
-  // route: RouteProp<RootStackParams, 'SizeSelection'>;
   shoe: Shoe;
   orderType: OrderType;
-  onSelectSize: (size: string) => void;
+  onSelectSize: (sizePriceMap: SizePriceMap) => void;
 
   toggleLoading: (isLoading: boolean) => void;
   showErrorMessage: (msg: string) => void;
 };
 
 type State = {
-  priceMap: Map<string, number>;
+  priceMap: SizePriceMap[];
   selectedSize: string;
 };
 
@@ -70,7 +57,7 @@ export class SizeSelection extends React.Component<Props, State> {
     this.orderType = this.props.orderType;
 
     this.state = {
-      priceMap: new Map(),
+      priceMap: [],
       selectedSize: '',
     };
   }
@@ -80,12 +67,24 @@ export class SizeSelection extends React.Component<Props, State> {
   }
 
   public render(): JSX.Element {
+    if (this.state.priceMap.length === 0) {
+      return <></>;
+    }
+
+    const priceMap = new Map<string, number>();
+    this.state.priceMap.forEach((p) => {
+      priceMap.set(p.shoeSize, p.sellPrice);
+    });
+
     return (
       <View style={{flex: 1}}>
         <SizePricePicker
           sizes={this.shoeSizes}
-          priceMap={this.state.priceMap}
-          onSizeSelected={this.props.onSelectSize}
+          priceMap={priceMap}
+          onSizeSelected={(size) => {
+            const result = this.state.priceMap.find((t) => t.shoeSize === size);
+            this.props.onSelectSize(result);
+          }}
         />
       </View>
     );
@@ -99,19 +98,12 @@ export class SizeSelection extends React.Component<Props, State> {
     this.props.toggleLoading(true);
 
     try {
-      const priceSizeMap: {
-        price: number;
-        size: string;
-      }[] = await orderService.getPriceSizeMap(
+      const priceMap: SizePriceMap[] = await orderService.getPriceSizeMap(
         getToken(),
-        this.orderType,
         this.shoe._id,
       );
 
-      const result = new Map<string, number>();
-      priceSizeMap.forEach(({price, size}) => result.set(size, price));
-
-      this.setState({priceMap: result});
+      this.setState({priceMap});
     } catch (error) {
       console.log(error);
       const errorMessage =

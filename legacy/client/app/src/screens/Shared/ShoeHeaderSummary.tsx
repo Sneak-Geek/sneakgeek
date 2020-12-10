@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, Image, StyleSheet} from 'react-native';
 import {AppText} from './Text';
-import {themes} from 'resources';
+import {strings, themes} from 'resources';
 import {Shoe} from 'business';
 
 const styles = StyleSheet.create({
@@ -19,14 +19,13 @@ const styles = StyleSheet.create({
   titleContainer: {
     flex: 1,
     flexDirection: 'column',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'center',
-
   },
   shoeImage: {
     width: 120,
     aspectRatio: 2,
-    alignSelf: 'center'
+    alignSelf: 'center',
   },
 });
 
@@ -41,7 +40,9 @@ export const ShoeHeaderSummary = (props: {shoe: Shoe}): JSX.Element => (
       <AppText.Body style={{flexWrap: 'wrap', marginBottom: 8}}>
         {props.shoe.title}
       </AppText.Body>
-      <AppText.Subhead>{props.shoe.colorway.join(', ')}</AppText.Subhead>
+      <AppText.Body>
+        {strings.Gender}: {props.shoe.gender}
+      </AppText.Body>
     </View>
   </View>
 );

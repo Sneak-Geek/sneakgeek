@@ -3,7 +3,6 @@ import { BaseService } from "../BaseService";
 import {
   SellOrder,
   PopulatedSellOrder,
-  BuyOrder,
   PopulatedBuyOrder,
   Transaction
 } from "../../../model";
@@ -27,14 +26,14 @@ export class OrderService extends BaseService implements IOrderService {
   }
 
 
-  public async getPriceSizeMap(token: string, orderType: OrderType, shoeId: string): Promise<{ price: number; size: string; }[]> {
-    const response = await this.apiClient.getInstance().get(`/order/shoe-price-size-map?orderType=${orderType}&shoeId=${shoeId}`, {
+  public async getPriceSizeMap(token: string, shoeId: string) {
+    const response = await this.apiClient.getInstance().get(`/order/shoe-price-size-map?shoeId=${shoeId}`, {
       headers: {
         authorization: token
       }
     });
 
-    return response.data as { price: number, size: string }[];
+    return response.data;
   }
 
   public async getTotalFee(token: string, sellOrderId: string): Promise<{ shippingFee: number, shoePrice: number }> {
@@ -50,11 +49,8 @@ export class OrderService extends BaseService implements IOrderService {
     return response.data;
   }
 
-  public async getCheckoutUrlForPurchase(token: string, paymentType: PaymentType, sellOrder: string, buyOrder?: string): Promise<string> {
-    let url = `/order/pay?paymentType=${paymentType}&sellOrderId=${sellOrder}`;
-    if (buyOrder) {
-      url += `?buyOrderId=${buyOrder}`;
-    }
+  public async getCheckoutUrlForPurchase(token: string, paymentType: PaymentType, inventoryId: string): Promise<string> {
+    let url = `/order/pay?paymentType=${paymentType}&inventoryId=${inventoryId}`;
 
     const response = await this.apiClient.getInstance().get(
       url,
@@ -100,9 +96,11 @@ export class OrderService extends BaseService implements IOrderService {
     return response.data;
   }
 
-  public async createBuyOrder(token: string, buyOrder: Partial<BuyOrder>) {
-    const response = await this.apiClient.getInstance().post(`/order/buy-order/new`,
-      buyOrder,
+  public async createBuyOrder(token: string, inventoryId: string) {
+    const response = await this.apiClient.getInstance().post(`/order/new`,
+      {
+        inventoryId
+      },
       {
         headers: {
           authorization: token

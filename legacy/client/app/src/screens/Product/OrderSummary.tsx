@@ -1,21 +1,10 @@
 import * as React from 'react';
-import {
-  Dimensions,
-  Image,
-  ScrollView,
-  StyleSheet,
-  View,
-  TouchableOpacity,
-} from 'react-native';
+import {Dimensions, StyleSheet, View} from 'react-native';
 import {Divider} from 'react-native-elements';
 import {} from 'react-native-gesture-handler';
-import ImagePicker, {ImagePickerOptions} from 'react-native-image-picker';
 import {AppText} from 'screens/Shared';
-import {SellOrder} from 'business';
 import {toCurrencyString} from 'utilities';
-import {images, strings} from 'resources';
 import {Profile} from 'business';
-import { OrderType } from 'business/src';
 
 const styles = StyleSheet.create({
   sectionContainer: {
@@ -37,10 +26,6 @@ const styles = StyleSheet.create({
     marginBottom: 25,
   },
 
-  shippingInfoBottomDivider: {
-    marginTop: 25,
-  },
-
   shippingInfoDetails: {
     marginTop: 10,
   },
@@ -57,44 +42,25 @@ const styles = StyleSheet.create({
 });
 
 type Props = {
-  orderType: OrderType;
   shoeSize: string;
-  isNewShoe: boolean;
   price: number;
-  shippingFee?: number;
+  inventoryId: string;
   // orderSummary: Partial<SellOrder>;
   userProfile: Profile;
-  onShoePictureAdded: (picUri: string) => void;
   onEditShippingInfo: () => void;
 };
 
 export class OrderSummary extends React.Component<Props> {
-  private readonly imagePickerOptions: ImagePickerOptions = {
-    allowsEditing: true,
-    mediaType: 'photo',
-    quality: 0.75,
-  };
-
-  public /** override */ render(): JSX.Element {
+  public render(): JSX.Element {
     return (
       <View style={{flex: 1, width: Dimensions.get('screen').width}}>
         <View style={{flex: 1, paddingHorizontal: 20}}>
+          {this._renderSummaryDetail('Cỡ giày', this.props.shoeSize)}
           {this._renderSummaryDetail(
-            'Cỡ giày',
-            this.props.shoeSize,
-          )}
-          {this._renderSummaryDetail(
-            'Tình trạng',
-            this.props.isNewShoe ? 'Mới' : 'Cũ',
-          )}
-          {this._renderShippingInfo()}
-          {this._renderSummaryDetail(
-            this.props.orderType === 'SellOrder' ? 'Giá bán' : 'Giá mua',
+            'Giá bán',
             toCurrencyString(this.props.price),
           )}
-          {this.props.shippingFee >= 0 && this._renderSummaryDetail('Phí vận chuyển', toCurrencyString(this.props.shippingFee))}
-          {this.props.shippingFee >= 0 && this._renderSummaryDetail('Tổng cộng', toCurrencyString(this.props.price + this.props.shippingFee))}
-          {/* {!this.props.isNewShoe && this._renderPictures()} */}
+          {this._renderShippingInfo()}
         </View>
       </View>
     );
@@ -131,7 +97,6 @@ export class OrderSummary extends React.Component<Props> {
             {this._renderShippingInfoDetails()}
           </View>
         )}
-        <Divider style={styles.shippingInfoBottomDivider} />
       </View>
     );
   }
@@ -181,39 +146,5 @@ export class OrderSummary extends React.Component<Props> {
           }>{`${ward} - ${district} - ${city}`}</AppText.Footnote>
       </>
     );
-  }
-
-  // private _renderPictures(): JSX.Element {
-  //   return (
-  //     <View style={{flex: 1, flexDirection: 'column'}}>
-  //       <AppText.Body>{strings.ProductPictures}</AppText.Body>
-  //       <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-  //         <View style={{flex: 1, flexDirection: 'row', marginTop: 10}}>
-  //           <TouchableOpacity onPress={this._launchImagePicker.bind(this)}>
-  //             <Image
-  //               source={images.CameraPlaceholder}
-  //               style={styles.imageContainer}
-  //             />
-  //           </TouchableOpacity>
-  //           {this.props.orderSummary?.pictures?.map((item, index) => (
-  //             <Image
-  //               key={index}
-  //               source={{uri: item}}
-  //               style={styles.imageContainer}
-  //               resizeMode={'cover'}
-  //             />
-  //           ))}
-  //         </View>
-  //       </ScrollView>
-  //     </View>
-  //   );
-  // }
-
-  private _launchImagePicker(): void {
-    ImagePicker.launchImageLibrary(this.imagePickerOptions, (result) => {
-      if (!result.didCancel) {
-        this.props.onShoePictureAdded(result.uri);
-      }
-    });
   }
 }
