@@ -1,5 +1,5 @@
 import React from 'react';
-import {SellOrder, PaymentType, IOrderService, FactoryKeys} from 'business';
+import {PaymentType, IOrderService, FactoryKeys} from 'business';
 import {getDependency, connect, getToken} from 'utilities';
 import {toggleIndicator, showSuccessNotification} from 'actions';
 import {strings, themes} from 'resources';
@@ -15,7 +15,6 @@ import {
 } from '@react-navigation/stack';
 import {AppText} from 'screens/Shared';
 import {Icon} from 'react-native-elements';
-import RouteNames from 'navigations/RouteNames';
 
 type Props = {
   route: RouteProp<RootStackParams, 'OrderPayment'>;
@@ -146,9 +145,8 @@ export class Payment extends React.Component<Props, State> {
     const data = event.nativeEvent.data as PaymentResult;
     if (data === 'success') {
       this.props.showMessage(strings.PaymentSuccess);
-      this.props.navigation.navigate(RouteNames.Tab.Name, {
-        screen: RouteNames.Tab.TransactionTab.Name,
-      });
+      this.props.navigation.goBack();
+      this.props.navigation.goBack();
     } else if (data === 'failed') {
       this.props.navigation.goBack();
       this.props.showMessage('Đã có lỗi xảy ra, xin vui lòng thử lại');
