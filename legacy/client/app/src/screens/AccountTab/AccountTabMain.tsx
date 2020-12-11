@@ -1,7 +1,7 @@
 import React from 'react';
-import { SafeAreaView, StatusBar, View, StyleSheet, Alert } from 'react-native';
-import { connect } from 'utilities/ReduxUtilities';
-import { IAppState } from 'store/AppStore';
+import {SafeAreaView, StatusBar, View, StyleSheet, Alert} from 'react-native';
+import {connect} from 'utilities/ReduxUtilities';
+import {IAppState} from 'store/AppStore';
 import {
   Profile,
   Account,
@@ -10,10 +10,10 @@ import {
   ObjectFactory,
   ISettingsProvider,
 } from 'business';
-import { themes, strings } from 'resources';
-import { AppText } from 'screens/Shared';
-import { ListItem } from 'react-native-elements';
-import { StackNavigationProp } from '@react-navigation/stack';
+import {themes, strings} from 'resources';
+import {AppText} from 'screens/Shared';
+import {ListItem} from 'react-native-elements';
+import {StackNavigationProp} from '@react-navigation/stack';
 import RouteNames from 'navigations/RouteNames';
 import {
   toggleIndicator,
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
   }),
   (dispatch: Function) => ({
     toggleLoading: (isLoading: boolean): void => {
-      dispatch(toggleIndicator({ isLoading, message: strings.PleaseWait }));
+      dispatch(toggleIndicator({isLoading, message: strings.PleaseWait}));
     },
     showNotification: (message: string, isError = false): void => {
       if (!isError) {
@@ -112,9 +112,9 @@ export class AccountTabMain extends React.Component<Props> {
 
   public render(): JSX.Element {
     return (
-      <SafeAreaView style={{ backgroundColor: themes.AppAccentColor, flex: 1 }}>
+      <SafeAreaView style={{backgroundColor: themes.AppAccentColor, flex: 1}}>
         <StatusBar barStyle={'dark-content'} />
-        <View style={{ flex: 1, position: 'relative' }}>
+        <View style={{flex: 1, position: 'relative'}}>
           {this._renderBasicUserData()}
           {this._renderSettingsList()}
           {this._renderBottomActionButton()}
@@ -124,7 +124,7 @@ export class AccountTabMain extends React.Component<Props> {
   }
 
   private _isUserLoggedIn() {
-    const { account, profile } = this.props;
+    const {account, profile} = this.props;
     return Boolean(account && profile);
   }
 
@@ -154,7 +154,7 @@ export class AccountTabMain extends React.Component<Props> {
   }
 
   private _renderBasicUserData(): JSX.Element {
-    const { profile } = this.props;
+    const {profile} = this.props;
     const firstName = profile?.userProvidedName?.firstName;
     const lastName = profile?.userProvidedName?.lastName;
 
@@ -179,7 +179,7 @@ export class AccountTabMain extends React.Component<Props> {
         title={setting.title}
         bottomDivider={true}
         titleStyle={themes.TextStyle.body}
-        leftIcon={{ name: setting.leftIcon, color: themes.AppPrimaryColor }}
+        leftIcon={{name: setting.leftIcon, color: themes.AppPrimaryColor}}
         onPress={setting.onClick}
       />
     ));
@@ -207,7 +207,7 @@ export class AccountTabMain extends React.Component<Props> {
         bottomDivider={true}
         titleStyle={themes.TextStyle.body}
         // leftIcon={{ name: iconTitle, color: themes.AppPrimaryColor }}
-        leftIcon={{ name: iconTitle, color: themes.AppPrimaryColor }}
+        leftIcon={{name: iconTitle, color: themes.AppPrimaryColor}}
         onPress={this._bottomButtonHandler.bind(this, isAccountAvailable)}
       />
     );

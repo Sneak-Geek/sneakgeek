@@ -25,15 +25,16 @@ export class InventoryController {
   @httpGet("/", middlewares.AuthMiddleware, middlewares.AccountVerifiedMiddleware, Types.IsSellerMiddleware)
   public async getInventories(@request() req: Request, @response() res: Response) {
     const profileId = req.user.profile as mongoose.Types.ObjectId;
-    const inventory = await this.inventoryDao.findByUserId(profileId.toHexString());
-    return res.status(HttpStatus.OK).send({ inventory });
+    console.log(profileId);
+    const inventoryWithShoe = await this.inventoryDao.findByUserId(profileId.toHexString());
+    return res.status(HttpStatus.OK).send(inventoryWithShoe);
   }
 
   @httpPost(
     "/new",
     middlewares.AuthMiddleware,
     middlewares.AccountVerifiedMiddleware,
-    // Types.IsSellerMiddleware,
+    Types.IsSellerMiddleware,
     body("shoeId").isString(),
     body("quantity").isInt({ min: 0 }),
     body("sellPrice").isInt({ min: 0 }),

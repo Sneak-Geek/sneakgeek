@@ -8,7 +8,7 @@ import {
   AccountTabEditProfile,
   AccountTabFaq,
   AccountTabPaymentInfo,
-  AccountTabInventory
+  AccountTabInventory,
 } from 'screens/AccountTab';
 import {
   createStackNavigator,
@@ -24,13 +24,10 @@ import {
   getNotification,
 } from 'business';
 import {CatalogSeeMore, NotificationsScreen} from 'screens/HomeTab';
-import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
-import {SellOrderHistory, OrderDetail, BuyOrders} from 'screens/TransactionTab';
 import {ProductRequest} from 'screens/SearchTab';
-import {getDependency, getToken, connect} from 'utilities';
-import {KeyExtensions} from 'common';
 import {IAppState} from 'store/AppStore';
 import {RootStackParams} from './RootStack';
+import {connect} from 'utilities';
 
 const Tab = createBottomTabNavigator();
 
@@ -60,6 +57,10 @@ const AccountTab = (): JSX.Element => (
     <AccountStack.Screen
       name={RouteNames.Tab.AccountTab.Inventory}
       component={AccountTabInventory}
+      options={{
+        ...themes.headerStyle,
+        title: strings.Inventory,
+      }}
     />
     <AccountStack.Screen
       name={RouteNames.Tab.AccountTab.Faq}
@@ -108,7 +109,7 @@ class HomeTab extends React.Component<HomeTabProps> {
                   marginLeft: 3,
                 }}
               />
-            )
+            ),
           }}
         />
         <HomeStack.Screen
@@ -154,49 +155,6 @@ const SearchTab = (): JSX.Element => (
   </SearchStack.Navigator>
 );
 
-const TopTab = createMaterialTopTabNavigator();
-
-const TransactionTopTabs = (): JSX.Element => (
-  <TopTab.Navigator tabBarOptions={themes.TabTopHeader}>
-    <TopTab.Screen
-      component={BuyOrders}
-      name={RouteNames.Tab.TransactionTab.Buy}
-      options={{
-        title: strings.BuyHistory,
-      }}
-    />
-    <TopTab.Screen
-      component={SellOrderHistory}
-      name={RouteNames.Tab.TransactionTab.SellOrderHistory}
-      options={{
-        title: strings.SellHistory,
-      }}
-    />
-  </TopTab.Navigator>
-);
-
-const TransactionStack = createStackNavigator();
-const TransactionTab = (): JSX.Element => (
-  <TransactionStack.Navigator>
-    <TransactionStack.Screen
-      name={RouteNames.Tab.TransactionTab.Main}
-      component={TransactionTopTabs}
-      options={{
-        ...themes.headerStyle,
-        title: strings.TransactionTab,
-      }}
-    />
-    <TransactionStack.Screen
-      name={RouteNames.Tab.TransactionTab.Detail}
-      component={OrderDetail}
-      options={{
-        headerShown: false,
-        headerTransparent: true,
-      }}
-    />
-  </TransactionStack.Navigator>
-);
-
 type RootTabProps = {
   pushDeviceToken: string;
   getNotifications: () => void;
@@ -213,7 +171,6 @@ type RootTabProps = {
   }),
 )
 export class TabStack extends React.Component<RootTabProps> {
-
   public componentDidMount() {
     const settingsProvider = Factory.getObjectInstance<ISettingsProvider>(
       Keys.ISettingsProvider,
