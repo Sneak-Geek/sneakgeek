@@ -22,7 +22,12 @@ export class InventoryController {
   @inject(Types.InventoryDao)
   private readonly inventoryDao!: IInventoryDao;
 
-  @httpGet("/", middlewares.AuthMiddleware, middlewares.AccountVerifiedMiddleware, Types.IsSellerMiddleware)
+  @httpGet(
+    "/",
+    middlewares.AuthMiddleware,
+    middlewares.AccountVerifiedMiddleware,
+    Types.IsSellerMiddleware
+  )
   public async getInventories(@request() req: Request, @response() res: Response) {
     const profileId = req.user.profile as mongoose.Types.ObjectId;
     console.log(profileId);
