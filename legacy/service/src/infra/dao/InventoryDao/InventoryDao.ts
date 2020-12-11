@@ -18,13 +18,33 @@ export class InventoryDao implements IInventoryDao {
     return this.inventoryRepository.findById(inventoryId).exec();
   }
 
+  public async findByUserId(userId: string) {
+    return this.inventoryRepository.aggregate([
+      {
+        $match: {
+          sellerId: mongoose.Types.ObjectId(userId),
+          quantity: { $gt: 0 },
+        },
+      },
+      {
+        $lookup: {
+          from: "shoes",
+          localField: "shoeId",
+          foreignField: "_id",
+          as: "shoe",
+        },
+      },
+      {
+        $unwind: { path: "$shoe" },
+      },
+    ]);
+  }
+
   public async isDuplicate(profileId: string, shoeId: string, shoeSize: string) {
     return (
-      (
-        await this.inventoryRepository
-          .find({ sellerId: profileId, shoeId, shoeSize })
-          .exec()
-      ).length === 1
+      (await this.inventoryRepository
+        .countDocuments({ sellerId: profileId, shoeId, shoeSize })
+        .exec()) === 1
     );
   }
 

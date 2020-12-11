@@ -1,7 +1,7 @@
 import React from 'react';
-import { SafeAreaView, StatusBar, View, StyleSheet, Alert } from 'react-native';
-import { connect } from 'utilities/ReduxUtilities';
-import { IAppState } from 'store/AppStore';
+import {SafeAreaView, StatusBar, View, StyleSheet, Alert} from 'react-native';
+import {connect} from 'utilities/ReduxUtilities';
+import {IAppState} from 'store/AppStore';
 import {
   Profile,
   Account,
@@ -10,10 +10,10 @@ import {
   ObjectFactory,
   ISettingsProvider,
 } from 'business';
-import { themes, strings } from 'resources';
-import { AppText } from 'screens/Shared';
-import { ListItem } from 'react-native-elements';
-import { StackNavigationProp } from '@react-navigation/stack';
+import {themes, strings} from 'resources';
+import {AppText} from 'screens/Shared';
+import {ListItem} from 'react-native-elements';
+import {StackNavigationProp} from '@react-navigation/stack';
 import RouteNames from 'navigations/RouteNames';
 import {
   toggleIndicator,
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
   }),
   (dispatch: Function) => ({
     toggleLoading: (isLoading: boolean): void => {
-      dispatch(toggleIndicator({ isLoading, message: strings.PleaseWait }));
+      dispatch(toggleIndicator({isLoading, message: strings.PleaseWait}));
     },
     showNotification: (message: string, isError = false): void => {
       if (!isError) {
@@ -92,9 +92,16 @@ export class AccountTabMain extends React.Component<Props> {
       leftIcon: 'person',
     },
     {
-      title: strings.History,
-      onClick: (): void => null,
-      leftIcon: 'history',
+      title: this._isSeller() ? strings.Inventory : strings.History,
+      onClick: (): void =>
+        this._onClickWithAccountGuarded(() => {
+          if (this._isSeller()) {
+            this.props.navigation.push(RouteNames.Tab.AccountTab.Inventory);
+          } else {
+            this.props.navigation.push(RouteNames.Tab.AccountTab.OrderHistory);
+          }
+        }),
+      leftIcon: this._isSeller() ? 'shopping-cart' : 'history',
     },
     {
       title: strings.AppContact,
@@ -105,9 +112,9 @@ export class AccountTabMain extends React.Component<Props> {
 
   public render(): JSX.Element {
     return (
-      <SafeAreaView style={{ backgroundColor: themes.AppAccentColor, flex: 1 }}>
+      <SafeAreaView style={{backgroundColor: themes.AppAccentColor, flex: 1}}>
         <StatusBar barStyle={'dark-content'} />
-        <View style={{ flex: 1, position: 'relative' }}>
+        <View style={{flex: 1, position: 'relative'}}>
           {this._renderBasicUserData()}
           {this._renderSettingsList()}
           {this._renderBottomActionButton()}
@@ -116,18 +123,24 @@ export class AccountTabMain extends React.Component<Props> {
     );
   }
 
+  private _isUserLoggedIn() {
+    const {account, profile} = this.props;
+    return Boolean(account && profile);
+  }
+
+  private _isSeller() {
+    return Boolean(this._isUserLoggedIn() && this.props.profile.isSeller);
+  }
+
   private _onClickWithAccountGuarded(action: () => void) {
-    const { account, profile, navigation } = this.props;
-    const isAccountExist = Boolean(account && profile);
-    if (isAccountExist) {
+    if (this._isUserLoggedIn()) {
       return action();
     }
-
     Alert.alert(strings.PleaseLogin, strings.NoAccountPleastLogin, [
       {
         text: strings.SignIn,
         onPress: () => {
-          navigation.navigate(RouteNames.Auth.Name, {
+          this.props.navigation.navigate(RouteNames.Auth.Name, {
             screen: RouteNames.Auth.Login,
           });
         },
@@ -141,7 +154,7 @@ export class AccountTabMain extends React.Component<Props> {
   }
 
   private _renderBasicUserData(): JSX.Element {
-    const { profile } = this.props;
+    const {profile} = this.props;
     const firstName = profile?.userProvidedName?.firstName;
     const lastName = profile?.userProvidedName?.lastName;
 
@@ -166,7 +179,7 @@ export class AccountTabMain extends React.Component<Props> {
         title={setting.title}
         bottomDivider={true}
         titleStyle={themes.TextStyle.body}
-        leftIcon={{ name: setting.leftIcon, color: themes.AppPrimaryColor }}
+        leftIcon={{name: setting.leftIcon, color: themes.AppPrimaryColor}}
         onPress={setting.onClick}
       />
     ));
@@ -194,7 +207,7 @@ export class AccountTabMain extends React.Component<Props> {
         bottomDivider={true}
         titleStyle={themes.TextStyle.body}
         // leftIcon={{ name: iconTitle, color: themes.AppPrimaryColor }}
-        leftIcon={{ name: iconTitle, color: themes.AppPrimaryColor }}
+        leftIcon={{name: iconTitle, color: themes.AppPrimaryColor}}
         onPress={this._bottomButtonHandler.bind(this, isAccountAvailable)}
       />
     );

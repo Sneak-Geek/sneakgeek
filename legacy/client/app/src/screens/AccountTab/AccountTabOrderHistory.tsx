@@ -1,31 +1,14 @@
 import React from 'react';
-import { View } from 'react-native';
-import { connect } from 'utilities/ReduxUtilities';
-import { IAppState } from 'store/AppStore';
-import { Profile, Account } from 'business';
+import {IAppState} from 'store/AppStore';
+import {useSelector} from 'react-redux';
 
-type Props = {
-    account: Account;
-    profile: Profile;
+export const AccountTabOrderHistory: React.FC<{}> = () => {
+  const account = useSelector(
+    (state: IAppState) => state.UserState.accountState.account,
+  );
+  const profile = useSelector(
+    (s: IAppState) => s.UserState.profileState.profile,
+  );
+
+  return <></>;
 };
-
-@connect(
-    (state: IAppState) => ({
-        account: state.UserState.accountState.account,
-        profile: state.UserState.profileState.profile,
-    }),
-    () => ({}),
-)
-export class AccountTabOrderHistory extends React.Component<Props> {
-    render(): JSX.Element {
-        const { account, profile } = this.props;
-        const isAccountExist = Boolean(account && profile);
-        if (!isAccountExist) {
-            return <View />;
-        }
-
-        const isSeller = profile.isSeller;
-
-        return <View />;
-    }
-}
