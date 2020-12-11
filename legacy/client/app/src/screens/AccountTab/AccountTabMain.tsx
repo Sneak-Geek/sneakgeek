@@ -13,7 +13,6 @@ import {
 import { themes, strings } from 'resources';
 import { AppText } from 'screens/Shared';
 import { ListItem } from 'react-native-elements';
-import { ImagePickerOptions } from 'react-native-image-picker';
 import { StackNavigationProp } from '@react-navigation/stack';
 import RouteNames from 'navigations/RouteNames';
 import {
@@ -103,11 +102,6 @@ export class AccountTabMain extends React.Component<Props> {
       leftIcon: 'phone',
     },
   ];
-  private imagePickerOption: ImagePickerOptions = {
-    allowsEditing: true,
-    mediaType: 'photo',
-    quality: 0.5,
-  };
 
   public render(): JSX.Element {
     return (

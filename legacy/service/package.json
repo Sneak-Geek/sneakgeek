@@ -70,7 +70,6 @@
     "@types/faker": "4.1.6",
     "@types/jest": "24.0.23",
     "@types/jsonwebtoken": "8.3.2",
-    "@types/lodash": "4.14.150",
     "@types/mailgun-js": "0.22.3",
     "@types/markdown-it": "0.0.9",
     "@types/mongodb": "~3.1.28",

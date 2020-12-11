@@ -59,12 +59,8 @@ export class ProfileController {
   @httpPut(
     "/update",
     AuthMiddleware,
-    body("userProvidedAddress.streetAddress").optional().isString(),
-    body("userProvidedAddress.ward").optional().isString(),
-    body("userProvidedAddress.wardCode").optional().isString(),
-    body("userProvidedAddress.districtId").optional().isInt(),
-    body("userProvidedAddress.district").optional().isString(),
-    body("userProvidedAddress.city").optional().isString(),
+    body("userProvidedAddress.addressLine1").optional().isString(),
+    body("userProvidedAddress.addressLine2").optional().isString(),
     body("userProvidedGender").optional().isString(),
     body("userProvidedPhoneNumber")
       .optional()
@@ -73,7 +69,6 @@ export class ProfileController {
     body("userProvidedName.firstName").optional().isString(),
     body("userProvidedName.middleName").optional().isString(),
     body("userProvidedName.lastName").optional().isString(),
-    body("userProvidedProfilePic").optional().isString(),
     body("isSeller").optional().isBoolean(),
     ValidationPassedMiddleware
   )

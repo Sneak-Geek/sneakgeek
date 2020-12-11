@@ -17,6 +17,8 @@ import {
   Keyboard,
   EmitterSubscription,
   TouchableWithoutFeedback,
+  Modal,
+  Alert,
 } from 'react-native';
 import {ScrollView, TextInput, StyleSheet} from 'react-native';
 import {
@@ -31,6 +33,8 @@ import {IAppState} from 'store/AppStore';
 import {showSuccessNotification, toggleIndicator} from 'actions';
 import {getToken, getDependency} from 'utilities';
 import {RootStackParams} from 'navigations/RootStack';
+import _ from 'lodash';
+import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 
 const styles = StyleSheet.create({
   headerContainer: {
@@ -91,6 +95,8 @@ const styles = StyleSheet.create({
 
   bottomButtonContainer: {
     backgroundColor: themes.AppPrimaryColor,
+    bottom: 10,
+    borderRadius: themes.LargeBorderRadius,
   },
 
   input: {
@@ -138,6 +144,7 @@ type State = {
   shouldShowConfirm: boolean;
   pickerVisible: boolean;
   pickerType: PickerType;
+  addressModalVisible: boolean;
 };
 
 type Setting = {
@@ -147,7 +154,8 @@ type Setting = {
   pickerType?: PickerType;
   value: (profile: Profile) => string | number;
   options?: () => Array<string | number>;
-  onUpdate: (value: string, profile: Profile) => Profile;
+  onUpdate?: (value: string, profile: Profile) => Profile;
+  onPress?: () => void;
 };
 
 type SettingSection = {
@@ -172,6 +180,7 @@ type SettingSection = {
 )
 export class AccountTabEditProfile extends React.Component<Props, State> {
   private sectionList: Array<SettingSection> = [];
+  private _addressLine1OnUpdateDelayed: _.DebouncedFunc<any>;
 
   public constructor(props: Props) {
     super(props);
@@ -181,7 +190,13 @@ export class AccountTabEditProfile extends React.Component<Props, State> {
       shouldShowConfirm: true,
       pickerVisible: false,
       pickerType: undefined,
+      addressModalVisible: false,
     };
+
+    this._addressLine1OnUpdateDelayed = _.debounce(
+      this._addressLine1OnUpdate,
+      2000,
+    );
 
     this.sectionList = [
       {
@@ -222,7 +237,7 @@ export class AccountTabEditProfile extends React.Component<Props, State> {
             placeholder: 'Giới tính',
             isPicker: true,
             pickerType: PickerType.GENDER,
-            options: (): string[] => [],
+            options: (): string[] => ['Nam', 'Nữ', 'Khác'],
             value: (profile: Profile): string => profile.userProvidedGender,
             onUpdate: (value: string, profile: Profile): Profile => {
               return Object.assign(profile, {
@@ -254,90 +269,32 @@ export class AccountTabEditProfile extends React.Component<Props, State> {
         ],
       },
       {
-        sectionName: 'Thông tin giày',
-        sectionFields: [
-          {
-            title: 'Cỡ giày',
-            placeholder: 'Cỡ giày',
-            isPicker: true,
-            pickerType: PickerType.SHOE_SIZE,
-            options: (): string[] => [],
-            value: (profile: Profile): string => profile.userProvidedShoeSize,
-            onUpdate: (value: string, profile: Profile): Profile => {
-              return Object.assign(profile, {
-                userProvidedShoeSize: value,
-              });
-            },
-          },
-        ],
-      },
-      {
         sectionName: 'Địa chỉ giao hàng',
         sectionFields: [
           {
-            title: 'Địa chỉ',
-            placeholder: 'Địa chỉ',
+            title: 'Địa chỉ 1',
+            placeholder: 'Đường/phố, quận/huyện, tỉnh/thành phố',
             isPicker: false,
             value: (profile: Profile): string =>
-              profile?.userProvidedAddress?.streetAddress,
+              profile?.userProvidedAddress?.addressLine1,
+            onPress: () => {
+              this.setState({addressModalVisible: true});
+            },
+          },
+          {
+            title: 'Địa chỉ 2',
+            placeholder: 'Ngõ, ngách, số phòng,...',
+            isPicker: false,
+            value: (profile: Profile): string =>
+              profile?.userProvidedAddress?.addressLine2,
             onUpdate: (value: string, profile: Profile): Profile => {
               return Object.assign(profile, {
                 userProvidedAddress: {
                   ...profile.userProvidedAddress,
-                  streetAddress: value,
+                  addressLine2: value,
                 },
               });
             },
-          },
-          {
-            title: 'Tỉnh/Thành phố',
-            placeholder: 'Tỉnh/Thành phố',
-            isPicker: true,
-            pickerType: PickerType.CITY,
-            options: (): string[] => this._getCities(),
-            value: (profile: Profile): string =>
-              profile.userProvidedAddress?.city,
-            onUpdate: (value: string, profile: Profile): Profile => ({
-              ...profile,
-              userProvidedAddress: {
-                ...profile.userProvidedAddress,
-                city: value,
-              },
-            }),
-          },
-          {
-            title: 'Quận/Huyện',
-            placeholder: 'Quận/Huyện',
-            isPicker: true,
-            pickerType: PickerType.DISTRICT,
-            options: (): string[] => this._getDistricts(),
-            value: (profile: Profile): string =>
-              profile.userProvidedAddress?.district,
-            onUpdate: (value: string, profile: Profile): Profile => ({
-              ...profile,
-              userProvidedAddress: {
-                ...profile.userProvidedAddress,
-                district: value,
-                districtId: this._findDistrictId(value),
-              },
-            }),
-          },
-          {
-            title: 'Phường/Xã',
-            placeholder: 'Phường/Xã',
-            isPicker: true,
-            pickerType: PickerType.WARD,
-            options: (): string[] => this._getWards(),
-            value: (profile: Profile): string =>
-              profile.userProvidedAddress?.ward,
-            onUpdate: (value: string, profile: Profile): Profile => ({
-              ...profile,
-              userProvidedAddress: {
-                ...profile.userProvidedAddress,
-                ward: value,
-                wardCode: this._findWardCode(value),
-              },
-            }),
           },
         ],
       },
@@ -376,6 +333,7 @@ export class AccountTabEditProfile extends React.Component<Props, State> {
             </ScrollView>
             {this._renderPicker()}
             {this._renderUpdateButton()}
+            {this._renderAddressModal()}
           </KeyboardAvoidingView>
         )}
       </SafeAreaConsumer>
@@ -390,39 +348,67 @@ export class AccountTabEditProfile extends React.Component<Props, State> {
     this._keyboardHideListener = Keyboard.addListener('keyboardDidHide', () => {
       this.setState({shouldShowConfirm: true});
     });
-
-    this._initializeAddressSettings();
-  }
-
-  private _initializeAddressSettings(): void {
-    const settingsService = getDependency<ISettingService>(
-      FactoryKeys.ISettingService,
-    );
-    const settingsProvider = getDependency<ISettingsProvider>(
-      FactoryKeys.ISettingsProvider,
-    );
-    this._validShippingAddress = settingsProvider.getValue(
-      SettingsKey.GhnShippingAddress,
-    );
-
-    if (!this._validShippingAddress) {
-      this.props.toggleLoadingIndicator(true);
-      settingsService
-        .getValidShippingAddress(getToken())
-        .then(async ({districts, wards}) => {
-          await settingsProvider.setValue(SettingsKey.GhnShippingAddress, {
-            districts,
-            wards,
-          });
-          this._validShippingAddress = {districts, wards};
-          this.props.toggleLoadingIndicator(false);
-        });
-    }
   }
 
   public componentWillUnmount(): void {
     this._keyboardHideListener.remove();
     this._keyboardShowListener.remove();
+    this._addressLine1OnUpdateDelayed.cancel();
+  }
+
+  private _renderAddressModal() {
+    return (
+      <Modal
+        visible={this.state.addressModalVisible}
+        hardwareAccelerated={true}
+        animationType={'slide'}
+        presentationStyle={'formSheet'}
+        onRequestClose={() => this.setState({addressModalVisible: false})}>
+        <View style={{flex: 1, position: 'relative'}}>
+          <Icon
+            name={'close'}
+            size={themes.IconSize * 1.5}
+            onPress={() => this.setState({addressModalVisible: false})}
+            containerStyle={{position: 'absolute', right: 15, top: 15}}
+          />
+          <AppText.Title3 style={{margin: 20, marginTop: 30}}>
+            Tìm kiếm địa chỉ
+          </AppText.Title3>
+
+          <GooglePlacesAutocomplete
+            placeholder={strings.Address}
+            textInputProps={{
+              autoFocus: this.state.addressModalVisible,
+            }}
+            query={{
+              key: 'AIzaSyA-KXgK4DIG3mqaQ1DNFJZ-N_K0l6UJHT8',
+              language: 'vi',
+              components: 'country:vn',
+            }}
+            onPress={(data) => {
+              let info = this.state.updatedInfo;
+              info = {
+                ...info,
+                userProvidedAddress: {
+                  ...info.userProvidedAddress,
+                  addressLine1: data.description,
+                },
+              };
+
+              this.setState({
+                addressModalVisible: false,
+                updatedInfo: info,
+              });
+            }}
+            styles={{
+              textInput: themes.TextStyle.body,
+              container: {flex: 1},
+              description: themes.TextStyle.callout,
+            }}
+          />
+        </View>
+      </Modal>
+    );
   }
 
   private _renderHeader(topInsets: number): JSX.Element {
@@ -512,9 +498,14 @@ export class AccountTabEditProfile extends React.Component<Props, State> {
           value={textValue}
           placeholder={item.placeholder}
           onChangeText={(value): void => {
-            if (updatedInfo) {
+            if (updatedInfo && item.onUpdate) {
               const newProfile = item.onUpdate(value, updatedInfo);
               this.setState({updatedInfo: newProfile});
+            }
+          }}
+          onTouchStart={() => {
+            if (item.onPress) {
+              item.onPress();
             }
           }}
           style={[styles.input, themes.TextStyle.subhead]}
@@ -593,53 +584,5 @@ export class AccountTabEditProfile extends React.Component<Props, State> {
     }
   }
 
-  private _findDistrictId(districtName: string): number {
-    return this._validShippingAddress.districts.find(
-      (t) => t.DistrictName === districtName,
-    ).DistrictID;
-  }
-
-  private _findWardCode(ward: string): string {
-    const {userProvidedAddress} = this.state.updatedInfo;
-    if (
-      userProvidedAddress &&
-      userProvidedAddress.district &&
-      userProvidedAddress.districtId
-    ) {
-      const wards = this._validShippingAddress.wards.get(
-        userProvidedAddress.districtId,
-      );
-
-      return wards.find((t) => t.WardName === ward).WardCode;
-    }
-
-    return undefined;
-  }
-
-  private _getCities(): string[] {
-    const cities = new Set(
-      this._validShippingAddress.districts.map((t) => t.ProvinceName),
-    );
-    return Array.from(cities).sort();
-  }
-
-  private _getDistricts(): string[] {
-    const selectedCity = this.state.updatedInfo.userProvidedAddress.city;
-
-    return this._validShippingAddress.districts
-      .filter((t) => t.ProvinceName === selectedCity)
-      .map((t) => t.DistrictName)
-      .sort();
-  }
-
-  private _getWards(): string[] {
-    const district = this.state.updatedInfo.userProvidedAddress.district;
-    const districtId = this._validShippingAddress.districts.find(
-      (t) => t.DistrictName === district,
-    ).DistrictID;
-    return this._validShippingAddress.wards
-      .get(districtId)
-      .map((t) => t.WardName)
-      .sort();
-  }
+  private _addressLine1OnUpdate(value: string): void {}
 }

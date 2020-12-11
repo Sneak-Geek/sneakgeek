@@ -1,10 +1,6 @@
 export type UserAddress = {
-    streetAddress: string,
-    ward: string,
-    wardCode: string,
-    district: string,
-    districtId: number,
-    city: string
+    addressLine1: string,
+    addressLine2: string
 };
 
 export interface Profile {

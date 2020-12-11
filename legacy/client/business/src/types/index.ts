@@ -31,6 +31,7 @@ export interface Profile {
   userProvidedShoeSize?: string;
   userProvidedEmail?: string;
   userProvidedPhoneNumber?: string;
+  isSeller?: boolean;
 }
 
 export interface Account {

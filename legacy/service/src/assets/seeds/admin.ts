@@ -23,12 +23,8 @@ export const AdminProfile = {
     lastName: "Trần",
   },
   userProvidedAddress: {
-    streetAddress: "14c Ngô Thì Nhậm",
-    ward: "Phường Hàng Bài",
-    wardCode: "1A0206",
-    district: "Quận Hoàn Kiếm",
-    districtId: 1489,
-    city: "Hà Nội",
+    addressLine1: "14c Ngô Thì Nhậm, Phường Hàng Bài, 1A0206, Quận Hoàn Kiếm, Hà Nội",
+    addressLine2: "Ngách 12/8",
   },
   userProvidedPhoneNumber: "0947356248",
 };
