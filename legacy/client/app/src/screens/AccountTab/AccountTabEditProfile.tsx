@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppText, BottomButton, BottomPicker } from 'screens/Shared';
+import {AppText, BottomButton, BottomPicker} from 'screens/Shared';
 import {
   Profile,
   IAccountService,
@@ -17,21 +17,24 @@ import {
   Keyboard,
   EmitterSubscription,
   TouchableWithoutFeedback,
+  Modal,
+  Alert,
 } from 'react-native';
-import { ScrollView, TextInput, StyleSheet } from 'react-native';
+import {ScrollView, TextInput, StyleSheet} from 'react-native';
 import {
   StackNavigationProp,
   HeaderHeightContext,
 } from '@react-navigation/stack';
-import { themes, strings } from 'resources';
-import { SafeAreaConsumer } from 'react-native-safe-area-context';
-import { Icon } from 'react-native-elements';
-import { connect } from 'utilities/ReduxUtilities';
-import { IAppState } from 'store/AppStore';
-import { showSuccessNotification, toggleIndicator } from 'actions';
-import { getToken, getDependency } from 'utilities';
-import { RootStackParams } from 'navigations/RootStack';
-import _ from "lodash";
+import {themes, strings} from 'resources';
+import {SafeAreaConsumer} from 'react-native-safe-area-context';
+import {Icon} from 'react-native-elements';
+import {connect} from 'utilities/ReduxUtilities';
+import {IAppState} from 'store/AppStore';
+import {showSuccessNotification, toggleIndicator} from 'actions';
+import {getToken, getDependency} from 'utilities';
+import {RootStackParams} from 'navigations/RootStack';
+import _ from 'lodash';
+import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 
 const styles = StyleSheet.create({
   headerContainer: {
@@ -92,6 +95,8 @@ const styles = StyleSheet.create({
 
   bottomButtonContainer: {
     backgroundColor: themes.AppPrimaryColor,
+    bottom: 10,
+    borderRadius: themes.LargeBorderRadius,
   },
 
   input: {
@@ -139,6 +144,7 @@ type State = {
   shouldShowConfirm: boolean;
   pickerVisible: boolean;
   pickerType: PickerType;
+  addressModalVisible: boolean;
 };
 
 type Setting = {
@@ -148,7 +154,8 @@ type Setting = {
   pickerType?: PickerType;
   value: (profile: Profile) => string | number;
   options?: () => Array<string | number>;
-  onUpdate: (value: string, profile: Profile) => Profile;
+  onUpdate?: (value: string, profile: Profile) => Profile;
+  onPress?: () => void;
 };
 
 type SettingSection = {
@@ -165,7 +172,7 @@ type SettingSection = {
       dispatch(updateProfile(profile));
     },
     toggleLoadingIndicator: (isLoading: boolean): void => {
-      dispatch(toggleIndicator({ isLoading, message: strings.PleaseWait }));
+      dispatch(toggleIndicator({isLoading, message: strings.PleaseWait}));
     },
     showNotification: (message: string): void =>
       dispatch(showSuccessNotification(message)),
@@ -173,7 +180,7 @@ type SettingSection = {
 )
 export class AccountTabEditProfile extends React.Component<Props, State> {
   private sectionList: Array<SettingSection> = [];
-  private _addressLine1OnUpdateDelayed: any;
+  private _addressLine1OnUpdateDelayed: _.DebouncedFunc<any>;
 
   public constructor(props: Props) {
     super(props);
@@ -183,9 +190,13 @@ export class AccountTabEditProfile extends React.Component<Props, State> {
       shouldShowConfirm: true,
       pickerVisible: false,
       pickerType: undefined,
+      addressModalVisible: false,
     };
 
-    this._addressLine1OnUpdateDelayed = _.debounce(this._addressLine1OnUpdate, 2000);
+    this._addressLine1OnUpdateDelayed = _.debounce(
+      this._addressLine1OnUpdate,
+      2000,
+    );
 
     this.sectionList = [
       {
@@ -266,15 +277,8 @@ export class AccountTabEditProfile extends React.Component<Props, State> {
             isPicker: false,
             value: (profile: Profile): string =>
               profile?.userProvidedAddress?.addressLine1,
-            onUpdate: (value: string, profile: Profile): Profile => {
-              this._addressLine1OnUpdateDelayed(value);
-
-              return Object.assign(profile, {
-                userProvidedAddress: {
-                  ...profile.userProvidedAddress,
-                  addressLine1: value,
-                },
-              });
+            onPress: () => {
+              this.setState({addressModalVisible: true});
             },
           },
           {
@@ -329,6 +333,7 @@ export class AccountTabEditProfile extends React.Component<Props, State> {
             </ScrollView>
             {this._renderPicker()}
             {this._renderUpdateButton()}
+            {this._renderAddressModal()}
           </KeyboardAvoidingView>
         )}
       </SafeAreaConsumer>
@@ -337,45 +342,73 @@ export class AccountTabEditProfile extends React.Component<Props, State> {
 
   public componentDidMount(): void {
     this._keyboardShowListener = Keyboard.addListener('keyboardDidShow', () => {
-      this.setState({ shouldShowConfirm: false });
+      this.setState({shouldShowConfirm: false});
     });
 
     this._keyboardHideListener = Keyboard.addListener('keyboardDidHide', () => {
-      this.setState({ shouldShowConfirm: true });
+      this.setState({shouldShowConfirm: true});
     });
-
-    this._initializeAddressSettings();
-  }
-
-  private _initializeAddressSettings(): void {
-    const settingsService = getDependency<ISettingService>(
-      FactoryKeys.ISettingService,
-    );
-    const settingsProvider = getDependency<ISettingsProvider>(
-      FactoryKeys.ISettingsProvider,
-    );
-    this._validShippingAddress = settingsProvider.getValue(
-      SettingsKey.GhnShippingAddress,
-    );
-
-    if (!this._validShippingAddress) {
-      this.props.toggleLoadingIndicator(true);
-      settingsService
-        .getValidShippingAddress(getToken())
-        .then(async ({ districts, wards }) => {
-          await settingsProvider.setValue(SettingsKey.GhnShippingAddress, {
-            districts,
-            wards,
-          });
-          this._validShippingAddress = { districts, wards };
-          this.props.toggleLoadingIndicator(false);
-        });
-    }
   }
 
   public componentWillUnmount(): void {
     this._keyboardHideListener.remove();
     this._keyboardShowListener.remove();
+    this._addressLine1OnUpdateDelayed.cancel();
+  }
+
+  private _renderAddressModal() {
+    return (
+      <Modal
+        visible={this.state.addressModalVisible}
+        hardwareAccelerated={true}
+        animationType={'slide'}
+        presentationStyle={'formSheet'}
+        onRequestClose={() => this.setState({addressModalVisible: false})}>
+        <View style={{flex: 1, position: 'relative'}}>
+          <Icon
+            name={'close'}
+            size={themes.IconSize * 1.5}
+            onPress={() => this.setState({addressModalVisible: false})}
+            containerStyle={{position: 'absolute', right: 15, top: 15}}
+          />
+          <AppText.Title3 style={{margin: 20, marginTop: 30}}>
+            Tìm kiếm địa chỉ
+          </AppText.Title3>
+
+          <GooglePlacesAutocomplete
+            placeholder={strings.Address}
+            textInputProps={{
+              autoFocus: this.state.addressModalVisible,
+            }}
+            query={{
+              key: 'AIzaSyA-KXgK4DIG3mqaQ1DNFJZ-N_K0l6UJHT8',
+              language: 'vi',
+              components: 'country:vn',
+            }}
+            onPress={(data) => {
+              let info = this.state.updatedInfo;
+              info = {
+                ...info,
+                userProvidedAddress: {
+                  ...info.userProvidedAddress,
+                  addressLine1: data.description,
+                },
+              };
+
+              this.setState({
+                addressModalVisible: false,
+                updatedInfo: info,
+              });
+            }}
+            styles={{
+              textInput: themes.TextStyle.body,
+              container: {flex: 1},
+              description: themes.TextStyle.callout,
+            }}
+          />
+        </View>
+      </Modal>
+    );
   }
 
   private _renderHeader(topInsets: number): JSX.Element {
@@ -403,7 +436,7 @@ export class AccountTabEditProfile extends React.Component<Props, State> {
               type={'feather'}
               size={themes.IconSize}
               onPress={(): void =>
-                this.setState({ editMode: !this.state.editMode })
+                this.setState({editMode: !this.state.editMode})
               }
             />
           </View>
@@ -416,8 +449,8 @@ export class AccountTabEditProfile extends React.Component<Props, State> {
     return (
       <View>
         {this.sectionList.map((item, i) => (
-          <View key={i} style={{ marginVertical: 15 }}>
-            <AppText.Headline style={{ marginVertical: 8, marginLeft: 15 }}>
+          <View key={i} style={{marginVertical: 15}}>
+            <AppText.Headline style={{marginVertical: 8, marginLeft: 15}}>
               {item.sectionName}
             </AppText.Headline>
             {this._renderSettings(item.sectionFields)}
@@ -442,7 +475,7 @@ export class AccountTabEditProfile extends React.Component<Props, State> {
               }
             }}>
             <View style={styles.listItem}>
-              <AppText.Body style={{ flex: 1 }}>{item.title}</AppText.Body>
+              <AppText.Body style={{flex: 1}}>{item.title}</AppText.Body>
               {this._renderSetting(item)}
             </View>
           </TouchableWithoutFeedback>
@@ -452,8 +485,8 @@ export class AccountTabEditProfile extends React.Component<Props, State> {
   }
 
   private _renderSetting(item: Setting): JSX.Element {
-    const { updatedInfo, editMode } = this.state;
-    const { profile } = this.props;
+    const {updatedInfo, editMode} = this.state;
+    const {profile} = this.props;
     const textValue =
       updatedInfo && item.value(updatedInfo)
         ? item.value(updatedInfo).toString()
@@ -465,9 +498,14 @@ export class AccountTabEditProfile extends React.Component<Props, State> {
           value={textValue}
           placeholder={item.placeholder}
           onChangeText={(value): void => {
-            if (updatedInfo) {
+            if (updatedInfo && item.onUpdate) {
               const newProfile = item.onUpdate(value, updatedInfo);
-              this.setState({ updatedInfo: newProfile });
+              this.setState({updatedInfo: newProfile});
+            }
+          }}
+          onTouchStart={() => {
+            if (item.onPress) {
+              item.onPress();
             }
           }}
           style={[styles.input, themes.TextStyle.subhead]}
@@ -508,7 +546,7 @@ export class AccountTabEditProfile extends React.Component<Props, State> {
           });
         }}
         onSelectPickerCancel={(): void =>
-          this.setState({ pickerVisible: false, pickerType: undefined })
+          this.setState({pickerVisible: false, pickerType: undefined})
         }
         optionLabelToString={(t): string => t.toString()}
       />
@@ -516,7 +554,7 @@ export class AccountTabEditProfile extends React.Component<Props, State> {
   }
 
   private _renderUpdateButton(): JSX.Element | null {
-    const { shouldShowConfirm, editMode } = this.state;
+    const {shouldShowConfirm, editMode} = this.state;
 
     if (!shouldShowConfirm || !editMode) {
       return null;
@@ -542,11 +580,9 @@ export class AccountTabEditProfile extends React.Component<Props, State> {
     } catch (error) {
       this.props.showNotification('Đã có lỗi khi xảy ra, xin vui lòng thử lại');
     } finally {
-      this.setState({ updatedInfo: this.props.profile, editMode: false });
+      this.setState({updatedInfo: this.props.profile, editMode: false});
     }
   }
 
-  private _addressLine1OnUpdate(value: string): void {
-
-  }
+  private _addressLine1OnUpdate(value: string): void {}
 }

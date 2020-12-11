@@ -23,5 +23,4 @@ export interface Profile {
     userProvidedEmail?: string;
     userProvidedPhoneNumber?: string;
     userProvidedProfilePic?: string;
-    isSeller?: boolean;
 }
