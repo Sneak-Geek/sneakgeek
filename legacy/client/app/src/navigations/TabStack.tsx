@@ -8,6 +8,7 @@ import {
   AccountTabEditProfile,
   AccountTabFaq,
   AccountTabPaymentInfo,
+  AccountTabInventory
 } from 'screens/AccountTab';
 import {
   createStackNavigator,
@@ -55,6 +56,10 @@ const AccountTab = (): JSX.Element => (
         headerShown: false,
         headerTransparent: true,
       }}
+    />
+    <AccountStack.Screen
+      name={RouteNames.Tab.AccountTab.Inventory}
+      component={AccountTabInventory}
     />
     <AccountStack.Screen
       name={RouteNames.Tab.AccountTab.Faq}

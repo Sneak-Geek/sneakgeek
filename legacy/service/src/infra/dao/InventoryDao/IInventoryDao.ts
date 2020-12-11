@@ -19,6 +19,7 @@ export type CurrentlySellData = {
 
 export interface IInventoryDao {
   findById(inventoryId: string): Promise<Inventory>;
+  findByUserId(userId: string): Promise<Inventory[]>;
   isDuplicate(profileId: string, shoeId: string, shoeSize: string): Promise<boolean>;
   reduceByOne(inventoryId: string): Promise<Inventory>;
   create(inventoryDto: CreateInventoryDto): Promise<Inventory>;

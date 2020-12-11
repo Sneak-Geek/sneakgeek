@@ -18,6 +18,10 @@ export class InventoryDao implements IInventoryDao {
     return this.inventoryRepository.findById(inventoryId).exec();
   }
 
+  public async findByUserId(userId: string) {
+    return this.inventoryRepository.find({ sellerId: userId, quantity: { $gt: 0 } }).exec();
+  }
+
   public async isDuplicate(profileId: string, shoeId: string, shoeSize: string) {
     return (
       (

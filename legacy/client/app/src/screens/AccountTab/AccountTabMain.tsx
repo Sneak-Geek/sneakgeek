@@ -92,9 +92,16 @@ export class AccountTabMain extends React.Component<Props> {
       leftIcon: 'person',
     },
     {
-      title: strings.History,
-      onClick: (): void => null,
-      leftIcon: 'history',
+      title: this._isSeller() ? strings.Inventory : strings.History,
+      onClick: (): void =>
+        this._onClickWithAccountGuarded(() => {
+          if (this._isSeller()) {
+            this.props.navigation.push(RouteNames.Tab.AccountTab.Inventory);
+          } else {
+            this.props.navigation.push(RouteNames.Tab.AccountTab.OrderHistory);
+          }
+        }),
+      leftIcon: this._isSeller() ? 'shopping-cart' : 'history',
     },
     {
       title: strings.AppContact,
@@ -116,18 +123,24 @@ export class AccountTabMain extends React.Component<Props> {
     );
   }
 
+  private _isUserLoggedIn() {
+    const { account, profile } = this.props;
+    return Boolean(account && profile);
+  }
+
+  private _isSeller() {
+    return Boolean(this._isUserLoggedIn() && this.props.profile.isSeller);
+  }
+
   private _onClickWithAccountGuarded(action: () => void) {
-    const { account, profile, navigation } = this.props;
-    const isAccountExist = Boolean(account && profile);
-    if (isAccountExist) {
+    if (this._isUserLoggedIn()) {
       return action();
     }
-
     Alert.alert(strings.PleaseLogin, strings.NoAccountPleastLogin, [
       {
         text: strings.SignIn,
         onPress: () => {
-          navigation.navigate(RouteNames.Auth.Name, {
+          this.props.navigation.navigate(RouteNames.Auth.Name, {
             screen: RouteNames.Auth.Login,
           });
         },
