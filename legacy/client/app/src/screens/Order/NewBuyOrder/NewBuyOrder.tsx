@@ -262,33 +262,10 @@ export class NewBuyOrder extends React.Component<Props, State> {
           onPress={() =>
             this.state.currentIndex !== this._childComponents.length - 1
               ? this._onListScroll()
-              : this._buyNow()
+              : this._purchaseProduct('domestic')
           }
         />
       </View>
-    );
-  }
-
-  private _buyNow() {
-    const options = [
-      {
-        name: strings.DomesticPayment,
-        action: (): void => this._purchaseProduct('domestic'),
-      },
-      {
-        name: strings.IntlPayment,
-        action: (): void => this._purchaseProduct('intl'),
-      },
-      {name: strings.Cancel, action: (): void => null},
-    ];
-
-    ActionSheet.showActionSheetWithOptions(
-      {
-        options: options.map((t) => t.name),
-        cancelButtonIndex: 2,
-        destructiveButtonIndex: -1,
-      },
-      (btnIdx) => options[btnIdx].action(),
     );
   }
 

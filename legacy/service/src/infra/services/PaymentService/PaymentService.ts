@@ -15,7 +15,7 @@ export class PaymentService implements IPaymentService {
   private readonly VPC_COMMAND = "pay";
   private readonly VPC_ACCESS_CODE = "D67342C2";
   private readonly VPC_MERCHANT = "ONEPAY";
-  private readonly VPC_LOCALE = "en";
+  private readonly VPC_LOCALE = "vn";
   private readonly VPC_CALLBACK_URL = "/api/v1/order/payment-callback";
   private readonly ONEPAY_DOMESTIC_URL = "https://mtf.onepay.vn/onecomm-pay/vpc.op";
   private readonly ONEPAY_INTERNATIONAL_URL = "https://mtf.onepay.vn/vpcpay/vpcpay.op";
