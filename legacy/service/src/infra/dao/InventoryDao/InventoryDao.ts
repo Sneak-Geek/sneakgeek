@@ -39,9 +39,9 @@ export class InventoryDao implements IInventoryDao {
       },
       {
         $match: {
-          "shoe.title": { $regex: shoeName, $options: 'i' }
-        }
-      }
+          "shoe.title": { $regex: shoeName, $options: "i" },
+        },
+      },
     ]);
   }
 

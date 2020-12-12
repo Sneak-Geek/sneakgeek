@@ -33,7 +33,10 @@ export class InventoryController {
   public async getInventories(@request() req: Request, @response() res: Response) {
     const profileId = req.user.profile as mongoose.Types.ObjectId;
     const { shoeName } = req.query;
-    const inventoryWithShoe = await this.inventoryDao.findByUserId(profileId.toHexString(), shoeName as string);
+    const inventoryWithShoe = await this.inventoryDao.findByUserId(
+      profileId.toHexString(),
+      shoeName as string
+    );
     return res.status(HttpStatus.OK).send(inventoryWithShoe);
   }
 
