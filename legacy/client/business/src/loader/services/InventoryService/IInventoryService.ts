@@ -7,7 +7,7 @@ export type SellingInventory = {
 };
 
 export interface IInventoryService {
-  getInventories(token: string): Promise<Inventory[]>;
+  getInventories(token: string, shoeName: string): Promise<(Inventory & {shoe: Shoe})[]>;
   createInventory(token: string, shoeId: string, quantity: number, sellPrice: number, shoeSize: string): Promise<void>;
   getSelling(): Promise<SellingInventory[]>;
 }
