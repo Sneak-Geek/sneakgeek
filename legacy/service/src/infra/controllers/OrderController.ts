@@ -3,7 +3,7 @@
 // !
 
 import { Request, Response } from "express";
-import { body, param, query } from "express-validator";
+import { body, query } from "express-validator";
 import HttpStatus from "http-status";
 import { inject } from "inversify";
 import {
@@ -88,6 +88,7 @@ export class OrderController {
       `${req.protocol}://${req.headers.host}`,
       shoe
     );
+    console.log("Onepay payment url", onepayRedirectUrl);
     return res.status(HttpStatus.OK).send(onepayRedirectUrl);
   }
 
@@ -140,5 +141,12 @@ export class OrderController {
     const result = await this.inventoryDao.getPriceBySize(shoeId);
 
     return res.status(HttpStatus.OK).send(result);
+  }
+
+  @httpGet("/last-sold", query("count").isInt({ min: 1 }))
+  public async getLastSold(@queryParam("count") count: string, @response() res: Response) {
+    const top = await this.orderDao.getLastSold(parseInt(count, 10));
+
+    return res.status(HttpStatus.OK).send(top);
   }
 }

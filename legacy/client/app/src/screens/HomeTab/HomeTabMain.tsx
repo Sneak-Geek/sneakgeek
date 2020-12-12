@@ -1,5 +1,5 @@
 import React from 'react';
-import {AppText, ImageRatioPreserved} from 'screens/Shared';
+import {AppText} from 'screens/Shared';
 import {
   StatusBar,
   SafeAreaView,
@@ -12,15 +12,14 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import {connect, getDependency, toCurrencyString} from 'utilities';
-import {IAppState} from 'store/AppStore';
 import {
-  NetworkRequestState,
-  Catalog,
   getHomeCatalogs,
   Shoe,
   SellingInventory,
   FactoryKeys,
   IInventoryService,
+  TrendingOrder,
+  IOrderService,
 } from 'business';
 import {toggleIndicator} from 'actions';
 import {strings, themes} from 'resources';
@@ -33,7 +32,6 @@ import {Avatar} from 'react-native-elements';
 const styles = StyleSheet.create({
   rootContainer: {
     flex: 1,
-    backgroundColor: themes.AppBackgroundColor,
   },
   hotShoeContainer: {
     width: Dimensions.get('window').width,
@@ -112,19 +110,6 @@ const styles = StyleSheet.create({
 });
 
 type Props = {
-  homeCatalogState: {
-    state: NetworkRequestState;
-    error?: any;
-    catalogs?: {
-      Nike: Catalog;
-      Jordan: Catalog;
-      adidas: Catalog;
-      hot: Catalog;
-      ranking: Catalog;
-      toppick: Catalog;
-      buynow: Catalog;
-    };
-  };
   navigation: StackNavigationProp<RootStackParams, 'HomeTabMain'>;
 
   toggleLoadingIndicator: (isLoading: boolean, message: string) => void;
@@ -138,107 +123,82 @@ type CurrentInventoryProps = {
 
 type State = {
   selling: SellingInventory[];
+  trendingOrders: TrendingOrder[];
 };
 
-@connect(
-  (state: IAppState) => ({
-    homeCatalogState: state.CatalogState.homepageCatalogState,
-  }),
-  (dispatch: Function) => ({
-    toggleLoadingIndicator: (isLoading: boolean, message: string): void => {
-      dispatch(toggleIndicator({isLoading, message}));
-    },
-    getHomepageCatalogs: (): void => {
-      dispatch(getHomeCatalogs());
-    },
-  }),
-)
+@connect(null, (dispatch: Function) => ({
+  toggleLoadingIndicator: (isLoading: boolean, message: string): void => {
+    dispatch(toggleIndicator({isLoading, message}));
+  },
+  getHomepageCatalogs: (): void => {
+    dispatch(getHomeCatalogs());
+  },
+}))
 export class HomeTabMain extends React.Component<Props, State> {
   state = {
     selling: new Array<SellingInventory>(),
+    trendingOrders: new Array<TrendingOrder>(),
   };
 
   public componentDidMount(): void {
     const inventoryService: IInventoryService = getDependency(
       FactoryKeys.IInventoryService,
     );
+    const orderService: IOrderService = getDependency(
+      FactoryKeys.IOrderService,
+    );
     inventoryService
       .getSelling()
       .then((inventories) => this.setState({selling: inventories}));
-    this.props.getHomepageCatalogs();
-  }
-
-  public componentDidUpdate(prevProps: Props) {
-    if (this.props.navigation.isFocused()) {
-      const prevState = prevProps.homeCatalogState.state;
-      const {homeCatalogState, toggleLoadingIndicator} = this.props;
-
-      if (prevState === homeCatalogState.state) {
-        return;
-      }
-
-      switch (homeCatalogState.state) {
-        case NetworkRequestState.NOT_STARTED:
-          break;
-        case NetworkRequestState.REQUESTING:
-          toggleLoadingIndicator(true, strings.PleaseWait);
-          break;
-        case NetworkRequestState.FAILED:
-        case NetworkRequestState.SUCCESS:
-        default:
-          toggleLoadingIndicator(false, '');
-          break;
-      }
-    }
+    orderService
+      .getTrendingOrder(10)
+      .then((orders) => this.setState({trendingOrders: orders}));
   }
 
   public render(): JSX.Element {
-    const {homeCatalogState} = this.props;
-    const {state} = homeCatalogState;
-
     return (
       <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
         <StatusBar barStyle={'dark-content'} />
-        {state === NetworkRequestState.SUCCESS && (
-          <ScrollView showsVerticalScrollIndicator={false}>
-            <View style={styles.rootContainer}>
-              {this._renderCurrentSelling()}
-              {this._renderTopTrending()}
-            </View>
-          </ScrollView>
-        )}
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          style={{flex: 1, backgroundColor: themes.AppBackgroundColor}}>
+          <View style={styles.rootContainer}>
+            {this._renderCurrentSelling()}
+            {this._renderTopTrending()}
+          </View>
+        </ScrollView>
       </SafeAreaView>
     );
   }
 
   private _renderTopTrending(): JSX.Element {
-    const ranking = this.props.homeCatalogState.catalogs.ranking;
-
+    const {trendingOrders} = this.state;
     return (
       <View>
         <AppText.Title2 style={styles.sectionTitle}>
           {strings.TopTrending}
         </AppText.Title2>
         <ScrollView horizontal={true} pagingEnabled={true}>
-          {this._renderRankingList(ranking.products.slice(0, 5), 1)}
-          {this._renderRankingList(ranking.products.slice(6, 11), 6)}
+          {this._renderRankingList(trendingOrders.slice(0, 5), 1)}
+          {trendingOrders.length > 5 &&
+            this._renderRankingList(trendingOrders.slice(6, 11), 6)}
         </ScrollView>
       </View>
     );
   }
 
   private _renderRankingList(
-    products: Shoe[],
+    orders: TrendingOrder[],
     startIndex: number,
   ): JSX.Element {
     return (
       <View style={styles.rankingRootContainer}>
         <View style={styles.rankingInnerContainer}>
-          {products.map(
-            (shoe, index): JSX.Element => (
+          {orders.map(
+            (order, index): JSX.Element => (
               <TouchableWithoutFeedback
-                key={shoe._id}
-                onPress={(): void => this._navigateToProductDetail(shoe)}>
+                key={order.shoe._id}
+                onPress={(): void => this._navigateToProductDetail(order.shoe)}>
                 <View style={styles.shoeRankingContainer}>
                   <Avatar
                     rounded
@@ -250,14 +210,14 @@ export class HomeTabMain extends React.Component<Props, State> {
                     }}
                   />
                   <Image
-                    source={{uri: shoe.media.imageUrl}}
+                    source={{uri: order.shoe.media.imageUrl}}
                     style={{width: 90, aspectRatio: 1, marginHorizontal: 20}}
                     resizeMode={'contain'}
                   />
                   <AppText.Subhead
                     style={{flex: 1, flexWrap: 'wrap'}}
                     numberOfLines={2}>
-                    {shoe.title}
+                    {order.shoe.title}
                   </AppText.Subhead>
                 </View>
               </TouchableWithoutFeedback>
@@ -269,20 +229,19 @@ export class HomeTabMain extends React.Component<Props, State> {
   }
 
   private _renderCurrentSelling(): JSX.Element {
-    const catalog = this.props.homeCatalogState.catalogs.Nike;
     return (
       <View style={{marginVertical: 10}}>
         <View style={styles.brandTitleContainer}>
           <AppText.Title2>{strings.Selling}</AppText.Title2>
           <AppText.Footnote
             style={{textDecorationLine: 'underline'}}
-            onPress={this._seeMore.bind(this, catalog)}>
+            onPress={() => {}}>
             {strings.SeeMore}
           </AppText.Footnote>
         </View>
         <FlatList
           horizontal={true}
-          keyExtractor={(itm): string => itm._id}
+          keyExtractor={(itm): string => itm.shoe._id}
           data={this.state.selling}
           style={{marginVertical: 20, paddingLeft: 20}}
           showsHorizontalScrollIndicator={false}
@@ -299,10 +258,6 @@ export class HomeTabMain extends React.Component<Props, State> {
 
   private _navigateToProductDetail(shoe: Shoe): void {
     this.props.navigation.navigate(RouteNames.Product.Name, {shoe});
-  }
-
-  private _seeMore(catalog: Catalog): void {
-    this.props.navigation.push('CatalogSeeMore', {catalog});
   }
 }
 

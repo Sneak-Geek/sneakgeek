@@ -3,11 +3,12 @@
 // !
 
 import { injectable, inject } from "inversify";
-import { IOrderDao } from "./IOrderDao";
+import { IOrderDao, TrendingOrder } from "./IOrderDao";
 import { Order, Repository } from "../../database";
 import { Types } from "../../../configuration/inversify";
 import { ObjectId } from "mongodb";
-import { OrderStatus } from "../../../assets";
+import { OrderStatus } from "../../../assets/constants";
+import mongoose from "mongoose";
 
 @injectable()
 export class OrderDao implements IOrderDao {
@@ -19,7 +20,9 @@ export class OrderDao implements IOrderDao {
   }
 
   public async updateStatus(orderId: string, status: OrderStatus) {
-    return this.orderRepo.findOneAndUpdate({ _id: orderId }, status).exec();
+    return this.orderRepo
+      .findOneAndUpdate({ _id: mongoose.Types.ObjectId(orderId) }, status)
+      .exec();
   }
 
   public async destroyById(OrderId: string | ObjectId): Promise<Order | undefined> {
@@ -28,5 +31,47 @@ export class OrderDao implements IOrderDao {
 
   public findById(OrderId: string): Promise<Order | undefined> {
     return this.orderRepo.findById(OrderId).exec();
+  }
+
+  async getLastSold(top: number): Promise<TrendingOrder[]> {
+    const result = await this.orderRepo
+      .aggregate([
+        {
+          $sort: { createdAt: -1 },
+        },
+        {
+          $match: { status: OrderStatus.COMPLETED },
+        },
+        {
+          $lookup: {
+            from: "inventories",
+            localField: "inventoryId",
+            foreignField: "_id",
+            as: "inventory",
+          },
+        },
+        { $unwind: { path: "$inventory" } },
+        {
+          $group: {
+            _id: "$inventory.shoeId",
+            status: { $first: "$status" },
+            sellPrice: { $min: "$inventory.sellPrice" },
+          },
+        },
+        { $limit: top },
+        {
+          $lookup: {
+            from: "shoes",
+            localField: "_id",
+            foreignField: "_id",
+            as: "shoe",
+          },
+        },
+        { $unwind: { path: "$shoe" } },
+        { $project: { _id: 0 } },
+      ])
+      .exec();
+
+    return result;
   }
 }

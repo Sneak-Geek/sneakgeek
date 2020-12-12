@@ -1,4 +1,4 @@
-import { IOrderService, PaymentType, OrderType, SellOrderEditInput } from "./IOrderService";
+import { IOrderService, PaymentType, OrderType, SellOrderEditInput, TrendingOrder } from "./IOrderService";
 import { BaseService } from "../BaseService";
 import {
   SellOrder,
@@ -8,6 +8,11 @@ import {
 } from "../../../model";
 
 export class OrderService extends BaseService implements IOrderService {
+  async getTrendingOrder(count: number): Promise<TrendingOrder[]> {
+    const { data } = await this.apiClient.getInstance().get(`/order/last-sold?count=${count}`);
+    return data;
+  }
+
   public async createSellOrder(token: string, sellOrder: SellOrder): Promise<void> {
     const response = await this.apiClient.getInstance().post(`/order/sell-order/new`, {
       shoeId: sellOrder.shoeId,

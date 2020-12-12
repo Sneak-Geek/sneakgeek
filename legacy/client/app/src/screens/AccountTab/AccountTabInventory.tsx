@@ -28,7 +28,9 @@ const styles = StyleSheet.create({
   },
 });
 
-const InventoryItem: React.FC<{inventory: Inventory & {shoe: Shoe}}> = (props) => {
+const InventoryItem: React.FC<{inventory: Inventory & {shoe: Shoe}}> = (
+  props,
+) => {
   const inventory = props.inventory;
   const shoe = inventory.shoe;
   return (
@@ -63,7 +65,9 @@ export const AccountTabInventory: React.FC<{}> = () => {
   const inventoryService = getDependency<IInventoryService>(
     FactoryKeys.IInventoryService,
   );
-  const [inventories, setInventories] = useState<(Inventory & {shoe: Shoe})[]>([]);
+  const [inventories, setInventories] = useState<(Inventory & {shoe: Shoe})[]>(
+    [],
+  );
   const [searchKey, setSearchKey] = useState<string>('');
 
   useEffect(() => {
@@ -82,7 +86,9 @@ export const AccountTabInventory: React.FC<{}> = () => {
         inputStyle={themes.TextStyle.body}
         value={searchKey}
         searchIcon={{size: themes.IconSize, name: 'search'}}
-        onChangeText={(text: string): void => { setSearchKey(text) }}
+        onChangeText={(text: string): void => {
+          setSearchKey(text);
+        }}
       />
       <FlatList
         style={{flex: 1}}
