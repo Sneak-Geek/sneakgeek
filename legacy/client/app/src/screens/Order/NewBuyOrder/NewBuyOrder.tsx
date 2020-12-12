@@ -1,18 +1,10 @@
 import React from 'react';
-import {
-  Shoe,
-  BuyOrder,
-  SellOrder,
-  Profile,
-  IOrderService,
-  FactoryKeys,
-  PaymentType,
-} from 'business';
+import {Shoe, Profile, IOrderService, FactoryKeys, PaymentType} from 'business';
 import {SafeAreaConsumer} from 'react-native-safe-area-context';
-import {View, ScrollView, FlatList, Dimensions} from 'react-native';
+import {View, ScrollView, FlatList} from 'react-native';
 import {RootStackParams} from 'navigations/RootStack';
 import {RouteProp} from '@react-navigation/native';
-import {connect, getToken, getDependency} from 'utilities';
+import {connect, getDependency} from 'utilities';
 import {IAppState} from 'store/AppStore';
 import {
   showErrorNotification,
@@ -28,10 +20,8 @@ import {
 } from '@react-navigation/stack';
 import {styles} from './styles';
 import {SizeSelection} from '../';
-import {BuyConfirmation} from '../BuyConfirmation';
 import {OrderSummary} from 'screens/Product/OrderSummary';
 import RouteNames from 'navigations/RouteNames';
-import ActionSheet from 'react-native-action-sheet';
 import {SizePriceMap} from 'business/src';
 
 type NewBuyOrderChild = {

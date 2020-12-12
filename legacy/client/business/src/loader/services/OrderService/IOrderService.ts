@@ -1,9 +1,11 @@
+import { OrderStatus } from "../../../assets";
 import {
   SellOrder,
   BuyOrder,
   Transaction,
   PopulatedSellOrder,
-  PopulatedBuyOrder
+  PopulatedBuyOrder,
+  Shoe
 } from "../../../model";
 
 export type PaymentType = "intl" | "domestic";
@@ -24,6 +26,12 @@ export type SizePriceMap = {
   inventoryId: string;
 }
 
+export type TrendingOrder = {
+  shoe: Shoe;
+  sellPrice: number;
+  status: OrderStatus
+}
+
 export interface IOrderService {
   createSellOrder(token: string, sellOrder: SellOrder): Promise<void>;
   createBuyOrder(token: string, inventoryId: string): Promise<void>;
@@ -39,4 +47,5 @@ export interface IOrderService {
   updateSellOrder: (token: string, order: SellOrderEditInput) => Promise<void>;
   cancelSellOrder: (token: string, orderId: string) => Promise<void>;
   getPopulatedSellOrderById: (token: string, orderId: string) => Promise<PopulatedSellOrder>;
+  getTrendingOrder: ( count: number) => Promise<TrendingOrder[]>;
 }
