@@ -37,7 +37,7 @@ export class OrderDao implements IOrderDao {
     const result = await this.orderRepo
       .aggregate([
         {
-          $sort: { createdAt: - 1},
+          $sort: { createdAt: -1 },
         },
         {
           $match: { status: OrderStatus.COMPLETED },

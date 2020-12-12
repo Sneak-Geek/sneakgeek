@@ -9,7 +9,7 @@ export type TrendingOrder = {
   status: OrderStatus;
   sellPrice: number;
   shoe: Shoe;
-}
+};
 
 export interface IOrderDao {
   create(order: { buyerId: string; inventoryId: string }): Promise<Order>;
