@@ -18,7 +18,7 @@ export class InventoryDao implements IInventoryDao {
     return this.inventoryRepository.findById(inventoryId).exec();
   }
 
-  public async findByUserId(userId: string) {
+  public async findByUserId(userId: string, shoeName: string) {
     return this.inventoryRepository.aggregate([
       {
         $match: {
@@ -36,6 +36,11 @@ export class InventoryDao implements IInventoryDao {
       },
       {
         $unwind: { path: "$shoe" },
+      },
+      {
+        $match: {
+          "shoe.title": { $regex: shoeName, $options: "i" },
+        },
       },
     ]);
   }

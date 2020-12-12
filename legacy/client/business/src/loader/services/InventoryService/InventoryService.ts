@@ -2,9 +2,9 @@ import { BaseService } from "../BaseService";
 import { IInventoryService } from "./IInventoryService";
 
 export class InventoryService extends BaseService implements IInventoryService {
-  public async getInventories(token: string) {
+  public async getInventories(token: string, shoeName: string) {
     const { data } = await this.apiClient.getInstance().get(
-      "/inventory",
+      `/inventory?shoeName=${shoeName}`,
       { headers: { authorization: token } }
     );
     return data;

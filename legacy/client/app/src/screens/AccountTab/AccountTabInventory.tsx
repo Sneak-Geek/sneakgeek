@@ -5,7 +5,8 @@ import {IInventoryService, FactoryKeys, Inventory} from 'business';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {AppText} from 'screens/Shared';
 import {strings, themes} from 'resources';
-import {Divider} from 'react-native-elements';
+import {Shoe} from 'business/src';
+import {SearchBar} from 'react-native-elements';
 
 const styles = StyleSheet.create({
   inventoryContainer: {
@@ -16,9 +17,18 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0.5,
     borderBottomColor: themes.AppDisabledColor,
   },
+  searchContainer: {
+    backgroundColor: 'white',
+    borderTopColor: 'transparent',
+    borderWidth: 0,
+    borderBottomColor: 'transparent',
+  },
+  searchInputContainer: {
+    backgroundColor: 'rgba(0, 0, 0, 0.03)',
+  },
 });
 
-const InventoryItem: React.FC<{inventory: Inventory}> = (props) => {
+const InventoryItem: React.FC<{inventory: Inventory & {shoe: Shoe}}> = (props) => {
   const inventory = props.inventory;
   const shoe = inventory.shoe;
   return (
@@ -53,17 +63,27 @@ export const AccountTabInventory: React.FC<{}> = () => {
   const inventoryService = getDependency<IInventoryService>(
     FactoryKeys.IInventoryService,
   );
-  const [inventories, setInventories] = useState<Inventory[]>([]);
+  const [inventories, setInventories] = useState<(Inventory & {shoe: Shoe})[]>([]);
+  const [searchKey, setSearchKey] = useState<string>('');
 
   useEffect(() => {
-    inventoryService.getInventories(token).then((i) => {
-      console.log(i);
+    inventoryService.getInventories(token, searchKey).then((i) => {
       setInventories(i);
     });
-  }, [inventoryService, token]);
+  }, [inventoryService, token, searchKey]);
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: 'white', paddingTop: 0}}>
+      <SearchBar
+        lightTheme={true}
+        round={true}
+        containerStyle={styles.searchContainer}
+        inputContainerStyle={styles.searchInputContainer}
+        inputStyle={themes.TextStyle.body}
+        value={searchKey}
+        searchIcon={{size: themes.IconSize, name: 'search'}}
+        onChangeText={(text: string): void => { setSearchKey(text) }}
+      />
       <FlatList
         style={{flex: 1}}
         data={inventories}

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { body } from "express-validator";
+import { body, query } from "express-validator";
 import HttpStatus from "http-status";
 import { inject } from "inversify";
 import {
@@ -26,12 +26,17 @@ export class InventoryController {
     "/",
     middlewares.AuthMiddleware,
     middlewares.AccountVerifiedMiddleware,
-    Types.IsSellerMiddleware
+    Types.IsSellerMiddleware,
+    query("shoeName").isString().optional(),
+    middlewares.ValidationPassedMiddleware
   )
   public async getInventories(@request() req: Request, @response() res: Response) {
     const profileId = req.user.profile as mongoose.Types.ObjectId;
-    console.log(profileId);
-    const inventoryWithShoe = await this.inventoryDao.findByUserId(profileId.toHexString());
+    const { shoeName } = req.query;
+    const inventoryWithShoe = await this.inventoryDao.findByUserId(
+      profileId.toHexString(),
+      shoeName as string
+    );
     return res.status(HttpStatus.OK).send(inventoryWithShoe);
   }
 
