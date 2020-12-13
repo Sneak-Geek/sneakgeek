@@ -6,6 +6,8 @@ import {
   controller,
   httpGet,
   httpPost,
+  httpPut,
+  queryParam,
   request,
   requestBody,
   response,
@@ -74,9 +76,42 @@ export class InventoryController {
     return res.status(HttpStatus.OK).send();
   }
 
+  @httpPut(
+    "/update",
+    middlewares.AuthMiddleware,
+    middlewares.AccountVerifiedMiddleware,
+    Types.IsSellerMiddleware,
+    body("_id").isMongoId(),
+    body("shoeId").isMongoId(),
+    body("shoeSize").isString(),
+    body("sellPrice").isNumeric(),
+    body("quantity").isNumeric(),
+    middlewares.ValidationPassedMiddleware
+  )
+  public async updateInventory(@request() req: Request, @response() res: Response) {
+    const inventoryId = req.body._id as string;
+    const inventory = await this.inventoryDao.findById(inventoryId);
+    const updateInventory = Object.assign(inventory, {
+      sellPrice: req.body.sellPrice,
+      quantity: req.body.quantity,
+    });
+    await updateInventory.save();
+    return res.status(HttpStatus.OK).send();
+  }
+
   @httpGet("/selling")
   public async getCurrentlySelling(@response() res: Response) {
     const result = await this.inventoryDao.getCurrentlySelling();
     return res.status(HttpStatus.OK).send(result);
+  }
+
+  @httpGet("/lowest")
+  public async getLowestPriceByShoe(
+    @queryParam("shoeId") shoeId: string,
+    @response() res: Response
+  ) {
+    const lowest = await this.inventoryDao.getLowestPrice(shoeId);
+
+    return res.status(HttpStatus.OK).json({ price: lowest });
   }
 }

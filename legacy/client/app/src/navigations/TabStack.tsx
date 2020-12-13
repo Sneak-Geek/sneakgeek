@@ -9,6 +9,7 @@ import {
   AccountTabFaq,
   AccountTabPaymentInfo,
   AccountTabInventory,
+  AccountTabInventoryDetail
 } from 'screens/AccountTab';
 import {
   createStackNavigator,
@@ -30,6 +31,7 @@ import { RootStackParams } from './RootStack';
 import { connect } from 'utilities';
 import { SellOrderHistory } from 'screens/TransactionTab';
 
+
 const Tab = createBottomTabNavigator();
 
 const TabBarIcon = (name: string) => ({ color, size }): JSX.Element => (
@@ -45,6 +47,7 @@ const AccountTab = (): JSX.Element => (
       options={{
         title: 'Tài khoản',
         ...themes.headerStyle,
+        headerLeft: () => null,
       }}
     />
     <AccountStack.Screen
@@ -61,6 +64,14 @@ const AccountTab = (): JSX.Element => (
       options={{
         ...themes.headerStyle,
         title: strings.Inventory,
+      }}
+    />
+    <AccountStack.Screen
+      name={RouteNames.Tab.AccountTab.InventoryDetail}
+      component={AccountTabInventoryDetail}
+      options={{
+        ...themes.headerStyle,
+        title: strings.InventoryDetail,
       }}
     />
     <AccountStack.Screen

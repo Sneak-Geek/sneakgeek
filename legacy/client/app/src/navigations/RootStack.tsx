@@ -92,8 +92,7 @@ const RootStack = (): JSX.Element => (
         component={ProductDetail}
         options={{
           title: strings.ProductDetail,
-          headerBackTitleVisible: false,
-          headerTitleStyle: themes.TextStyle.title3,
+          ...themes.headerStyle,
         }}
       />
       <Stack.Screen

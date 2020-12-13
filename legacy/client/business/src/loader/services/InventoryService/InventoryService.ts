@@ -1,3 +1,4 @@
+import { Inventory } from "../../../model";
 import { BaseService } from "../BaseService";
 import { IInventoryService } from "./IInventoryService";
 
@@ -18,9 +19,24 @@ export class InventoryService extends BaseService implements IInventoryService {
     )
   }
 
+  public async updateInventory(token: string, inventory: Inventory) {
+    const { data } = await this.apiClient.getInstance().put(
+      '/inventory/update',
+      inventory,
+      { headers: { authorization: token } }
+    )
+    return data;
+  }
+
   public async getSelling() {
     const { data } = await this.apiClient.getInstance().get("/inventory/selling");
 
     return data;
+  }
+
+  public async getLowestSellPrice(shoeId: string) {
+    const { data } = await this.apiClient.getInstance().get(`/inventory/lowest?shoeId=${shoeId}`);
+
+    return data.price;
   }
 }

@@ -62,9 +62,7 @@ export class ProfileController {
     body("userProvidedAddress.addressLine1").optional().isString(),
     body("userProvidedAddress.addressLine2").optional().isString(),
     body("userProvidedGender").optional().isString(),
-    body("userProvidedPhoneNumber")
-      .optional()
-      .isMobilePhone("vi-VN", { strictMode: false }),
+    body("userProvidedPhoneNumber").optional().isString(),
     body("userProvidedEmail").optional().isEmail(),
     body("userProvidedName.firstName").optional().isString(),
     body("userProvidedName.middleName").optional().isString(),

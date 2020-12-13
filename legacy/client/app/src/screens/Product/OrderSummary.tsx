@@ -5,6 +5,7 @@ import {} from 'react-native-gesture-handler';
 import {AppText} from 'screens/Shared';
 import {toCurrencyString} from 'utilities';
 import {Profile} from 'business';
+import {strings} from 'resources';
 
 const styles = StyleSheet.create({
   sectionContainer: {
@@ -91,59 +92,38 @@ export class OrderSummary extends React.Component<Props> {
             {'Thay đổi'}
           </AppText.Body>
         </View>
-        {this._shouldRenderShippingInfoDetails() && (
-          <View style={styles.shippingInfoDescriptionContainer}>
-            {this._renderName()}
-            {this._renderShippingInfoDetails()}
-          </View>
-        )}
+        <View style={styles.shippingInfoDescriptionContainer}>
+          {this._renderName()}
+          {this._renderShippingInfoDetails()}
+        </View>
       </View>
     );
   }
 
-  private _shouldRenderShippingInfoDetails(): boolean {
-    const profile = this.props.userProfile;
-    if (
-      !profile.userProvidedName?.firstName ||
-      !profile.userProvidedName?.lastName
-    ) {
-      return false;
-    } else if (!profile.userProvidedEmail) {
-      return false;
-    } else if (!profile.userProvidedPhoneNumber) {
-      return false;
-    } else if (
-      !profile.userProvidedAddress?.streetAddress ||
-      !profile.userProvidedAddress?.ward ||
-      !profile.userProvidedAddress?.district ||
-      !profile.userProvidedAddress?.city
-    ) {
-      return false;
-    }
-    return true;
-  }
-
   private _renderName(): JSX.Element {
-    const name = `${this.props.userProfile.userProvidedName.firstName} ${this.props.userProfile.userProvidedName.lastName}`;
-    return <AppText.Body>{name}</AppText.Body>;
+    const name = `${this.props.userProfile.userProvidedName.lastName} ${this.props.userProfile.userProvidedName.firstName}`;
+    return <AppText.Headline>{name}</AppText.Headline>;
   }
 
   private _renderShippingInfoDetails(): JSX.Element {
     const profile = this.props.userProfile;
+    const email = profile.userProvidedEmail;
     const phoneNumber = profile.userProvidedPhoneNumber;
-    const {streetAddress, ward, district, city} = profile.userProvidedAddress;
+    const {addressLine1, addressLine2} = profile.userProvidedAddress;
     return (
       <>
-        <AppText.Footnote style={styles.shippingInfoDetails}>
+        <AppText.Subhead style={styles.shippingInfoDetails}>
           {phoneNumber}
-        </AppText.Footnote>
-        <AppText.Footnote style={styles.shippingInfoDetails}>
-          {streetAddress}
-        </AppText.Footnote>
-        <AppText.Footnote
-          style={
-            styles.shippingInfoDetails
-          }>{`${ward} - ${district} - ${city}`}</AppText.Footnote>
+        </AppText.Subhead>
+        <AppText.Subhead style={styles.shippingInfoDetails}>
+          {email}
+        </AppText.Subhead>
+        <AppText.Subhead style={styles.shippingInfoDetails}>
+          {strings.Address}: {addressLine1}
+        </AppText.Subhead>
+        <AppText.Subhead style={styles.shippingInfoDetails}>
+          {addressLine2}
+        </AppText.Subhead>
       </>
     );
   }
