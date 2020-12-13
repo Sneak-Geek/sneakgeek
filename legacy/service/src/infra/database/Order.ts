@@ -29,7 +29,6 @@ export const OrderSchema = new mongoose.Schema(
       ref: "UserProfile",
       // require: true, phai seed lai data nen tam comment out
     },
-
   },
   { timestamps: true }
 );

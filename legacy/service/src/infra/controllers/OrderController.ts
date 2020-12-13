@@ -41,12 +41,7 @@ export class OrderController {
   @inject(Types.ShoeDao)
   private readonly shoeDao!: IShoeDao;
 
-  @httpGet(
-    "/",
-    AuthMiddleware,
-    AccountVerifiedMiddleware,
-    ValidationPassedMiddleware
-  )
+  @httpGet("/", AuthMiddleware, AccountVerifiedMiddleware, ValidationPassedMiddleware)
   public async getOrderHistoryByUserId(
     @request() req: Request,
     @requestBody() body: any,
