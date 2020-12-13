@@ -44,6 +44,7 @@ const AccountTab = (): JSX.Element => (
       options={{
         title: 'Tài khoản',
         ...themes.headerStyle,
+        headerLeft: () => null,
       }}
     />
     <AccountStack.Screen

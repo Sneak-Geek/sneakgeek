@@ -15,4 +15,5 @@ export interface Shoe {
   title: string;
   retailPrice?: number;
   releaseDate?: string;
+  gender: "men" | "women";
 }

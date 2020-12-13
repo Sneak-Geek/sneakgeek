@@ -1,8 +1,5 @@
 import React from 'react';
-import {
-  StackNavigationProp,
-  HeaderHeightContext,
-} from '@react-navigation/stack';
+import {StackNavigationProp} from '@react-navigation/stack';
 import {RootStackParams} from 'navigations/RootStack';
 import {RouteProp} from '@react-navigation/native';
 import {
@@ -18,9 +15,8 @@ import {
   RefreshControl,
 } from 'react-native';
 import {SafeAreaConsumer} from 'react-native-safe-area-context';
-import {AppText, LiteShoeCard, ReviewItem} from 'screens/Shared';
+import {AppText, LiteShoeCard} from 'screens/Shared';
 import {strings, themes} from 'resources';
-import {Icon} from 'react-native-elements';
 import {
   connect,
   toVnDateFormat,
@@ -388,10 +384,8 @@ export class ProductDetail extends React.Component<Props> {
       profile &&
       !profile.isSeller &&
       (!profile?.userProvidedAddress ||
-        !profile?.userProvidedAddress.city ||
-        !profile?.userProvidedAddress.districtId ||
-        !profile?.userProvidedAddress.wardCode ||
-        !profile?.userProvidedAddress.streetAddress);
+        !profile?.userProvidedAddress.addressLine1 ||
+        !profile?.userProvidedAddress.addressLine1);
 
     let backgroundColor: string;
     let subtitle: string;
@@ -427,7 +421,7 @@ export class ProductDetail extends React.Component<Props> {
     };
 
     return (
-      <TouchableOpacity onPress={onPress}>
+      <TouchableOpacity onPress={onPressWrapper}>
         <View
           style={{
             backgroundColor,

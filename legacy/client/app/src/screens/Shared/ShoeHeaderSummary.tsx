@@ -40,9 +40,10 @@ export const ShoeHeaderSummary = (props: {shoe: Shoe}): JSX.Element => (
       <AppText.Body style={{flexWrap: 'wrap', marginBottom: 8}}>
         {props.shoe.title}
       </AppText.Body>
-      <AppText.Body>
-        {strings.Gender}: {props.shoe.gender}
-      </AppText.Body>
+      <AppText.Subhead>
+        {strings.Gender}:{' '}
+        {props.shoe.gender === 'men' ? strings.Men : strings.Women}
+      </AppText.Subhead>
     </View>
   </View>
 );
