@@ -1,5 +1,5 @@
 import { createAction } from "redux-actions"
-import { Shoe, BuyOrder, PopulatedSellOrder } from "../model"
+import { Shoe, PopulatedSellOrder } from "../model"
 import { GetBuyOrdersPayload, GetSellOrderHistoryPayload, NetworkRequestState } from "../payload";
 import { ObjectFactory, FactoryKeys } from "../loader/kernel";
 import { ISettingsProvider, IOrderService, SettingsKey, OrderType } from "../loader";

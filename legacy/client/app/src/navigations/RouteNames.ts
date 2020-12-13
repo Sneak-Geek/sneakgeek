@@ -49,7 +49,7 @@ const RouteNames = {
       Inventory: 'AccountTabInventory',
       InventoryDetail: 'AccountTabInventoryDetail',
       Faq: 'AccountTabFaq',
-      PaymentInfo: 'AccountTabPaymentInfo'
+      PaymentInfo: 'AccountTabPaymentInfo',
     },
   },
 };

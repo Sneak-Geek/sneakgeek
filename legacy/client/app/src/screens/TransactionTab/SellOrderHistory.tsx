@@ -1,33 +1,36 @@
 import React from 'react';
 import {
   NetworkRequestState,
-  SellOrder,
   PopulatedSellOrder,
-  OrderStatus,
   getUserPopulatedOrders,
   Order,
   IOrderService,
-  FactoryKeys
+  FactoryKeys,
+  OrderHistory,
+  Profile,
 } from 'business';
-import { connect, getDependency, getToken, toCurrencyString } from 'utilities';
-import { IAppState } from 'store/AppStore';
-import { FlatList } from 'react-native-gesture-handler';
+import {
+  connect,
+  getDependency,
+  getToken,
+  toCurrencyString,
+  toVnDateFormat,
+} from 'utilities';
+import {IAppState} from 'store/AppStore';
+import {FlatList} from 'react-native-gesture-handler';
 import {
   View,
   Image,
   SafeAreaView,
-  TouchableWithoutFeedback,
   StyleSheet,
-  RefreshControl,
   Modal,
-  TouchableOpacity
+  TouchableOpacity,
 } from 'react-native';
-import { themes, strings } from 'resources';
-import { AppText, ShimmerLoadList } from 'screens/Shared';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParams } from 'navigations/RootStack';
-import RouteNames from 'navigations/RouteNames';
-import { Icon } from 'react-native-elements';
+import {themes, strings} from 'resources';
+import {AppText, ShoeHeaderSummary} from 'screens/Shared';
+import {StackNavigationProp} from '@react-navigation/stack';
+import {RootStackParams} from 'navigations/RootStack';
+import {Icon} from 'react-native-elements';
 
 const styles = StyleSheet.create({
   orderContainer: {
@@ -46,6 +49,20 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: themes.AppBackgroundColor,
   },
+  shippingInfoDetails: {
+    marginVertical: 5,
+  },
+  modalContentContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    backgroundColor: 'white',
+  },
+  infoContainer: {
+    marginVertical: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
 });
 
 type Props = {
@@ -55,6 +72,7 @@ type Props = {
     error?: unknown;
   };
 
+  userProfile: Profile;
   // dispatch props
   getUserPopulatedOrders: () => void;
 
@@ -63,14 +81,15 @@ type Props = {
 };
 
 type State = {
-  orders: Order[] | undefined;
+  orders: OrderHistory[];
   modalVisible: boolean;
-  order: Order | undefined;
-}
+  selectedOrder: OrderHistory;
+};
 
 @connect(
   (state: IAppState) => ({
     sellOrderHistoryState: state.OrderState.sellOrderHistoryState,
+    userProfile: state.UserState.profileState.profile,
   }),
   (dispatch: Function) => ({
     getUserPopulatedOrders: (): void =>
@@ -78,22 +97,24 @@ type State = {
   }),
 )
 export class SellOrderHistory extends React.Component<Props, State> {
-  private modalInfo = [{
-    header: 'Cỡ giày',
-    key: 'shoeSize'
-  },
-  {
-    header: 'Giá bán',
-    key: 'retailPrice'
-  },
-  {
-    header: 'Ngày bán',
-    key: 'updatedAt'
-  },
+  private modalInfo = [
+    {
+      header: 'Cỡ giày',
+      value: (order: OrderHistory) => order.inventory.shoeSize,
+    },
+    {
+      header: 'Giá bán',
+      value: (order: OrderHistory) =>
+        toCurrencyString(order.inventory.sellPrice),
+    },
+    {
+      header: 'Ngày mua',
+      value: (order: OrderHistory) => toVnDateFormat(order.createdAt),
+    },
   ];
 
   public async componentDidMount(): Promise<void> {
-    const { state } = this.props.sellOrderHistoryState;
+    const {state} = this.props.sellOrderHistoryState;
     if (state === NetworkRequestState.NOT_STARTED) {
       this.props.getUserPopulatedOrders();
     }
@@ -102,11 +123,9 @@ export class SellOrderHistory extends React.Component<Props, State> {
       FactoryKeys.IOrderService,
     );
 
-    const data = await orderService
-      .getOrderHistory(getToken());
-
-    this.setState({ orders: data })
-    console.log(this.state.orders);
+    orderService
+      .getOrderHistory(getToken())
+      .then((orders) => this.setState({orders}));
   }
 
   constructor(props) {
@@ -114,19 +133,19 @@ export class SellOrderHistory extends React.Component<Props, State> {
     this.state = {
       orders: [],
       modalVisible: false,
-      order: undefined
-    }
+      selectedOrder: undefined,
+    };
   }
 
   public render(): JSX.Element {
-    const { orders } = this.state;
+    const {orders} = this.state;
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+      <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
         {orders?.length > 0 && (
           <FlatList
             data={orders}
             keyExtractor={(item): string => item._id}
-            renderItem={({ item }): JSX.Element => this._renderOrder(item)}
+            renderItem={({item}): JSX.Element => this._renderOrder(item)}
           />
         )}
         {orders.length === 0 && (
@@ -134,34 +153,35 @@ export class SellOrderHistory extends React.Component<Props, State> {
             <AppText.Body>Hiện chưa có đơn bán nào</AppText.Body>
           </View>
         )}
-        {this.state.order && this._renderModal()}
+        {this.state.selectedOrder && this._renderModal()}
       </SafeAreaView>
     );
   }
 
-  private _renderOrder(order: Order): JSX.Element {
+  private _renderOrder(order: OrderHistory): JSX.Element {
     const shoe = order.shoe;
-    let status: string;
-    let color: string;
+    const size = order.inventory.shoeSize;
 
     return (
       <TouchableOpacity onPress={this._onOrderPress.bind(this, order)}>
         <View style={styles.orderContainer}>
           <Image
-            source={{ uri: shoe.media.imageUrl }}
-            style={{ width: 100, aspectRatio: 1 }}
+            source={{uri: shoe.media.imageUrl}}
+            style={{width: 100, aspectRatio: 1}}
             resizeMode={'contain'}
           />
-          <View style={{ flex: 1, flexDirection: 'column', marginLeft: 20 }}>
-            <AppText.Subhead style={{ flexWrap: 'wrap', marginBottom: 10 }}>
+          <View style={{flex: 1, flexDirection: 'column', marginLeft: 20}}>
+            <AppText.Subhead style={{flexWrap: 'wrap', marginBottom: 10}}>
               {shoe.title}
             </AppText.Subhead>
-            <AppText.Subhead style={{ marginBottom: 5 }}>
+            <AppText.Subhead style={{marginBottom: 5}}>
               {strings.Price}:{' '}
-              <AppText.Body>{toCurrencyString(shoe.retailPrice)}</AppText.Body>
+              <AppText.Body>
+                {toCurrencyString(order.inventory.sellPrice)}
+              </AppText.Body>
             </AppText.Subhead>
-            <AppText.Subhead style={{ marginBottom: 5 }}>
-              {strings.ShoeSize}: <AppText.Body>{shoe.shoeSize}</AppText.Body>
+            <AppText.Subhead style={{marginBottom: 5}}>
+              {strings.ShoeSize}: <AppText.Body>{size}</AppText.Body>
             </AppText.Subhead>
           </View>
         </View>
@@ -169,71 +189,75 @@ export class SellOrderHistory extends React.Component<Props, State> {
     );
   }
 
-
-
   private _onOrderPress(order): void {
-    this.setState({ order })
-    this.setState({ modalVisible: true })
+    this.setState({selectedOrder: order, modalVisible: true});
   }
 
   private _renderModal(): JSX.Element {
-    const order = this.state.order;
+    const order = this.state.selectedOrder;
     return (
-
-      <Modal visible={this.state.modalVisible}
+      <Modal
+        visible={this.state.modalVisible}
         animationType="slide"
-        transparent={true}
-      >
-        <View style={{ display: 'flex', flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <View style={{ width: 370, height: 550, backgroundColor: 'white', borderWidth: 1, borderColor: '#C8C8C8', borderRadius: 10, marginTop: 15, display: 'flex', flexDirection: 'column', paddingLeft: 20, paddingRight: 20 }}>
+        presentationStyle={'formSheet'}>
+        <View style={styles.modalContentContainer}>
+          <AppText.Title3 style={{alignSelf: 'center', marginTop: 20}}>
+            Thông tin giao dịch
+          </AppText.Title3>
+          <Icon
+            containerStyle={{position: 'absolute', top: 20, right: 20}}
+            name="close"
+            onPress={() => {
+              this.setState({modalVisible: false});
+            }}
+          />
 
-            <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-              <TouchableOpacity>
-                <Icon
-                  name='g-translate'
-                  color='#00aced' iconStyle={{ color: 'white' }} />
-              </TouchableOpacity>
-              <AppText.Title3 style={{ alignSelf: 'center', marginTop: 20 }}>Thông tin giao dịch</AppText.Title3>
-              <TouchableOpacity onPress={() => { this.setState({ modalVisible: false }) }}>
-                <Icon containerStyle={{ marginTop: 20 }}
-                  name='close'
-                  color='#00aced' />
-              </TouchableOpacity>
-            </View>
+          <ShoeHeaderSummary shoe={order.shoe} />
 
-            <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-
-              <Image style={{ width: 100, aspectRatio: 1 }}
-                resizeMode={'contain'} source={{ uri: order.shoe.media.imageUrl }} />
-              <View style={{ marginLeft: 20 }}>
-                <AppText.SubHeadline>{order.shoe.title}</AppText.SubHeadline>
-                <AppText.SubHeadline>SKU: {order._id}</AppText.SubHeadline>
-              </View>
-            </View>
-
+          <View style={{flex: 1, padding: 20, alignSelf: 'stretch'}}>
             {this.modalInfo.map((info) => {
               return (
-                <View style={{ margin: 10, display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                <View style={styles.infoContainer}>
                   <AppText.Body>{info.header}</AppText.Body>
-                  <AppText.Body> {info.key === 'updatedAt' ? order[info.key] : order.shoe[info.key]}</AppText.Body>
+                  <AppText.Body>
+                    {info.value(this.state.selectedOrder)}
+                  </AppText.Body>
                 </View>
               );
             })}
 
-            <AppText.Title3 style={{ marginTop: 30 }}>
+            <AppText.Title3 style={{marginTop: 20}}>
               Thông tin giao hàng
             </AppText.Title3>
-
-            <View style={{ display: 'flex', flexDirection: 'row', flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-              <AppText.Body>Chưa có thông tin giao hàng.</AppText.Body>
-            </View>
-
-
+            {this._renderShippingInfoDetails()}
           </View>
         </View>
-
       </Modal>
+    );
+  }
 
+  private _renderShippingInfoDetails(): JSX.Element {
+    const profile = this.props.userProfile;
+    const email = profile.userProvidedEmail;
+    const phoneNumber = profile.userProvidedPhoneNumber;
+    const {addressLine1, addressLine2} = profile.userProvidedAddress;
+    const name = `${this.props.userProfile.userProvidedName.lastName} ${this.props.userProfile.userProvidedName.firstName}`;
+    return (
+      <>
+        <AppText.Body style={{marginTop: 10}}>{name}</AppText.Body>
+        <AppText.Subhead style={styles.shippingInfoDetails}>
+          {phoneNumber}
+        </AppText.Subhead>
+        <AppText.Subhead style={styles.shippingInfoDetails}>
+          {email}
+        </AppText.Subhead>
+        <AppText.Subhead style={styles.shippingInfoDetails}>
+          {strings.Address}: {addressLine1}
+        </AppText.Subhead>
+        <AppText.Subhead style={styles.shippingInfoDetails}>
+          {addressLine2}
+        </AppText.Subhead>
+      </>
     );
   }
 }

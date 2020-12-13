@@ -3,7 +3,7 @@
 // !
 
 import { injectable, inject } from "inversify";
-import { IOrderDao, TrendingOrder } from "./IOrderDao";
+import { IOrderDao, OrderHistory, TrendingOrder } from "./IOrderDao";
 import { Order, Repository } from "../../database";
 import { Types } from "../../../configuration/inversify";
 import { ObjectId } from "mongodb";
@@ -33,7 +33,7 @@ export class OrderDao implements IOrderDao {
     return this.orderRepo.findById(OrderId).exec();
   }
 
-  public async getOrderHistoryByUserId(buyerId: string): Promise<Order[] | undefined> {
+  public async getOrderHistoryByUserId(buyerId: string): Promise<OrderHistory[]> {
     return this.orderRepo
       .aggregate([
         {
@@ -63,19 +63,6 @@ export class OrderDao implements IOrderDao {
         {
           $unwind: {
             path: "$shoe",
-          },
-        },
-        {
-          $project: {
-            updatedAt: 1,
-            createdAt: 1,
-            shoe: {
-              _id: 1,
-              retailPrice: 1,
-              title: 1,
-              media: 1,
-              shoeSize: "$inventory.shoeSize",
-            },
           },
         },
       ])

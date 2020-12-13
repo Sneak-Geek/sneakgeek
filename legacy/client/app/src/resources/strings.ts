@@ -179,4 +179,5 @@ export const strings = {
   InventoryDetail: 'Thông tin đơn bán',
   InventoryQuantity: 'Số lượng',
   TopTrending: 'Top Trending',
+  OrderHistory: 'Lịch sử giao dịch',
 };

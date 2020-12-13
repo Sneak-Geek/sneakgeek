@@ -5,7 +5,9 @@ import {
   Transaction,
   PopulatedSellOrder,
   PopulatedBuyOrder,
-  Shoe
+  Shoe,
+  Inventory,
+  Order
 } from "../../../model";
 
 export type PaymentType = "intl" | "domestic";
@@ -32,23 +34,9 @@ export type TrendingOrder = {
   status: OrderStatus
 }
 
-export type Order = {
-  _id: string,
-  createdAt: string,
-  updatedAt: string,
-  shoe: {
-    _id: string,
-    media: {
-      imageUrl: string,
-      smallImageUrl: string,
-      thumbUrl: string,
-      gallery: [],
-      hidden: boolean
-    },
-    retailPrice: number,
-    title: string,
-    shoeSize: number
-  }
+export type OrderHistory = Order & {
+  inventory: Inventory;
+  shoe: Shoe;
 }
 
 export interface IOrderService {
@@ -67,5 +55,5 @@ export interface IOrderService {
   cancelSellOrder: (token: string, orderId: string) => Promise<void>;
   getPopulatedSellOrderById: (token: string, orderId: string) => Promise<PopulatedSellOrder>;
   getTrendingOrder: (count: number) => Promise<TrendingOrder[]>;
-  getOrderHistory: (token: string) => Promise<Order[] | undefined>;
+  getOrderHistory: (token: string) => Promise<OrderHistory[]>;
 }

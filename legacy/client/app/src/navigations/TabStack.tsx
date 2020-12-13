@@ -1,40 +1,39 @@
 import React from 'react';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import RouteNames from './RouteNames';
-import { themes, strings, images } from 'resources';
-import { Icon } from 'react-native-elements';
+import {themes, strings, images} from 'resources';
+import {Icon} from 'react-native-elements';
 import {
   AccountTabMain,
   AccountTabEditProfile,
   AccountTabFaq,
   AccountTabPaymentInfo,
   AccountTabInventory,
-  AccountTabInventoryDetail
+  AccountTabInventoryDetail,
 } from 'screens/AccountTab';
 import {
   createStackNavigator,
   StackNavigationProp,
 } from '@react-navigation/stack';
-import { HomeTabMain } from 'screens/HomeTab/HomeTabMain';
-import { SearchTabMain } from 'screens/SearchTab/SearchTabMain';
-import { Image } from 'react-native';
+import {HomeTabMain} from 'screens/HomeTab/HomeTabMain';
+import {SearchTabMain} from 'screens/SearchTab/SearchTabMain';
+import {Image} from 'react-native';
 import {
   ObjectFactory as Factory,
   ISettingsProvider,
   FactoryKeys as Keys,
   getNotification,
 } from 'business';
-import { CatalogSeeMore, NotificationsScreen } from 'screens/HomeTab';
-import { ProductRequest } from 'screens/SearchTab';
-import { IAppState } from 'store/AppStore';
-import { RootStackParams } from './RootStack';
-import { connect } from 'utilities';
-import { SellOrderHistory } from 'screens/TransactionTab';
-
+import {CatalogSeeMore, NotificationsScreen} from 'screens/HomeTab';
+import {ProductRequest} from 'screens/SearchTab';
+import {IAppState} from 'store/AppStore';
+import {RootStackParams} from './RootStack';
+import {connect} from 'utilities';
+import {SellOrderHistory} from 'screens/TransactionTab';
 
 const Tab = createBottomTabNavigator();
 
-const TabBarIcon = (name: string) => ({ color, size }): JSX.Element => (
+const TabBarIcon = (name: string) => ({color, size}): JSX.Element => (
   <Icon name={name} size={size} color={color} />
 );
 
@@ -93,10 +92,10 @@ const AccountTab = (): JSX.Element => (
     <AccountStack.Screen
       name={RouteNames.Tab.AccountTab.OrderHistory}
       component={SellOrderHistory}
-    // options={{
-    // title: strings.PaymentInfo,
-    // ...themes.headerStyle,
-    // }}
+      options={{
+        title: strings.OrderHistory,
+        ...themes.headerStyle,
+      }}
     />
   </AccountStack.Navigator>
 );

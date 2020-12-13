@@ -1,4 +1,4 @@
-import { IOrderService, PaymentType, OrderType, SellOrderEditInput, TrendingOrder, Order } from "./IOrderService";
+import { IOrderService, PaymentType, OrderType, SellOrderEditInput, TrendingOrder, OrderHistory } from "./IOrderService";
 import { BaseService } from "../BaseService";
 import {
   SellOrder,
@@ -13,7 +13,7 @@ export class OrderService extends BaseService implements IOrderService {
     return data;
   }
 
-  async getOrderHistory(token: string): Promise<Order[] | undefined> {
+  async getOrderHistory(token: string): Promise<OrderHistory[]> {
     const { data } = await this.apiClient.getInstance().get(`/order`, {
       headers: {
         authorization: token
