@@ -33,4 +33,10 @@ export class InventoryService extends BaseService implements IInventoryService {
 
     return data;
   }
+
+  public async getLowestSellPrice(shoeId: string) {
+    const { data } = await this.apiClient.getInstance().get(`/inventory/lowest?shoeId=${shoeId}`);
+
+    return data.price;
+  }
 }

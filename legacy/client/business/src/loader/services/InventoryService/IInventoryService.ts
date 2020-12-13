@@ -11,4 +11,5 @@ export interface IInventoryService {
   createInventory(token: string, shoeId: string, quantity: number, sellPrice: number, shoeSize: string): Promise<void>;
   updateInventory(token: string, inventory: Inventory): Promise<Inventory>;
   getSelling(): Promise<SellingInventory[]>;
+  getLowestSellPrice(shoeId: string): Promise<number>;
 }

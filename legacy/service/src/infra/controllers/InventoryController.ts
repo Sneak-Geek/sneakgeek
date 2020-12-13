@@ -7,6 +7,7 @@ import {
   httpGet,
   httpPost,
   httpPut,
+  queryParam,
   request,
   requestBody,
   response,
@@ -99,5 +100,12 @@ export class InventoryController {
   public async getCurrentlySelling(@response() res: Response) {
     const result = await this.inventoryDao.getCurrentlySelling();
     return res.status(HttpStatus.OK).send(result);
+  }
+
+  @httpGet("/lowest")
+  public async getLowestPriceByShoe(@queryParam("shoeId") shoeId: string, @response() res: Response) {
+    const lowest = await this.inventoryDao.getLowestPrice(shoeId);
+
+    return res.status(HttpStatus.OK).json({ price: lowest });
   }
 }

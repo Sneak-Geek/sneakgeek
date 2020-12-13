@@ -128,4 +128,18 @@ export class InventoryDao implements IInventoryDao {
       ])
       .exec();
   }
+
+  public async getLowestPrice(shoeId: string) {
+    const lowestPrices = await this.inventoryRepository
+      .find({ shoeId: mongoose.Types.ObjectId(shoeId) })
+      .sort({ sellPrice: 1 })
+      .limit(1)
+      .exec();
+
+    if (lowestPrices.length === 0) {
+      return 0;
+    }
+
+    return lowestPrices[0].sellPrice;
+  }
 }
