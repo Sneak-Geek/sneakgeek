@@ -1,5 +1,5 @@
 import { createAction } from "redux-actions"
-import { Shoe, BuyOrder, PopulatedSellOrder } from "../model"
+import { Shoe, PopulatedSellOrder } from "../model"
 import { GetBuyOrdersPayload, GetSellOrderHistoryPayload, NetworkRequestState } from "../payload";
 import { ObjectFactory, FactoryKeys } from "../loader/kernel";
 import { ISettingsProvider, IOrderService, SettingsKey, OrderType } from "../loader";
@@ -29,7 +29,7 @@ export const getUserPopulatedOrders = (type: OrderType) => {
       dispatch(updateAction({
         state: NetworkRequestState.SUCCESS,
         // @ts-ignore
-        data: orders as BuyOrder[] | PopulatedSellOrder[]
+        data: orders as [] | PopulatedSellOrder[]
       }));
     } catch (error) {
       dispatch(updateAction({

@@ -3,11 +3,16 @@
 //!
 
 import { OrderStatus } from "../../../assets";
-import { Order, Shoe } from "../../database";
+import { Inventory, Order, Shoe } from "../../database";
 
 export type TrendingOrder = {
   status: OrderStatus;
   sellPrice: number;
+  shoe: Shoe;
+};
+
+export type OrderHistory = Order & {
+  inventory: Inventory;
   shoe: Shoe;
 };
 
@@ -17,4 +22,5 @@ export interface IOrderDao {
   findById(orderId: string): Promise<Order>;
   destroyById(OrderId: string): Promise<Order>;
   getLastSold(top: number): Promise<TrendingOrder[]>;
+  getOrderHistoryByUserId(buyerId: string): Promise<OrderHistory[]>;
 }

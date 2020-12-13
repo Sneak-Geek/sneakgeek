@@ -3,7 +3,7 @@
 // !
 
 import { injectable, inject } from "inversify";
-import { IOrderDao, TrendingOrder } from "./IOrderDao";
+import { IOrderDao, OrderHistory, TrendingOrder } from "./IOrderDao";
 import { Order, Repository } from "../../database";
 import { Types } from "../../../configuration/inversify";
 import { ObjectId } from "mongodb";
@@ -31,6 +31,42 @@ export class OrderDao implements IOrderDao {
 
   public findById(OrderId: string): Promise<Order | undefined> {
     return this.orderRepo.findById(OrderId).exec();
+  }
+
+  public async getOrderHistoryByUserId(buyerId: string): Promise<OrderHistory[]> {
+    return this.orderRepo
+      .aggregate([
+        {
+          $match: {
+            buyerId: mongoose.Types.ObjectId(buyerId),
+          },
+        },
+        {
+          $lookup: {
+            from: "inventories",
+            localField: "inventoryId",
+            foreignField: "_id",
+            as: "inventory",
+          },
+        },
+        {
+          $unwind: { path: "$inventory" },
+        },
+        {
+          $lookup: {
+            from: "shoes",
+            localField: "inventory.shoeId",
+            foreignField: "_id",
+            as: "shoe",
+          },
+        },
+        {
+          $unwind: {
+            path: "$shoe",
+          },
+        },
+      ])
+      .exec();
   }
 
   async getLastSold(top: number): Promise<TrendingOrder[]> {
