@@ -7,12 +7,10 @@ import {
   Image,
   StyleSheet,
   Dimensions,
-  ActivityIndicator,
   Alert,
   FlatList,
   TouchableOpacity,
   ScrollView,
-  RefreshControl,
 } from 'react-native';
 import {SafeAreaConsumer} from 'react-native-safe-area-context';
 import {AppText, LiteShoeCard} from 'screens/Shared';
@@ -22,40 +20,35 @@ import {
   toVnDateFormat,
   toCurrencyString,
   convertUsdToVnd,
+  getDependency,
 } from 'utilities';
 import {IAppState} from 'store/AppStore';
 import {
   Account,
-  NetworkRequestState,
-  Review,
-  getReviews,
   Profile,
   getShoeInfo,
+  NetworkRequestState,
   Shoe,
-  SellOrder,
-  BuyOrder,
 } from 'business';
 import RouteNames from 'navigations/RouteNames';
+import {FactoryKeys, InventoryService} from 'business/src';
 
 type Props = {
   account: Account;
   profile: Profile;
   route: RouteProp<RootStackParams, 'ProductDetail'>;
   navigation: StackNavigationProp<RootStackParams, 'ProductDetail'>;
-  reviewState: {
-    state: NetworkRequestState;
-    reviews: Review[];
-    error?: any;
-  };
   shoeInfoState: {
     state: NetworkRequestState;
     error?: any;
     relatedShoes: Shoe[];
-    lowestSellOrder?: SellOrder;
-    highestBuyOrder?: BuyOrder;
   };
   getReviews: (shoeId: string) => void;
   getShoeInfo: (shoeId: string) => void;
+};
+
+type State = {
+  lowestPrice: number;
 };
 
 const styles = StyleSheet.create({
@@ -135,7 +128,7 @@ const styles = StyleSheet.create({
   },
   bottomButtonStyle: {
     height: themes.RegularButtonHeight,
-    width: Dimensions.get('window').width * 0.75,
+    width: Dimensions.get('window').width * 0.85,
     alignItems: 'center',
     borderRadius: themes.LargeBorderRadius,
     flexDirection: 'row',
@@ -149,25 +142,38 @@ const styles = StyleSheet.create({
 
 @connect(
   (state: IAppState) => ({
-    reviewState: state.ProductState.reviewState,
     shoeInfoState: state.ProductState.infoState,
     account: state.UserState.accountState.account,
     profile: state.UserState.profileState.profile,
   }),
   (dispatch: Function) => ({
-    getReviews: (shoeId: string): void => dispatch(getReviews(shoeId)),
     getShoeInfo: (shoeId: string): void => dispatch(getShoeInfo(shoeId)),
   }),
 )
-export class ProductDetail extends React.Component<Props> {
+export class ProductDetail extends React.Component<Props, State> {
   private _shoe = this.props.route.params.shoe;
+  private inventoryService: InventoryService = getDependency(
+    FactoryKeys.IInventoryService,
+  );
+
+  state = {
+    lowestPrice: 0,
+  };
 
   public componentDidMount(): void {
     this._getShoeData();
+    this._getLowestPrice();
   }
 
   private _getShoeData() {
     this.props.getShoeInfo(this._shoe._id);
+  }
+
+  private async _getLowestPrice() {
+    const lowestPrice = await this.inventoryService.getLowestSellPrice(
+      this._shoe._id,
+    );
+    this.setState({lowestPrice});
   }
 
   public render(): JSX.Element {
@@ -178,20 +184,7 @@ export class ProductDetail extends React.Component<Props> {
             style={{
               ...styles.rootContainer,
             }}>
-            <ScrollView
-              style={{flex: 1}}
-              showsVerticalScrollIndicator={false}
-              refreshControl={
-                <RefreshControl
-                  refreshing={
-                    this.props.reviewState.state ===
-                      NetworkRequestState.REQUESTING ||
-                    this.props.shoeInfoState.state ===
-                      NetworkRequestState.REQUESTING
-                  }
-                  onRefresh={this._getShoeData.bind(this)}
-                />
-              }>
+            <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
               <View
                 style={{
                   ...styles.pageContainer,
@@ -290,34 +283,28 @@ export class ProductDetail extends React.Component<Props> {
   }
 
   private _renderRelatedShoes(): JSX.Element {
-    let content: JSX.Element;
     const {shoeInfoState} = this.props;
-
-    if (shoeInfoState.state === NetworkRequestState.REQUESTING) {
-      content = <ActivityIndicator size={'large'} />;
-    } else if (shoeInfoState.state === NetworkRequestState.SUCCESS) {
-      content = (
-        <FlatList
-          horizontal={true}
-          showsHorizontalScrollIndicator={false}
-          style={{marginBottom: 20, paddingBottom: 10}}
-          data={shoeInfoState.relatedShoes}
-          keyExtractor={(itm): string => itm._id}
-          renderItem={({item}): JSX.Element => (
-            <LiteShoeCard
-              shoe={item}
-              onPress={(): void =>
-                // @ts-ignore
-                this.props.navigation.push(RouteNames.Product.Name, {
-                  shoe: item,
-                })
-              }
-              style={{marginRight: 20, paddingBottom: 8}}
-            />
-          )}
-        />
-      );
-    }
+    let content: JSX.Element = (
+      <FlatList
+        horizontal={true}
+        showsHorizontalScrollIndicator={false}
+        style={{marginBottom: 20, paddingBottom: 10}}
+        data={shoeInfoState.relatedShoes}
+        keyExtractor={(itm): string => itm._id}
+        renderItem={({item}): JSX.Element => (
+          <LiteShoeCard
+            shoe={item}
+            onPress={(): void =>
+              // @ts-ignore
+              this.props.navigation.push(RouteNames.Product.Name, {
+                shoe: item,
+              })
+            }
+            style={{marginRight: 20, paddingBottom: 8}}
+          />
+        )}
+      />
+    );
 
     return (
       <View style={{flex: 1, paddingHorizontal: 20}}>
@@ -334,39 +321,28 @@ export class ProductDetail extends React.Component<Props> {
   private _renderActionButtons(bottom: number): JSX.Element {
     const {profile, account} = this.props;
     const isSell = account && profile && profile.isSeller && account.isVerified;
-    const {highestBuyOrder, lowestSellOrder} = this.props.shoeInfoState;
     return (
       <View style={{bottom, ...styles.bottomContainer}}>
         {!isSell &&
-          this._renderSingleActionButton(
-            'Mua',
-            () => {
-              // @ts-ignore
-              this.props.navigation.push(RouteNames.Order.Name, {
-                screen: RouteNames.Order.NewBuyOrder,
-                params: {
-                  shoe: this._shoe,
-                },
-              });
-            },
-            lowestSellOrder,
-          )}
+          this._renderSingleActionButton('Mua', () => {
+            // @ts-ignore
+            this.props.navigation.push(RouteNames.Order.Name, {
+              screen: RouteNames.Order.NewBuyOrder,
+              params: {
+                shoe: this._shoe,
+              },
+            });
+          })}
         {isSell &&
-          this._renderSingleActionButton(
-            'Bán',
-            () => {
-              // @ts-ignore
-              this.props.navigation.push(RouteNames.Order.Name, {
-                screen: RouteNames.Order.NewSellOrder,
-                params: {
-                  shoe: this._shoe,
-                  highestBuyOrder: highestBuyOrder,
-                  lowestSellOrder: lowestSellOrder,
-                },
-              });
-            },
-            highestBuyOrder,
-          )}
+          this._renderSingleActionButton('Bán', () => {
+            // @ts-ignore
+            this.props.navigation.push(RouteNames.Order.Name, {
+              screen: RouteNames.Order.NewSellOrder,
+              params: {
+                shoe: this._shoe,
+              },
+            });
+          })}
       </View>
     );
   }
@@ -374,7 +350,6 @@ export class ProductDetail extends React.Component<Props> {
   private _renderSingleActionButton(
     actionType: string,
     onPress: () => void,
-    order?: SellOrder | BuyOrder,
   ): JSX.Element {
     const {account, profile, navigation} = this.props;
     const isAccountAvailable = Boolean(account && profile);
@@ -388,19 +363,16 @@ export class ProductDetail extends React.Component<Props> {
         !profile?.userProvidedAddress.addressLine1);
 
     let backgroundColor: string;
-    let subtitle: string;
-    let price: string;
     switch (actionType) {
       case 'Mua':
         backgroundColor = themes.AppPrimaryColor;
-        subtitle = 'thấp nhất';
-        price = order ? toCurrencyString((order as SellOrder).sellPrice) : '-';
+        if (this.state.lowestPrice === 0) {
+          backgroundColor = themes.AppDisabledColor;
+        }
         break;
       default:
         backgroundColor = themes.AppSellColor;
-        subtitle = 'cao nhất';
         toCurrencyString;
-        price = order ? toCurrencyString((order as BuyOrder).buyPrice) : '-';
     }
 
     const onPressWrapper = (): void => {
@@ -420,29 +392,29 @@ export class ProductDetail extends React.Component<Props> {
       }
     };
 
+    const shouldRenderPrice =
+      !profile?.isSeller && this.state.lowestPrice !== 0;
+
     return (
-      <TouchableOpacity onPress={onPressWrapper}>
+      <TouchableOpacity
+        onPress={onPressWrapper}
+        disabled={!profile?.isSeller && this.state.lowestPrice === 0}>
         <View
           style={{
             backgroundColor,
             ...styles.bottomButtonStyle,
             ...themes.ButtonShadow,
           }}>
-          <View style={{flex: 1, alignItems: 'center'}}>
+          <View style={{flex: 1, alignItems: 'center', marginVertical: 15}}>
             <AppText.Title3 style={{color: themes.AppAccentColor}}>
               {actionType.toUpperCase()}
             </AppText.Title3>
-          </View>
-          <View style={{flex: 1, alignItems: 'flex-start'}}>
-            <View>
-              <AppText.Body style={{color: themes.AppAccentColor}}>
-                {subtitle}
-              </AppText.Body>
+            {shouldRenderPrice && (
               <AppText.SubCallout
                 style={{color: themes.AppAccentColor, alignSelf: 'center'}}>
-                {price}
+                {strings.Price}: {toCurrencyString(this.state.lowestPrice)}
               </AppText.SubCallout>
-            </View>
+            )}
           </View>
         </View>
       </TouchableOpacity>

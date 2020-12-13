@@ -7,6 +7,7 @@ import {
   httpGet,
   httpPost,
   httpPut,
+  queryParam,
   request,
   requestBody,
   response,
@@ -76,7 +77,7 @@ export class InventoryController {
   }
 
   @httpPut(
-    '/update',
+    "/update",
     middlewares.AuthMiddleware,
     middlewares.AccountVerifiedMiddleware,
     Types.IsSellerMiddleware,
@@ -90,7 +91,10 @@ export class InventoryController {
   public async updateInventory(@request() req: Request, @response() res: Response) {
     const inventoryId = req.body._id as string;
     const inventory = await this.inventoryDao.findById(inventoryId);
-    const updateInventory = Object.assign(inventory, { sellPrice: req.body.sellPrice, quantity: req.body.quantity });
+    const updateInventory = Object.assign(inventory, {
+      sellPrice: req.body.sellPrice,
+      quantity: req.body.quantity,
+    });
     await updateInventory.save();
     return res.status(HttpStatus.OK).send();
   }
@@ -99,5 +103,15 @@ export class InventoryController {
   public async getCurrentlySelling(@response() res: Response) {
     const result = await this.inventoryDao.getCurrentlySelling();
     return res.status(HttpStatus.OK).send(result);
+  }
+
+  @httpGet("/lowest")
+  public async getLowestPriceByShoe(
+    @queryParam("shoeId") shoeId: string,
+    @response() res: Response
+  ) {
+    const lowest = await this.inventoryDao.getLowestPrice(shoeId);
+
+    return res.status(HttpStatus.OK).json({ price: lowest });
   }
 }

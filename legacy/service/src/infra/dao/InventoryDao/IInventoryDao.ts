@@ -28,4 +28,5 @@ export interface IInventoryDao {
   create(inventoryDto: CreateInventoryDto): Promise<Inventory>;
   getPriceBySize(shoeId: string): Promise<PriceSizeAgg>;
   getCurrentlySelling(): Promise<CurrentlySellData>;
+  getLowestPrice(shoeId: string): Promise<number>;
 }
