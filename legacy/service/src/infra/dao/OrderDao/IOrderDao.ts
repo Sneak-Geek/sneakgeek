@@ -11,10 +11,10 @@ export type TrendingOrder = {
   shoe: Shoe;
 };
 
-export type OrderHistory =  Order & {
+export type OrderHistory = Order & {
   inventory: Inventory;
   shoe: Shoe;
-}
+};
 
 export interface IOrderDao {
   create(order: { buyerId: string; inventoryId: string }): Promise<Order>;
