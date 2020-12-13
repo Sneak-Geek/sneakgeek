@@ -176,6 +176,7 @@ export const strings = {
     'Số tiền rút ra không thể lớn hơn số tiền hiện có.',
   PleaseProvideAllInformation: 'Xin vui lòng điền đủ thông thin chuyển khoản.',
   Inventory: 'Kho hàng',
+  InventoryDetail: 'Thông tin đơn bán',
   InventoryQuantity: 'Số lượng',
   TopTrending: 'Top Trending',
 };
