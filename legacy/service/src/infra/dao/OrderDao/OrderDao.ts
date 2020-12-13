@@ -33,6 +33,53 @@ export class OrderDao implements IOrderDao {
     return this.orderRepo.findById(OrderId).exec();
   }
 
+  public async getOrderHistoryByUserId(buyerId: string): Promise<Order[] | undefined> {
+    return this.orderRepo.aggregate([
+      {
+        $match: {
+          buyerId: mongoose.Types.ObjectId(buyerId)
+        }
+      },
+      {
+        $lookup: {
+          from: "inventories",
+          localField: "inventoryId",
+          foreignField: "_id",
+          as: "inventory"
+        }
+      },
+      {
+        $unwind: { path: "$inventory" }
+      },
+      {
+        $lookup: {
+          from: "shoes",
+          localField: 'inventory.shoeId',
+          foreignField: '_id',
+          as: 'shoe'
+        },
+      },
+      {
+        $unwind: {
+          path: '$shoe'
+        },
+      },
+      {
+        $project: {
+          updatedAt: 1,
+          createdAt: 1,
+          shoe: {
+            _id: 1,
+            retailPrice: 1,
+            title: 1,
+            media: 1,
+            shoeSize: "$inventory.shoeSize",
+          }
+        }
+      }
+    ]).exec();
+  }
+
   async getLastSold(top: number): Promise<TrendingOrder[]> {
     const result = await this.orderRepo
       .aggregate([

@@ -88,7 +88,7 @@ export class OrderControllerTest {
         dbClient.connection.db.dropCollection("sellorders"),
         dbClient.connection.db.dropCollection("transactions"),
       ]);
-    } catch (error) {}
+    } catch (error) { }
   }
 
   @test("POST /sell-order/new: create sell order for new shoe")

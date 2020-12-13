@@ -29,7 +29,7 @@ export const getUserPopulatedOrders = (type: OrderType) => {
       dispatch(updateAction({
         state: NetworkRequestState.SUCCESS,
         // @ts-ignore
-        data: orders as BuyOrder[] | PopulatedSellOrder[]
+        data: orders as [] | PopulatedSellOrder[]
       }));
     } catch (error) {
       dispatch(updateAction({

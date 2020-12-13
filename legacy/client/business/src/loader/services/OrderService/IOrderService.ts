@@ -32,6 +32,25 @@ export type TrendingOrder = {
   status: OrderStatus
 }
 
+export type Order = {
+  _id: string,
+  createdAt: string,
+  updatedAt: string,
+  shoe: {
+    _id: string,
+    media: {
+      imageUrl: string,
+      smallImageUrl: string,
+      thumbUrl: string,
+      gallery: [],
+      hidden: boolean
+    },
+    retailPrice: number,
+    title: string,
+    shoeSize: number
+  }
+}
+
 export interface IOrderService {
   createSellOrder(token: string, sellOrder: SellOrder): Promise<void>;
   createBuyOrder(token: string, inventoryId: string): Promise<void>;
@@ -47,5 +66,6 @@ export interface IOrderService {
   updateSellOrder: (token: string, order: SellOrderEditInput) => Promise<void>;
   cancelSellOrder: (token: string, orderId: string) => Promise<void>;
   getPopulatedSellOrderById: (token: string, orderId: string) => Promise<PopulatedSellOrder>;
-  getTrendingOrder: ( count: number) => Promise<TrendingOrder[]>;
+  getTrendingOrder: (count: number) => Promise<TrendingOrder[]>;
+  getOrderHistory: (token: string) => Promise<Order[] | undefined>;
 }

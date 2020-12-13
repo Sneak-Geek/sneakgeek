@@ -41,6 +41,23 @@ export class OrderController {
   @inject(Types.ShoeDao)
   private readonly shoeDao!: IShoeDao;
 
+  @httpGet(
+    "/",
+    AuthMiddleware,
+    AccountVerifiedMiddleware,
+    ValidationPassedMiddleware
+  )
+  public async getOrderHistoryByUserId(
+    @request() req: Request,
+    @requestBody() body: any,
+    @response() res: Response
+  ) {
+    const user = req.user as UserAccount;
+    const buyerId = (user.profile as mongoose.Types.ObjectId).toHexString();
+    const order = await this.orderDao.getOrderHistoryByUserId(buyerId);
+    return res.status(HttpStatus.OK).send(order);
+  }
+
   @httpPost(
     "/new",
     AuthMiddleware,

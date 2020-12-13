@@ -24,6 +24,12 @@ export const OrderSchema = new mongoose.Schema(
       enum: Object.keys(OrderStatus),
       default: OrderStatus.PENDING,
     },
+    shoeId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "UserProfile",
+      // require: true, phai seed lai data nen tam comment out
+    },
+
   },
   { timestamps: true }
 );
