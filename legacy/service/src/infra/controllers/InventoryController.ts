@@ -6,6 +6,7 @@ import {
   controller,
   httpGet,
   httpPost,
+  httpPut,
   request,
   requestBody,
   response,
@@ -71,6 +72,26 @@ export class InventoryController {
       sellerId: profileId.toString(),
       ...inventoryBody,
     });
+    return res.status(HttpStatus.OK).send();
+  }
+
+  @httpPut(
+    '/update',
+    middlewares.AuthMiddleware,
+    middlewares.AccountVerifiedMiddleware,
+    Types.IsSellerMiddleware,
+    body("_id").isMongoId(),
+    body("shoeId").isMongoId(),
+    body("shoeSize").isString(),
+    body("sellPrice").isNumeric(),
+    body("quantity").isNumeric(),
+    middlewares.ValidationPassedMiddleware
+  )
+  public async updateInventory(@request() req: Request, @response() res: Response) {
+    const inventoryId = req.body._id as string;
+    const inventory = await this.inventoryDao.findById(inventoryId);
+    const updateInventory = Object.assign(inventory, { sellPrice: req.body.sellPrice, quantity: req.body.quantity });
+    await updateInventory.save();
     return res.status(HttpStatus.OK).send();
   }
 

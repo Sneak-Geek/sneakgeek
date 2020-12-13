@@ -1,3 +1,4 @@
+import { Inventory } from "../../../model";
 import { BaseService } from "../BaseService";
 import { IInventoryService } from "./IInventoryService";
 
@@ -16,6 +17,15 @@ export class InventoryService extends BaseService implements IInventoryService {
       { shoeId, quantity, sellPrice, shoeSize },
       { headers: { authorization: token } }
     )
+  }
+
+  public async updateInventory(token: string, inventory: Inventory) {
+    const { data } = await this.apiClient.getInstance().put(
+      '/inventory/update',
+      inventory,
+      { headers: { authorization: token } }
+    )
+    return data;
   }
 
   public async getSelling() {
