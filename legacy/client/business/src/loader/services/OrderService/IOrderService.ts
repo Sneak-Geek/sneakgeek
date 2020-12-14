@@ -44,7 +44,7 @@ export interface IOrderService {
   createBuyOrder(token: string, inventoryId: string): Promise<void>;
   getPriceSizeMap: (token: string, shoeId: string) => Promise<SizePriceMap[]>;
   getTotalFee: (token: string, sellOrderId: string) => Promise<{ shippingFee: number, shoePrice: number }>;
-  getCheckoutUrlForPurchase: (token: string, paymentType: PaymentType, inventoryId: string) => Promise<string>;
+  getCheckoutUrlForPurchase: (token: string, paymentType: PaymentType, inventoryId: string, addressLine1: string, addressLine2: string) => Promise<string>;
   getUserPopulatedOrders: (token: string, type: OrderType) => Promise<Array<PopulatedBuyOrder> | Array<PopulatedSellOrder>>;
   getTransactionBySellOrder: (token: string, sellOrderId: string) => Promise<Transaction>;
   getLowestSellOrderAndHighestBuyOrder(token: string, shoeId: string, shoeSize: string): Promise<{

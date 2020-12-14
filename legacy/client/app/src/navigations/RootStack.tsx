@@ -1,9 +1,9 @@
 import React from 'react';
-import {createStackNavigator} from '@react-navigation/stack';
+import { createStackNavigator } from '@react-navigation/stack';
 import RouteNames from './RouteNames';
-import {AuthenticationStack} from './AuthenticationStack';
-import {TabStack} from './TabStack';
-import {NavigationContainer} from '@react-navigation/native';
+import { AuthenticationStack } from './AuthenticationStack';
+import { TabStack } from './TabStack';
+import { NavigationContainer } from '@react-navigation/native';
 import {
   Shoe,
   Catalog,
@@ -15,17 +15,17 @@ import {
   BuyOrder,
   SellOrder,
 } from 'business';
-import {OrderStack} from './OrderStack';
-import {SplashScreen} from 'screens/SplashScreen';
-import {ProductDetail} from 'screens/Product';
-import {strings, themes} from 'resources';
+import { OrderStack } from './OrderStack';
+import { SplashScreen } from 'screens/SplashScreen';
+import { ProductDetail } from 'screens/Product';
+import { strings, themes } from 'resources';
 
 export type RootStackParams = {
   ProductRequest: undefined;
-  ProductDetail: {shoe: Shoe};
-  ProductNewReview: {shoe: Shoe};
-  ProductAllReviews: {shoe: Shoe; reviews: Review[]};
-  SizeSelection: {orderType: OrderType; shoe: Shoe};
+  ProductDetail: { shoe: Shoe };
+  ProductNewReview: { shoe: Shoe };
+  ProductAllReviews: { shoe: Shoe; reviews: Review[] };
+  SizeSelection: { orderType: OrderType; shoe: Shoe };
   NewSellOrder: {
     shoe: Shoe;
     highestBuyOrder?: BuyOrder;
@@ -34,11 +34,13 @@ export type RootStackParams = {
   NewBuyOrder: {
     shoe: Shoe;
   };
-  OrderSizeSelection: {shoe: Shoe};
-  OrderBuyConfirmation: {shoe: Shoe; size: string; minPrice: number};
+  OrderSizeSelection: { shoe: Shoe };
+  OrderBuyConfirmation: { shoe: Shoe; size: string; minPrice: number };
   OrderPayment: {
     inventoryId: string;
     paymentType: PaymentType;
+    addressLine1: string;
+    addressLine2: string;
   };
   SellOrderHistory: undefined;
   TransactionBuyOrder: undefined;
@@ -52,7 +54,7 @@ export type RootStackParams = {
   EmailLogin: undefined;
   HomeTab: undefined;
   HomeTabMain: undefined;
-  CatalogSeeMore: {catalog: Catalog};
+  CatalogSeeMore: { catalog: Catalog };
   SearchTabMain: undefined;
   TrasactionTabMain: undefined;
   AccountTabMain: undefined;

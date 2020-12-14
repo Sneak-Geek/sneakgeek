@@ -6,6 +6,7 @@ import mongoose from "mongoose";
 import { Repository, Document } from "./Repository";
 import { ObjectId } from "mongodb";
 import { OrderStatus } from "../../assets/constants";
+import { UserAddress, UserProvidedAddressSchema } from "./UserProfile";
 
 export const OrderSchema = new mongoose.Schema(
   {
@@ -29,6 +30,10 @@ export const OrderSchema = new mongoose.Schema(
       ref: "UserProfile",
       // require: true, phai seed lai data nen tam comment out
     },
+    shippingAddress: {
+      type: UserProvidedAddressSchema,
+      required: true
+    },
   },
   { timestamps: true }
 );
@@ -37,6 +42,7 @@ export type Order = Document<{
   buyerId: ObjectId;
   inventoryId: ObjectId;
   status: string;
+  shippingAddress: UserAddress;
 }>;
 
 export const OrderRepository: Repository<Order> = mongoose.model("Order", OrderSchema);
