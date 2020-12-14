@@ -53,43 +53,31 @@ export class OrderController {
     return res.status(HttpStatus.OK).send(order);
   }
 
-  @httpPost(
-    "/new",
-    AuthMiddleware,
-    AccountVerifiedMiddleware,
-    body("inventoryId").isMongoId(),
-    ValidationPassedMiddleware
-  )
-  public async newOrder(
-    @request() req: Request,
-    @requestBody() body: any,
-    @response() res: Response
-  ) {
-    const user = req.user as UserAccount;
-    const order = await this.orderDao.create({
-      buyerId: (user.profile as mongoose.Types.ObjectId).toHexString(),
-      inventoryId: body.inventoryId,
-    });
-
-    return res.status(HttpStatus.OK).send(order);
-  }
-
   @httpGet(
     "/pay",
     query("paymentType").isIn(["intl", "domestic"]),
     query("inventoryId").isMongoId(),
+    query("addressLine1").isString(),
+    query("addressLine2").optional().isString(),
     AuthMiddleware,
     AccountVerifiedMiddleware,
     ValidationPassedMiddleware
   )
   public async getPaymentUrl(@request() req: Request, @response() res: Response) {
-    const { paymentType, inventoryId } = req.query;
+    const { paymentType, inventoryId, addressLine1, addressLine2 } = req.query;
     const user = req.user as UserAccount;
     const buyerId = (user.profile as mongoose.Types.ObjectId).toHexString();
 
     const [inventory, order] = await Promise.all([
       this.inventoryDao.findById(inventoryId as string),
-      this.orderDao.create({ buyerId, inventoryId: inventoryId as string }),
+      this.orderDao.create({
+        buyerId,
+        inventoryId: inventoryId as string,
+        shippingAddress: {
+          addressLine1: addressLine1 as string,
+          addressLine2: addressLine2 as string
+        },
+      }),
     ]);
     const shoe = await this.shoeDao.findById(inventory.shoeId);
 

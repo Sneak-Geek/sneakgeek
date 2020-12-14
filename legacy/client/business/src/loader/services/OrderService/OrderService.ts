@@ -63,8 +63,8 @@ export class OrderService extends BaseService implements IOrderService {
     return response.data;
   }
 
-  public async getCheckoutUrlForPurchase(token: string, paymentType: PaymentType, inventoryId: string): Promise<string> {
-    let url = `/order/pay?paymentType=${paymentType}&inventoryId=${inventoryId}`;
+  public async getCheckoutUrlForPurchase(token: string, paymentType: PaymentType, inventoryId: string, addressLine1: string, addressLine2: string): Promise<string> {
+    let url = `/order/pay?paymentType=${paymentType}&inventoryId=${inventoryId}&addressLine1=${addressLine1}&addressLine2=${addressLine2}`;
 
     const response = await this.apiClient.getInstance().get(
       url,

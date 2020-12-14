@@ -17,7 +17,7 @@ export type OrderHistory = Order & {
 };
 
 export interface IOrderDao {
-  create(order: { buyerId: string; inventoryId: string }): Promise<Order>;
+  create(order: { buyerId: string; inventoryId: string, shippingAddress: { addressLine1: string, addressLine2: string } }): Promise<Order>;
   updateStatus(orderId: string, status: OrderStatus): Promise<Order>;
   findById(orderId: string): Promise<Order>;
   destroyById(OrderId: string): Promise<Order>;
