@@ -1,5 +1,15 @@
+import { strings } from "resources";
+
 const minVndThreshold = 50000;
 const usdToVndConversionRate = 25000;
+
+export function translateGenderToVnms(gender: string) {
+  if (gender === "men") {
+    return strings.Men;
+  } else {
+    return strings.Women;
+  }
+}
 
 export function convertUsdToVnd(amount: string | number) {
   let parsedAmount = typeof amount === 'string' ? parseInt(amount, 10) : amount;
@@ -14,7 +24,7 @@ export function toCurrencyString(amount: string | number, maxDigit?: number) {
     return converted.toLocaleString('vi', {
       style: 'currency',
       currency: 'VND',
-      ...(maxDigit ? {maximumSignificantDigits: maxDigit} : {}),
+      ...(maxDigit ? { maximumSignificantDigits: maxDigit } : {}),
     });
   }
 
