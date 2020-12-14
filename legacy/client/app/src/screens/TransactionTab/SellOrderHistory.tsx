@@ -16,8 +16,8 @@ import {
   toCurrencyString,
   toVnDateFormat,
 } from 'utilities';
-import {IAppState} from 'store/AppStore';
-import {FlatList} from 'react-native-gesture-handler';
+import { IAppState } from 'store/AppStore';
+import { FlatList } from 'react-native-gesture-handler';
 import {
   View,
   Image,
@@ -26,11 +26,11 @@ import {
   Modal,
   TouchableOpacity,
 } from 'react-native';
-import {themes, strings} from 'resources';
-import {AppText, ShoeHeaderSummary} from 'screens/Shared';
-import {StackNavigationProp} from '@react-navigation/stack';
-import {RootStackParams} from 'navigations/RootStack';
-import {Icon} from 'react-native-elements';
+import { themes, strings } from 'resources';
+import { AppText, ShoeHeaderSummary } from 'screens/Shared';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParams } from 'navigations/RootStack';
+import { Icon } from 'react-native-elements';
 
 const styles = StyleSheet.create({
   orderContainer: {
@@ -109,12 +109,12 @@ export class SellOrderHistory extends React.Component<Props, State> {
     },
     {
       header: 'Ngày mua',
-      value: (order: OrderHistory) => toVnDateFormat(order.createdAt),
+      value: (order: OrderHistory) => toVnDateFormat(order.updatedAt),
     },
   ];
 
   public async componentDidMount(): Promise<void> {
-    const {state} = this.props.sellOrderHistoryState;
+    const { state } = this.props.sellOrderHistoryState;
     if (state === NetworkRequestState.NOT_STARTED) {
       this.props.getUserPopulatedOrders();
     }
@@ -125,7 +125,7 @@ export class SellOrderHistory extends React.Component<Props, State> {
 
     orderService
       .getOrderHistory(getToken())
-      .then((orders) => this.setState({orders}));
+      .then((orders) => this.setState({ orders }));
   }
 
   constructor(props) {
@@ -138,14 +138,14 @@ export class SellOrderHistory extends React.Component<Props, State> {
   }
 
   public render(): JSX.Element {
-    const {orders} = this.state;
+    const { orders } = this.state;
     return (
-      <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
         {orders?.length > 0 && (
           <FlatList
             data={orders}
             keyExtractor={(item): string => item._id}
-            renderItem={({item}): JSX.Element => this._renderOrder(item)}
+            renderItem={({ item }): JSX.Element => this._renderOrder(item)}
           />
         )}
         {orders.length === 0 && (
@@ -166,22 +166,25 @@ export class SellOrderHistory extends React.Component<Props, State> {
       <TouchableOpacity onPress={this._onOrderPress.bind(this, order)}>
         <View style={styles.orderContainer}>
           <Image
-            source={{uri: shoe.media.imageUrl}}
-            style={{width: 100, aspectRatio: 1}}
+            source={{ uri: shoe.media.imageUrl }}
+            style={{ width: 100, aspectRatio: 1 }}
             resizeMode={'contain'}
           />
-          <View style={{flex: 1, flexDirection: 'column', marginLeft: 20}}>
-            <AppText.Subhead style={{flexWrap: 'wrap', marginBottom: 10}}>
+          <View style={{ flex: 1, flexDirection: 'column', marginLeft: 20 }}>
+            <AppText.Subhead style={{ flexWrap: 'wrap', marginBottom: 10 }}>
               {shoe.title}
             </AppText.Subhead>
-            <AppText.Subhead style={{marginBottom: 5}}>
+            <AppText.Subhead style={{ marginBottom: 5 }}>
               {strings.Price}:{' '}
               <AppText.Body>
                 {toCurrencyString(order.inventory.sellPrice)}
               </AppText.Body>
             </AppText.Subhead>
-            <AppText.Subhead style={{marginBottom: 5}}>
+            <AppText.Subhead style={{ marginBottom: 5 }}>
               {strings.ShoeSize}: <AppText.Body>{size}</AppText.Body>
+            </AppText.Subhead>
+            <AppText.Subhead style={{ marginBottom: 5 }}>
+              {strings.BuyDate}: <AppText.Body>{toVnDateFormat(order.updatedAt)}</AppText.Body>
             </AppText.Subhead>
           </View>
         </View>
@@ -190,7 +193,7 @@ export class SellOrderHistory extends React.Component<Props, State> {
   }
 
   private _onOrderPress(order): void {
-    this.setState({selectedOrder: order, modalVisible: true});
+    this.setState({ selectedOrder: order, modalVisible: true });
   }
 
   private _renderModal(): JSX.Element {
@@ -201,20 +204,20 @@ export class SellOrderHistory extends React.Component<Props, State> {
         animationType="slide"
         presentationStyle={'formSheet'}>
         <View style={styles.modalContentContainer}>
-          <AppText.Title3 style={{alignSelf: 'center', marginTop: 20}}>
+          <AppText.Title3 style={{ alignSelf: 'center', marginTop: 20 }}>
             Thông tin giao dịch
           </AppText.Title3>
           <Icon
-            containerStyle={{position: 'absolute', top: 20, right: 20}}
+            containerStyle={{ position: 'absolute', top: 20, right: 20 }}
             name="close"
             onPress={() => {
-              this.setState({modalVisible: false});
+              this.setState({ modalVisible: false });
             }}
           />
 
           <ShoeHeaderSummary shoe={order.shoe} />
 
-          <View style={{flex: 1, padding: 20, alignSelf: 'stretch'}}>
+          <View style={{ flex: 1, padding: 20, alignSelf: 'stretch' }}>
             {this.modalInfo.map((info) => {
               return (
                 <View style={styles.infoContainer}>
@@ -226,7 +229,7 @@ export class SellOrderHistory extends React.Component<Props, State> {
               );
             })}
 
-            <AppText.Title3 style={{marginTop: 20}}>
+            <AppText.Title3 style={{ marginTop: 20 }}>
               Thông tin giao hàng
             </AppText.Title3>
             {this._renderShippingInfoDetails()}
@@ -240,11 +243,11 @@ export class SellOrderHistory extends React.Component<Props, State> {
     const profile = this.props.userProfile;
     const email = profile.userProvidedEmail;
     const phoneNumber = profile.userProvidedPhoneNumber;
-    const {addressLine1, addressLine2} = profile.userProvidedAddress;
+    const { addressLine1, addressLine2 } = profile.userProvidedAddress;
     const name = `${this.props.userProfile.userProvidedName.lastName} ${this.props.userProfile.userProvidedName.firstName}`;
     return (
       <>
-        <AppText.Body style={{marginTop: 10}}>{name}</AppText.Body>
+        <AppText.Body style={{ marginTop: 10 }}>{name}</AppText.Body>
         <AppText.Subhead style={styles.shippingInfoDetails}>
           {phoneNumber}
         </AppText.Subhead>

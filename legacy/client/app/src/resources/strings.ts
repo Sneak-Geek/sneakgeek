@@ -180,4 +180,5 @@ export const strings = {
   InventoryQuantity: 'Số lượng',
   TopTrending: 'Top Trending',
   OrderHistory: 'Lịch sử giao dịch',
+  BuyDate: 'Ngày mua'
 };
