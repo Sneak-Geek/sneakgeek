@@ -3,4 +3,8 @@ export type Order = {
   buyerId: string;
   inventoryId: string;
   status: string;
+  shippingAddress: {
+    addressLine1: string;
+    addressLine2: string;
+  };
 }

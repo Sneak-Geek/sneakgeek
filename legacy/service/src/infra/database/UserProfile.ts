@@ -4,7 +4,6 @@
 
 import mongoose from "mongoose";
 import { Repository, Document } from "./Repository";
-import { Brand, SizeStandard, ShoeSize, NotificationPlatform } from "../../assets";
 
 const UserProvidedNameSchema = new mongoose.Schema({
   firstName: String,
@@ -12,7 +11,7 @@ const UserProvidedNameSchema = new mongoose.Schema({
   lastName: String,
 });
 
-const UserProvidedAddressSchema = new mongoose.Schema({
+export const UserProvidedAddressSchema = new mongoose.Schema({
   addressLine1: String,
   addressLine2: String,
 });
@@ -52,7 +51,7 @@ export type UserProfile = Document<{
   isSeller: boolean;
 }>;
 
-type UserAddress = Document<{
+export type UserAddress = Document<{
   addressLine1: string;
   addressLine2: string;
 }>;
