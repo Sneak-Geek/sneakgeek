@@ -65,6 +65,11 @@ export class OrderDao implements IOrderDao {
             path: "$shoe",
           },
         },
+        {
+          $sort: {
+            updatedAt: -1,
+          },
+        },
       ])
       .exec();
   }
