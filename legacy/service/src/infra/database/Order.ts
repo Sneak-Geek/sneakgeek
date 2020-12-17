@@ -32,7 +32,7 @@ export const OrderSchema = new mongoose.Schema(
     },
     shippingAddress: {
       type: UserProvidedAddressSchema,
-      required: true
+      required: true,
     },
   },
   { timestamps: true }

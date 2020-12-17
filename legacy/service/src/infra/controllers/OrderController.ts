@@ -75,7 +75,7 @@ export class OrderController {
         inventoryId: inventoryId as string,
         shippingAddress: {
           addressLine1: addressLine1 as string,
-          addressLine2: addressLine2 as string
+          addressLine2: addressLine2 as string,
         },
       }),
     ]);
