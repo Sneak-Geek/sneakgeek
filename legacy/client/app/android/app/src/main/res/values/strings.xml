@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">app</string>
+    <string name="app_name">SneakGeek</string>
+    <string name="facebook_app_id">1521812747994918</string>
+    <string name="fb_login_protocol_scheme">fb1521812747994918</string>
 </resources>
