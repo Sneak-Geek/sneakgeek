@@ -21,7 +21,7 @@ import {
   CdnService,
   IAppleAuthSdk,
   IInventoryService,
-  InventoryService
+  InventoryService,
 } from 'business';
 import {Provider} from 'react-redux';
 
@@ -32,7 +32,7 @@ import {InAppNotification} from 'screens/InAppNotification';
 import {AppLoadingIndicator} from 'screens/AppLoadingIndicator';
 import {IDeviceInfoProvider, DeviceInfoProvider} from 'providers';
 import {AppleAuthSdk} from 'common/AppleAuthSdk';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
 
 export default function App(): JSX.Element {
   const [depLoaded, setDepLoaded] = useState(false);
@@ -49,7 +49,7 @@ export default function App(): JSX.Element {
     Factory.register<IEnvVar>(Keys.IEnvVar, {
       dev: __DEV__,
       devUrl: 'http://localhost:8080/api/v1',
-      prodUrl: 'https://sneakgeek-dev.azurewebsites.net/api/v1',
+      prodUrl: 'https://sneakgeek-296607.et.r.appspot.com/api/v1',
     });
     Factory.register<IFacebookSDK>(Keys.IFacebookSDK, new FacebookSdk());
     Factory.register<IGoogleSDK>(Keys.IGoogleSDK, new GoogleSdk());
@@ -75,7 +75,7 @@ export default function App(): JSX.Element {
     );
     Factory.register<IInventoryService>(
       KeyExtensions.IInventoryService,
-      new InventoryService()
+      new InventoryService(),
     );
   };
 
@@ -88,16 +88,16 @@ export default function App(): JSX.Element {
   return (
     <SafeAreaProvider>
       <Provider store={AppStore}>
-      {depLoaded ? (
-        <>
-          <InAppNotification />
-          <AppLoadingIndicator />
-          <RootStack />
-        </>
-      ) : (
-        <></>
-      )}
-    </Provider> 
+        {depLoaded ? (
+          <>
+            <InAppNotification />
+            <AppLoadingIndicator />
+            <RootStack />
+          </>
+        ) : (
+          <></>
+        )}
+      </Provider>
     </SafeAreaProvider>
   );
 }

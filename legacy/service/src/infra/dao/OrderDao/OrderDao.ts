@@ -15,7 +15,11 @@ export class OrderDao implements IOrderDao {
   @inject(Types.OrderRepository)
   private readonly orderRepo!: Repository<Order>;
 
-  public async create(order: { buyerId: string; inventoryId: string, shippingAddress: { addressLine1: string, addressLine2: string } }) {
+  public async create(order: {
+    buyerId: string;
+    inventoryId: string;
+    shippingAddress: { addressLine1: string; addressLine2: string };
+  }) {
     return this.orderRepo.create(order);
   }
 

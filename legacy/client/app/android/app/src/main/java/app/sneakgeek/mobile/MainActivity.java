@@ -1,4 +1,4 @@
-package com.app;
+package app.sneakgeek.mobile;
 
 import com.facebook.react.ReactActivity;
 
