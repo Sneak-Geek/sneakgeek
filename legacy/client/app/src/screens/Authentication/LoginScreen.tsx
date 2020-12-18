@@ -8,6 +8,7 @@ import {
   StatusBar,
   Alert,
   TouchableOpacity,
+  Platform,
 } from 'react-native';
 import {Button, Icon} from 'react-native-elements';
 import {strings, themes, images} from 'resources';
@@ -124,7 +125,7 @@ export class LoginScreen extends React.Component<Props> {
               <View style={styles.buttonContainer}>
                 {this._renderFacebookLogin()}
                 {this._renderGoogleLogin()}
-                {this._renderAppleLogin()}
+                {Platform.OS === 'ios' && this._renderAppleLogin()}
                 {this._renderEmailSignUp()}
                 {this._renderEmailLogin()}
               </View>

@@ -109,7 +109,7 @@ export class SellOrderHistory extends React.Component<Props, State> {
     },
     {
       header: 'Ngày mua',
-      value: (order: OrderHistory) => toVnDateFormat(order.createdAt),
+      value: (order: OrderHistory) => toVnDateFormat(order.updatedAt),
     },
   ];
 
@@ -183,6 +183,9 @@ export class SellOrderHistory extends React.Component<Props, State> {
             <AppText.Subhead style={{ marginBottom: 5 }}>
               {strings.ShoeSize}: <AppText.Body>{size}</AppText.Body>
             </AppText.Subhead>
+            <AppText.Subhead style={{ marginBottom: 5 }}>
+              {strings.BuyDate}: <AppText.Body>{toVnDateFormat(order.updatedAt)}</AppText.Body>
+            </AppText.Subhead>
           </View>
         </View>
       </TouchableOpacity>
@@ -241,6 +244,7 @@ export class SellOrderHistory extends React.Component<Props, State> {
     const email = profile.userProvidedEmail;
     const phoneNumber = profile.userProvidedPhoneNumber;
     const { addressLine1, addressLine2 } = order.shippingAddress;
+
     const name = `${this.props.userProfile.userProvidedName.lastName} ${this.props.userProfile.userProvidedName.firstName}`;
     return (
       <>

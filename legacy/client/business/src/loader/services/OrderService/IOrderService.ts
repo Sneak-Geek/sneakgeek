@@ -35,6 +35,7 @@ export type TrendingOrder = {
 }
 
 export type OrderHistory = Order & {
+  updatedAt: string;
   inventory: Inventory;
   shoe: Shoe;
 }
