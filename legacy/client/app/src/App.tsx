@@ -33,6 +33,9 @@ import {AppLoadingIndicator} from 'screens/AppLoadingIndicator';
 import {IDeviceInfoProvider, DeviceInfoProvider} from 'providers';
 import {AppleAuthSdk} from 'common/AppleAuthSdk';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
+import ErrorBoundary from 'ErrorBoundary';
+import {Platform, StatusBar} from 'react-native';
+import {themes} from 'resources';
 
 export default function App(): JSX.Element {
   const [depLoaded, setDepLoaded] = useState(false);
@@ -48,7 +51,7 @@ export default function App(): JSX.Element {
     );
     Factory.register<IEnvVar>(Keys.IEnvVar, {
       dev: __DEV__,
-      devUrl: 'http://localhost:8080/api/v1',
+      devUrl: 'http://192.168.0.5:8080/api/v1',
       prodUrl: 'https://sneakgeek-296607.et.r.appspot.com/api/v1',
     });
     Factory.register<IFacebookSDK>(Keys.IFacebookSDK, new FacebookSdk());
@@ -86,18 +89,26 @@ export default function App(): JSX.Element {
   });
 
   return (
-    <SafeAreaProvider>
-      <Provider store={AppStore}>
-        {depLoaded ? (
-          <>
-            <InAppNotification />
-            <AppLoadingIndicator />
-            <RootStack />
-          </>
-        ) : (
-          <></>
-        )}
-      </Provider>
-    </SafeAreaProvider>
+    <ErrorBoundary>
+      <SafeAreaProvider>
+        <Provider store={AppStore}>
+          {Platform.OS === 'android' && (
+            <StatusBar
+              backgroundColor={themes.AppAccentColor}
+              barStyle={'light-content'}
+            />
+          )}
+          {depLoaded ? (
+            <>
+              <InAppNotification />
+              <AppLoadingIndicator />
+              <RootStack />
+            </>
+          ) : (
+            <></>
+          )}
+        </Provider>
+      </SafeAreaProvider>
+    </ErrorBoundary>
   );
 }
