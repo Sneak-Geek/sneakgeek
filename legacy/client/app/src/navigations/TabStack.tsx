@@ -22,7 +22,6 @@ import {
   ObjectFactory as Factory,
   ISettingsProvider,
   FactoryKeys as Keys,
-  getNotification,
 } from 'business';
 import {CatalogSeeMore, NotificationsScreen} from 'screens/HomeTab';
 import {ProductRequest} from 'screens/SearchTab';
@@ -179,60 +178,45 @@ type RootTabProps = {
   getNotifications: () => void;
 };
 
-@connect(
-  (state: IAppState) => ({
-    pushDeviceToken: state.EnvironmentState.pushDeviceToken,
-  }),
-  (dispatch: Function) => ({
-    getNotifications: () => {
-      dispatch(getNotification());
-    },
-  }),
-)
-export class TabStack extends React.Component<RootTabProps> {
-  public componentDidMount() {
+export const TabStack: React.FC<RootTabProps> = () => {
+  React.useEffect(() => {
     const settingsProvider = Factory.getObjectInstance<ISettingsProvider>(
       Keys.ISettingsProvider,
     );
     settingsProvider.loadServerSettings();
+  });
 
-    // Get notifications
-    this.props.getNotifications();
-  }
-
-  public render() {
-    return (
-      <Tab.Navigator
-        tabBarOptions={{
-          labelStyle: themes.TextStyle.footnoteRegular,
-          activeTintColor: themes.AppPrimaryColor,
-          inactiveTintColor: themes.AppDisabledColor,
-        }}>
-        <Tab.Screen
-          name={RouteNames.Tab.HomeTab.Name}
-          component={HomeTab}
-          options={{
-            tabBarIcon: TabBarIcon('home'),
-            title: strings.HomeTab,
-          }}
-        />
-        <Tab.Screen
-          name={RouteNames.Tab.SearchTab.Name}
-          component={SearchTab}
-          options={{
-            tabBarIcon: TabBarIcon('search'),
-            title: strings.SearchTab,
-          }}
-        />
-        <Tab.Screen
-          name={RouteNames.Tab.AccountTab.Name}
-          component={AccountTab}
-          options={{
-            tabBarIcon: TabBarIcon('person'),
-            title: strings.UserTab,
-          }}
-        />
-      </Tab.Navigator>
-    );
-  }
-}
+  return (
+    <Tab.Navigator
+      tabBarOptions={{
+        labelStyle: themes.TextStyle.footnoteRegular,
+        activeTintColor: themes.AppPrimaryColor,
+        inactiveTintColor: themes.AppDisabledColor,
+      }}>
+      <Tab.Screen
+        name={RouteNames.Tab.HomeTab.Name}
+        component={HomeTab}
+        options={{
+          tabBarIcon: TabBarIcon('home'),
+          title: strings.HomeTab,
+        }}
+      />
+      <Tab.Screen
+        name={RouteNames.Tab.SearchTab.Name}
+        component={SearchTab}
+        options={{
+          tabBarIcon: TabBarIcon('search'),
+          title: strings.SearchTab,
+        }}
+      />
+      <Tab.Screen
+        name={RouteNames.Tab.AccountTab.Name}
+        component={AccountTab}
+        options={{
+          tabBarIcon: TabBarIcon('person'),
+          title: strings.UserTab,
+        }}
+      />
+    </Tab.Navigator>
+  );
+};

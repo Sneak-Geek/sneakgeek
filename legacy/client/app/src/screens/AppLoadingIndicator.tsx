@@ -2,13 +2,8 @@ import {Modal, View, StyleSheet, ActivityIndicator} from 'react-native';
 import React from 'react';
 import {themes} from 'resources';
 import {AppText} from './Shared';
-import {connect} from 'utilities/ReduxUtilities';
 import {IAppState} from 'store/AppStore';
-
-type Props = {
-  isLoading: boolean;
-  message?: string;
-};
+import {useSelector} from 'react-redux';
 
 const styles = StyleSheet.create({
   container: {
@@ -26,33 +21,32 @@ const styles = StyleSheet.create({
   },
 });
 
-@connect(
-  (state: IAppState) => ({
-    isLoading: state.LoadingIndicatorState.isLoading,
-    message: state.LoadingIndicatorState.message,
-  }),
-  null,
-)
-export class AppLoadingIndicator extends React.Component<Props> {
-  public render(): JSX.Element {
-    return (
-      <Modal
-        presentationStyle={'overFullScreen'}
-        visible={this.props.isLoading}
-        transparent={true}
-        animationType={'fade'}
-        animated={true}>
-        <View style={styles.container}>
-          <View style={styles.indicator}>
-            <ActivityIndicator size={'large'} color={'white'} />
-            {this.props.message && (
-              <AppText.Subhead style={{color: themes.AppAccentColor}}>
-                {this.props.message}
-              </AppText.Subhead>
-            )}
-          </View>
+export const AppLoadingIndicator: React.FC<{}> = () => {
+  const isLoading = useSelector(
+    (s: IAppState) => s.LoadingIndicatorState.isLoading,
+  );
+
+  const message = useSelector(
+    (s: IAppState) => s.LoadingIndicatorState.message,
+  );
+
+  return (
+    <Modal
+      presentationStyle={'overFullScreen'}
+      visible={isLoading}
+      transparent={true}
+      animationType={'fade'}
+      animated={true}>
+      <View style={styles.container}>
+        <View style={styles.indicator}>
+          <ActivityIndicator size={'large'} color={'white'} />
+          {message && (
+            <AppText.Subhead style={{color: themes.AppAccentColor}}>
+              {message}
+            </AppText.Subhead>
+          )}
         </View>
-      </Modal>
-    );
-  }
-}
+      </View>
+    </Modal>
+  );
+};
