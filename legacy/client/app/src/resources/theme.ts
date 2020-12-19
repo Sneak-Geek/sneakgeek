@@ -13,6 +13,7 @@ export const themes = {
   AppPrimaryColor: '#E2603F',
   AppSecondaryColor: '#000',
   HotOrange: '#FF9500',
+  GreenSuccess: '#1ABC9C',
   LightGreenBlue: '#1ABC9C',
   AppAccentColor: '#FFF',
   AppErrorColor: '#FF2D55',
