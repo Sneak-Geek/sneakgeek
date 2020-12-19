@@ -12,7 +12,6 @@ import {Notifcation} from 'reducers/NotificationReducers';
 import {dismissNotification} from 'actions';
 import {Icon} from 'react-native-elements';
 import {useDispatch, useSelector} from 'react-redux';
-import {reverse} from 'lodash';
 
 type NotificationItemProps = {
   item: Notifcation;
@@ -71,9 +70,9 @@ export const InAppNotification: React.FC<{}> = () => {
   );
   const dispatch = useDispatch();
 
-  // React.useEffect(() => {
-  //   return () => timeouts.forEach((t) => clearTimeout(t));
-  // });
+  React.useEffect(() => {
+    return () => timeouts.forEach((t) => clearTimeout(t));
+  });
 
   const onNotificationAdded = (item: Notifcation) => {
     const timeout = setTimeout(() => {
