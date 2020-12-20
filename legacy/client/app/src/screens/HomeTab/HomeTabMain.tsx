@@ -10,6 +10,7 @@ import {
   Dimensions,
   FlatList,
   TouchableWithoutFeedback,
+  RefreshControl,
 } from 'react-native';
 import {connect, getDependency, toCurrencyString} from 'utilities';
 import {
@@ -122,6 +123,7 @@ type CurrentInventoryProps = {
 };
 
 type State = {
+  isGettingData: boolean;
   selling: SellingInventory[];
   trendingOrders: TrendingOrder[];
 };
@@ -136,23 +138,13 @@ type State = {
 }))
 export class HomeTabMain extends React.Component<Props, State> {
   state = {
+    isGettingData: false,
     selling: new Array<SellingInventory>(),
     trendingOrders: new Array<TrendingOrder>(),
   };
 
   public componentDidMount(): void {
-    const inventoryService: IInventoryService = getDependency(
-      FactoryKeys.IInventoryService,
-    );
-    const orderService: IOrderService = getDependency(
-      FactoryKeys.IOrderService,
-    );
-    inventoryService
-      .getSelling()
-      .then((inventories) => this.setState({selling: inventories}));
-    orderService
-      .getTrendingOrder(10)
-      .then((orders) => this.setState({trendingOrders: orders}));
+    this._getData();
   }
 
   public render(): JSX.Element {
@@ -161,7 +153,13 @@ export class HomeTabMain extends React.Component<Props, State> {
         <StatusBar barStyle={'dark-content'} />
         <ScrollView
           showsVerticalScrollIndicator={false}
-          style={{flex: 1, backgroundColor: themes.AppBackgroundColor}}>
+          style={{flex: 1, backgroundColor: themes.AppBackgroundColor}}
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.isGettingData}
+              onRefresh={this._getData.bind(this)}
+            />
+          }>
           <View style={styles.rootContainer}>
             {this._renderCurrentSelling()}
             {this._renderTopTrending()}
@@ -169,6 +167,27 @@ export class HomeTabMain extends React.Component<Props, State> {
         </ScrollView>
       </SafeAreaView>
     );
+  }
+
+  private _getData() {
+    this.setState({isGettingData: true});
+    const inventoryService: IInventoryService = getDependency(
+      FactoryKeys.IInventoryService,
+    );
+    const orderService: IOrderService = getDependency(
+      FactoryKeys.IOrderService,
+    );
+
+    Promise.all([
+      inventoryService.getSelling(),
+      orderService.getTrendingOrder(10),
+    ]).then(([inventories, orders]) => {
+      this.setState({
+        selling: inventories,
+        trendingOrders: orders,
+        isGettingData: false,
+      });
+    });
   }
 
   private _renderTopTrending(): JSX.Element {
@@ -243,7 +262,7 @@ export class HomeTabMain extends React.Component<Props, State> {
           horizontal={true}
           keyExtractor={(itm): string => itm.shoe._id}
           data={this.state.selling}
-          style={{marginVertical: 20, paddingLeft: 20}}
+          style={{marginVertical: 20, paddingLeft: 20, marginRight: 15}}
           showsHorizontalScrollIndicator={false}
           renderItem={({item}): JSX.Element => (
             <CurrentInventory

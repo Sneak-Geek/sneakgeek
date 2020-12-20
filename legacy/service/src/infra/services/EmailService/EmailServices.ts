@@ -28,7 +28,7 @@ export class EmailService implements IEmailService {
     const userEmail = account.accountEmailByProvider;
 
     const mailOptions = {
-      from: "no-reply@support.sneakgeek.app",
+      from: "no-reply@support.sneakgeek.io",
       to: userEmail,
       subject: "Verify your account with SneakGeek",
       text: `${host}/api/v1/account/verify?verificationToken=${verification.verificationToken}`,

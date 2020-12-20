@@ -3,7 +3,7 @@
 //!
 
 import React from 'react';
-import {View, StyleSheet, SafeAreaView} from 'react-native';
+import {View, StyleSheet, SafeAreaView, Modal, Alert} from 'react-native';
 import {FlatList, TouchableWithoutFeedback} from 'react-native-gesture-handler';
 import {AppText} from 'screens/Shared';
 import {themes} from 'resources';
@@ -40,9 +40,7 @@ const NotificationItem = ({item, onPress}: NotificationItemProps) => {
   }
 
   return (
-    <TouchableWithoutFeedback
-      style={[styles.toastContainer, styles.toastBackground]}
-      onPress={onPress}>
+    <View style={[styles.toastContainer, styles.toastBackground]}>
       <View style={styles.toastInnerContainer}>
         <Icon
           name={icon}
@@ -53,13 +51,13 @@ const NotificationItem = ({item, onPress}: NotificationItemProps) => {
         />
         <AppText.Body style={styles.toastTitle}>{item.message}</AppText.Body>
         <Icon
-          name={'x'}
-          type={'feather'}
-          size={themes.IconSize}
+          name={'close'}
+          size={themes.IconSize * 1.2}
           containerStyle={styles.closeNotification}
+          onPress={onPress}
         />
       </View>
-    </TouchableWithoutFeedback>
+    </View>
   );
 };
 
@@ -83,11 +81,17 @@ export const InAppNotification: React.FC<{}> = () => {
     timeouts.push(timeout);
   };
 
+  if (notifications.length === 0) {
+    return <></>;
+  }
+
   return (
-    <SafeAreaView style={styles.root}>
-      <View style={{flex: 1}}>
+    <Modal
+      visible={true}
+      transparent={true}
+      presentationStyle={'overFullScreen'}>
+      <SafeAreaView style={styles.root}>
         <FlatList
-          style={styles.toastListContainer}
           keyExtractor={(_itm, idx) => idx.toString()}
           data={notifications}
           renderItem={({item}) => {
@@ -95,28 +99,19 @@ export const InAppNotification: React.FC<{}> = () => {
             return (
               <NotificationItem
                 item={item}
-                onPress={() => dismissNotification(item.id)}
+                onPress={() => dispatch(dismissNotification(item.id))}
               />
             );
           }}
         />
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </Modal>
   );
 };
 
 const styles = StyleSheet.create({
   root: {
-    zIndex: 1000,
-    flex: 1,
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'transparent',
-  },
-  toastListContainer: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
+    paddingTop: 0,
   },
   toastInnerContainer: {
     flex: 1,
@@ -125,10 +120,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: 10,
     backgroundColor: 'white',
-    borderColor: 'black',
+    borderColor: themes.DisabledColor,
     borderRadius: themes.ButtonBorderRadius * 2,
     height: themes.RegularButtonHeight,
-    borderWidth: 1,
+    borderWidth: 0.5,
     position: 'relative',
   },
   toastContainer: {
@@ -136,7 +131,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 2,
     paddingHorizontal: 8,
-    paddingVertical: 10,
+    marginVertical: 5,
+    zIndex: 1,
   },
   toastBackground: {
     backgroundColor: 'transparent',
@@ -147,7 +143,7 @@ const styles = StyleSheet.create({
   },
   closeNotification: {
     position: 'absolute',
-    top: 10,
-    right: 10,
+    top: 5,
+    right: 5,
   },
 });

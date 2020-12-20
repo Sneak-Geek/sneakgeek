@@ -112,7 +112,6 @@ export class AccountTabMain extends React.Component<Props> {
   ];
 
   public render(): JSX.Element {
-    console.log(getToken());
     return (
       <SafeAreaView style={{backgroundColor: themes.AppAccentColor, flex: 1}}>
         <StatusBar barStyle={'dark-content'} />

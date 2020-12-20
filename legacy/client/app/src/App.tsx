@@ -51,7 +51,7 @@ export default function App(): JSX.Element {
     );
     Factory.register<IEnvVar>(Keys.IEnvVar, {
       dev: __DEV__,
-      devUrl: 'http://localhost:8080/api/v1',
+      devUrl: 'http://192.168.0.5:8080/api/v1',
       prodUrl: 'https://dev.sneakgeek.io/api/v1',
     });
     Factory.register<IFacebookSDK>(Keys.IFacebookSDK, new FacebookSdk());
@@ -100,9 +100,9 @@ export default function App(): JSX.Element {
           )}
           {depLoaded ? (
             <>
+              <RootStack />
               <InAppNotification />
               <AppLoadingIndicator />
-              <RootStack />
             </>
           ) : (
             <></>

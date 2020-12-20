@@ -1,10 +1,15 @@
 import React from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {Dimensions, StyleSheet, TextInput, View} from 'react-native';
+import {TextInput, View} from 'react-native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {themes, strings} from 'resources';
-import {ShoeHeaderSummary, BottomButton, AppText} from 'screens/Shared';
-import {Shoe, SellOrder, IOrderService, FactoryKeys, Profile, Inventory} from 'business';
+import {
+  ShoeHeaderSummary,
+  BottomButton,
+  AppText,
+  DismissKeyboardView,
+} from 'screens/Shared';
+import {Shoe, FactoryKeys, Profile, Inventory} from 'business';
 import {RouteProp} from '@react-navigation/native';
 import {RootStackParams} from 'navigations/RootStack';
 import {connect, getToken, getDependency} from 'utilities';
@@ -13,9 +18,7 @@ import {
   showSuccessNotification,
   toggleIndicator,
 } from 'actions';
-import {styles} from './styles';
-import {CdnService, IInventoryService} from 'business/src';
-import RouteNames from 'navigations/RouteNames';
+import {IInventoryService} from 'business/src';
 import {IAppState} from 'store/AppStore';
 
 type Props = {
@@ -74,11 +77,11 @@ export class NewSellOrder extends React.Component<Props, State> {
   public render(): JSX.Element {
     return (
       <SafeAreaView style={{flex: 1, paddingTop: 0}}>
-        <View style={{flex: 1, backgroundColor: 'white'}}>
+        <DismissKeyboardView style={{flex: 1, backgroundColor: 'white'}}>
           <ShoeHeaderSummary shoe={this._shoe} />
           {this._renderInventory()}
           {this._renderBottomButton()}
-        </View>
+        </DismissKeyboardView>
       </SafeAreaView>
     );
   }
@@ -92,8 +95,8 @@ export class NewSellOrder extends React.Component<Props, State> {
           this.setState({
             inventory: {
               ...this.state.inventory,
-              shoeSize: text
-            }
+              shoeSize: text,
+            },
           });
         },
       },
@@ -104,9 +107,9 @@ export class NewSellOrder extends React.Component<Props, State> {
           this.setState({
             inventory: {
               ...this.state.inventory,
-              quantity: parseInt(text, 10) 
-            }
-          })
+              quantity: parseInt(text, 10),
+            },
+          });
         },
       },
       {
@@ -116,9 +119,9 @@ export class NewSellOrder extends React.Component<Props, State> {
           this.setState({
             inventory: {
               ...this.state.inventory,
-              sellPrice: parseInt(text, 10) 
-            }
-          })
+              sellPrice: parseInt(text, 10),
+            },
+          });
         },
       },
     ];
@@ -136,7 +139,7 @@ export class NewSellOrder extends React.Component<Props, State> {
               placeholder={t.title}
               numberOfLines={1}
               style={{...themes.TextStyle.body, marginBottom: 20}}
-              keyboardType={'number-pad'}
+              keyboardType={'numeric'}
               onChangeText={t.onUpdate}
             />
           </View>
@@ -161,14 +164,16 @@ export class NewSellOrder extends React.Component<Props, State> {
   private async _sellShoe() {
     const token = getToken();
     const inventory = this.state.inventory;
-    const inventoryService = getDependency<IInventoryService>(FactoryKeys.IInventoryService);
+    const inventoryService = getDependency<IInventoryService>(
+      FactoryKeys.IInventoryService,
+    );
     try {
       await inventoryService.createInventory(
         token,
         inventory.shoeId,
         inventory.quantity,
         inventory.sellPrice,
-        inventory.shoeSize
+        inventory.shoeSize,
       );
       this.props.showSuccessNotification('Đã bán thành công sản phẩm!');
       this.props.navigation.goBack();
