@@ -19,6 +19,14 @@ export const ValidationPassedMiddleware = (
       "Middleware validation error",
       JSON.stringify(error, null, 2)
     );
+    LogProvider.instance.debug(
+      "request header",
+      JSON.stringify(req.headers, null, 2)
+    );
+    LogProvider.instance.debug(
+      "request body",
+      JSON.stringify(req.body, null, 2)
+    );
 
     return res.status(HttpStatus.BAD_REQUEST).send({
       message: "HTTP request validation error",
