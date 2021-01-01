@@ -27,4 +27,5 @@ export const AdminProfile = {
     addressLine2: "Ngách 12/8",
   },
   userProvidedPhoneNumber: "0947356248",
+  isSeller: true,
 };
