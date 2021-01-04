@@ -5,7 +5,6 @@ import {themes, strings, images} from 'resources';
 import {Icon} from 'react-native-elements';
 import {
   AccountTabMain,
-  AccountTabEditProfile,
   AccountTabFaq,
   AccountTabPaymentInfo,
   AccountTabInventory,
@@ -46,14 +45,6 @@ const AccountTab = (): JSX.Element => (
         title: 'Tài khoản',
         ...themes.headerStyle,
         headerLeft: () => null,
-      }}
-    />
-    <AccountStack.Screen
-      name={RouteNames.Tab.AccountTab.EditProfile}
-      component={AccountTabEditProfile}
-      options={{
-        headerShown: false,
-        headerTransparent: true,
       }}
     />
     <AccountStack.Screen

@@ -12,7 +12,6 @@ import {
   response,
   httpGet,
   queryParam,
-  httpPost,
   requestBody,
 } from "inversify-express-utils";
 import { Types } from "../../configuration/inversify/inversify.types";

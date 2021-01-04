@@ -1,28 +1,28 @@
 import React from 'react';
-import { Shoe, Profile, IOrderService, FactoryKeys, PaymentType } from 'business';
-import { SafeAreaConsumer } from 'react-native-safe-area-context';
-import { View, ScrollView, FlatList } from 'react-native';
-import { RootStackParams } from 'navigations/RootStack';
-import { RouteProp } from '@react-navigation/native';
-import { connect, getDependency } from 'utilities';
-import { IAppState } from 'store/AppStore';
+import {Shoe, Profile, IOrderService, FactoryKeys, PaymentType} from 'business';
+import {SafeAreaConsumer} from 'react-native-safe-area-context';
+import {View, ScrollView, FlatList} from 'react-native';
+import {RootStackParams} from 'navigations/RootStack';
+import {RouteProp} from '@react-navigation/native';
+import {connect, getDependency} from 'utilities';
+import {IAppState} from 'store/AppStore';
 import {
   showErrorNotification,
   showSuccessNotification,
   toggleIndicator,
 } from 'actions';
-import { themes, strings } from 'resources';
-import { AppText, ShoeHeaderSummary, BottomButton } from 'screens/Shared';
-import { Icon } from 'react-native-elements';
+import {themes, strings} from 'resources';
+import {AppText, ShoeHeaderSummary, BottomButton} from 'screens/Shared';
+import {Icon} from 'react-native-elements';
 import {
   HeaderHeightContext,
   StackNavigationProp,
 } from '@react-navigation/stack';
-import { styles } from './styles';
-import { SizeSelection } from '../';
-import { OrderSummary } from 'screens/Product/OrderSummary';
+import {styles} from './styles';
+import {SizeSelection} from '../';
+import {OrderSummary} from 'screens/Product/OrderSummary';
 import RouteNames from 'navigations/RouteNames';
-import { SizePriceMap } from 'business/src';
+import {SizePriceMap} from 'business/src';
 
 type NewBuyOrderChild = {
   render: () => JSX.Element;
@@ -55,7 +55,7 @@ type State = {
   }),
   (dispatch: Function) => ({
     toggleLoading: (isLoading: boolean) => {
-      dispatch(toggleIndicator({ isLoading, message: strings.PleaseWait }));
+      dispatch(toggleIndicator({isLoading, message: strings.PleaseWait}));
     },
     showErrorNotification: (message: string): void => {
       dispatch(showErrorNotification(message));
@@ -110,9 +110,7 @@ export class NewBuyOrder extends React.Component<Props, State> {
           <OrderSummary
             key={1}
             onEditShippingInfo={() =>
-              this.props.navigation.navigate(RouteNames.Tab.AccountTab.Name, {
-                screen: RouteNames.Tab.AccountTab.EditProfile,
-              })
+              this.props.navigation.push(RouteNames.Tab.AccountTab.EditProfile)
             }
             userProfile={this.props.profile}
             shoeSize={this.state.buyOrder.shoeSize}
@@ -132,10 +130,10 @@ export class NewBuyOrder extends React.Component<Props, State> {
       <SafeAreaConsumer>
         {(insets): JSX.Element => (
           <View
-            style={{ paddingTop: insets.top, backgroundColor: 'white', flex: 1 }}>
+            style={{paddingTop: insets.top, backgroundColor: 'white', flex: 1}}>
             {this._renderHeader(insets.top)}
             <ShoeHeaderSummary shoe={this._shoe} />
-            <ScrollView style={{ flex: 1 }}>
+            <ScrollView style={{flex: 1}}>
               {this._renderNewBuyOrderContent()}
             </ScrollView>
             {this._renderBottomButton(insets.bottom)}
@@ -166,8 +164,8 @@ export class NewBuyOrder extends React.Component<Props, State> {
                 hitSlop={{}}
               />
             ) : (
-                <View style={{ width: themes.IconSize, height: themes.IconSize }} />
-              )}
+              <View style={{width: themes.IconSize, height: themes.IconSize}} />
+            )}
             <AppText.Title3>{strings.NewBuyOrder}</AppText.Title3>
             <Icon
               name={'x'}
@@ -200,7 +198,7 @@ export class NewBuyOrder extends React.Component<Props, State> {
       this.state.currentIndex === this._childComponents.length - 2
     ) {
     } else if (canGoNext || canGoBack) {
-      this.setState({ currentIndex: nextIndex }, () => {
+      this.setState({currentIndex: nextIndex}, () => {
         this._childFlatList.scrollToIndex({
           index: nextIndex,
           animated: true,
@@ -214,11 +212,11 @@ export class NewBuyOrder extends React.Component<Props, State> {
       <FlatList
         ref={(ref) => (this._childFlatList = ref)}
         bounces={false}
-        style={{ flex: 1, marginTop: 10, height: '100%' }}
+        style={{flex: 1, marginTop: 10, height: '100%'}}
         horizontal={true}
         pagingEnabled={true}
         data={this._childComponents}
-        renderItem={({ item }) => item.render()}
+        renderItem={({item}) => item.render()}
         alwaysBounceHorizontal={false}
         scrollEnabled={false}
         keyExtractor={(_item, idx) => idx.toString()}

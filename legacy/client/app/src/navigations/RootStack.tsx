@@ -19,6 +19,7 @@ import {OrderStack} from './OrderStack';
 import {SplashScreen} from 'screens/SplashScreen';
 import {ProductDetail} from 'screens/Product';
 import {strings, themes} from 'resources';
+import {AccountTabEditProfile} from 'screens/AccountTab';
 
 export type RootStackParams = {
   ProductRequest: undefined;
@@ -103,6 +104,14 @@ const RootStack = (): JSX.Element => (
         options={{
           gestureEnabled: false,
           headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name={RouteNames.Tab.AccountTab.EditProfile}
+        component={AccountTabEditProfile}
+        options={{
+          headerShown: false,
+          headerTransparent: true,
         }}
       />
     </Stack.Navigator>

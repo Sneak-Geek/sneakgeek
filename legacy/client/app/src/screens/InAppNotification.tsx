@@ -3,8 +3,8 @@
 //!
 
 import React from 'react';
-import {View, StyleSheet, SafeAreaView, Modal, Alert} from 'react-native';
-import {FlatList, TouchableWithoutFeedback} from 'react-native-gesture-handler';
+import {View, StyleSheet, SafeAreaView, Modal} from 'react-native';
+import {FlatList} from 'react-native-gesture-handler';
 import {AppText} from 'screens/Shared';
 import {themes} from 'resources';
 import {IAppState} from 'store/AppStore';
@@ -112,6 +112,10 @@ export const InAppNotification: React.FC<{}> = () => {
 const styles = StyleSheet.create({
   root: {
     paddingTop: 0,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
   },
   toastInnerContainer: {
     flex: 1,
