@@ -181,4 +181,6 @@ export const strings = {
   TopTrending: 'Top Trending',
   OrderHistory: 'Lịch sử giao dịch',
   BuyDate: 'Ngày mua',
+  CustomerSupportEmail: 'support@sneakgeek.io',
+  CustomerSupportPOCName: 'Trần Quang Đại',
 };

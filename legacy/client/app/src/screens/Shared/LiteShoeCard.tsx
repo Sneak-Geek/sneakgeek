@@ -2,9 +2,11 @@ import React from 'react';
 import {Shoe} from 'business';
 import {View, TouchableOpacity, Image, ViewStyle} from 'react-native';
 import {AppText} from './Text';
+import { toCurrencyString } from 'utilities';
 
 export const LiteShoeCard = (props: {
   shoe: Shoe;
+  price: number;
   onPress: () => void;
   style?: ViewStyle;
 }): JSX.Element => {
@@ -22,9 +24,14 @@ export const LiteShoeCard = (props: {
           style={{width: 120, height: 120}}
           resizeMode={'contain'}
         />
-        <AppText.Subhead numberOfLines={2} style={{marginHorizontal: 12}}>
-          {props.shoe.title}
-        </AppText.Subhead>
+        <View style={{alignItems:'flex-start',marginHorizontal: 12}}>
+          <AppText.Subhead numberOfLines={2}>
+            {props.shoe.title}
+          </AppText.Subhead>
+          <AppText.Subhead numberOfLines={2} style={{marginVertical: 8}}>
+            {toCurrencyString(props.price)}
+          </AppText.Subhead>
+        </View>
       </View>
     </TouchableOpacity>
   );
