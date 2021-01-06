@@ -1,7 +1,7 @@
 import React from 'react';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParams } from 'navigations/RootStack';
-import { RouteProp } from '@react-navigation/native';
+import {StackNavigationProp} from '@react-navigation/stack';
+import {RootStackParams} from 'navigations/RootStack';
+import {RouteProp} from '@react-navigation/native';
 import {
   View,
   Image,
@@ -12,27 +12,28 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import { SafeAreaConsumer } from 'react-native-safe-area-context';
-import { AppText, LiteShoeCard } from 'screens/Shared';
-import { strings, themes } from 'resources';
+import {SafeAreaConsumer} from 'react-native-safe-area-context';
+import {AppText, LiteShoeCard} from 'screens/Shared';
+import {strings, themes} from 'resources';
 import {
   connect,
   toVnDateFormat,
   toCurrencyString,
   convertUsdToVnd,
   getDependency,
-  translateGenderToVnms
+  translateGenderToVnms,
 } from 'utilities';
-import { IAppState } from 'store/AppStore';
+import {IAppState} from 'store/AppStore';
 import {
   Account,
   Profile,
   getShoeInfo,
   NetworkRequestState,
   Shoe,
+  getCurrentUser,
 } from 'business';
 import RouteNames from 'navigations/RouteNames';
-import { FactoryKeys, InventoryService } from 'business/src';
+import {FactoryKeys, InventoryService} from 'business/src';
 
 type Props = {
   account: Account;
@@ -46,6 +47,7 @@ type Props = {
   };
   getReviews: (shoeId: string) => void;
   getShoeInfo: (shoeId: string) => void;
+  getCurrentUser: () => void;
 };
 
 type State = {
@@ -149,6 +151,7 @@ const styles = StyleSheet.create({
   }),
   (dispatch: Function) => ({
     getShoeInfo: (shoeId: string): void => dispatch(getShoeInfo(shoeId)),
+    getCurrentUser: () => dispatch(getCurrentUser()),
   }),
 )
 export class ProductDetail extends React.Component<Props, State> {
@@ -164,17 +167,22 @@ export class ProductDetail extends React.Component<Props, State> {
   public componentDidMount(): void {
     this._getShoeData();
     this._getLowestPrice();
+    this._getCurrentUser();
   }
 
   private _getShoeData() {
     this.props.getShoeInfo(this._shoe._id);
   }
 
+  private _getCurrentUser() {
+    this.props.getCurrentUser();
+  }
+
   private async _getLowestPrice() {
     const lowestPrice = await this.inventoryService.getLowestSellPrice(
       this._shoe._id,
     );
-    this.setState({ lowestPrice });
+    this.setState({lowestPrice});
   }
 
   public render(): JSX.Element {
@@ -185,7 +193,7 @@ export class ProductDetail extends React.Component<Props, State> {
             style={{
               ...styles.rootContainer,
             }}>
-            <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
+            <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
               <View
                 style={{
                   ...styles.pageContainer,
@@ -209,8 +217,8 @@ export class ProductDetail extends React.Component<Props, State> {
     return (
       <View style={styles.shoeImageContainer}>
         <Image
-          source={{ uri: this._shoe.media.imageUrl }}
-          style={{ width: '100%', aspectRatio: 2 }}
+          source={{uri: this._shoe.media.imageUrl}}
+          style={{width: '100%', aspectRatio: 2}}
           resizeMode={'contain'}
         />
       </View>
@@ -262,11 +270,11 @@ export class ProductDetail extends React.Component<Props, State> {
         </View>,
       ),
     );
-    return <View style={{ paddingHorizontal: 20 }}>{views}</View>;
+    return <View style={{paddingHorizontal: 20}}>{views}</View>;
   }
 
   private _alertMissingInfo(message: string): void {
-    const { navigation } = this.props;
+    const {navigation} = this.props;
     Alert.alert(strings.AccountInfo, message, [
       {
         text: strings.AddInfoForReview,
@@ -285,15 +293,15 @@ export class ProductDetail extends React.Component<Props, State> {
   }
 
   private _renderRelatedShoes(): JSX.Element {
-    const { shoeInfoState } = this.props;
+    const {shoeInfoState} = this.props;
     let content: JSX.Element = (
       <FlatList
         horizontal={true}
         showsHorizontalScrollIndicator={false}
-        style={{ marginBottom: 20, paddingBottom: 10 }}
+        style={{marginBottom: 20, paddingBottom: 10}}
         data={shoeInfoState.relatedShoes}
         keyExtractor={(itm): string => itm._id}
-        renderItem={({ item }): JSX.Element => (
+        renderItem={({item}): JSX.Element => (
           <LiteShoeCard
             shoe={item}
             onPress={(): void =>
@@ -302,14 +310,14 @@ export class ProductDetail extends React.Component<Props, State> {
                 shoe: item,
               })
             }
-            style={{ marginRight: 20, paddingBottom: 8 }}
+            style={{marginRight: 20, paddingBottom: 8}}
           />
         )}
       />
     );
 
     return (
-      <View style={{ flex: 1, paddingHorizontal: 20 }}>
+      <View style={{flex: 1, paddingHorizontal: 20}}>
         <View style={styles.ratingHeaderContainer}>
           <AppText.Headline>
             {strings.RelatedProducts.toUpperCase()}
@@ -321,10 +329,10 @@ export class ProductDetail extends React.Component<Props, State> {
   }
 
   private _renderActionButtons(bottom: number): JSX.Element {
-    const { profile, account } = this.props;
+    const {profile, account} = this.props;
     const isSell = account && profile && profile.isSeller && account.isVerified;
     return (
-      <View style={{ bottom, ...styles.bottomContainer }}>
+      <View style={{bottom, ...styles.bottomContainer}}>
         {!isSell &&
           this._renderSingleActionButton('Mua', () => {
             // @ts-ignore
@@ -353,7 +361,7 @@ export class ProductDetail extends React.Component<Props, State> {
     actionType: string,
     onPress: () => void,
   ): JSX.Element {
-    const { account, profile, navigation } = this.props;
+    const {account, profile, navigation} = this.props;
     const isAccountAvailable = Boolean(account && profile);
 
     const isVerified = account?.isVerified;
@@ -407,13 +415,13 @@ export class ProductDetail extends React.Component<Props, State> {
             ...styles.bottomButtonStyle,
             ...themes.ButtonShadow,
           }}>
-          <View style={{ flex: 1, alignItems: 'center', marginVertical: 15 }}>
-            <AppText.Title3 style={{ color: themes.AppAccentColor }}>
+          <View style={{flex: 1, alignItems: 'center', marginVertical: 15}}>
+            <AppText.Title3 style={{color: themes.AppAccentColor}}>
               {actionType.toUpperCase()}
             </AppText.Title3>
             {shouldRenderPrice && (
               <AppText.SubCallout
-                style={{ color: themes.AppAccentColor, alignSelf: 'center' }}>
+                style={{color: themes.AppAccentColor, alignSelf: 'center'}}>
                 {strings.Price}: {toCurrencyString(this.state.lowestPrice)}
               </AppText.SubCallout>
             )}

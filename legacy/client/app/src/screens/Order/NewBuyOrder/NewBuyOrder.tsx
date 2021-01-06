@@ -69,7 +69,6 @@ export class NewBuyOrder extends React.Component<Props, State> {
   private _shoe: Shoe;
   private _childFlatList: FlatList<NewBuyOrderChild>;
   private _childComponents: NewBuyOrderChild[];
-  private _orderService: IOrderService;
 
   public constructor(props: Props) {
     super(props);
@@ -85,9 +84,6 @@ export class NewBuyOrder extends React.Component<Props, State> {
     };
 
     this._shoe = this.props.route.params.shoe;
-    this._orderService = getDependency<IOrderService>(
-      FactoryKeys.IOrderService,
-    );
 
     this._childComponents = [
       {
