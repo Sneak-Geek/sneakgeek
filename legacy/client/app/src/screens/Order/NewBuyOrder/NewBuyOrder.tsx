@@ -1,7 +1,14 @@
 import React from 'react';
-import {Shoe, Profile, IOrderService, FactoryKeys, PaymentType} from 'business';
+import {
+  Shoe,
+  Profile,
+  IOrderService,
+  FactoryKeys,
+  PaymentType,
+  Account,
+} from 'business';
 import {SafeAreaConsumer} from 'react-native-safe-area-context';
-import {View, ScrollView, FlatList} from 'react-native';
+import {View, ScrollView, FlatList, Alert} from 'react-native';
 import {RootStackParams} from 'navigations/RootStack';
 import {RouteProp} from '@react-navigation/native';
 import {connect, getDependency} from 'utilities';
@@ -30,6 +37,7 @@ type NewBuyOrderChild = {
 };
 
 type Props = {
+  account: Account;
   profile: Profile;
   route: RouteProp<RootStackParams, 'NewBuyOrder'>;
   navigation: StackNavigationProp<RootStackParams, 'NewBuyOrder'>;
@@ -51,6 +59,7 @@ type State = {
 
 @connect(
   (state: IAppState) => ({
+    account: state.UserState.accountState.account,
     profile: state.UserState.profileState.profile,
   }),
   (dispatch: Function) => ({
@@ -69,7 +78,6 @@ export class NewBuyOrder extends React.Component<Props, State> {
   private _shoe: Shoe;
   private _childFlatList: FlatList<NewBuyOrderChild>;
   private _childComponents: NewBuyOrderChild[];
-  private _orderService: IOrderService;
 
   public constructor(props: Props) {
     super(props);
@@ -85,9 +93,6 @@ export class NewBuyOrder extends React.Component<Props, State> {
     };
 
     this._shoe = this.props.route.params.shoe;
-    this._orderService = getDependency<IOrderService>(
-      FactoryKeys.IOrderService,
-    );
 
     this._childComponents = [
       {
@@ -246,6 +251,9 @@ export class NewBuyOrder extends React.Component<Props, State> {
               ? themes.AppSecondaryColor
               : themes.AppDisabledColor,
             borderRadius: themes.LargeBorderRadius,
+            ...(shouldBuyShoe && !this.props.profile
+              ? {backgroundColor: themes.AppDisabledColor}
+              : {}),
           }}
           onPress={() =>
             this.state.currentIndex !== this._childComponents.length - 1
@@ -258,12 +266,45 @@ export class NewBuyOrder extends React.Component<Props, State> {
   }
 
   private _purchaseProduct(paymentType: PaymentType): void {
+    if (!this.props.profile) {
+      this._alertMissingInfo();
+      return;
+    }
+
     this.props.navigation.push(RouteNames.Order.Payment, {
       paymentType,
       inventoryId: this.state.buyOrder.inventoryId,
       addressLine1: this.props.profile.userProvidedAddress.addressLine1,
       addressLine2: this.props.profile.userProvidedAddress.addressLine2,
     });
+  }
+
+  private _alertMissingInfo(): void {
+    const message = !this.props.account
+      ? strings.NotAuthenticated
+      : strings.MissingProfileInfo;
+    const {navigation} = this.props;
+    Alert.alert(strings.AccountInfo, message, [
+      {
+        text: strings.AddInfoForReview,
+        onPress: (): void => {
+          if (this.props.account) {
+            navigation.navigate(RouteNames.Tab.AccountTab.Name, {
+              screen: RouteNames.Tab.AccountTab.EditProfile,
+            });
+          } else {
+            navigation.navigate(RouteNames.Auth.Name, {
+              screen: RouteNames.Auth.Login,
+            });
+          }
+        },
+      },
+      {
+        text: strings.Cancel,
+        onPress: null,
+        style: 'cancel',
+      },
+    ]);
   }
 
   private _setShoeSizeAndPrice(priceMap: SizePriceMap): void {

@@ -101,12 +101,21 @@ export class OrderSummary extends React.Component<Props> {
   }
 
   private _renderName(): JSX.Element {
+    if (!this.props.userProfile) {
+      return <></>;
+    }
+
     const name = `${this.props.userProfile.userProvidedName.lastName} ${this.props.userProfile.userProvidedName.firstName}`;
     return <AppText.Headline>{name}</AppText.Headline>;
   }
 
   private _renderShippingInfoDetails(): JSX.Element {
     const profile = this.props.userProfile;
+
+    if (!profile) {
+      return <></>;
+    }
+
     const email = profile.userProvidedEmail;
     const phoneNumber = profile.userProvidedPhoneNumber;
     const {addressLine1, addressLine2} = profile.userProvidedAddress;
