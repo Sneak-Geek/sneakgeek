@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import RootStack from 'navigations/RootStack';
 import {
   ObjectFactory as Factory,
@@ -23,19 +23,19 @@ import {
   IInventoryService,
   InventoryService,
 } from 'business';
-import {Provider} from 'react-redux';
+import { Provider } from 'react-redux';
 
-import {SettingsProvider, FacebookSdk, KeyExtensions, GoogleSdk} from 'common';
+import { SettingsProvider, FacebookSdk, KeyExtensions, GoogleSdk } from 'common';
 
-import {AppStore} from 'store/AppStore';
-import {InAppNotification} from 'screens/InAppNotification';
-import {AppLoadingIndicator} from 'screens/AppLoadingIndicator';
-import {IDeviceInfoProvider, DeviceInfoProvider} from 'providers';
-import {AppleAuthSdk} from 'common/AppleAuthSdk';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
+import { AppStore } from 'store/AppStore';
+import { InAppNotification } from 'screens/InAppNotification';
+import { AppLoadingIndicator } from 'screens/AppLoadingIndicator';
+import { IDeviceInfoProvider, DeviceInfoProvider } from 'providers';
+import { AppleAuthSdk } from 'common/AppleAuthSdk';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import ErrorBoundary from 'ErrorBoundary';
-import {Platform, StatusBar} from 'react-native';
-import {themes} from 'resources';
+import { Platform, StatusBar } from 'react-native';
+import { themes } from 'resources';
 
 export default function App(): JSX.Element {
   const [depLoaded, setDepLoaded] = useState(false);
@@ -51,7 +51,7 @@ export default function App(): JSX.Element {
     );
     Factory.register<IEnvVar>(Keys.IEnvVar, {
       dev: __DEV__,
-      devUrl: 'http://192.168.0.5:8080/api/v1',
+      devUrl: 'http://localhost:8080/api/v1',
       prodUrl: 'https://dev.sneakgeek.io/api/v1',
     });
     Factory.register<IFacebookSDK>(Keys.IFacebookSDK, new FacebookSdk());
@@ -105,8 +105,8 @@ export default function App(): JSX.Element {
               <AppLoadingIndicator />
             </>
           ) : (
-            <></>
-          )}
+              <></>
+            )}
         </Provider>
       </SafeAreaProvider>
     </ErrorBoundary>

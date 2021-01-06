@@ -20,6 +20,7 @@ import {SplashScreen} from 'screens/SplashScreen';
 import {ProductDetail} from 'screens/Product';
 import {strings, themes} from 'resources';
 import {AccountTabEditProfile} from 'screens/AccountTab';
+import { SeeMore } from 'screens/HomeTab';
 
 export type RootStackParams = {
   ProductRequest: undefined;
@@ -112,6 +113,14 @@ const RootStack = (): JSX.Element => (
         options={{
           headerShown: false,
           headerTransparent: true,
+        }}
+      />
+      <Stack.Screen
+        name={RouteNames.Tab.HomeTab.SeeMore}
+        component={SeeMore}
+        options={{
+          title: strings.SeeMore,
+          ...themes.headerStyle,
         }}
       />
     </Stack.Navigator>

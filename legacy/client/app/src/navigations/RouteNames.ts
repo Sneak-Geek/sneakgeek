@@ -50,6 +50,7 @@ const RouteNames = {
       InventoryDetail: 'AccountTabInventoryDetail',
       Faq: 'AccountTabFaq',
       PaymentInfo: 'AccountTabPaymentInfo',
+      ContactUs: 'AccountTabContactUs',
     },
   },
 };

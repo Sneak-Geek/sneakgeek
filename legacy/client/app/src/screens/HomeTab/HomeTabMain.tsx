@@ -254,7 +254,7 @@ export class HomeTabMain extends React.Component<Props, State> {
           <AppText.Title2>{strings.Selling}</AppText.Title2>
           <AppText.Footnote
             style={{textDecorationLine: 'underline'}}
-            onPress={() => {}}>
+            onPress={() => {this.props.navigation.push(RouteNames.Tab.HomeTab.SeeMore, {inventories: this.state.selling})}}>
             {strings.SeeMore}
           </AppText.Footnote>
         </View>

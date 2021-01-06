@@ -9,6 +9,7 @@ import {
   AccountTabPaymentInfo,
   AccountTabInventory,
   AccountTabInventoryDetail,
+  ContactUs,
 } from 'screens/AccountTab';
 import {
   createStackNavigator,
@@ -22,7 +23,7 @@ import {
   ISettingsProvider,
   FactoryKeys as Keys,
 } from 'business';
-import {CatalogSeeMore, NotificationsScreen} from 'screens/HomeTab';
+import {SeeMore, NotificationsScreen} from 'screens/HomeTab';
 import {ProductRequest} from 'screens/SearchTab';
 import {IAppState} from 'store/AppStore';
 import {RootStackParams} from './RootStack';
@@ -87,6 +88,14 @@ const AccountTab = (): JSX.Element => (
         ...themes.headerStyle,
       }}
     />
+    <AccountStack.Screen
+      name={RouteNames.Tab.AccountTab.ContactUs}
+      component={ContactUs}
+      options={{
+        title: strings.AppContact,
+        ...themes.headerStyle,
+      }}
+    />
   </AccountStack.Navigator>
 );
 
@@ -119,14 +128,6 @@ class HomeTab extends React.Component<HomeTabProps> {
                 }}
               />
             ),
-          }}
-        />
-        <HomeStack.Screen
-          name={RouteNames.Tab.HomeTab.SeeMore}
-          component={CatalogSeeMore}
-          options={{
-            title: strings.SeeMore,
-            ...themes.headerStyle,
           }}
         />
         <HomeStack.Screen
