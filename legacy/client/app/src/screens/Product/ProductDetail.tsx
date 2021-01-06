@@ -361,16 +361,7 @@ export class ProductDetail extends React.Component<Props, State> {
     actionType: string,
     onPress: () => void,
   ): JSX.Element {
-    const {account, profile, navigation} = this.props;
-    const isAccountAvailable = Boolean(account && profile);
-
-    const isVerified = account?.isVerified;
-    const missingAddress =
-      profile &&
-      !profile.isSeller &&
-      (!profile?.userProvidedAddress ||
-        !profile?.userProvidedAddress.addressLine1 ||
-        !profile?.userProvidedAddress.addressLine1);
+    const {profile} = this.props;
 
     let backgroundColor: string;
     switch (actionType) {
@@ -385,29 +376,12 @@ export class ProductDetail extends React.Component<Props, State> {
         toCurrencyString;
     }
 
-    const onPressWrapper = (): void => {
-      if (!isAccountAvailable) {
-        // @ts-ignore
-        navigation.navigate(RouteNames.Auth.Name, {
-          screen: RouteNames.Auth.Login,
-        });
-      } else if (isVerified && !missingAddress) {
-        return onPress();
-      } else if (!isVerified) {
-        Alert.alert(strings.AccountNotVerifieid);
-      } else {
-        this._alertMissingInfo(
-          `${strings.AddInfoForReview}: ${strings.MissingAddress}`,
-        );
-      }
-    };
-
     const shouldRenderPrice =
       !profile?.isSeller && this.state.lowestPrice !== 0;
 
     return (
       <TouchableOpacity
-        onPress={onPressWrapper}
+        onPress={onPress}
         disabled={!profile?.isSeller && this.state.lowestPrice === 0}>
         <View
           style={{
