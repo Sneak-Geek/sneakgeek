@@ -106,7 +106,7 @@ export class AccountTabMain extends React.Component<Props> {
     },
     {
       title: strings.AppContact,
-      onClick: (): void => null,
+      onClick: (): void => this.props.navigation.push(RouteNames.Tab.AccountTab.ContactUs),
       leftIcon: 'phone',
     },
   ];
