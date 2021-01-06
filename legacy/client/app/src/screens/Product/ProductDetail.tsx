@@ -273,25 +273,6 @@ export class ProductDetail extends React.Component<Props, State> {
     return <View style={{paddingHorizontal: 20}}>{views}</View>;
   }
 
-  private _alertMissingInfo(message: string): void {
-    const {navigation} = this.props;
-    Alert.alert(strings.AccountInfo, message, [
-      {
-        text: strings.AddInfoForReview,
-        onPress: (): void =>
-          // @ts-ignore
-          navigation.navigate(RouteNames.Tab.AccountTab.Name, {
-            screen: RouteNames.Tab.AccountTab.EditProfile,
-          }),
-      },
-      {
-        text: strings.Cancel,
-        onPress: null,
-        style: 'cancel',
-      },
-    ]);
-  }
-
   private _renderRelatedShoes(): JSX.Element {
     const {shoeInfoState} = this.props;
     let content: JSX.Element = (

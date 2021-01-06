@@ -1,5 +1,12 @@
 import React from 'react';
-import {StyleSheet, StyleProp, ViewStyle, TextStyle, View} from 'react-native';
+import {
+  StyleSheet,
+  StyleProp,
+  ViewStyle,
+  TextStyle,
+  View,
+  TouchableOpacityProps,
+} from 'react-native';
 import {themes} from 'resources';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {AppText} from './Text';
@@ -29,11 +36,14 @@ type Props = {
   onPress: () => void;
   style?: StyleProp<ViewStyle>;
   titleStyle?: StyleProp<TextStyle>;
-};
+} & TouchableOpacityProps;
 
 export const BottomButton = (props: Props) => (
   <View style={[styles.containerStyle, props.style]}>
-    <TouchableOpacity style={styles.buttonStyle} onPress={props.onPress}>
+    <TouchableOpacity
+      style={styles.buttonStyle}
+      onPress={props.onPress}
+      disabled={props.disabled}>
       <AppText.Headline style={[props.titleStyle, styles.titleStyle]}>
         {props.title}
       </AppText.Headline>
