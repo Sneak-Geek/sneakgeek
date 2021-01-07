@@ -31,7 +31,7 @@ type StateProps = {
 
 type DispatchProps = {
   toggleLoadingIndicator: (isLoading: boolean, message?: string) => void;
-  showErrorNotification: (message: string) => void;
+  showAppErrorNotification: (message: string) => void;
   emailLogin: (email: string, password: string) => void;
 };
 
@@ -51,7 +51,7 @@ type Props = StateProps &
       toggleLoadingIndicator: (isLoading: boolean, message?: string) => {
         dispatch(toggleIndicator({isLoading, message}));
       },
-      showErrorNotification: (message: string) => {
+      showAppErrorNotification: (message: string) => {
         dispatch(showErrorNotification(message));
       },
       emailLogin: (email: string, password: string) => {
@@ -68,12 +68,7 @@ export class EmailLoginScreen extends React.Component<Props, State> {
 
   public componentDidUpdate(prevProps: Props) {
     if (this.props.navigation.isFocused()) {
-      const {
-        navigation,
-        accountState,
-        showErrorNotification,
-        toggleLoadingIndicator,
-      } = this.props;
+      const {navigation, accountState, toggleLoadingIndicator} = this.props;
       const {state} = accountState;
       if (state === prevProps.accountState.state) {
         return;
@@ -93,8 +88,10 @@ export class EmailLoginScreen extends React.Component<Props, State> {
           case strings.EmailString:
             Alert.alert(strings.AccountCreatedByEmail);
             break;
+          case undefined:
+            Alert.alert(strings.InvalidLogin);
+            break;
           default:
-            showErrorNotification(strings.InvalidLogin);
             break;
         }
       } else if (state === NetworkRequestState.SUCCESS) {

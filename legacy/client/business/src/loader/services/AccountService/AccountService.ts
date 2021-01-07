@@ -18,21 +18,9 @@ export class AccountService extends BaseService implements IAccountService {
     const response = await this.apiClient.getInstance().post(
       endpoint,
       { email, password },
-      {
-        headers: {
-          "Access-Control-Request-Method": "POST",
-        },
-      }
     );
 
-    if (
-      response &&
-      (response.status === HttpStatus.CREATED || response.status === HttpStatus.OK)
-    ) {
-      return response.data;
-    }
-
-    return undefined;
+    return response.data;
   }
 
   public async login(

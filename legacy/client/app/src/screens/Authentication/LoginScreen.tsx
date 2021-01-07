@@ -180,6 +180,7 @@ export class LoginScreen extends React.Component<Props> {
 
       if (currentError && currentError !== prevError) {
         const provider = currentError?.response?.data?.provider;
+
         switch (provider) {
           case strings.GoogleString:
             Alert.alert(strings.AccountCreatedByGoogle);
