@@ -92,7 +92,8 @@ export const AccountTabInventoryDetail: React.FC<{}> = () => {
         style={{
           backgroundColor: themes.AppSecondaryColor,
           borderRadius: themes.LargeBorderRadius,
-          marginBottom: 10
+          marginBottom: 10,
+          alignSelf: 'flex-end'
         }}
         title={strings.Confirm}
         onPress={async () => {
