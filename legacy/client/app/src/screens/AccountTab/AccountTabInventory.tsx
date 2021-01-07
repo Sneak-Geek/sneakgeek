@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, Image, StyleSheet, View, TextInput } from 'react-native';
+import { FlatList, Image, StyleSheet, View, TextInput, Keyboard, Dimensions } from 'react-native';
 import { getDependency, getToken, toCurrencyString } from 'utilities';
 import { IInventoryService, FactoryKeys, Inventory } from 'business';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -64,53 +64,58 @@ export const AccountTabInventoryDetail: React.FC<{}> = () => {
   ]
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: 'white', paddingTop: 0 }}>
-      <ShoeHeaderSummary shoe={inventory.shoe} />
-      <View style={{ padding: 20, flex: 1, flexDirection: 'column' }}>
-        {items.map((t) => (
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}>
-            <AppText.SubHeadline>{t.title}</AppText.SubHeadline>
-            <TextInput
-              defaultValue={t.displayText}
-              numberOfLines={1}
-              editable={t.editable}
-              style={{ ...themes.TextStyle.body, marginBottom: 20 }}
-              keyboardType={'number-pad'}
-              onChangeText={t.onUpdate}
-            />
+    <View style={{ display: 'flex', flex: 1, backgroundColor: 'white' }}>
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()} style={{ height: Dimensions.get('window').height - 190 }}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: 'white', paddingTop: 0 }}>
+          <ShoeHeaderSummary shoe={inventory.shoe} />
+          <View style={{ padding: 20, flex: 1, flexDirection: 'column' }}>
+            {items.map((t) => (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}>
+                <AppText.SubHeadline>{t.title}</AppText.SubHeadline>
+                <TextInput
+                  defaultValue={t.displayText}
+                  numberOfLines={1}
+                  editable={t.editable}
+                  style={{ ...themes.TextStyle.body, marginBottom: 20 }}
+                  keyboardType={'number-pad'}
+                  onChangeText={t.onUpdate}
+                />
+              </View>
+            ))}
           </View>
-        ))}
-      </View>
-      <BottomButton
-        style={{
-          backgroundColor: themes.AppSecondaryColor,
-          borderRadius: themes.LargeBorderRadius,
-          marginBottom: 10
-        }}
-        title={strings.Confirm}
-        onPress={async () => {
-          const token = getToken();
-          const inventoryService = getDependency<IInventoryService>(
-            FactoryKeys.IInventoryService,
-          );
-          const updatedInventory = {
-            _id: inventory._id,
-            sellerId: inventory.sellerId,
-            shoeId: inventory.shoeId,
-            shoeSize: inventory.shoeSize,
-            quantity,
-            sellPrice: price
-          };
-          await inventoryService.updateInventory(token, updatedInventory);
-          navigation.goBack();
-        }}
-      />
-    </SafeAreaView >
+          <BottomButton
+            style={{
+              backgroundColor: themes.AppSecondaryColor,
+              borderRadius: themes.LargeBorderRadius,
+              marginBottom: 10,
+              alignSelf: 'flex-end'
+            }}
+            title={strings.Confirm}
+            onPress={async () => {
+              const token = getToken();
+              const inventoryService = getDependency<IInventoryService>(
+                FactoryKeys.IInventoryService,
+              );
+              const updatedInventory = {
+                _id: inventory._id,
+                sellerId: inventory.sellerId,
+                shoeId: inventory.shoeId,
+                shoeSize: inventory.shoeSize,
+                quantity,
+                sellPrice: price
+              };
+              await inventoryService.updateInventory(token, updatedInventory);
+              navigation.goBack();
+            }}
+          />
+        </SafeAreaView >
+      </TouchableWithoutFeedback>
+    </View>
   )
 }
 
@@ -124,9 +129,11 @@ const InventoryItem: React.FC<{ inventory: Inventory & { shoe: Shoe } }> = (
 
   return (
     <TouchableWithoutFeedback style={styles.inventoryContainer}
-      onPress={() => navigation.navigate(RouteNames.Tab.AccountTab.InventoryDetail, {
-        inventory
-      })}>
+      onPress={() => {
+        navigation.navigate(RouteNames.Tab.AccountTab.InventoryDetail, {
+          inventory
+        })
+      }}>
       <Image
         source={{ uri: inventory.shoe.media.thumbUrl }}
         style={{ width: 100, aspectRatio: 1 }}
