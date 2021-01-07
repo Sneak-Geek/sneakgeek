@@ -3,28 +3,28 @@
 //!
 
 import React from 'react';
-import {View, StyleSheet, SafeAreaView, Modal} from 'react-native';
-import {FlatList} from 'react-native-gesture-handler';
-import {AppText} from 'screens/Shared';
-import {themes} from 'resources';
-import {IAppState} from 'store/AppStore';
-import {Notifcation} from 'reducers/NotificationReducers';
-import {dismissNotification} from 'actions';
-import {Icon} from 'react-native-elements';
-import {useDispatch, useSelector} from 'react-redux';
+import { View, StyleSheet, SafeAreaView, Modal } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
+import { AppText } from 'screens/Shared';
+import { themes } from 'resources';
+import { IAppState } from 'store/AppStore';
+import { Notifcation } from 'reducers/NotificationReducers';
+import { dismissNotification } from 'actions';
+import { Icon } from 'react-native-elements';
+import { useDispatch, useSelector } from 'react-redux';
 
 type NotificationItemProps = {
   item: Notifcation;
   onPress: () => void;
 };
 
-const NotificationItem = ({item, onPress}: NotificationItemProps) => {
+const NotificationItem = ({ item, onPress }: NotificationItemProps) => {
   let icon: string;
   let reverseColor: string;
 
   switch (item.type) {
     case 'error':
-      icon = 'x';
+      icon = 'exclamation';
       reverseColor = themes.AppSellColor;
       break;
     case 'success':
@@ -38,6 +38,7 @@ const NotificationItem = ({item, onPress}: NotificationItemProps) => {
     default:
       break;
   }
+  let type = icon === 'error' ? 'material' : 'font-awesome';
 
   return (
     <View style={[styles.toastContainer, styles.toastBackground]}>
@@ -46,6 +47,7 @@ const NotificationItem = ({item, onPress}: NotificationItemProps) => {
           name={icon}
           color={reverseColor}
           reverse={true}
+          type={type}
           size={themes.IconSize * 0.75}
           reverseColor={themes.AppAccentColor}
         />
@@ -94,7 +96,7 @@ export const InAppNotification: React.FC<{}> = () => {
         <FlatList
           keyExtractor={(_itm, idx) => idx.toString()}
           data={notifications}
-          renderItem={({item}) => {
+          renderItem={({ item }) => {
             onNotificationAdded(item);
             return (
               <NotificationItem
