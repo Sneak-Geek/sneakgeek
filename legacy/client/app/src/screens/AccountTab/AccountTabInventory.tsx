@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, Image, StyleSheet, View, TextInput } from 'react-native';
+import { FlatList, Image, StyleSheet, View, TextInput, Keyboard, Dimensions } from 'react-native';
 import { getDependency, getToken, toCurrencyString } from 'utilities';
 import { IInventoryService, FactoryKeys, Inventory } from 'business';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -10,6 +10,7 @@ import { SearchBar } from 'react-native-elements';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import RouteNames from 'navigations/RouteNames';
+import { DismissKeyboardView } from 'screens/Shared';
 
 const styles = StyleSheet.create({
   inventoryContainer: {
@@ -64,7 +65,7 @@ export const AccountTabInventoryDetail: React.FC<{}> = () => {
   ]
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: 'white', paddingTop: 0 }}>
+    <DismissKeyboardView style={{ flex: 1, backgroundColor: 'white', paddingTop: 0 }}>
       <ShoeHeaderSummary shoe={inventory.shoe} />
       <View style={{ padding: 20, flex: 1, flexDirection: 'column' }}>
         {items.map((t) => (
@@ -90,7 +91,8 @@ export const AccountTabInventoryDetail: React.FC<{}> = () => {
         style={{
           backgroundColor: themes.AppSecondaryColor,
           borderRadius: themes.LargeBorderRadius,
-          marginBottom: 10
+          marginBottom: 10,
+          alignSelf: 'flex-end'
         }}
         title={strings.Confirm}
         onPress={async () => {
@@ -110,7 +112,7 @@ export const AccountTabInventoryDetail: React.FC<{}> = () => {
           navigation.goBack();
         }}
       />
-    </SafeAreaView >
+    </DismissKeyboardView >
   )
 }
 
@@ -124,9 +126,11 @@ const InventoryItem: React.FC<{ inventory: Inventory & { shoe: Shoe } }> = (
 
   return (
     <TouchableWithoutFeedback style={styles.inventoryContainer}
-      onPress={() => navigation.navigate(RouteNames.Tab.AccountTab.InventoryDetail, {
-        inventory
-      })}>
+      onPress={() => {
+        navigation.navigate(RouteNames.Tab.AccountTab.InventoryDetail, {
+          inventory
+        })
+      }}>
       <Image
         source={{ uri: inventory.shoe.media.thumbUrl }}
         style={{ width: 100, aspectRatio: 1 }}
