@@ -80,7 +80,8 @@ export const AccountTabInventoryDetail: React.FC<{}> = () => {
               defaultValue={t.displayText}
               numberOfLines={1}
               editable={t.editable}
-              style={{ ...themes.TextStyle.body, marginBottom: 20 }}
+              style={{ ...themes.TextStyle.body, marginBottom: 20, width: 300, textAlign: 'right' }}
+
               keyboardType={'number-pad'}
               onChangeText={t.onUpdate}
             />
