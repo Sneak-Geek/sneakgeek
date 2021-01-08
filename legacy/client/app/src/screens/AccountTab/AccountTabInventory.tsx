@@ -10,6 +10,7 @@ import { SearchBar } from 'react-native-elements';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import RouteNames from 'navigations/RouteNames';
+import { DismissKeyboardView } from 'screens/Shared';
 
 const styles = StyleSheet.create({
   inventoryContainer: {
@@ -64,58 +65,55 @@ export const AccountTabInventoryDetail: React.FC<{}> = () => {
   ]
 
   return (
-    <View style={{ display: 'flex', flex: 1, backgroundColor: 'white' }}>
-      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()} style={{ height: Dimensions.get('window').height - 190 }}>
-        <SafeAreaView style={{ flex: 1, backgroundColor: 'white', paddingTop: 0 }}>
-          <ShoeHeaderSummary shoe={inventory.shoe} />
-          <View style={{ padding: 20, flex: 1, flexDirection: 'column' }}>
-            {items.map((t) => (
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                }}>
-                <AppText.SubHeadline>{t.title}</AppText.SubHeadline>
-                <TextInput
-                  defaultValue={t.displayText}
-                  numberOfLines={1}
-                  editable={t.editable}
-                  style={{ ...themes.TextStyle.body, marginBottom: 20 }}
-                  keyboardType={'number-pad'}
-                  onChangeText={t.onUpdate}
-                />
-              </View>
-            ))}
-          </View>
-          <BottomButton
+    <DismissKeyboardView style={{ flex: 1, backgroundColor: 'white', paddingTop: 0 }}>
+      <ShoeHeaderSummary shoe={inventory.shoe} />
+      <View style={{ padding: 20, flex: 1, flexDirection: 'column' }}>
+        {items.map((t) => (
+          <View
             style={{
-              backgroundColor: themes.AppSecondaryColor,
-              borderRadius: themes.LargeBorderRadius,
-              marginBottom: 10,
-              alignSelf: 'flex-end'
-            }}
-            title={strings.Confirm}
-            onPress={async () => {
-              const token = getToken();
-              const inventoryService = getDependency<IInventoryService>(
-                FactoryKeys.IInventoryService,
-              );
-              const updatedInventory = {
-                _id: inventory._id,
-                sellerId: inventory.sellerId,
-                shoeId: inventory.shoeId,
-                shoeSize: inventory.shoeSize,
-                quantity,
-                sellPrice: price
-              };
-              await inventoryService.updateInventory(token, updatedInventory);
-              navigation.goBack();
-            }}
-          />
-        </SafeAreaView >
-      </TouchableWithoutFeedback>
-    </View>
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}>
+            <AppText.SubHeadline>{t.title}</AppText.SubHeadline>
+            <TextInput
+              defaultValue={t.displayText}
+              numberOfLines={1}
+              editable={t.editable}
+              style={{ ...themes.TextStyle.body, marginBottom: 20, width: 300, textAlign: 'right' }}
+
+              keyboardType={'number-pad'}
+              onChangeText={t.onUpdate}
+            />
+          </View>
+        ))}
+      </View>
+      <BottomButton
+        style={{
+          backgroundColor: themes.AppSecondaryColor,
+          borderRadius: themes.LargeBorderRadius,
+          marginBottom: 10,
+          alignSelf: 'flex-end'
+        }}
+        title={strings.Confirm}
+        onPress={async () => {
+          const token = getToken();
+          const inventoryService = getDependency<IInventoryService>(
+            FactoryKeys.IInventoryService,
+          );
+          const updatedInventory = {
+            _id: inventory._id,
+            sellerId: inventory.sellerId,
+            shoeId: inventory.shoeId,
+            shoeSize: inventory.shoeSize,
+            quantity,
+            sellPrice: price
+          };
+          await inventoryService.updateInventory(token, updatedInventory);
+          navigation.goBack();
+        }}
+      />
+    </DismissKeyboardView >
   )
 }
 

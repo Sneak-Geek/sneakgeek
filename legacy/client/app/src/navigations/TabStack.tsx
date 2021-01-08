@@ -23,7 +23,7 @@ import {
   ISettingsProvider,
   FactoryKeys as Keys,
 } from 'business';
-import {SeeMore, NotificationsScreen} from 'screens/HomeTab';
+import {NotificationsScreen} from 'screens/HomeTab';
 import {ProductRequest} from 'screens/SearchTab';
 import {IAppState} from 'store/AppStore';
 import {RootStackParams} from './RootStack';

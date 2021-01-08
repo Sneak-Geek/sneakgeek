@@ -24,7 +24,7 @@ const NotificationItem = ({item, onPress}: NotificationItemProps) => {
 
   switch (item.type) {
     case 'error':
-      icon = 'x';
+      icon = 'exclamation';
       reverseColor = themes.AppSellColor;
       break;
     case 'success':
@@ -38,6 +38,7 @@ const NotificationItem = ({item, onPress}: NotificationItemProps) => {
     default:
       break;
   }
+  let type = icon === 'error' ? 'material' : 'font-awesome';
 
   return (
     <View style={[styles.toastContainer, styles.toastBackground]}>
@@ -46,6 +47,7 @@ const NotificationItem = ({item, onPress}: NotificationItemProps) => {
           name={icon}
           color={reverseColor}
           reverse={true}
+          type={type}
           size={themes.IconSize * 0.75}
           reverseColor={themes.AppAccentColor}
         />

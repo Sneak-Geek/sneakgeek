@@ -1,8 +1,8 @@
-import React, {ErrorInfo} from 'react';
-import {StyleSheet, View} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {strings} from 'resources';
-import {AppText} from 'screens/Shared';
+import React, { ErrorInfo } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { strings } from 'resources';
+import { AppText } from 'screens/Shared';
 
 const styles = StyleSheet.create({
   flexAll: {
@@ -34,7 +34,7 @@ export default class ErrorBoundary extends React.Component<{}, State> {
   }
 
   static getDerivedStateFromError(error: Error) {
-    return {error, hasError: true};
+    return { error, hasError: true };
   }
 
   render() {
