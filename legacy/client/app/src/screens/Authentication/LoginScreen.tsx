@@ -24,6 +24,7 @@ import {
 } from 'business';
 import {IAppState} from 'store/AppStore';
 import {AppText} from 'screens/Shared';
+import {FeatureFlags} from 'FeatureFlag';
 
 type Props = {
   accountState: {account: Account; state: NetworkRequestState; error?: any};
@@ -123,8 +124,8 @@ export class LoginScreen extends React.Component<Props> {
                 />
               </TouchableOpacity>
               <View style={styles.buttonContainer}>
-                {this._renderFacebookLogin()}
-                {this._renderGoogleLogin()}
+                {FeatureFlags.enableFacebook && this._renderFacebookLogin()}
+                {FeatureFlags.enabledGoogle && this._renderGoogleLogin()}
                 {Platform.OS === 'ios' && this._renderAppleLogin()}
                 {this._renderEmailSignUp()}
                 {this._renderEmailLogin()}
