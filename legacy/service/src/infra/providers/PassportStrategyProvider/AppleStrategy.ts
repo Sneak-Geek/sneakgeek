@@ -25,7 +25,11 @@ export class AppleStrategy extends Strategy {
 
   public async authenticate(req: Request, _?: any) {
     if (!req.headers["access_token"] && !req.body["access_token"]) {
-      LogProvider.instance.error(`Error getting token from Apple\n${JSON.stringify(req.headers, null, 2)}\n${JSON.stringify(req.body, null, 2)}`);
+      LogProvider.instance.error(
+        `Error getting token from Apple\n
+        ${JSON.stringify(req.headers, null, 2)}\n
+        ${JSON.stringify(req.body, null, 2)}`
+      );
       this.fail(HttpStatus.UNAUTHORIZED);
     } else {
       const token = (req.headers["access_token"] || req.body["access_token"]) as string;
