@@ -107,7 +107,10 @@ export class NewBuyOrder extends React.Component<Props, State> {
           />
         ),
         canProceed: (): boolean => {
-          return this.state.buyOrder.shoeSize !== undefined;
+          return (
+            Boolean(this.state.buyOrder.inventoryId) &&
+            Boolean(this.state.buyOrder.sellPrice)
+          );
         },
       },
       {
@@ -311,9 +314,9 @@ export class NewBuyOrder extends React.Component<Props, State> {
     this.setState({
       buyOrder: {
         ...this.state.buyOrder,
-        sellPrice: priceMap.sellPrice,
-        inventoryId: priceMap.inventoryId,
-        shoeSize: priceMap.shoeSize,
+        sellPrice: priceMap?.sellPrice,
+        inventoryId: priceMap?.inventoryId,
+        shoeSize: priceMap?.shoeSize,
       },
     });
   }
