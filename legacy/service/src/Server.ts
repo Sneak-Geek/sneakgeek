@@ -187,6 +187,7 @@ export default class Server {
         _next: express.NextFunction
       ) => {
         if (error.name === Constants.Errors.InternalOAuthError) {
+          LogProvider.instance.error(`HTTP request unauthorized \n${error.stack}`);
           return response.status(HttpStatus.UNAUTHORIZED).send({
             message: "Unauthorized",
           });

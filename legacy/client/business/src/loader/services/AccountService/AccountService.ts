@@ -27,20 +27,11 @@ export class AccountService extends BaseService implements IAccountService {
     token: string,
     provider: AuthProvider
   ): Promise<{ account: Account; token: string } | undefined> {
-    const headers = { access_token: token };
     const response = await this.apiClient
       .getInstance()
-      .post(`/account/auth/${provider}`, {}, { headers });
-    {
-    }
-    if (
-      response &&
-      (response.status === HttpStatus.CREATED || response.status === HttpStatus.OK)
-    ) {
-      return response.data;
-    }
-
-    return undefined;
+      .post(`/account/auth/${provider}`, { access_token: token }) 
+    
+    return response.data;
   }
 
   public async getCurrentUser(

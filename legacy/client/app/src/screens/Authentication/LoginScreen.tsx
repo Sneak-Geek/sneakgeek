@@ -24,10 +24,13 @@ import {
 } from 'business';
 import {IAppState} from 'store/AppStore';
 import {AppText} from 'screens/Shared';
+import {FeatureFlags} from 'FeatureFlag';
+import {toggleIndicator} from 'actions';
 
 type Props = {
   accountState: {account: Account; state: NetworkRequestState; error?: any};
   navigation: StackNavigationProp<any>;
+  toggleLoading: (isLoading: boolean) => void;
   facebookLogin: () => void;
   googleLogin: () => void;
   appleLogin: () => void;
@@ -89,6 +92,9 @@ const styles = StyleSheet.create({
     accountState: state.UserState.accountState,
   }),
   (dispatch: Function) => ({
+    toggleLoading: (isLoading: boolean): void => {
+      dispatch(toggleIndicator({isLoading, message: ''}));
+    },
     facebookLogin: (): void => {
       dispatch(authenticateWithFb());
     },
@@ -123,8 +129,8 @@ export class LoginScreen extends React.Component<Props> {
                 />
               </TouchableOpacity>
               <View style={styles.buttonContainer}>
-                {this._renderFacebookLogin()}
-                {this._renderGoogleLogin()}
+                {FeatureFlags.enableFacebook && this._renderFacebookLogin()}
+                {FeatureFlags.enabledGoogle && this._renderGoogleLogin()}
                 {Platform.OS === 'ios' && this._renderAppleLogin()}
                 {this._renderEmailSignUp()}
                 {this._renderEmailLogin()}
@@ -171,14 +177,20 @@ export class LoginScreen extends React.Component<Props> {
       const currentError = accountState.error;
       const prevError = prevProps.accountState.error;
 
+      if (accountState.state === NetworkRequestState.REQUESTING) {
+        this.props.toggleLoading(true);
+      }
+
       if (
         accountState.state === NetworkRequestState.SUCCESS &&
         accountState.account
       ) {
+        this.props.toggleLoading(false);
         navigation.push(RouteNames.Tab.Name);
       }
 
       if (currentError && currentError !== prevError) {
+        this.props.toggleLoading(false);
         const provider = currentError?.response?.data?.provider;
 
         switch (provider) {

@@ -4,6 +4,7 @@ import HttpStatus from "http-status";
 import { Types, container } from "../../../configuration/inversify";
 import { IAppleAuthService } from "../../../infra/services";
 import { UserAccount } from "../../../infra/database";
+import { LogProvider } from "../LogProvider";
 
 export type AppleStrategyCallback = (
   userId: string,
@@ -23,15 +24,21 @@ export class AppleStrategy extends Strategy {
   }
 
   public async authenticate(req: Request, _?: any) {
-    if (!req.headers["access_token"] || typeof req.headers["access_token"] !== "string") {
+    if (!req.headers["access_token"] && !req.body["access_token"]) {
+      LogProvider.instance.error(
+        `Error getting token from Apple\n
+        ${JSON.stringify(req.headers, null, 2)}\n
+        ${JSON.stringify(req.body, null, 2)}`
+      );
       this.fail(HttpStatus.UNAUTHORIZED);
     } else {
-      const token = req.headers["access_token"];
+      const token = (req.headers["access_token"] || req.body["access_token"]) as string;
       try {
         const userToken = (await this.appleAuthService.getUserToken(token)).sub;
 
         this.callback(userToken, this._onVerified.bind(this));
       } catch (error) {
+        LogProvider.instance.error(`Error authenticate with Apple\n${error.stack}`);
         this.fail(HttpStatus.INTERNAL_SERVER_ERROR);
       }
     }
