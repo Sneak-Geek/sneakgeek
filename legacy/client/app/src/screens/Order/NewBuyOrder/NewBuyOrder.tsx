@@ -269,7 +269,16 @@ export class NewBuyOrder extends React.Component<Props, State> {
   }
 
   private _purchaseProduct(paymentType: PaymentType): void {
-    if (!this.props.profile) {
+    const profile = this.props.profile;
+    const isMissingInfo =
+      !profile ||
+      !profile.userProvidedEmail ||
+      !profile.userProvidedAddress?.addressLine1 ||
+      !profile.userProvidedAddress?.addressLine2 ||
+      !profile.userProvidedName?.firstName ||
+      !profile.userProvidedName.lastName;
+
+    if (isMissingInfo) {
       this._alertMissingInfo();
       return;
     }
@@ -292,9 +301,7 @@ export class NewBuyOrder extends React.Component<Props, State> {
         text: strings.AddInfoForReview,
         onPress: (): void => {
           if (this.props.account) {
-            navigation.navigate(RouteNames.Tab.AccountTab.Name, {
-              screen: RouteNames.Tab.AccountTab.EditProfile,
-            });
+            navigation.navigate(RouteNames.Tab.AccountTab.EditProfile);
           } else {
             navigation.navigate(RouteNames.Auth.Name, {
               screen: RouteNames.Auth.Login,
