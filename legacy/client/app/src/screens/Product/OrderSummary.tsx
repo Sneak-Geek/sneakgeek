@@ -105,8 +105,17 @@ export class OrderSummary extends React.Component<Props> {
       return <></>;
     }
 
-    const name = `${this.props.userProfile.userProvidedName.lastName} ${this.props.userProfile.userProvidedName.firstName}`;
-    return <AppText.Headline>{name}</AppText.Headline>;
+    const name = this.props.userProfile.userProvidedName;
+
+    const displayName =
+      name.lastName || name.firstName
+        ? `${name.lastName || ''} ${name.firstName || ''}`
+        : null;
+    return displayName ? (
+      <AppText.Headline>{displayName}</AppText.Headline>
+    ) : (
+      <></>
+    );
   }
 
   private _renderShippingInfoDetails(): JSX.Element {
@@ -118,21 +127,31 @@ export class OrderSummary extends React.Component<Props> {
 
     const email = profile.userProvidedEmail;
     const phoneNumber = profile.userProvidedPhoneNumber;
-    const {addressLine1, addressLine2} = profile.userProvidedAddress;
+    const address = profile.userProvidedAddress;
+
     return (
       <>
-        <AppText.Subhead style={styles.shippingInfoDetails}>
-          {phoneNumber}
-        </AppText.Subhead>
-        <AppText.Subhead style={styles.shippingInfoDetails}>
-          {email}
-        </AppText.Subhead>
-        <AppText.Subhead style={styles.shippingInfoDetails}>
-          {strings.Address}: {addressLine1}
-        </AppText.Subhead>
-        <AppText.Subhead style={styles.shippingInfoDetails}>
-          {addressLine2}
-        </AppText.Subhead>
+        {phoneNumber && (
+          <AppText.Subhead style={styles.shippingInfoDetails}>
+            {phoneNumber}
+          </AppText.Subhead>
+        )}
+        {email && (
+          <AppText.Subhead style={styles.shippingInfoDetails}>
+            {email}
+          </AppText.Subhead>
+        )}
+
+        {address?.addressLine1 && (
+          <AppText.Subhead style={styles.shippingInfoDetails}>
+            {strings.Address}: {address?.addressLine1}
+          </AppText.Subhead>
+        )}
+        {address?.addressLine2 && (
+          <AppText.Subhead style={styles.shippingInfoDetails}>
+            {address?.addressLine2}
+          </AppText.Subhead>
+        )}
       </>
     );
   }
