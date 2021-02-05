@@ -5,9 +5,6 @@ import {
   IAccountService,
   FactoryKeys,
   updateProfile,
-  ISettingsProvider,
-  ISettingService,
-  SettingsKey,
   Ward,
   District,
 } from 'business';
@@ -18,7 +15,6 @@ import {
   EmitterSubscription,
   TouchableWithoutFeedback,
   Modal,
-  Alert,
 } from 'react-native';
 import {ScrollView, TextInput, StyleSheet} from 'react-native';
 import {
@@ -206,7 +202,9 @@ export class AccountTabEditProfile extends React.Component<Props, State> {
             title: 'Họ',
             placeholder: 'Họ',
             value: (profile: Profile): string =>
-              profile.userProvidedName ? profile.userProvidedName.lastName : '',
+              profile && profile.userProvidedName
+                ? profile.userProvidedName.lastName
+                : '',
             onUpdate: (value: string, profile: Profile): Profile => {
               return Object.assign(profile, {
                 userProvidedName: {
@@ -219,8 +217,8 @@ export class AccountTabEditProfile extends React.Component<Props, State> {
           {
             title: 'Tên',
             placeholder: 'Tên',
-            value: (profile: Profile): string =>
-              profile.userProvidedName
+            value: (profile?: Profile): string =>
+              profile && profile.userProvidedName
                 ? profile.userProvidedName.firstName
                 : '',
             onUpdate: (value: string, profile: Profile): Profile => {
@@ -238,7 +236,7 @@ export class AccountTabEditProfile extends React.Component<Props, State> {
             isPicker: true,
             pickerType: PickerType.GENDER,
             options: (): string[] => ['Nam', 'Nữ', 'Khác'],
-            value: (profile: Profile): string => profile.userProvidedGender,
+            value: (profile: Profile): string => profile?.userProvidedGender,
             onUpdate: (value: string, profile: Profile): Profile => {
               return Object.assign(profile, {
                 userProvidedGender: value,
@@ -248,7 +246,7 @@ export class AccountTabEditProfile extends React.Component<Props, State> {
           {
             title: 'Email',
             placeholder: 'Email',
-            value: (profile: Profile): string => profile.userProvidedEmail,
+            value: (profile: Profile): string => profile?.userProvidedEmail,
             onUpdate: (value: string, profile: Profile): Profile => {
               return Object.assign(profile, {
                 userProvidedEmail: value,
@@ -259,7 +257,7 @@ export class AccountTabEditProfile extends React.Component<Props, State> {
             title: 'Điện thoại',
             placeholder: 'Điện thoại',
             value: (profile: Profile): string =>
-              profile.userProvidedPhoneNumber,
+              profile?.userProvidedPhoneNumber,
             onUpdate: (value: string, profile: Profile): Profile => {
               return Object.assign(profile, {
                 userProvidedPhoneNumber: value,

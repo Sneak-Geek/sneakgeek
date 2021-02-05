@@ -89,8 +89,8 @@ export default function App(): JSX.Element {
   });
 
   return (
-    <ErrorBoundary>
-      <SafeAreaProvider>
+    <SafeAreaProvider>
+      <ErrorBoundary>
         <Provider store={AppStore}>
           {Platform.OS === 'android' && (
             <StatusBar
@@ -108,7 +108,7 @@ export default function App(): JSX.Element {
             <></>
           )}
         </Provider>
-      </SafeAreaProvider>
-    </ErrorBoundary>
+      </ErrorBoundary>
+    </SafeAreaProvider>
   );
 }
