@@ -1,17 +1,10 @@
 import React from 'react';
-import {
-  Shoe,
-  Profile,
-  IOrderService,
-  FactoryKeys,
-  PaymentType,
-  Account,
-} from 'business';
+import {Shoe, Profile, PaymentType, Account} from 'business';
 import {SafeAreaConsumer} from 'react-native-safe-area-context';
 import {View, ScrollView, FlatList, Alert} from 'react-native';
 import {RootStackParams} from 'navigations/RootStack';
 import {RouteProp} from '@react-navigation/native';
-import {connect, getDependency} from 'utilities';
+import {connect} from 'utilities';
 import {IAppState} from 'store/AppStore';
 import {
   showErrorNotification,
@@ -118,7 +111,11 @@ export class NewBuyOrder extends React.Component<Props, State> {
           <OrderSummary
             key={1}
             onEditShippingInfo={() =>
-              this.props.navigation.push(RouteNames.Tab.AccountTab.EditProfile)
+              this._isMissingInfo
+                ? this._alertMissingInfo()
+                : this.props.navigation.push(
+                    RouteNames.Tab.AccountTab.EditProfile,
+                  )
             }
             userProfile={this.props.profile}
             shoeSize={this.state.buyOrder.shoeSize}
@@ -268,7 +265,7 @@ export class NewBuyOrder extends React.Component<Props, State> {
     );
   }
 
-  private _purchaseProduct(paymentType: PaymentType): void {
+  private get _isMissingInfo() {
     const profile = this.props.profile;
     const isMissingInfo =
       !profile ||
@@ -278,7 +275,11 @@ export class NewBuyOrder extends React.Component<Props, State> {
       !profile.userProvidedName?.firstName ||
       !profile.userProvidedName.lastName;
 
-    if (isMissingInfo) {
+    return isMissingInfo;
+  }
+
+  private _purchaseProduct(paymentType: PaymentType): void {
+    if (this._isMissingInfo) {
       this._alertMissingInfo();
       return;
     }
@@ -292,9 +293,10 @@ export class NewBuyOrder extends React.Component<Props, State> {
   }
 
   private _alertMissingInfo(): void {
-    const message = !this.props.account
-      ? strings.NotAuthenticated
-      : strings.MissingProfileInfo;
+    const message =
+      !this.props.account || !this.props.profile
+        ? strings.NotAuthenticated
+        : strings.MissingProfileInfo;
     const {navigation} = this.props;
     Alert.alert(strings.AccountInfo, message, [
       {
