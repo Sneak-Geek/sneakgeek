@@ -1,7 +1,7 @@
 import React from 'react';
 import {Platform} from 'react-native';
 
-const ThemeContext = React.createContext({
+const theme = {
   color: {
     backgroundColor: '#FFFFFF',
     brandColorPrimary: '#1E2330',
@@ -110,6 +110,8 @@ const ThemeContext = React.createContext({
       fontFamily: 'RobotoCondensed-Light',
     },
   },
-});
+}
+
+const ThemeContext = React.createContext(theme);
 
 export default ThemeContext;

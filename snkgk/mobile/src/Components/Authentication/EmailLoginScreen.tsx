@@ -1,5 +1,5 @@
 import {useNavigation} from '@react-navigation/native';
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {
   Keyboard,
   KeyboardAvoidingView,
@@ -18,28 +18,31 @@ import {updateUser, User} from '../../Redux/UserSlice';
 import {AppText} from '../Shared/AppText';
 
 const Input: React.FC<{
-  theme: any;
   value: string;
   contentType: 'emailAddress' | 'password';
   onChangeText: (text: string) => void;
   placeholder: string;
-}> = ({theme, value, contentType, onChangeText, placeholder}) => (
-  <View style={styles.inputContainer}>
-    <TextInput
-      autoFocus={true}
-      style={[styles.input, theme.text.callout]}
-      placeholder={placeholder}
-      value={value}
-      textContentType={contentType}
-      onChangeText={onChangeText}
-      selectionColor={theme.color.brandColorPrimary}
-      autoCapitalize={'none'}
-      secureTextEntry={contentType === 'password'}
-    />
-  </View>
-);
+}> = ({value, contentType, onChangeText, placeholder}) => {
+  const theme = useContext(ThemeContext);
+  return (
+    <View style={styles.inputContainer}>
+      <TextInput
+        autoFocus={true}
+        style={[styles.input, theme.text.callout]}
+        placeholder={placeholder}
+        value={value}
+        textContentType={contentType}
+        onChangeText={onChangeText}
+        selectionColor={theme.color.brandColorPrimary}
+        autoCapitalize={'none'}
+        secureTextEntry={contentType === 'password'}
+      />
+    </View>
+  );
+};
 
-const EmailLogin = () => {
+const EmailLogin: React.FC<{}> = () => {
+  const theme = useContext(ThemeContext);
   const navigation = useNavigation();
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
@@ -60,42 +63,36 @@ const EmailLogin = () => {
   };
 
   return (
-    <ThemeContext.Consumer>
-      {(theme) => (
-        <SafeAreaView
-          style={[
-            styles.container,
-            {backgroundColor: theme.color.backgroundColor},
-          ]}>
-          <KeyboardAvoidingView behavior={'padding'} style={{flex: 1}}>
-            <View style={styles.contentContainer}>
-              <AppText.Body style={styles.welcomeText}>
-                {Strings.EmailLoginWelcome}
-              </AppText.Body>
-              <Input
-                placeholder={Strings.Email}
-                theme={theme}
-                value={email}
-                contentType={'emailAddress'}
-                onChangeText={setEmail}
-              />
-              <Input
-                placeholder={Strings.Password}
-                theme={theme}
-                value={password}
-                contentType={'password'}
-                onChangeText={setPassword}
-              />
-              <BottomButton
-                title={'Login'}
-                onPress={login}
-                style={{backgroundColor: theme.color.brandColorPrimary}}
-              />
-            </View>
-          </KeyboardAvoidingView>
-        </SafeAreaView>
-      )}
-    </ThemeContext.Consumer>
+    <SafeAreaView
+      style={[
+        styles.container,
+        {backgroundColor: theme.color.backgroundColor},
+      ]}>
+      <KeyboardAvoidingView behavior={'padding'} style={{flex: 1}}>
+        <View style={styles.contentContainer}>
+          <AppText.Body style={styles.welcomeText}>
+            {Strings.EmailLoginWelcome}
+          </AppText.Body>
+          <Input
+            placeholder={Strings.Email}
+            value={email}
+            contentType={'emailAddress'}
+            onChangeText={setEmail}
+          />
+          <Input
+            placeholder={Strings.Password}
+            value={password}
+            contentType={'password'}
+            onChangeText={setPassword}
+          />
+          <BottomButton
+            title={'Login'}
+            onPress={login}
+            style={{backgroundColor: theme.color.brandColorPrimary}}
+          />
+        </View>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 };
 

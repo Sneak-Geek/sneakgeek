@@ -1,5 +1,5 @@
 import { CompleteModel, initDb, ProductModel } from "./schema";
-import { getBrands, getProduct, getReleaseTime } from "./stockxapi";
+import { getBrands, getProducts, getReleaseTime } from "./stockxapi";
 import mongoose from 'mongoose'
 
 const nonPanic = ['BulkWriteError'];
@@ -62,7 +62,7 @@ async function scrappers() {
   docs.forEach((record) => {
     const timeout = setTimeout(async () => {
       try {
-        const products = await getProduct(record.gender, record.brand, record.releaseTime);
+        const products = await getProducts(record.gender, record.brand, record.releaseTime);
         console.log(`Adding ${products.length}: ${record.brand}, ${record.gender}, ${record.releaseTime}`);
         await Promise.all([
           CompleteModel.updateOne({ _id: mongoose.Types.ObjectId(record.id)}, { completed: true }),

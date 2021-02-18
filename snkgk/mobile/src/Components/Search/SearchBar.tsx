@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {StyleProp, StyleSheet, View, ViewStyle} from 'react-native';
 import {Icon, SearchBar} from 'react-native-elements';
 import Strings from '../../Common/Strings';
@@ -22,37 +22,34 @@ const AppSearchBar: React.FC<Props> = ({
     setSearchText(text);
     // search
   };
+  const theme = useContext(ThemeContext);
 
   return (
-    <ThemeContext.Consumer>
-      {(theme) => (
-        <View style={[styles.searchBarRoot, containerStyle]}>
-          <SearchBar
-            placeholder={Strings.Search}
-            lightTheme={true}
-            round={true}
-            value={searchText}
-            containerStyle={styles.searchContainer}
-            inputContainerStyle={styles.searchInputContainer}
-            searchIcon={{size: theme.icon.size, name: 'search'}}
-            inputStyle={theme.text.body}
-            onChangeText={(text) => {
-              onSearch(text);
-              onChangeText(text);
-            }}
-            onCancel={() => setSearchText('')}
-            onClear={onClear}
-            onSubmitEditing={onSubmitEditing}
-          />
-          <Icon
-            name={'tune'}
-            size={theme.icon.size}
-            color={theme.color.brandColorPrimary}
-            onPress={() => {}}
-          />
-        </View>
-      )}
-    </ThemeContext.Consumer>
+    <View style={[styles.searchBarRoot, containerStyle]}>
+      <SearchBar
+        placeholder={Strings.Search}
+        lightTheme={true}
+        round={true}
+        value={searchText}
+        containerStyle={styles.searchContainer}
+        inputContainerStyle={styles.searchInputContainer}
+        searchIcon={{size: theme.icon.size, name: 'search'}}
+        inputStyle={theme.text.body}
+        onChangeText={(text) => {
+          onSearch(text);
+          onChangeText(text);
+        }}
+        onCancel={() => setSearchText('')}
+        onClear={onClear}
+        onSubmitEditing={onSubmitEditing}
+      />
+      <Icon
+        name={'tune'}
+        size={theme.icon.size}
+        color={theme.color.brandColorPrimary}
+        onPress={() => {}}
+      />
+    </View>
   );
 };
 
