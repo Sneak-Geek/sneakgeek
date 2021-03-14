@@ -85,7 +85,10 @@ export class QueryBuilder {
     // Always fixed sort by releaseDate
     // Always return result with imageUrl
     return {
-      sort: [{ releaseDate: { order: "desc" } }],
+      sort: [
+        "_score",
+        { releaseDate: { order: "desc" } }
+      ],
       from: this.currentPage,
       size: this.pageSize,
       query: {
