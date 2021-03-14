@@ -16,6 +16,11 @@ export const UserProvidedAddressSchema = new mongoose.Schema({
   addressLine2: String,
 });
 
+export const UserProvidedBankAccount = new mongoose.Schema({
+  accountNumber: String,
+  bankBranch: String,
+})
+
 export const UserProfileSchema = new mongoose.Schema(
   {
     accountId: {
@@ -25,6 +30,7 @@ export const UserProfileSchema = new mongoose.Schema(
     },
     userProvidedName: UserProvidedNameSchema,
     userProvidedAddress: UserProvidedAddressSchema,
+    userProvidedBankAccount: UserProvidedBankAccount,
     userProvidedGender: String,
     userProvidedEmail: {
       type: String,

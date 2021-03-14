@@ -21,7 +21,6 @@ import {
   showErrorNotification,
   reset,
 } from 'actions';
-import {getToken} from 'utilities';
 
 type Props = {
   account: Account;
@@ -106,7 +105,8 @@ export class AccountTabMain extends React.Component<Props> {
     },
     {
       title: strings.AppContact,
-      onClick: (): void => this.props.navigation.push(RouteNames.Tab.AccountTab.ContactUs),
+      onClick: (): void =>
+        this.props.navigation.push(RouteNames.Tab.AccountTab.ContactUs),
       leftIcon: 'phone',
     },
   ];

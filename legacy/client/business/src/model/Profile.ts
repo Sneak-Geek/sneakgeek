@@ -3,6 +3,11 @@ export type UserAddress = {
     addressLine2: string
 };
 
+export type UserBankAccount = {
+    accountNumber: string,
+    bankBranch: string,
+}
+
 export interface Profile {
     _id: string;
     isSeller: boolean;
@@ -17,6 +22,7 @@ export interface Profile {
         middleName: string;
         lastName: string;
     };
+    userProvidedBankAccount?: UserBankAccount;
     userProvidedAddress?: UserAddress;
     userProvidedGender?: string;
     userProvidedShoeSize?: string;
