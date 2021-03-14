@@ -29,7 +29,7 @@ import {IAppState} from 'store/AppStore';
 import {showSuccessNotification, toggleIndicator} from 'actions';
 import {getToken, getDependency} from 'utilities';
 import {RootStackParams} from 'navigations/RootStack';
-import _ from 'lodash';
+import _, {values} from 'lodash';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 
 const styles = StyleSheet.create({
@@ -297,6 +297,28 @@ export class AccountTabEditProfile extends React.Component<Props, State> {
         ],
       },
     ];
+
+    if (this.props.profile?.isSeller) {
+      this.sectionList.push({
+        sectionName: 'Tài khoản ngân hàng',
+        sectionFields: [
+          {
+            title: 'Số tài khoản',
+            placeholder: '01234567879',
+            isPicker: false,
+            value: (profile: Profile): string => '',
+            onUpdate: (value: string, profile: Profile): Profile => profile,
+          },
+          {
+            title: 'Chi nhánh',
+            placeholder: 'BIDV chi nhánh Đống Đa',
+            isPicker: false,
+            value: (profile: Profile): string => '',
+            onUpdate: (values: string, profile: Profile): Profile => profile,
+          },
+        ],
+      });
+    }
   }
 
   private _keyboardShowListener: EmitterSubscription;
@@ -379,7 +401,7 @@ export class AccountTabEditProfile extends React.Component<Props, State> {
               autoFocus: this.state.addressModalVisible,
             }}
             query={{
-              key: 'AIzaSyA-KXgK4DIG3mqaQ1DNFJZ-N_K0l6UJHT8',
+              key: 'AIzaSyDlfZb9snIlXHI-vn6zeaIAJfR3lWJmGlI',
               language: 'vi',
               components: 'country:vn',
             }}
