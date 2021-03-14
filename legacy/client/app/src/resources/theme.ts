@@ -22,7 +22,7 @@ export const themes = {
   AppDisabledColor: '#DADADA',
   AppSellColor: '#E2603F',
   AppPendingColor: '#E2C115',
-  AppBackgroundColor: '#f5f5f7',
+  AppBackgroundColor: 'white',
   NotificationBackground: '#D8F2ED',
   IconHitSlop: {top: 20, bottom: 20, left: 50, right: 50},
   ButtonShadow: Platform.select({
