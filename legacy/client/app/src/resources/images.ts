@@ -8,5 +8,6 @@ export const images = {
   Profile: require('../../assets/icons/profile.jpg'),
   ImagePlaceholder: require('../../assets/icons/ImagePlaceholder.jpg'),
   CameraPlaceholder: require('../../assets/icons/CameraPlaceholder.png'),
-  TopTrending: require('../../assets/icons/BXH.png')
+  TopTrending: require('../../assets/icons/BXH.png'),
+  ShippingStatus: require('../../assets/icons/ShippingStatus.png')
 };
