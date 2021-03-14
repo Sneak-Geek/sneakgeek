@@ -19,7 +19,7 @@ export const UserProvidedAddressSchema = new mongoose.Schema({
 export const UserProvidedBankAccount = new mongoose.Schema({
   accountNumber: String,
   bankBranch: String,
-})
+});
 
 export const UserProfileSchema = new mongoose.Schema(
   {
