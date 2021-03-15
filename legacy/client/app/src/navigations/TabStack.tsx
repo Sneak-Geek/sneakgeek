@@ -17,7 +17,7 @@ import {
 } from '@react-navigation/stack';
 import {HomeTabMain} from 'screens/HomeTab/HomeTabMain';
 import {SearchTabMain} from 'screens/SearchTab/SearchTabMain';
-import {Image} from 'react-native';
+import {Image, View} from 'react-native';
 import {
   ObjectFactory as Factory,
   ISettingsProvider,
@@ -32,8 +32,8 @@ import {SellOrderHistory} from 'screens/TransactionTab';
 
 const Tab = createBottomTabNavigator();
 
-const TabBarIcon = (name: string) => ({color, size}): JSX.Element => (
-  <Icon name={name} size={size} color={color} />
+const TabBarIcon = (name: string, type?: string) => ({color, size}): JSX.Element => (
+  <Icon name={name} size={size} color={color} {...type ? {type} : {}}/>
 );
 
 const AccountStack = createStackNavigator();
@@ -165,6 +165,26 @@ const SearchTab = (): JSX.Element => (
   </SearchStack.Navigator>
 );
 
+const TransactionStack = createStackNavigator();
+export const TransactionTab = (): JSX.Element => {
+    return (
+        <TransactionStack.Navigator>
+        <TransactionStack.Screen 
+            name={RouteNames.Tab.TransactionTab.Main}
+            component={SellOrderHistory}
+            options={{
+              gestureEnabled: null,
+              ...themes.headerStyle,
+              title: strings.TransactionInfo,
+              headerLeft: () => (
+                <View></View>
+              ),
+            }}
+        />
+        </TransactionStack.Navigator>
+    );
+}
+
 type RootTabProps = {
   pushDeviceToken: string;
   getNotifications: () => void;
@@ -199,6 +219,14 @@ export const TabStack: React.FC<RootTabProps> = () => {
         options={{
           tabBarIcon: TabBarIcon('search'),
           title: strings.SearchTab,
+        }}
+      />
+      <Tab.Screen
+        name={RouteNames.Tab.TransactionTab.Name}
+        component={TransactionTab}
+        options={{
+          tabBarIcon: TabBarIcon('tag-heart', 'material-community'),
+          title: strings.TransactionTab,
         }}
       />
       <Tab.Screen

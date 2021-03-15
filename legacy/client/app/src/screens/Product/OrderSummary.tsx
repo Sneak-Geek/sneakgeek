@@ -105,7 +105,7 @@ export class OrderSummary extends React.Component<Props> {
       return <></>;
     }
 
-    const name = this.props.userProfile.userProvidedName;
+    const name = this.props.userProfile?.userProvidedName;
 
     const displayName =
       name.lastName || name.firstName
@@ -125,9 +125,9 @@ export class OrderSummary extends React.Component<Props> {
       return <></>;
     }
 
-    const email = profile.userProvidedEmail;
-    const phoneNumber = profile.userProvidedPhoneNumber;
-    const address = profile.userProvidedAddress;
+    const email = profile?.userProvidedEmail;
+    const phoneNumber = profile?.userProvidedPhoneNumber;
+    const address = profile?.userProvidedAddress;
 
     return (
       <>
