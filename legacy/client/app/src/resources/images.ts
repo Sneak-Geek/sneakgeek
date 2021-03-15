@@ -9,5 +9,6 @@ export const images = {
   ImagePlaceholder: require('../../assets/icons/ImagePlaceholder.jpg'),
   CameraPlaceholder: require('../../assets/icons/CameraPlaceholder.png'),
   TopTrending: require('../../assets/icons/BXH.png'),
-  ShippingStatus: require('../../assets/icons/ShippingStatus.png')
+  ShippingStatusBuyer: require('../../assets/icons/ShippingStatus.png'),
+  ShippingStatusSeller: require('../../assets/icons/ShippingStatusSeller.png')
 };

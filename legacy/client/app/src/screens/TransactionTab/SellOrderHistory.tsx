@@ -234,7 +234,7 @@ export class SellOrderHistory extends React.Component<Props, State> {
           {this._renderShippingInfoDetails(order)}
           {this._renderLine()}
           <View style={{ marginBottom: 100}}>
-            <Image style={{ width: 170, resizeMode:'contain', height: 300}} source={images.ShippingStatus}/>
+            <Image style={{ width: 170, resizeMode:'contain', height: 300}} source={images.ShippingStatusBuyer}/>
           </View>
           </ScrollView>
         </View>
