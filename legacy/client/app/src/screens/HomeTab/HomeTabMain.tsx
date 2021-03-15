@@ -29,13 +29,16 @@ import {RootStackParams} from 'navigations/RootStack';
 import RouteNames from 'navigations/RouteNames';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {Avatar} from 'react-native-elements';
+import {images} from '../../resources';
+
+const {width, height} = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   rootContainer: {
     flex: 1,
   },
   hotShoeContainer: {
-    width: Dimensions.get('window').width,
+    width: width,
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
@@ -49,7 +52,7 @@ const styles = StyleSheet.create({
     width: '90%',
     alignItems: 'center',
     justifyContent: 'space-between',
-    height: Dimensions.get('window').height * 0.3,
+    height: height * 0.3,
     paddingBottom: 8,
     borderRadius: 20,
   },
@@ -108,6 +111,9 @@ const styles = StyleSheet.create({
     ...themes.ButtonShadow,
     marginVertical: 5,
   },
+  trendingImgStyle: {
+    width: null, resizeMode:'contain', height: 440
+  }
 });
 
 type Props = {
@@ -193,15 +199,16 @@ export class HomeTabMain extends React.Component<Props, State> {
   private _renderTopTrending(): JSX.Element {
     const {trendingOrders} = this.state;
     return (
-      <View>
-        <AppText.Title2 style={styles.sectionTitle}>
+      <View style={{display:'flex', width}}>
+        {/* <AppText.Title2 style={styles.sectionTitle}>
           {strings.TopTrending}
         </AppText.Title2>
         <ScrollView horizontal={true} pagingEnabled={true}>
           {this._renderRankingList(trendingOrders.slice(0, 5), 1)}
           {trendingOrders.length > 5 &&
             this._renderRankingList(trendingOrders.slice(6, 11), 6)}
-        </ScrollView>
+        </ScrollView> */}
+        <Image style={styles.trendingImgStyle}  source={images.TopTrending}/>
       </View>
     );
   }
@@ -249,18 +256,20 @@ export class HomeTabMain extends React.Component<Props, State> {
 
   private _renderCurrentSelling(): JSX.Element {
     return (
-      <View style={{marginVertical: 10}}>
+      <View style={{marginVertical: 20}}>
         <View style={styles.brandTitleContainer}>
           <AppText.Title2>{strings.Selling}</AppText.Title2>
-          <AppText.Footnote
-            style={{textDecorationLine: 'underline'}}
-            onPress={() => {
-              this.props.navigation.push(RouteNames.Tab.HomeTab.SeeMore, {
-                inventories: this.state.selling,
-              });
-            }}>
-            {strings.SeeMore}
-          </AppText.Footnote>
+          {this.state.selling.length >= 4 &&
+              <AppText.Footnote
+              style={{textDecorationLine: 'underline'}}
+              onPress={() => {
+                this.props.navigation.push(RouteNames.Tab.HomeTab.SeeMore, {
+                  inventories: this.state.selling,
+                });
+              }}>
+              {strings.SeeMore}
+            </AppText.Footnote>
+          }
         </View>
         <FlatList
           horizontal={true}

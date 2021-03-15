@@ -17,7 +17,7 @@ import {
   toVnDateFormat,
 } from 'utilities';
 import { IAppState } from 'store/AppStore';
-import { FlatList } from 'react-native-gesture-handler';
+import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import {
   View,
   Image,
@@ -31,6 +31,7 @@ import { AppText, ShoeHeaderSummary } from 'screens/Shared';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParams } from 'navigations/RootStack';
 import { Icon } from 'react-native-elements';
+import {images} from '../../resources/';
 
 const styles = StyleSheet.create({
   orderContainer: {
@@ -214,30 +215,45 @@ export class SellOrderHistory extends React.Component<Props, State> {
               this.setState({ modalVisible: false });
             }}
           />
-
           <ShoeHeaderSummary shoe={order.shoe} />
-
-          <View style={{ flex: 1, padding: 20, alignSelf: 'stretch' }}>
+          <ScrollView style={{ flex: 1, padding: 20, alignSelf: 'stretch' }}>
             {this.modalInfo.map((info) => {
               return (
                 <View style={styles.infoContainer}>
-                  <AppText.Body>{info.header}</AppText.Body>
+                  <AppText.Body style={{color: 'rgba(0,0,0,0.6)'}}>{info.header}</AppText.Body>
                   <AppText.Body>
                     {info.value(this.state.selectedOrder)}
                   </AppText.Body>
                 </View>
               );
             })}
-
-            <AppText.Title3 style={{ marginTop: 20 }}>
-              Thông tin giao hàng
-            </AppText.Title3>
-            {this._renderShippingInfoDetails(order)}
+          {this._renderLine()}
+          <AppText.SubHeadline style={{color: 'rgba(0,0,0,0.6)'}}>
+            Thông tin giao hàng
+          </AppText.SubHeadline>
+          {this._renderShippingInfoDetails(order)}
+          {this._renderLine()}
+          <View style={{ marginBottom: 100}}>
+            <Image style={{ width: 170, resizeMode:'contain', height: 300}} source={images.ShippingStatusBuyer}/>
           </View>
+          </ScrollView>
         </View>
       </Modal>
     );
   }
+
+  private _renderLine(): JSX.Element {
+    return (
+      <View
+              style={{
+                borderBottomColor: '#BCBBC1',
+                borderBottomWidth: 1,
+                marginVertical: 20
+              }}
+            />
+    );
+  }
+
 
   private _renderShippingInfoDetails(order: OrderHistory): JSX.Element {
     const profile = this.props.userProfile;
@@ -248,7 +264,7 @@ export class SellOrderHistory extends React.Component<Props, State> {
     const name = `${this.props.userProfile.userProvidedName.lastName} ${this.props.userProfile.userProvidedName.firstName}`;
     return (
       <>
-        <AppText.Body style={{ marginTop: 10 }}>{name}</AppText.Body>
+        <AppText.Body style={{ marginTop: 20 }}>{name}</AppText.Body>
         <AppText.Subhead style={styles.shippingInfoDetails}>
           {phoneNumber}
         </AppText.Subhead>
