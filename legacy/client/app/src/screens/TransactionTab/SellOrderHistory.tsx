@@ -257,11 +257,11 @@ export class SellOrderHistory extends React.Component<Props, State> {
 
   private _renderShippingInfoDetails(order: OrderHistory): JSX.Element {
     const profile = this.props.userProfile;
-    const email = profile.userProvidedEmail;
-    const phoneNumber = profile.userProvidedPhoneNumber;
+    const email = profile?.userProvidedEmail;
+    const phoneNumber = profile?.userProvidedPhoneNumber;
     const { addressLine1, addressLine2 } = order.shippingAddress;
 
-    const name = `${this.props.userProfile.userProvidedName.lastName} ${this.props.userProfile.userProvidedName.firstName}`;
+    const name = `${this.props.userProfile?.userProvidedName.lastName} ${this.props.userProfile?.userProvidedName.firstName}`;
     return (
       <>
         <AppText.Body style={{ marginTop: 20 }}>{name}</AppText.Body>
