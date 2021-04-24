@@ -5,8 +5,19 @@
 import mongoose from "mongoose";
 import { Repository, Document } from "./Repository";
 import { ObjectId } from "mongodb";
-import { OrderStatus } from "../../assets/constants";
+import { OrderStatus, TrackingStatus, PaymentMethod } from "../../assets/constants";
 import { UserAddress, UserProvidedAddressSchema } from "./UserProfile";
+
+const TrackingSchema = new mongoose.Schema(
+  {
+    status: {
+      type: String,
+      enum: Object.keys(TrackingStatus),
+      require: true,
+    },
+  },
+  { timestamps: true }
+);
 
 export const OrderSchema = new mongoose.Schema(
   {
@@ -25,14 +36,19 @@ export const OrderSchema = new mongoose.Schema(
       enum: Object.keys(OrderStatus),
       default: OrderStatus.PENDING,
     },
-    shoeId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "UserProfile",
-      // require: true, phai seed lai data nen tam comment out
-    },
     shippingAddress: {
       type: UserProvidedAddressSchema,
       required: true,
+    },
+    sellingPrice: {
+      type: Number,
+      require: true,
+    },
+    trackingStatus: [TrackingSchema],
+    paymentMethod: {
+      type: String,
+      enum: Object.keys(PaymentMethod),
+      require: true,
     },
   },
   { timestamps: true }
@@ -43,6 +59,8 @@ export type Order = Document<{
   inventoryId: ObjectId;
   status: string;
   shippingAddress: UserAddress;
+  sellingPrice: number;
+  paymentMethod: string;
 }>;
 
 export const OrderRepository: Repository<Order> = mongoose.model("Order", OrderSchema);
