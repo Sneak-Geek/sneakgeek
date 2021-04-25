@@ -26,6 +26,10 @@ export const OrderSchema = new mongoose.Schema(
       ref: "UserProfile",
       required: true,
     },
+    shoeId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Shoe",
+    },
     inventoryId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Inventory",
