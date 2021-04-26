@@ -14,6 +14,7 @@ const TrackingSchema = new mongoose.Schema(
       type: String,
       enum: Object.keys(TrackingStatus),
       require: true,
+      default: TrackingStatus.WAITING_FOR_BANK_TRANSFER,
     },
   },
   { timestamps: true }
@@ -29,6 +30,7 @@ export const OrderSchema = new mongoose.Schema(
     shoeId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Shoe",
+      require: true,
     },
     inventoryId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -48,7 +50,15 @@ export const OrderSchema = new mongoose.Schema(
       type: Number,
       require: true,
     },
-    trackingStatus: [TrackingSchema],
+    trackingStatus: {
+      type: [TrackingSchema],
+      require: true,
+      default: [
+        {
+          status: TrackingStatus.WAITING_FOR_BANK_TRANSFER,
+        },
+      ],
+    },
     paymentMethod: {
       type: String,
       enum: Object.keys(PaymentMethod),

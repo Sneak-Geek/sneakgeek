@@ -7,7 +7,7 @@ import { IOrderDao, OrderHistory, TrendingOrder } from "./IOrderDao";
 import { Order, Repository } from "../../database";
 import { Types } from "../../../configuration/inversify";
 import { ObjectId } from "mongodb";
-import { OrderStatus } from "../../../assets/constants";
+import { OrderStatus, PaymentMethod } from "../../../assets/constants";
 import mongoose from "mongoose";
 
 @injectable()
@@ -18,7 +18,10 @@ export class OrderDao implements IOrderDao {
   public async create(order: {
     buyerId: string;
     inventoryId: string;
+    shoeId: string;
     shippingAddress: { addressLine1: string; addressLine2: string };
+    sellingPrice: number;
+    paymentMethod: PaymentMethod;
   }) {
     return this.orderRepo.create(order);
   }

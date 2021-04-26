@@ -142,4 +142,11 @@ export class InventoryDao implements IInventoryDao {
 
     return lowestPrices[0].sellPrice;
   }
+
+  public async updateInventoryWhenCreateOrder(inventoryId: string): Promise<Inventory> {
+    return this.inventoryRepository.findOneAndUpdate(
+      { _id: inventoryId, quantity: { $gt: 0 } },
+      { $inc: { quantity: -1 } }
+    );
+  }
 }
