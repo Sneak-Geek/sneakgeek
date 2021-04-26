@@ -2,7 +2,7 @@
 //! Copyright (c) 2019 - SneakGeek. All rights reserved
 //!
 
-import { OrderStatus } from "../../../assets";
+import { OrderStatus, PaymentMethod } from "../../../assets";
 import { Inventory, Order, Shoe } from "../../database";
 
 export type TrendingOrder = {
@@ -20,7 +20,10 @@ export interface IOrderDao {
   create(order: {
     buyerId: string;
     inventoryId: string;
+    shoeId: string;
     shippingAddress: { addressLine1: string; addressLine2: string };
+    sellingPrice: number;
+    paymentMethod: PaymentMethod;
   }): Promise<Order>;
   updateStatus(orderId: string, status: OrderStatus): Promise<Order>;
   findById(orderId: string): Promise<Order>;
