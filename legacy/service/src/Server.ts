@@ -152,7 +152,7 @@ export default class Server {
     LogProvider.instance.info("Configuring application settings");
 
     // Cors. TODO: configure safe options for access from trusted website only
-    // app.use(cors());
+    app.use(cors());
 
     // Request logging
     app.use(

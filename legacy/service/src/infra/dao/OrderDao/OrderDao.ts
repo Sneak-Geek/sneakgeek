@@ -4,7 +4,7 @@
 
 import { injectable, inject } from "inversify";
 import { IOrderDao, OrderHistory, TrendingOrder } from "./IOrderDao";
-import { Order, Repository } from "../../database";
+import { Inventory, Order, Repository, Shoe } from "../../database";
 import { Types } from "../../../configuration/inversify";
 import { ObjectId } from "mongodb";
 import { OrderStatus, PaymentMethod } from "../../../assets/constants";
@@ -121,5 +121,87 @@ export class OrderDao implements IOrderDao {
       .exec();
 
     return result;
+  }
+
+  async getAllPendingOrders(start: number, pageSize: number): Promise<OrderHistory[]> {
+    const query = [
+      {
+        $match: { status: OrderStatus.PENDING },
+      },
+      {
+        $sort: { createdAt: 1 },
+      },
+      {
+        $limit: pageSize,
+      },
+      {
+        $lookup: {
+          from: "inventories",
+          localField: "inventoryId",
+          foreignField: "_id",
+          as: "inventory",
+        },
+      },
+      {
+        $unwind: { path: "$inventory" },
+      },
+      {
+        $lookup: {
+          from: "shoes",
+          // TODO(hoangpham95): change back to shoeId once completely migrated
+          localField: "inventory.shoeId",
+          foreignField: "_id",
+          as: "shoe",
+        },
+      },
+      {
+        $unwind: { path: "$shoe" },
+      },
+    ];
+    if (start > 1) {
+      query.splice(2, 0, { $skip: start - 1 } as any);
+    }
+
+    return this.orderRepo.aggregate(query).exec();
+  }
+
+  async getOrderById(orderId: string): Promise<OrderHistory> {
+    const result = await this.orderRepo
+      .aggregate([
+        {
+          $match: {
+            _id: mongoose.Types.ObjectId(orderId),
+          },
+        },
+        {
+          $lookup: {
+            from: "inventories",
+            localField: "inventoryId",
+            foreignField: "_id",
+            as: "inventory",
+          },
+        },
+        {
+          $unwind: {
+            path: "$inventory",
+          },
+        },
+        {
+          $lookup: {
+            from: "shoes",
+            localField: "inventory.shoeId",
+            foreignField: "_id",
+            as: "shoe",
+          },
+        },
+        {
+          $unwind: {
+            path: "$shoe",
+          },
+        },
+      ])
+      .exec();
+
+    return result[0];
   }
 }
