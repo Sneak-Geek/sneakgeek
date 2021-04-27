@@ -75,6 +75,7 @@ export type Order = Document<{
   shippingAddress: UserAddress;
   sellingPrice: number;
   paymentMethod: string;
+  trackingStatus: Array<Object>;
 }>;
 
 export const OrderRepository: Repository<Order> = mongoose.model("Order", OrderSchema);

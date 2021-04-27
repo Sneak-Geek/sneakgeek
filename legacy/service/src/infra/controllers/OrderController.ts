@@ -20,6 +20,7 @@ import {
   ValidationPassedMiddleware,
   AuthMiddleware,
   AccountVerifiedMiddleware,
+  AdminPermissionMiddleware,
 } from "../middlewares";
 import {
   OrderStatus,
@@ -107,5 +108,29 @@ export class OrderController {
     const order = await this.orderDao.create(newOrder);
 
     return res.status(HttpStatus.OK).send(order);
+  }
+
+  @httpPost("/update-admin", 
+  body("statusUpdate").isString(),
+  body("orderId").isMongoId(),
+  AuthMiddleware,
+  AccountVerifiedMiddleware,
+  AdminPermissionMiddleware,
+  ValidationPassedMiddleware
+  )
+  public async updateOrderByAdmin(@request() req: Request, @response() res: Response) {
+    try {
+
+      const {orderId} = req.body;
+      const order = await this.orderDao.findById(orderId);
+      
+      if (order.trackingStatus))
+
+
+    } catch (error) {
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
+        message: "Unexpected error!",
+      });
+    }
   }
 }
