@@ -2,7 +2,7 @@
 //! Copyright (c) 2019 - SneakGeek. All rights reserved
 //!
 
-import { OrderStatus, PaymentMethod } from "../../../assets";
+import { OrderStatus, PaymentMethod, TrackingStatus } from "../../../assets";
 import { Inventory, Order, Shoe } from "../../database";
 
 export type TrendingOrder = {
@@ -24,8 +24,18 @@ export interface IOrderDao {
     shippingAddress: { addressLine1: string; addressLine2: string };
     sellingPrice: number;
     paymentMethod: PaymentMethod;
+    trackingStatusArray: Array<{ status: string; date: Date }>;
   }): Promise<Order>;
   updateStatus(orderId: string, status: OrderStatus): Promise<Order>;
+  updateTrackingAndOrderStatusHelper(
+    orderId: string,
+    trackingStatus: TrackingStatus,
+    status?: OrderStatus
+  ): Promise<Order>;
+  updateTrackingAndOrderStatus(
+    orderId: string,
+    trackingStatus: TrackingStatus
+  ): Promise<Order>;
   findById(orderId: string): Promise<Order>;
   destroyById(OrderId: string): Promise<Order>;
   getLastSold(top: number): Promise<TrendingOrder[]>;

@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import httpStatus from "http-status";
+import { body } from "express-validator";
 import { inject } from "inversify";
 import {
   controller,
@@ -7,6 +8,7 @@ import {
   request,
   requestParam,
   response,
+  httpPost,
 } from "inversify-express-utils";
 import { Types } from "../../configuration/inversify";
 import { IOrderDao } from "../dao";
@@ -15,6 +17,7 @@ import {
   AuthMiddleware,
   ValidationPassedMiddleware,
 } from "../middlewares";
+import { TrackingStatus } from "../../assets/constants";
 
 @controller("/api/v1/orders")
 export class AdminOrderController {
@@ -62,5 +65,30 @@ export class AdminOrderController {
     return res.status(httpStatus.OK).json({
       data: order,
     });
+  }
+
+  @httpPost(
+    "/update-admin",
+    body("statusUpdate").isIn(Object.keys(TrackingStatus)),
+    body("orderId").isMongoId(),
+    AuthMiddleware,
+    AdminPermissionMiddleware,
+    ValidationPassedMiddleware
+  )
+  public async updateOrderByAdmin(@request() req: Request, @response() res: Response) {
+    try {
+      const { orderId, statusUpdate } = req.body;
+      const order = await this.orderDao.updateTrackingAndOrderStatus(orderId, statusUpdate);
+      if (!order) {
+        return res.status(httpStatus.BAD_REQUEST).send({ message: "Bad request!" });
+      }
+
+      // TO DO: Email notification
+      return order;
+    } catch (error) {
+      return res.status(httpStatus.INTERNAL_SERVER_ERROR).send({
+        message: "Unexpected error!",
+      });
+    }
   }
 }

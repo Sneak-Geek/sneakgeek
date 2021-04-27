@@ -20,15 +20,9 @@ import {
   ValidationPassedMiddleware,
   AuthMiddleware,
   AccountVerifiedMiddleware,
-  AdminPermissionMiddleware,
 } from "../middlewares";
-import {
-  OrderStatus,
-  PaymentCallbackResponse,
-  PaymentMethod,
-} from "../../assets/constants";
-import { IPaymentService } from "../services";
-import { IOrderDao, IInventoryDao, IShoeDao } from "../dao";
+import { PaymentMethod, TrackingStatus } from "../../assets/constants";
+import { IOrderDao, IInventoryDao } from "../dao";
 import { UserAccount } from "../database";
 import mongoose from "mongoose";
 
@@ -93,6 +87,12 @@ export class OrderController {
       return res.status(HttpStatus.BAD_REQUEST).send({ message: "Out of stock!" });
     }
 
+    let trackingStatusArray = [];
+    trackingStatusArray.push({
+      status: TrackingStatus.WAITING_FOR_BANK_TRANSFER,
+      date: Date.now(),
+    });
+
     const newOrder = {
       buyerId: (user.profile as unknown) as string,
       inventoryId: (inventoryId as unknown) as string,
@@ -103,34 +103,11 @@ export class OrderController {
       },
       sellingPrice: (sellingPrice as unknown) as number,
       paymentMethod: (paymentType as unknown) as PaymentMethod,
+      trackingStatusArray,
     };
 
     const order = await this.orderDao.create(newOrder);
 
     return res.status(HttpStatus.OK).send(order);
-  }
-
-  @httpPost("/update-admin", 
-  body("statusUpdate").isString(),
-  body("orderId").isMongoId(),
-  AuthMiddleware,
-  AccountVerifiedMiddleware,
-  AdminPermissionMiddleware,
-  ValidationPassedMiddleware
-  )
-  public async updateOrderByAdmin(@request() req: Request, @response() res: Response) {
-    try {
-
-      const {orderId} = req.body;
-      const order = await this.orderDao.findById(orderId);
-      
-      if (order.trackingStatus))
-
-
-    } catch (error) {
-      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
-        message: "Unexpected error!",
-      });
-    }
   }
 }
