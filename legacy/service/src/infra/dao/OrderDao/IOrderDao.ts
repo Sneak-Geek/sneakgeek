@@ -24,14 +24,9 @@ export interface IOrderDao {
     shippingAddress: { addressLine1: string; addressLine2: string };
     sellingPrice: number;
     paymentMethod: PaymentMethod;
-    trackingStatusArray: Array<{ status: string; date: Date }>;
+    trackingStatus: Array<{ status: string; date: Date }>;
   }): Promise<Order>;
   updateStatus(orderId: string, status: OrderStatus): Promise<Order>;
-  updateTrackingAndOrderStatusHelper(
-    orderId: string,
-    trackingStatus: TrackingStatus,
-    status?: OrderStatus
-  ): Promise<Order>;
   updateTrackingAndOrderStatus(
     orderId: string,
     trackingStatus: TrackingStatus

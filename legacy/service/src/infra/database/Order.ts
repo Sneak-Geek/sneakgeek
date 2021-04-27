@@ -39,7 +39,7 @@ export const OrderSchema = new mongoose.Schema(
       type: Number,
       require: true,
     },
-    trackingStatusArray: {
+    trackingStatus: {
       type: [
         {
           status: { type: String, enum: Object.keys(TrackingStatus) },
@@ -64,7 +64,7 @@ export type Order = Document<{
   shippingAddress: UserAddress;
   sellingPrice: number;
   paymentMethod: string;
-  trackingStatusArray: Array<{ status: string; date: Date }>;
+  trackingStatus: Array<{ status: TrackingStatus; date: Date }>;
 }>;
 
 export const OrderRepository: Repository<Order> = mongoose.model("Order", OrderSchema);

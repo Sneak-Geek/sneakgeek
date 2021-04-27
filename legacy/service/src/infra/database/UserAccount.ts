@@ -16,6 +16,7 @@ export enum AccessLevel {
   Content = "Content",
   Manager = "Manager",
   Admin = "Admin",
+  Seller = "Seller",
 }
 
 const AccountNameSchema = new mongoose.Schema({

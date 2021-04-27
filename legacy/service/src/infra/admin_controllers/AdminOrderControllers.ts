@@ -8,7 +8,7 @@ import {
   request,
   requestParam,
   response,
-  httpPost,
+  httpPut,
 } from "inversify-express-utils";
 import { Types } from "../../configuration/inversify";
 import { IOrderDao } from "../dao";
@@ -67,18 +67,26 @@ export class AdminOrderController {
     });
   }
 
-  @httpPost(
-    "/update-admin",
-    body("statusUpdate").isIn(Object.keys(TrackingStatus)),
-    body("orderId").isMongoId(),
+  @httpPut(
+    "/:orderId",
+    body("status").isIn(Object.keys(TrackingStatus)),
     AuthMiddleware,
     AdminPermissionMiddleware,
     ValidationPassedMiddleware
   )
-  public async updateOrderByAdmin(@request() req: Request, @response() res: Response) {
+  public async updateOrderByAdmin(
+    @request() req: Request,
+    @requestParam("orderId") orderId: string,
+    @response() res: Response
+  ) {
+    if (!orderId) {
+      return res.status(httpStatus.BAD_REQUEST).send({
+        message: "orderId is required",
+      });
+    }
+    const { status } = req.body;
     try {
-      const { orderId, statusUpdate } = req.body;
-      const order = await this.orderDao.updateTrackingAndOrderStatus(orderId, statusUpdate);
+      const order = await this.orderDao.updateTrackingAndOrderStatus(orderId, status);
       if (!order) {
         return res.status(httpStatus.BAD_REQUEST).send({ message: "Bad request!" });
       }

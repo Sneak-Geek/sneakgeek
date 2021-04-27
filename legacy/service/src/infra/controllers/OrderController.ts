@@ -15,7 +15,7 @@ import {
   requestBody,
   httpPost,
 } from "inversify-express-utils";
-import { Types } from "../../configuration/inversify/inversify.types";
+import { Types } from "../../configuration/inversify";
 import {
   ValidationPassedMiddleware,
   AuthMiddleware,
@@ -87,8 +87,8 @@ export class OrderController {
       return res.status(HttpStatus.BAD_REQUEST).send({ message: "Out of stock!" });
     }
 
-    let trackingStatusArray = [];
-    trackingStatusArray.push({
+    let trackingStatus = [];
+    trackingStatus.push({
       status: TrackingStatus.WAITING_FOR_BANK_TRANSFER,
       date: Date.now(),
     });
@@ -103,11 +103,39 @@ export class OrderController {
       },
       sellingPrice: (sellingPrice as unknown) as number,
       paymentMethod: (paymentType as unknown) as PaymentMethod,
-      trackingStatusArray,
+      trackingStatus,
     };
 
     const order = await this.orderDao.create(newOrder);
 
     return res.status(HttpStatus.OK).send(order);
+  }
+
+  @httpPost(
+    "/update-seller",
+    body("status").isIn([
+      TrackingStatus.SELLER_APPROVED_ORDER,
+      TrackingStatus.SELLER_REJECTED_ORDER,
+    ]),
+    body("orderId").isMongoId(),
+    AuthMiddleware,
+    Types.IsSellerMiddleware,
+    ValidationPassedMiddleware
+  )
+  public async updateOrderBySeller(@request() req: Request, @response() res: Response) {
+    try {
+      const { orderId, status } = req.body;
+      const order = await this.orderDao.updateTrackingAndOrderStatus(orderId, status);
+      if (!order) {
+        return res.status(HttpStatus.BAD_REQUEST).send({ message: "Bad request!" });
+      }
+
+      // TO DO: Email notification
+      return order;
+    } catch (error) {
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
+        message: "Unexpected error!",
+      });
+    }
   }
 }

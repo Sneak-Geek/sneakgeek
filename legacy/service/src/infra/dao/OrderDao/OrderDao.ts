@@ -10,8 +10,8 @@ import { ObjectId } from "mongodb";
 import {
   OrderStatus,
   PaymentMethod,
-  PreviousTrackingStatusMap,
   TrackingStatus,
+  TrackingStatusOrdering,
 } from "../../../assets/constants";
 import mongoose from "mongoose";
 
@@ -27,7 +27,7 @@ export class OrderDao implements IOrderDao {
     shippingAddress: { addressLine1: string; addressLine2: string };
     sellingPrice: number;
     paymentMethod: PaymentMethod;
-    trackingStatusArray: Array<{ status: string; date: Date }>;
+    trackingStatus: Array<{ status: TrackingStatus; date: Date }>;
   }) {
     return this.orderRepo.create(order);
   }
@@ -38,53 +38,65 @@ export class OrderDao implements IOrderDao {
       .exec();
   }
 
-  public async updateTrackingAndOrderStatusHelper(
+  private async updateTrackingAndOrderStatusHelper(
     orderId: string,
     trackingStatus: TrackingStatus,
-    status: OrderStatus = OrderStatus.PENDING
+    orderStatus: OrderStatus = OrderStatus.PENDING
   ): Promise<Order> {
     return this.orderRepo.findOneAndUpdate(
       { _id: orderId },
       {
-        $push: { trackingStatusArray: { status: trackingStatus, date: Date.now() } },
-        status,
+        $push: { trackingStatus: { status: trackingStatus, date: Date.now() } },
+        status: orderStatus,
       }
     );
   }
 
+  private _isValidTrackingStatus(status: TrackingStatus): Boolean {
+    return TrackingStatusOrdering.has(status);
+  }
+
+  private _isValidTrackingOrdering(
+    trackingStatus: Array<{ status: TrackingStatus; date: Date }>,
+    status: TrackingStatus
+  ): Boolean {
+    return (
+      trackingStatus[trackingStatus.length - 1].status ===
+      TrackingStatusOrdering.get(status)
+    );
+  }
+
+  private _isValidOrderStatus(order: Order): Boolean {
+    return order.status !== OrderStatus.FAILED && order.status !== OrderStatus.COMPLETED;
+  }
+
   public async updateTrackingAndOrderStatus(
     orderId: string,
-    trackingStatus: TrackingStatus
+    status: TrackingStatus
   ): Promise<Order> {
-    const doc = await this.findById(orderId);
-    const { trackingStatusArray } = doc;
+    const order = await this.findById(orderId);
+    const { trackingStatus } = order;
 
     if (
-      !trackingStatusArray ||
-      trackingStatusArray.length < 1 ||
-      trackingStatusArray[trackingStatusArray.length - 1].status !==
-        PreviousTrackingStatusMap[trackingStatus] ||
-      trackingStatusArray[trackingStatusArray.length - 1].status === OrderStatus.FAILED ||
-      trackingStatusArray[trackingStatusArray.length - 1].status === OrderStatus.COMPLETED
+      !this._isValidTrackingStatus(status) ||
+      !this._isValidTrackingOrdering(trackingStatus, status) ||
+      !this._isValidOrderStatus(order)
     )
-      return undefined;
+      return Promise.reject(new Error("Please check orderStatus and trackingStatus!"));
+
     if (
-      trackingStatus === TrackingStatus.NOT_RECEIVED_BANK_TRANSFER ||
-      trackingStatus === TrackingStatus.SELLER_REJECTED_ORDER ||
-      trackingStatus === TrackingStatus.SHOE_UNQUALIFIED
+      status === TrackingStatus.NOT_RECEIVED_BANK_TRANSFER ||
+      status === TrackingStatus.SELLER_REJECTED_ORDER ||
+      status === TrackingStatus.SHOE_UNQUALIFIED
     ) {
+      return this.updateTrackingAndOrderStatusHelper(orderId, status, OrderStatus.FAILED);
+    } else if (status === TrackingStatus.BUYER_RECEIVED) {
       return this.updateTrackingAndOrderStatusHelper(
         orderId,
-        trackingStatus,
-        OrderStatus.FAILED
-      );
-    } else if (trackingStatus === TrackingStatus.BUYER_RECEIVED) {
-      return this.updateTrackingAndOrderStatusHelper(
-        orderId,
-        trackingStatus,
+        status,
         OrderStatus.COMPLETED
       );
-    } else return this.updateTrackingAndOrderStatusHelper(orderId, trackingStatus);
+    } else return this.updateTrackingAndOrderStatusHelper(orderId, status);
   }
 
   public async destroyById(OrderId: string | ObjectId): Promise<Order | undefined> {
