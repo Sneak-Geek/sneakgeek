@@ -123,7 +123,11 @@ export class OrderDao implements IOrderDao {
     return result;
   }
 
-  async getAllPendingOrders(start: number, pageSize: number): Promise<OrderHistory[]> {
+  async getPendingOrdersCount(): Promise<number> {
+    return this.orderRepo.count({ status: OrderStatus.PENDING });
+  }
+
+  async getAllPendingOrders(start: number, end: number): Promise<OrderHistory[]> {
     const query = [
       {
         $match: { status: OrderStatus.PENDING },
@@ -132,7 +136,7 @@ export class OrderDao implements IOrderDao {
         $sort: { createdAt: 1 },
       },
       {
-        $limit: pageSize,
+        $limit: end - start + 1,
       },
       {
         $lookup: {

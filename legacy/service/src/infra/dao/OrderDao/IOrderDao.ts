@@ -30,6 +30,7 @@ export interface IOrderDao {
   destroyById(OrderId: string): Promise<Order>;
   getLastSold(top: number): Promise<TrendingOrder[]>;
   getOrderHistoryByUserId(buyerId: string): Promise<OrderHistory[]>;
-  getAllPendingOrders(start: number, pageSize: number): Promise<OrderHistory[]>;
+  getPendingOrdersCount(): Promise<number>;
+  getAllPendingOrders(start: number, end: number): Promise<OrderHistory[]>;
   getOrderById(orderId: string): Promise<OrderHistory>;
 }

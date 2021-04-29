@@ -30,15 +30,18 @@ export class AdminOrderController {
         message: "Range is required",
       });
     }
-    const [start, pageSize] = JSON.parse(range as string);
-    const orders = await this.orderDao.getAllPendingOrders(
-      parseInt(start, 10),
-      parseInt(pageSize)
-    );
+    const [start, end] = JSON.parse(range as string);
+    let [orders, total] = await Promise.all([
+      this.orderDao.getAllPendingOrders(parseInt(start, 10), parseInt(end, 10)),
+      this.orderDao.getPendingOrdersCount(),
+    ]);
 
-    return res.status(httpStatus.OK).json({
-      data: orders,
-    });
+    res.setHeader("Access-Control-Expose-Headers", "X-Total-Count");
+    res.setHeader("X-Total-Count", `${total}`);
+
+    const returnOrders = orders.map((o) => Object.assign({ id: o._id }, o));
+
+    return res.status(httpStatus.OK).json(returnOrders);
   }
 
   @httpGet(
@@ -60,7 +63,8 @@ export class AdminOrderController {
     const order = await this.orderDao.getOrderById(orderId);
 
     return res.status(httpStatus.OK).json({
-      data: order,
+      ...order,
+      id: order._id,
     });
   }
 }
