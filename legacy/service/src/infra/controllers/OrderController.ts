@@ -15,19 +15,14 @@ import {
   requestBody,
   httpPost,
 } from "inversify-express-utils";
-import { Types } from "../../configuration/inversify/inversify.types";
+import { Types } from "../../configuration/inversify";
 import {
   ValidationPassedMiddleware,
   AuthMiddleware,
   AccountVerifiedMiddleware,
 } from "../middlewares";
-import {
-  OrderStatus,
-  PaymentCallbackResponse,
-  PaymentMethod,
-} from "../../assets/constants";
-import { IPaymentService } from "../services";
-import { IOrderDao, IInventoryDao, IShoeDao } from "../dao";
+import { PaymentMethod, TrackingStatus } from "../../assets/constants";
+import { IOrderDao, IInventoryDao } from "../dao";
 import { UserAccount } from "../database";
 import mongoose from "mongoose";
 
@@ -92,6 +87,12 @@ export class OrderController {
       return res.status(HttpStatus.BAD_REQUEST).send({ message: "Out of stock!" });
     }
 
+    let trackingStatus = [];
+    trackingStatus.push({
+      status: TrackingStatus.WAITING_FOR_BANK_TRANSFER,
+      date: Date.now(),
+    });
+
     const newOrder = {
       buyerId: (user.profile as unknown) as string,
       inventoryId: (inventoryId as unknown) as string,
@@ -102,10 +103,39 @@ export class OrderController {
       },
       sellingPrice: (sellingPrice as unknown) as number,
       paymentMethod: (paymentType as unknown) as PaymentMethod,
+      trackingStatus,
     };
 
     const order = await this.orderDao.create(newOrder);
 
     return res.status(HttpStatus.OK).send(order);
+  }
+
+  @httpPost(
+    "/update-seller",
+    body("status").isIn([
+      TrackingStatus.SELLER_APPROVED_ORDER,
+      TrackingStatus.SELLER_REJECTED_ORDER,
+    ]),
+    body("orderId").isMongoId(),
+    AuthMiddleware,
+    Types.IsSellerMiddleware,
+    ValidationPassedMiddleware
+  )
+  public async updateOrderBySeller(@request() req: Request, @response() res: Response) {
+    try {
+      const { orderId, status } = req.body;
+      const order = await this.orderDao.updateTrackingAndOrderStatus(orderId, status);
+      if (!order) {
+        return res.status(HttpStatus.BAD_REQUEST).send({ message: "Bad request!" });
+      }
+
+      // TO DO: Email notification
+      return order;
+    } catch (error) {
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
+        message: "Unexpected error!",
+      });
+    }
   }
 }

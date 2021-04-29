@@ -4,7 +4,7 @@ import { inject, injectable } from "inversify";
 import { BaseMiddleware } from "inversify-express-utils";
 import { Types } from "../../configuration/inversify";
 import { ProfileDao } from "../dao";
-import { UserAccount } from "../database";
+import { AccessLevel, UserAccount } from "../database";
 
 @injectable()
 export class IsSellerMiddleware extends BaseMiddleware {
@@ -21,7 +21,7 @@ export class IsSellerMiddleware extends BaseMiddleware {
       });
     }
 
-    if (!profile.isSeller) {
+    if (!profile.isSeller && user.accessLevel !== AccessLevel.Seller) {
       return res.status(HttpStatus.FORBIDDEN).send({
         message: "Profile is not seller",
       });

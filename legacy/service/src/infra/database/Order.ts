@@ -8,18 +8,6 @@ import { ObjectId } from "mongodb";
 import { OrderStatus, TrackingStatus, PaymentMethod } from "../../assets/constants";
 import { UserAddress, UserProvidedAddressSchema } from "./UserProfile";
 
-const TrackingSchema = new mongoose.Schema(
-  {
-    status: {
-      type: String,
-      enum: Object.keys(TrackingStatus),
-      require: true,
-      default: TrackingStatus.WAITING_FOR_BANK_TRANSFER,
-    },
-  },
-  { timestamps: true }
-);
-
 export const OrderSchema = new mongoose.Schema(
   {
     buyerId: {
@@ -41,6 +29,7 @@ export const OrderSchema = new mongoose.Schema(
       type: String,
       enum: Object.keys(OrderStatus),
       default: OrderStatus.PENDING,
+      require: true,
     },
     shippingAddress: {
       type: UserProvidedAddressSchema,
@@ -51,13 +40,13 @@ export const OrderSchema = new mongoose.Schema(
       require: true,
     },
     trackingStatus: {
-      type: [TrackingSchema],
-      require: true,
-      default: [
+      type: [
         {
-          status: TrackingStatus.WAITING_FOR_BANK_TRANSFER,
+          status: { type: String, enum: Object.keys(TrackingStatus) },
+          date: Date,
         },
       ],
+      require: true,
     },
     paymentMethod: {
       type: String,
@@ -75,6 +64,7 @@ export type Order = Document<{
   shippingAddress: UserAddress;
   sellingPrice: number;
   paymentMethod: string;
+  trackingStatus: Array<{ status: TrackingStatus; date: Date }>;
 }>;
 
 export const OrderRepository: Repository<Order> = mongoose.model("Order", OrderSchema);
