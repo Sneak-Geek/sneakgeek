@@ -67,11 +67,6 @@ export const OrderSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-    _id: true,
-    id: true,
-    toObject: { virtuals: true },
-    toJSON: { virtuals: true },
-    versionKey: true,
   }
 );
 

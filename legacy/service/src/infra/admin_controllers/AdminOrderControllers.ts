@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { param, query } from "express-validator";
 import httpStatus from "http-status";
 import { inject } from "inversify";
 import {
@@ -21,7 +22,13 @@ export class AdminOrderController {
   public constructor(@inject(Types.OrderDao) private orderDao: IOrderDao) {}
 
   // Get all pending orders
-  @httpGet("/", AuthMiddleware, AdminPermissionMiddleware, ValidationPassedMiddleware)
+  @httpGet(
+    "/",
+    query("range").exists(),
+    AuthMiddleware,
+    AdminPermissionMiddleware,
+    ValidationPassedMiddleware
+  )
   public async getOrders(@request() req: Request, @response() res: Response) {
     // required range
     let range = req.query.range;
@@ -46,6 +53,7 @@ export class AdminOrderController {
 
   @httpGet(
     "/:orderId",
+    param("orderId").isMongoId(),
     AuthMiddleware,
     AdminPermissionMiddleware,
     ValidationPassedMiddleware
