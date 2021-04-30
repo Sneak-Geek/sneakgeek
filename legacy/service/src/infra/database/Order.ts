@@ -54,7 +54,9 @@ export const OrderSchema = new mongoose.Schema(
       require: true,
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
 
 export type Order = Document<{

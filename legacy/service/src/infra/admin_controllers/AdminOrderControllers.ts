@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { param, query } from "express-validator";
 import httpStatus from "http-status";
 import { body } from "express-validator";
 import { inject } from "inversify";
@@ -24,7 +25,13 @@ export class AdminOrderController {
   public constructor(@inject(Types.OrderDao) private orderDao: IOrderDao) {}
 
   // Get all pending orders
-  @httpGet("/", AuthMiddleware, AdminPermissionMiddleware, ValidationPassedMiddleware)
+  @httpGet(
+    "/",
+    query("range").exists(),
+    AuthMiddleware,
+    AdminPermissionMiddleware,
+    ValidationPassedMiddleware
+  )
   public async getOrders(@request() req: Request, @response() res: Response) {
     // required range
     let range = req.query.range;
@@ -33,19 +40,23 @@ export class AdminOrderController {
         message: "Range is required",
       });
     }
-    const [start, pageSize] = JSON.parse(range as string);
-    const orders = await this.orderDao.getAllPendingOrders(
-      parseInt(start, 10),
-      parseInt(pageSize)
-    );
+    const [start, end] = JSON.parse(range as string);
+    let [orders, total] = await Promise.all([
+      this.orderDao.getAllPendingOrders(parseInt(start, 10), parseInt(end, 10)),
+      this.orderDao.getPendingOrdersCount(),
+    ]);
 
-    return res.status(httpStatus.OK).json({
-      data: orders,
-    });
+    res.setHeader("Access-Control-Expose-Headers", "X-Total-Count");
+    res.setHeader("X-Total-Count", `${total}`);
+
+    const returnOrders = orders.map((o) => Object.assign({ id: o._id }, o));
+
+    return res.status(httpStatus.OK).json(returnOrders);
   }
 
   @httpGet(
     "/:orderId",
+    param("orderId").isMongoId(),
     AuthMiddleware,
     AdminPermissionMiddleware,
     ValidationPassedMiddleware
@@ -63,7 +74,8 @@ export class AdminOrderController {
     const order = await this.orderDao.getOrderById(orderId);
 
     return res.status(httpStatus.OK).json({
-      data: order,
+      ...order,
+      id: order._id,
     });
   }
 
