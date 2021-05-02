@@ -125,9 +125,7 @@ export default class Server {
     await bootstrapProvider.bootstrapUsersData();
     await bootstrapProvider.bootstrapShoesData();
     await bootstrapProvider.bootstrapCatalogData();
-
-    // bootstrap GHN shipping data
-    // await bootstrapProvider.bootstrapShippingService();
+    await bootstrapProvider.bootstrapInventoryAndOrder();
 
     LogProvider.instance.info("Bootstrap data completed");
   }

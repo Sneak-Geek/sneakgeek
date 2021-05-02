@@ -3,7 +3,7 @@
 //!
 
 import { UserProfile } from "../../database/UserProfile";
-import { AdminProfile } from "../../../assets/seeds/admin";
+import { AdminProfile } from "../../../assets/seeds/user";
 
 export interface GhnDistrict {
   Code: string; // district code

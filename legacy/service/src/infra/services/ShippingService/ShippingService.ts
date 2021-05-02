@@ -5,7 +5,7 @@
 import { injectable } from "inversify";
 import { IShippingService, GhnDistrict, GhnWard } from "./IShippingService";
 import { UserProfile } from "../../database/UserProfile";
-import { AdminProfile } from "../../../assets/seeds/admin";
+import { AdminProfile } from "../../../assets/seeds/user";
 import path from "path";
 import fs from "fs";
 import { Parser } from "csv-parse";

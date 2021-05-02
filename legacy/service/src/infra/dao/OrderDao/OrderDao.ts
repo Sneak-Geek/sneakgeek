@@ -25,7 +25,7 @@ export class OrderDao implements IOrderDao {
     inventoryId: string;
     shoeId: string;
     shippingAddress: { addressLine1: string; addressLine2: string };
-    sellingPrice: number;
+    soldPrice: number;
     paymentMethod: PaymentMethod;
     trackingStatus: Array<{ status: TrackingStatus; date: Date }>;
   }) {
