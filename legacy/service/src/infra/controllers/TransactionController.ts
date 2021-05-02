@@ -35,10 +35,7 @@ import mongoose from "mongoose";
 import HttpStatus from "http-status";
 import { AdminProfile } from "../../assets/seeds/user";
 import { ObjectId } from "mongodb";
-import {
-  PaymentStatus,
-  PaymentCallbackResponse,
-} from "../../assets/constants";
+import { PaymentStatus, PaymentCallbackResponse } from "../../assets/constants";
 import { ITransactionDao, INotificationDao, IProfileDao } from "../dao";
 import { LogProvider } from "../providers";
 

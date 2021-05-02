@@ -228,7 +228,7 @@ export class BootstrapProvider implements IBootstrapProvider {
     if (this.levelToAccMap.size === 0) {
       return;
     }
-    
+
     let shoeId = _.sample(this.shoeIds);
     if (!shoeId) {
       shoeId = (await this.shoeRepository.findOne().exec())._id;
