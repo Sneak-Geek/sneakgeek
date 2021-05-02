@@ -33,11 +33,10 @@ import {
 } from "../services";
 import mongoose from "mongoose";
 import HttpStatus from "http-status";
-import { AdminProfile } from "../../assets/seeds/admin";
+import { AdminProfile } from "../../assets/seeds/user";
 import { ObjectId } from "mongodb";
 import {
   PaymentStatus,
-  OrderStatus,
   PaymentCallbackResponse,
 } from "../../assets/constants";
 import { ITransactionDao, INotificationDao, IProfileDao } from "../dao";

@@ -22,7 +22,7 @@ export interface IOrderDao {
     inventoryId: string;
     shoeId: string;
     shippingAddress: { addressLine1: string; addressLine2: string };
-    sellingPrice: number;
+    soldPrice: number;
     paymentMethod: PaymentMethod;
     trackingStatus: Array<{ status: string; date: Date }>;
   }): Promise<Order>;

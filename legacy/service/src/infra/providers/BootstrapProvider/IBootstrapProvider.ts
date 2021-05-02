@@ -9,5 +9,5 @@ export interface IBootstrapProvider {
   bootstrapUsersData: () => Promise<any>;
   bootstrapShoesData: () => Promise<any>;
   bootstrapCatalogData: () => Promise<any>;
-  bootstrapShippingService: () => Promise<any>;
+  bootstrapInventoryAndOrder: () => Promise<void>;
 }

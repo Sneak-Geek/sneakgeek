@@ -7,52 +7,96 @@ import {
   Repository,
   Catalogue,
   CatalogType,
-  ShoeSchema,
+  Inventory,
+  Order,
 } from "../../database";
+import { AccessLevel } from "../../database/UserAccount";
 import { Types } from "../../../configuration/inversify";
 import mongoose, { Document } from "mongoose";
-import { AdminAccount, AdminProfile } from "../../../assets/seeds/admin";
-import { IShippingService } from "../../services";
+import {
+  AdminAccount,
+  AdminCredential,
+  AdminProfile,
+  SeedCredential,
+  SellerAccount,
+  SellerCredential,
+  SellerProfile,
+  UserCredential,
+  UserRegularAccount,
+  UserRegularProfile,
+} from "../../../assets/seeds/user";
 import { LogProvider } from "../LogProvider";
 import path from "path";
 import fs from "fs";
+import _ from "lodash";
+import { PaymentMethod, TrackingStatus } from "../../../assets/constants";
 
+type AccountInfo = {
+  accountId: mongoose.Types.ObjectId;
+  profileId: mongoose.Types.ObjectId;
+};
 @injectable()
 export class BootstrapProvider implements IBootstrapProvider {
-  @inject(Types.ShoeRepository) private shoeRepository: Repository<Shoe>;
-  @inject(Types.AccountRepository) private accountRepository: Repository<UserAccount>;
-  @inject(Types.ProfileRepository) private profileRepository: Repository<UserProfile>;
-  @inject(Types.CatalogueRepository) private catalogRepository: Repository<Catalogue>;
-  @inject(Types.ShippingService) private shippingService: IShippingService;
+  constructor(
+    @inject(Types.ShoeRepository) private shoeRepository: Repository<Shoe>,
+    @inject(Types.AccountRepository) private accountRepository: Repository<UserAccount>,
+    @inject(Types.ProfileRepository) private profileRepository: Repository<UserProfile>,
+    @inject(Types.CatalogueRepository) private catalogRepository: Repository<Catalogue>,
+    @inject(Types.InventoryRepository) private inventoryRepo: Repository<Inventory>,
+    @inject(Types.OrderRepository) private orderRepo: Repository<Order>
+  ) {}
+
+  private levelToAccMap: Map<AccessLevel, AccountInfo> = new Map();
+  private shoeIds: Array<mongoose.Types.ObjectId>;
 
   public async bootstrapUsersData(): Promise<any> {
-    const adminAccountCreated = await this.accountRepository
-      .findOne({ accountEmailByProvider: AdminAccount.accountEmailByProvider })
+    Promise.all([
+      this._createUserData(AdminCredential, AdminAccount, AdminProfile, AccessLevel.Admin),
+      this._createUserData(
+        UserCredential,
+        UserRegularAccount,
+        UserRegularProfile,
+        AccessLevel.User
+      ),
+      this._createUserData(
+        SellerCredential,
+        SellerAccount,
+        SellerProfile,
+        AccessLevel.Seller
+      ),
+    ]);
+  }
+
+  private async _createUserData(
+    credential: SeedCredential,
+    account: any,
+    profile: any,
+    acl: AccessLevel
+  ) {
+    const count = await this.accountRepository
+      .count({ accountEmailByProvider: credential.email })
       .exec();
+    if (count === 0) {
+      LogProvider.instance.info("Creating account");
 
-    if (!adminAccountCreated) {
-      LogProvider.instance.info("Creating admin account");
-
-      const seedAdminAccountId = new mongoose.Types.ObjectId();
-      const seedAdminProfileId = new mongoose.Types.ObjectId();
+      const accountId = new mongoose.Types.ObjectId();
+      const profileId = new mongoose.Types.ObjectId();
 
       await Promise.all([
         this.accountRepository.create({
-          _id: seedAdminAccountId,
-          profile: seedAdminProfileId,
-          ...AdminAccount,
+          _id: accountId,
+          profile: profileId,
+          ...account,
         }),
         this.profileRepository.create({
-          _id: seedAdminProfileId,
-          accountId: seedAdminAccountId,
-          ...AdminProfile,
+          _id: profileId,
+          accountId,
+          ...profile,
         }),
       ]);
 
-      LogProvider.instance.info("Admin account created");
+      this.levelToAccMap.set(acl, { accountId, profileId });
     }
-
-    return null;
   }
 
   public async bootstrapShoesData(): Promise<any> {
@@ -64,6 +108,7 @@ export class BootstrapProvider implements IBootstrapProvider {
 
     const shoeCount = await this.shoeRepository.estimatedDocumentCount().exec();
     const shoes = this.getRawShoesData();
+    this.shoeIds = shoes.map((s) => s._id);
 
     if (shoeCount < shoes.length) {
       LogProvider.instance.info(`Inserting ${shoes.length} shoes`);
@@ -178,10 +223,42 @@ export class BootstrapProvider implements IBootstrapProvider {
     ]);
   }
 
-  public async bootstrapShippingService(): Promise<any> {
-    await this.shippingService.initialze();
-    this.shippingService.registerWebHookCallback();
-    this.shippingService.parseGhnShippingData();
-    return;
+  public async bootstrapInventoryAndOrder(): Promise<void> {
+    // Already bootstrapped
+    if (this.levelToAccMap.size === 0) {
+      return;
+    }
+    
+    let shoeId = _.sample(this.shoeIds);
+    if (!shoeId) {
+      shoeId = (await this.shoeRepository.findOne().exec())._id;
+    }
+
+    const rawInventory: Partial<Inventory> = {
+      sellerId: this.levelToAccMap.get(AccessLevel.Seller).profileId,
+      shoeId,
+      shoeSize: "8.5",
+      sellPrice: 4500000,
+      quantity: 10,
+    };
+
+    const inventory = await this.inventoryRepo.create(rawInventory);
+
+    const order: Partial<Order> = {
+      buyerId: this.levelToAccMap.get(AccessLevel.User).profileId,
+      shoeId,
+      inventoryId: inventory._id,
+      // @ts-ignore
+      shippingAddress: UserRegularProfile.userProvidedAddress,
+      soldPrice: 4500000,
+      trackingStatus: [
+        {
+          status: TrackingStatus.WAITING_FOR_BANK_TRANSFER,
+          date: new Date(),
+        },
+      ],
+      paymentMethod: PaymentMethod.BANK_TRANSFER,
+    };
+    await this.orderRepo.create(order);
   }
 }

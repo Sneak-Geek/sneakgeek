@@ -35,7 +35,7 @@ export const OrderSchema = new mongoose.Schema(
       type: UserProvidedAddressSchema,
       required: true,
     },
-    sellingPrice: {
+    soldPrice: {
       type: Number,
       require: true,
     },
@@ -46,6 +46,7 @@ export const OrderSchema = new mongoose.Schema(
           date: Date,
         },
       ],
+      default: [],
       require: true,
     },
     paymentMethod: {
@@ -61,10 +62,11 @@ export const OrderSchema = new mongoose.Schema(
 
 export type Order = Document<{
   buyerId: ObjectId;
+  shoeId: ObjectId;
   inventoryId: ObjectId;
   status: string;
   shippingAddress: UserAddress;
-  sellingPrice: number;
+  soldPrice: number;
   paymentMethod: string;
   trackingStatus: Array<{ status: TrackingStatus; date: Date }>;
 }>;

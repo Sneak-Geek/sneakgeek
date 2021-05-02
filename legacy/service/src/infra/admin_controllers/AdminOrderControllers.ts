@@ -19,6 +19,7 @@ import {
   ValidationPassedMiddleware,
 } from "../middlewares";
 import { TrackingStatus } from "../../assets/constants";
+import { Order } from "../database/Order";
 
 @controller("/api/v1/orders")
 export class AdminOrderController {
@@ -33,7 +34,6 @@ export class AdminOrderController {
     ValidationPassedMiddleware
   )
   public async getOrders(@request() req: Request, @response() res: Response) {
-    // required range
     let range = req.query.range;
     if (!range) {
       return res.status(httpStatus.BAD_REQUEST).json({
@@ -49,7 +49,7 @@ export class AdminOrderController {
     res.setHeader("Access-Control-Expose-Headers", "X-Total-Count");
     res.setHeader("X-Total-Count", `${total}`);
 
-    const returnOrders = orders.map((o) => Object.assign({ id: o._id }, o));
+    const returnOrders = orders.map((order) => this._getOrderWithAdminFormat(order));
 
     return res.status(httpStatus.OK).json(returnOrders);
   }
@@ -73,15 +73,12 @@ export class AdminOrderController {
 
     const order = await this.orderDao.getOrderById(orderId);
 
-    return res.status(httpStatus.OK).json({
-      ...order,
-      id: order._id,
-    });
+    return res.status(httpStatus.OK).json(this._getOrderWithAdminFormat(order));
   }
 
   @httpPut(
     "/:orderId",
-    body("status").isIn(Object.keys(TrackingStatus)),
+    body("lastTrackingStatus").isIn(Object.keys(TrackingStatus)),
     AuthMiddleware,
     AdminPermissionMiddleware,
     ValidationPassedMiddleware
@@ -96,19 +93,40 @@ export class AdminOrderController {
         message: "orderId is required",
       });
     }
-    const { status } = req.body;
+    const { lastTrackingStatus } = req.body;
     try {
-      const order = await this.orderDao.updateTrackingAndOrderStatus(orderId, status);
+      let order = await this.orderDao.updateTrackingAndOrderStatus(
+        orderId,
+        lastTrackingStatus
+      );
       if (!order) {
         return res.status(httpStatus.BAD_REQUEST).send({ message: "Bad request!" });
       }
 
-      // TO DO: Email notification
-      return order;
+      // TODO: Email notification
+      // Populating order data
+      order = await this.orderDao.getOrderById(orderId);
+      return res.status(httpStatus.OK).json(this._getOrderWithAdminFormat(order));
     } catch (error) {
       return res.status(httpStatus.INTERNAL_SERVER_ERROR).send({
         message: "Unexpected error!",
       });
     }
+  }
+
+  private _getOrderWithAdminFormat(order: Order) {
+    return {
+      ...order,
+      id: order._id,
+      lastTrackingStatus: this._getLastTrackingStatus(order),
+    };
+  }
+
+  private _getLastTrackingStatus(order: Order) {
+    if (order.trackingStatus.length === 0) {
+      return undefined;
+    }
+
+    return order.trackingStatus[order.trackingStatus.length - 1].status;
   }
 }

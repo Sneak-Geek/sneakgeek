@@ -69,7 +69,7 @@ export class OrderController {
     body("inventoryId").isMongoId(),
     body("addressLine1").isString(),
     body("addressLine2").optional().isString(),
-    body("sellingPrice").isInt(),
+    body("soldPrice").isInt(),
     AuthMiddleware,
     AccountVerifiedMiddleware,
     ValidationPassedMiddleware
@@ -77,7 +77,7 @@ export class OrderController {
   public async bankTransfer(@request() req: Request, @response() res: Response) {
     // Update inventory and create order
     // TO DO: Implement transactions with isolation and atomicity. Ref: https://docs.mongodb.com/manual/core/transactions/
-    const { paymentType, inventoryId, addressLine1, addressLine2, sellingPrice } = req.body;
+    const { paymentType, inventoryId, addressLine1, addressLine2, soldPrice } = req.body;
     const user = req.user as UserAccount;
     const updatedInventory = await this.inventoryDao.updateInventoryWhenCreateOrder(
       inventoryId as string
@@ -101,7 +101,7 @@ export class OrderController {
         addressLine1: (addressLine1 as unknown) as string,
         addressLine2: (addressLine2 as unknown) as string,
       },
-      sellingPrice: (sellingPrice as unknown) as number,
+      soldPrice: (soldPrice as unknown) as number,
       paymentMethod: (paymentType as unknown) as PaymentMethod,
       trackingStatus,
     };
