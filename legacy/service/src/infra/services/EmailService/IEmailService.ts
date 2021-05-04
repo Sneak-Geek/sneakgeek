@@ -10,4 +10,5 @@ export interface IEmailService {
     verification: Verification,
     host: string
   ): Promise<any>;
+  notifyUser(email: string, subject: string, text: string): Promise<any>;
 }

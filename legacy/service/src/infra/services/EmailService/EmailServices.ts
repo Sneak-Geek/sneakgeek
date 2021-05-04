@@ -45,4 +45,27 @@ export class EmailService implements IEmailService {
 
     return deferred.promise;
   }
+
+  public notifyUser(email: string, subject: string, text: string): Promise<any> {
+    const deferred = Promise.defer();
+
+    if (!email || !subject || !text) deferred.resolve();
+
+    const mailOptions = {
+      from: "no-reply@support.sneakgeek.io",
+      to: email,
+      subject,
+      text,
+    };
+
+    this.mailgun.messages().send(mailOptions, (err: any, body: any) => {
+      if (err) {
+        deferred.reject(err);
+      } else {
+        deferred.resolve(body);
+      }
+    });
+
+    return deferred.promise;
+  }
 }
