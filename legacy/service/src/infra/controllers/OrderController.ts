@@ -22,15 +22,13 @@ import {
   AccountVerifiedMiddleware,
 } from "../middlewares";
 import { PaymentMethod, TrackingStatus } from "../../assets/constants";
-import { IOrderDao, IInventoryDao } from "../dao";
+import { IOrderDao } from "../dao";
 import { UserAccount } from "../database";
 import mongoose from "mongoose";
+import { AsbtractOrderController } from "./AbstractOrderController";
 
 @controller("/api/v1/order")
-export class OrderController {
-  @inject(Types.InventoryDao)
-  private readonly inventoryDao!: IInventoryDao;
-
+export class OrderController extends AsbtractOrderController {
   @inject(Types.OrderDao)
   private readonly orderDao!: IOrderDao;
 
@@ -130,7 +128,8 @@ export class OrderController {
         return res.status(HttpStatus.BAD_REQUEST).send({ message: "Bad request!" });
       }
 
-      // TO DO: Email notification
+      await this.notifyByEmail(order, status);
+
       return order;
     } catch (error) {
       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({

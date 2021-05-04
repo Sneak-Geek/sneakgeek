@@ -20,10 +20,13 @@ import {
 } from "../middlewares";
 import { TrackingStatus } from "../../assets/constants";
 import { Order } from "../database/Order";
+import { AsbtractOrderController } from "../controllers/AbstractOrderController";
 
 @controller("/api/v1/orders")
-export class AdminOrderController {
-  public constructor(@inject(Types.OrderDao) private orderDao: IOrderDao) {}
+export class AdminOrderController extends AsbtractOrderController {
+  public constructor(@inject(Types.OrderDao) private orderDao: IOrderDao) {
+    super();
+  }
 
   // Get all pending orders
   @httpGet(
@@ -103,7 +106,8 @@ export class AdminOrderController {
         return res.status(httpStatus.BAD_REQUEST).send({ message: "Bad request!" });
       }
 
-      // TODO: Email notification
+      // TO DO: Email notification
+      await this.notifyByEmail(order, lastTrackingStatus);
       // Populating order data
       order = await this.orderDao.getOrderById(orderId);
       return res.status(httpStatus.OK).json(this._getOrderWithAdminFormat(order));
