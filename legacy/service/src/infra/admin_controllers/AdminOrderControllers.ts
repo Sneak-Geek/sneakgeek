@@ -97,10 +97,10 @@ export class AdminOrderController extends AsbtractOrderController {
       });
     }
     const { lastTrackingStatus, refundInfo } = req.body;
-    
+
     if (refundInfo && lastTrackingStatus !== TrackingStatus.REFUND_TO_BUYER) {
       return res.status(httpStatus.BAD_REQUEST).json({
-        message: "Refund info should come with refund status"
+        message: "Refund info should come with refund status",
       });
     }
 
