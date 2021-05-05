@@ -39,17 +39,19 @@ export class OrderDao implements IOrderDao {
   }
 
   private async updateTrackingAndOrderStatusHelper(
+    refundInfo: string | undefined,
     orderId: string,
     trackingStatus: TrackingStatus,
     orderStatus: OrderStatus = OrderStatus.PENDING
   ): Promise<Order> {
-    return this.orderRepo.findOneAndUpdate(
-      { _id: orderId },
-      {
-        $push: { trackingStatus: { status: trackingStatus, date: Date.now() } },
-        status: orderStatus,
-      }
-    );
+    const updates = {
+      $push: { trackingStatus: { status: trackingStatus, date: Date.now() } },
+      status: orderStatus,
+    };
+    if (refundInfo) {
+      updates["refundInfo"] = refundInfo;
+    }
+    return this.orderRepo.findOneAndUpdate({ _id: orderId }, updates);
   }
 
   private _isValidTrackingStatus(status: TrackingStatus): Boolean {
@@ -72,7 +74,8 @@ export class OrderDao implements IOrderDao {
 
   public async updateTrackingAndOrderStatus(
     orderId: string,
-    status: TrackingStatus
+    status: TrackingStatus,
+    refundInfo?: string
   ): Promise<Order> {
     const order = await this.findById(orderId);
     const { trackingStatus } = order;
@@ -87,16 +90,23 @@ export class OrderDao implements IOrderDao {
     if (
       status === TrackingStatus.NOT_RECEIVED_BANK_TRANSFER ||
       status === TrackingStatus.SELLER_REJECTED_ORDER ||
-      status === TrackingStatus.SHOE_UNQUALIFIED
+      status === TrackingStatus.SHOE_UNQUALIFIED ||
+      status === TrackingStatus.REFUND_TO_BUYER
     ) {
-      return this.updateTrackingAndOrderStatusHelper(orderId, status, OrderStatus.FAILED);
+      return this.updateTrackingAndOrderStatusHelper(
+        refundInfo,
+        orderId,
+        status,
+        OrderStatus.FAILED
+      );
     } else if (status === TrackingStatus.BUYER_RECEIVED) {
       return this.updateTrackingAndOrderStatusHelper(
+        undefined,
         orderId,
         status,
         OrderStatus.COMPLETED
       );
-    } else return this.updateTrackingAndOrderStatusHelper(orderId, status);
+    } else return this.updateTrackingAndOrderStatusHelper(undefined, orderId, status);
   }
 
   public async destroyById(OrderId: string | ObjectId): Promise<Order | undefined> {

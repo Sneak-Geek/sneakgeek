@@ -16,6 +16,7 @@ export enum TrackingStatus {
   NOT_RECEIVED_BANK_TRANSFER = "NOT_RECEIVED_BANK_TRANSFER", // Send to Buyer and SneakGeek
   SELLER_APPROVED_ORDER = "SELLER_APPROVED_ORDER", // Send to SneakGeek and seller
   SELLER_REJECTED_ORDER = "SELLER_REJECTED_ORDER", //  Send to SneakGeek and Buyer and seller
+  REFUND_TO_BUYER = "REFUND_TO_BUYER",
   ORDER_BEING_SENT_TO_SNKGK_FOR_AUTHENTICATION = "ORDER_BEING_SENT_TO_SNKGK_FOR_AUTHENTICATION", // Khong can email
   SHOE_VERIFIED = "SHOE_VERIFIED", // Send SneakGeek
   SHOE_UNQUALIFIED = "SHOE_UNQUALIFIED", // Send to seller, buyer, and SneakGeek
@@ -31,6 +32,7 @@ export const TrackingStatusOrdering: Map<TrackingStatus, TrackingStatus> = new M
   [TrackingStatus.NOT_RECEIVED_BANK_TRANSFER, TrackingStatus.WAITING_FOR_BANK_TRANSFER],
   [TrackingStatus.SELLER_APPROVED_ORDER, TrackingStatus.RECEIVED_BANK_TRANSFER],
   [TrackingStatus.SELLER_REJECTED_ORDER, TrackingStatus.RECEIVED_BANK_TRANSFER],
+  [TrackingStatus.REFUND_TO_BUYER, TrackingStatus.SELLER_REJECTED_ORDER],
   [
     TrackingStatus.ORDER_BEING_SENT_TO_SNKGK_FOR_AUTHENTICATION,
     TrackingStatus.SELLER_APPROVED_ORDER,

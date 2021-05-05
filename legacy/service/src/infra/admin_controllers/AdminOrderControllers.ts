@@ -96,7 +96,14 @@ export class AdminOrderController extends AsbtractOrderController {
         message: "orderId is required",
       });
     }
-    const { lastTrackingStatus } = req.body;
+    const { lastTrackingStatus, refundInfo } = req.body;
+    
+    if (refundInfo && lastTrackingStatus !== TrackingStatus.REFUND_TO_BUYER) {
+      return res.status(httpStatus.BAD_REQUEST).json({
+        message: "Refund info should come with refund status"
+      });
+    }
+
     try {
       let order = await this.orderDao.updateTrackingAndOrderStatus(
         orderId,
@@ -106,7 +113,6 @@ export class AdminOrderController extends AsbtractOrderController {
         return res.status(httpStatus.BAD_REQUEST).send({ message: "Bad request!" });
       }
 
-      // TO DO: Email notification
       await this.notifyByEmail(order, lastTrackingStatus);
       // Populating order data
       order = await this.orderDao.getOrderById(orderId);

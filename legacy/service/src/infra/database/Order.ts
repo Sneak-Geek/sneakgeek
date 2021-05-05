@@ -39,6 +39,7 @@ export const OrderSchema = new mongoose.Schema(
       type: Number,
       require: true,
     },
+    refundInfo: String,
     trackingStatus: {
       type: [
         {
@@ -69,6 +70,7 @@ export type Order = Document<{
   soldPrice: number;
   paymentMethod: string;
   trackingStatus: Array<{ status: TrackingStatus; date: Date }>;
+  refundInfo: string;
 }>;
 
 export const OrderRepository: Repository<Order> = mongoose.model("Order", OrderSchema);
