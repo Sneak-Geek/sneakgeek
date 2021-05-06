@@ -29,7 +29,8 @@ export interface IOrderDao {
   updateStatus(orderId: string, status: OrderStatus): Promise<Order>;
   updateTrackingAndOrderStatus(
     orderId: string,
-    trackingStatus: TrackingStatus
+    trackingStatus: TrackingStatus,
+    refundInfo?: string
   ): Promise<Order>;
   findById(orderId: string): Promise<Order>;
   destroyById(OrderId: string): Promise<Order>;
