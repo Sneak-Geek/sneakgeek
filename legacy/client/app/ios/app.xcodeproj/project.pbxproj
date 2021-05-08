@@ -14,7 +14,7 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		1C7AD14D4DBD436AA6B16B2D /* RobotoCondensed-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DADCA8F32A7D471F9735002E /* RobotoCondensed-BoldItalic.ttf */; };
-		2064B33E2646E2C40097F880 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2064B33D2646E2C40097F880 /* GoogleService-Info.plist */; };
+		2064B3442646E7BE0097F880 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2064B3432646E7BE0097F880 /* GoogleService-Info.plist */; };
 		415273B37D6245B19EC32C41 /* RobotoCondensed-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 73B8135B1F4D4A4290048004 /* RobotoCondensed-Light.ttf */; };
 		46C8FCDBD4CEF8A7BEFB8DF6 /* libPods-app.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DBC5E9EF9334E66D50AA917 /* libPods-app.a */; };
 		4C178DC7C6E43567E966E903 /* libPods-app-appTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BE4FD79269D2B92EC7591300 /* libPods-app-appTests.a */; };
@@ -47,7 +47,7 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = app/Images.xcassets; sourceTree = SOURCE_ROOT; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = app/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = app/main.m; sourceTree = "<group>"; };
-		2064B33D2646E2C40097F880 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		2064B3432646E7BE0097F880 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		20DBBFC32454BE0300D18FED /* app.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = app.entitlements; path = app/app.entitlements; sourceTree = "<group>"; };
 		270C21C3AD1C413FBF169A49 /* Feather.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Feather.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Feather.ttf"; sourceTree = "<group>"; };
 		2DB6BF0CE6214526AA91D33A /* RobotoCondensed-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "RobotoCondensed-Bold.ttf"; path = "../assets/fonts/RobotoCondensed-Bold.ttf"; sourceTree = "<group>"; };
@@ -119,7 +119,7 @@
 		13B07FAE1A68108700A75B9A /* app */ = {
 			isa = PBXGroup;
 			children = (
-				2064B33D2646E2C40097F880 /* GoogleService-Info.plist */,
+				2064B3432646E7BE0097F880 /* GoogleService-Info.plist */,
 				20DBBFC32454BE0300D18FED /* app.entitlements */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
@@ -310,7 +310,7 @@
 			files = (
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
-				2064B33E2646E2C40097F880 /* GoogleService-Info.plist in Resources */,
+				2064B3442646E7BE0097F880 /* GoogleService-Info.plist in Resources */,
 				5D9D0FDC34454E39AA238932 /* RobotoCondensed-Bold.ttf in Resources */,
 				1C7AD14D4DBD436AA6B16B2D /* RobotoCondensed-BoldItalic.ttf in Resources */,
 				A398036BDC304B0DA4ED5162 /* RobotoCondensed-Italic.ttf in Resources */,
