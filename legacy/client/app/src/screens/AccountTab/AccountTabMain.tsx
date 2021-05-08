@@ -92,18 +92,6 @@ export class AccountTabMain extends React.Component<Props> {
       leftIcon: 'person',
     },
     {
-      title: this._isSeller() ? strings.Inventory : strings.History,
-      onClick: (): void =>
-        this._onClickWithAccountGuarded(() => {
-          if (this._isSeller()) {
-            this.props.navigation.push(RouteNames.Tab.AccountTab.Inventory);
-          } else {
-            this.props.navigation.push(RouteNames.Tab.AccountTab.OrderHistory);
-          }
-        }),
-      leftIcon: this._isSeller() ? 'shopping-cart' : 'history',
-    },
-    {
       title: strings.AppContact,
       onClick: (): void =>
         this.props.navigation.push(RouteNames.Tab.AccountTab.ContactUs),
