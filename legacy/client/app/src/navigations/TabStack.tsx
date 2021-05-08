@@ -32,8 +32,11 @@ import {SellOrderHistory} from 'screens/TransactionTab';
 
 const Tab = createBottomTabNavigator();
 
-const TabBarIcon = (name: string, type?: string) => ({color, size}): JSX.Element => (
-  <Icon name={name} size={size} color={color} {...type ? {type} : {}}/>
+const TabBarIcon = (name: string, type?: string) => ({
+  color,
+  size,
+}): JSX.Element => (
+  <Icon name={name} size={size} color={color} {...(type ? {type} : {})} />
 );
 
 const AccountStack = createStackNavigator();
@@ -167,23 +170,21 @@ const SearchTab = (): JSX.Element => (
 
 const TransactionStack = createStackNavigator();
 export const TransactionTab = (): JSX.Element => {
-    return (
-        <TransactionStack.Navigator>
-        <TransactionStack.Screen 
-            name={RouteNames.Tab.TransactionTab.Main}
-            component={SellOrderHistory}
-            options={{
-              gestureEnabled: null,
-              ...themes.headerStyle,
-              title: strings.TransactionInfo,
-              headerLeft: () => (
-                <View></View>
-              ),
-            }}
-        />
-        </TransactionStack.Navigator>
-    );
-}
+  return (
+    <TransactionStack.Navigator>
+      <TransactionStack.Screen
+        name={RouteNames.Tab.TransactionTab.Main}
+        component={SellOrderHistory}
+        options={{
+          gestureEnabled: null,
+          ...themes.headerStyle,
+          title: strings.TransactionInfo,
+          headerLeft: () => <View />,
+        }}
+      />
+    </TransactionStack.Navigator>
+  );
+};
 
 type RootTabProps = {
   pushDeviceToken: string;
