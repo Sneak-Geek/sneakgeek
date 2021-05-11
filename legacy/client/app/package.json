@@ -24,7 +24,7 @@
     "axios": "^0.19.2",
     "business": "file:../business",
     "humanize-plus": "^1.8.2",
-    "lodash": "^4.17.20",
+    "lodash": "^4.17.21",
     "react": "16.13.1",
     "react-native": "0.63.4",
     "react-native-action-sheet": "^2.2.0",
