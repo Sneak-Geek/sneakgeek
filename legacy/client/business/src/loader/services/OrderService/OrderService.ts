@@ -6,6 +6,7 @@ import {
   PopulatedBuyOrder,
   Transaction
 } from "../../../model";
+import { TrackingStatus } from "../../../assets";
 
 export class OrderService extends BaseService implements IOrderService {
   async getTrendingOrder(count: number): Promise<TrendingOrder[]> {
@@ -153,5 +154,16 @@ export class OrderService extends BaseService implements IOrderService {
     });
 
     return response.data;
+  }
+
+  public async updateBySeller(token: string, orderId: string, status: TrackingStatus): Promise<void> {
+    this.apiClient.getInstance().put(`/order/update-seller`, {
+      orderId, status
+    },
+      {
+        headers: {
+          authorization: token
+        }
+      });
   }
 }

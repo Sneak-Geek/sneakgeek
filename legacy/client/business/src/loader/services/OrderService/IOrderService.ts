@@ -1,4 +1,4 @@
-import { OrderStatus } from "../../../assets";
+import { OrderStatus, TrackingStatus } from "../../../assets";
 import {
   SellOrder,
   BuyOrder,
@@ -57,4 +57,5 @@ export interface IOrderService {
   getPopulatedSellOrderById: (token: string, orderId: string) => Promise<PopulatedSellOrder>;
   getTrendingOrder: (count: number) => Promise<TrendingOrder[]>;
   getOrderHistory: (token: string) => Promise<OrderHistory[]>;
+  updateBySeller: (token: string, orderId: string, status: TrackingStatus) => Promise<void>;
 }

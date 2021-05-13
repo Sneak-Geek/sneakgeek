@@ -15,6 +15,11 @@ export const OrderSchema = new mongoose.Schema(
       ref: "UserProfile",
       required: true,
     },
+    sellerId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "UserProfile",
+      required: true,
+    },
     shoeId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Shoe",
@@ -63,6 +68,7 @@ export const OrderSchema = new mongoose.Schema(
 
 export type Order = Document<{
   buyerId: ObjectId;
+  sellerId: ObjectId;
   shoeId: ObjectId;
   inventoryId: ObjectId;
   status: string;
