@@ -184,5 +184,5 @@ export const strings = {
   BuyDate: 'Ngày mua',
   CustomerSupportEmail: 'support@sneakgeek.io',
   CustomerSupportPOCName: 'Trần Quang Đại',
-  TransactionInfo: 'Thông tin giao dịch'
+  TransactionInfo: 'Lịch sử giao dịch',
 };

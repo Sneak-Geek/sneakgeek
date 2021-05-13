@@ -12,7 +12,7 @@ import {
 } from 'business';
 import {themes, strings} from 'resources';
 import {AppText} from 'screens/Shared';
-import {ListItem} from 'react-native-elements';
+import {Icon, ListItem} from 'react-native-elements';
 import {StackNavigationProp} from '@react-navigation/stack';
 import RouteNames from 'navigations/RouteNames';
 import {
@@ -164,13 +164,16 @@ export class AccountTabMain extends React.Component<Props> {
     return this.settings.map((setting) => (
       <ListItem
         key={setting.title}
-        chevron={true}
-        title={setting.title}
         bottomDivider={true}
-        titleStyle={themes.TextStyle.body}
-        leftIcon={{name: setting.leftIcon, color: themes.AppPrimaryColor}}
-        onPress={setting.onClick}
-      />
+        onPress={setting.onClick}>
+        <Icon name={setting.leftIcon} color={themes.AppPrimaryColor} />
+        <ListItem.Content>
+          <ListItem.Title style={themes.TextStyle.body}>
+            {setting.title}
+          </ListItem.Title>
+        </ListItem.Content>
+        <ListItem.Chevron />
+      </ListItem>
     ));
   }
 
@@ -183,17 +186,18 @@ export class AccountTabMain extends React.Component<Props> {
     return (
       <ListItem
         key={title}
-        chevron={true}
-        title={title}
         bottomDivider={true}
-        titleStyle={themes.TextStyle.body}
-        leftIcon={{
-          name: iconTitle,
-          color: themes.AppPrimaryColor,
-          type: 'material-community',
-        }}
-        onPress={this._bottomButtonHandler.bind(this, isAccountAvailable)}
-      />
+        onPress={this._bottomButtonHandler.bind(this, isAccountAvailable)}>
+        <Icon
+          name={iconTitle}
+          color={themes.AppPrimaryColor}
+          type={'material-community'}
+        />
+        <ListItem.Content>
+          <ListItem.Title style={themes.TextStyle.body}>{title}</ListItem.Title>
+        </ListItem.Content>
+        <ListItem.Chevron />
+      </ListItem>
     );
   }
 

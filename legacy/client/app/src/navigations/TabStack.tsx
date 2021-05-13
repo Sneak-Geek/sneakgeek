@@ -29,6 +29,7 @@ import {IAppState} from 'store/AppStore';
 import {RootStackParams} from './RootStack';
 import {connect} from 'utilities';
 import {SellOrderHistory} from 'screens/TransactionTab';
+import {TransactionHistory} from 'screens/TransactionTab/TransactionHistory';
 
 const Tab = createBottomTabNavigator();
 
@@ -57,14 +58,6 @@ const AccountTab = (): JSX.Element => (
       options={{
         ...themes.headerStyle,
         title: strings.Inventory,
-      }}
-    />
-    <AccountStack.Screen
-      name={RouteNames.Tab.AccountTab.InventoryDetail}
-      component={AccountTabInventoryDetail}
-      options={{
-        ...themes.headerStyle,
-        title: strings.InventoryDetail,
       }}
     />
     <AccountStack.Screen
