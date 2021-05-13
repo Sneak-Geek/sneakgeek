@@ -117,13 +117,13 @@ export class OrderDao implements IOrderDao {
     return this.orderRepo.findById(OrderId).exec();
   }
 
-  public async getOrderHistoryByUserId(buyerId: string): Promise<OrderHistory[]> {
+  public async getUserHistory(profileId: string, isSeller: boolean): Promise<Order[]> {
+    const matchField = isSeller ? "sellerId" : "buyerId";
+    const matchQuery = { [matchField]: mongoose.Types.ObjectId(profileId) };
     return this.orderRepo
       .aggregate([
         {
-          $match: {
-            buyerId: mongoose.Types.ObjectId(buyerId),
-          },
+          $match: matchQuery,
         },
         {
           $lookup: {
@@ -139,7 +139,7 @@ export class OrderDao implements IOrderDao {
         {
           $lookup: {
             from: "shoes",
-            localField: "inventory.shoeId",
+            localField: "shoeId",
             foreignField: "_id",
             as: "shoe",
           },

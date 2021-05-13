@@ -229,28 +229,38 @@ export class BootstrapProvider implements IBootstrapProvider {
       return;
     }
 
-    let shoeId = _.sample(this.shoeIds);
-    if (!shoeId) {
-      shoeId = (await this.shoeRepository.findOne().exec())._id;
-    }
+    const inventories = await this._bootstrapInventory();
+    return this._bootstrapOrders(inventories);
+  }
 
-    const rawInventory: Partial<Inventory> = {
-      sellerId: this.levelToAccMap.get(AccessLevel.Seller).profileId,
-      shoeId,
+  private async _bootstrapInventory(): Promise<Inventory[]> {
+    const shoeIds = (
+      await this.shoeRepository
+        .find({ brand: "Jordan" })
+        .sort({ createdAt: -1 })
+        .limit(50)
+        .exec()
+    ).map((s) => s._id);
+    const sellerId = this.levelToAccMap.get(AccessLevel.Seller).profileId;
+    const rawInventories: Array<Partial<Inventory>> = shoeIds.map((s) => ({
+      sellerId,
+      shoeId: s,
       shoeSize: "8.5",
-      sellPrice: 4500000,
+      sellPrice: 5000000,
       quantity: 10,
-    };
+    }));
 
-    const inventory = await this.inventoryRepo.create(rawInventory);
+    return this.inventoryRepo.insertMany(rawInventories);
+  }
 
-    const order: Partial<Order> = {
+  private _bootstrapOrders(inventories: Array<Inventory>): Promise<any> {
+    const orders = inventories.slice(0, 10).map((inv) => ({
       buyerId: this.levelToAccMap.get(AccessLevel.User).profileId,
-      shoeId,
-      inventoryId: inventory._id,
-      // @ts-ignore
+      sellerId: inv.sellerId,
+      shoeId: inv.shoeId,
+      inventoryId: inv._id,
       shippingAddress: UserRegularProfile.userProvidedAddress,
-      soldPrice: 4500000,
+      soldPrice: inv.sellPrice,
       trackingStatus: [
         {
           status: TrackingStatus.WAITING_FOR_BANK_TRANSFER,
@@ -258,7 +268,8 @@ export class BootstrapProvider implements IBootstrapProvider {
         },
       ],
       paymentMethod: PaymentMethod.BANK_TRANSFER,
-    };
-    await this.orderRepo.create(order);
+    }));
+
+    return this.orderRepo.insertMany(orders, { ordered: false, rawResult: false });
   }
 }

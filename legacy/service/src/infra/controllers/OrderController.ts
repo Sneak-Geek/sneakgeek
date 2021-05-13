@@ -12,8 +12,8 @@ import {
   response,
   httpGet,
   queryParam,
-  requestBody,
   httpPost,
+  httpPut,
 } from "inversify-express-utils";
 import { Types } from "../../configuration/inversify";
 import {
@@ -23,7 +23,7 @@ import {
 } from "../middlewares";
 import { PaymentMethod, TrackingStatus } from "../../assets/constants";
 import { IOrderDao } from "../dao";
-import { UserAccount } from "../database";
+import { AccessLevel, Order, UserAccount, UserProfile } from "../database";
 import mongoose from "mongoose";
 import { AsbtractOrderController } from "./AbstractOrderController";
 
@@ -32,16 +32,21 @@ export class OrderController extends AsbtractOrderController {
   @inject(Types.OrderDao)
   private readonly orderDao!: IOrderDao;
 
-  @httpGet("/", AuthMiddleware, AccountVerifiedMiddleware, ValidationPassedMiddleware)
-  public async getOrderHistoryByUserId(
-    @request() req: Request,
-    @requestBody() body: any,
-    @response() res: Response
-  ) {
+  @httpGet("/", AuthMiddleware, AccountVerifiedMiddleware)
+  public async getOrderHistory(@request() req: Request, @response() res: Response) {
     const user = req.user as UserAccount;
-    const buyerId = (user.profile as mongoose.Types.ObjectId).toHexString();
-    const order = await this.orderDao.getOrderHistoryByUserId(buyerId);
-    return res.status(HttpStatus.OK).send(order);
+    const profileId = (user.profile as mongoose.Types.ObjectId).toHexString();
+
+    if (user.accessLevel !== AccessLevel.User && user.accessLevel !== AccessLevel.Seller) {
+      return res.status(HttpStatus.BAD_REQUEST).send({
+        message: "Not seller or buyer",
+      });
+    }
+    const orders = await this.orderDao.getUserHistory(
+      profileId,
+      user.accessLevel === AccessLevel.Seller
+    );
+    return res.status(HttpStatus.OK).send(orders);
   }
 
   @httpGet("/shoe-price-size-map", query("shoeId").isMongoId(), ValidationPassedMiddleware)
@@ -93,6 +98,7 @@ export class OrderController extends AsbtractOrderController {
 
     const newOrder = {
       buyerId: (user.profile as unknown) as string,
+      sellerId: updatedInventory.sellerId,
       inventoryId: (inventoryId as unknown) as string,
       shoeId: (updatedInventory.shoeId as unknown) as string,
       shippingAddress: {
@@ -109,7 +115,7 @@ export class OrderController extends AsbtractOrderController {
     return res.status(HttpStatus.OK).send(order);
   }
 
-  @httpPost(
+  @httpPut(
     "/update-seller",
     body("status").isIn([
       TrackingStatus.SELLER_APPROVED_ORDER,

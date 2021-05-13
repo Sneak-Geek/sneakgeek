@@ -1,3 +1,5 @@
+import { TrackingStatus } from "../assets/constants";
+
 export type Order = {
   _id: string;
   buyerId: string;
@@ -7,4 +9,10 @@ export type Order = {
     addressLine1: string;
     addressLine2: string;
   };
+  trackingStatus: [
+    {
+      status: TrackingStatus;
+      date: Date;
+    }
+  ];
 }

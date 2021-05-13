@@ -4,7 +4,7 @@ export type AuthProvider = "facebook" | "google" | "apple";
 
 export type Account = {
   isVerified: boolean;
-  accessLevel: number;
+  accessLevel: string;
   _id: string;
   profile: string | Partial<Profile>;
   createdAt: string;
