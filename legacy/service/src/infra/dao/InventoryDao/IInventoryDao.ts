@@ -2,6 +2,7 @@
 //! Copyright (c) 2019 - SneakGeek. All rights reserved
 //!
 
+import { ObjectId } from "mongodb";
 import { Inventory, Shoe } from "../../database";
 import { CreateInventoryDto } from "./CreateInventoryDto";
 
@@ -30,4 +31,5 @@ export interface IInventoryDao {
   getCurrentlySelling(): Promise<CurrentlySellData>;
   getLowestPrice(shoeId: string): Promise<number>;
   updateInventoryWhenCreateOrder(inventoryId: string): Promise<Inventory>;
+  getMatchingInventory(shoeId: string | ObjectId, price: number): Promise<Inventory>;
 }

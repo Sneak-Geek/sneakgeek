@@ -8,6 +8,7 @@ import { Inventory, Repository } from "../../database";
 import { CreateInventoryDto } from "./CreateInventoryDto";
 import { IInventoryDao } from "./IInventoryDao";
 import mongoose from "mongoose";
+import { ObjectId } from "mongodb";
 
 @injectable()
 export class InventoryDao implements IInventoryDao {
@@ -148,5 +149,15 @@ export class InventoryDao implements IInventoryDao {
       { _id: inventoryId, quantity: { $gt: 0 } },
       { $inc: { quantity: -1 } }
     );
+  }
+
+  public async getMatchingInventory(
+    shoeId: string | ObjectId,
+    price: number
+  ): Promise<Inventory> {
+    return this.inventoryRepository.findOne({
+      shoeId: new ObjectId(shoeId),
+      sellPrice: price,
+    });
   }
 }
