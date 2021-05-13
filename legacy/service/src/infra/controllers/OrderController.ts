@@ -29,8 +29,12 @@ import { AsbtractOrderController } from "./AbstractOrderController";
 
 @controller("/api/v1/order")
 export class OrderController extends AsbtractOrderController {
-  @inject(Types.OrderDao)
-  private readonly orderDao!: IOrderDao;
+  constructor(
+    @inject(Types.OrderDao)
+    private readonly orderDao: IOrderDao
+  ) {
+    super();
+  }
 
   @httpGet("/", AuthMiddleware, AccountVerifiedMiddleware)
   public async getOrderHistory(@request() req: Request, @response() res: Response) {
@@ -69,7 +73,7 @@ export class OrderController extends AsbtractOrderController {
   @httpPost(
     "/bank-transfer",
     body("paymentType").isIn(Object.keys(PaymentMethod)),
-    body("inventoryId").isMongoId(),
+    body("shoeId").isMongoId(),
     body("addressLine1").isString(),
     body("addressLine2").optional().isString(),
     body("soldPrice").isInt(),
@@ -80,10 +84,13 @@ export class OrderController extends AsbtractOrderController {
   public async bankTransfer(@request() req: Request, @response() res: Response) {
     // Update inventory and create order
     // TO DO: Implement transactions with isolation and atomicity. Ref: https://docs.mongodb.com/manual/core/transactions/
-    const { paymentType, inventoryId, addressLine1, addressLine2, soldPrice } = req.body;
+    const { paymentType, shoeId, addressLine1, addressLine2, soldPrice } = req.body;
+    // Bank transfer needs shoeId, soldPrice to find corresponding inventory
+    const inventory = await this.inventoryDao.getMatchingInventory(shoeId, parseInt(soldPrice, 10));
+
     const user = req.user as UserAccount;
     const updatedInventory = await this.inventoryDao.updateInventoryWhenCreateOrder(
-      inventoryId as string
+      inventory._id
     );
 
     if (!updatedInventory) {
@@ -99,7 +106,7 @@ export class OrderController extends AsbtractOrderController {
     const newOrder = {
       buyerId: (user.profile as unknown) as string,
       sellerId: updatedInventory.sellerId,
-      inventoryId: (inventoryId as unknown) as string,
+      inventoryId: (inventory._id as unknown) as string,
       shoeId: (updatedInventory.shoeId as unknown) as string,
       shippingAddress: {
         addressLine1: (addressLine1 as unknown) as string,

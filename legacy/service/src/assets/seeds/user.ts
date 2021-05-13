@@ -33,6 +33,7 @@ export const AdminProfile = {
   },
   userProvidedPhoneNumber: "0947356248",
   isSeller: true,
+  userProvidedEmail: AdminCredential.email,
 };
 
 export const UserCredential = {
@@ -61,6 +62,7 @@ export const UserRegularProfile = {
   },
   userProvidedPhoneNumber: "0912738809",
   isSeller: false,
+  userProvidedEmail: UserCredential.email,
 };
 
 export const SellerCredential = {
@@ -89,4 +91,5 @@ export const SellerProfile = {
   },
   userProvidedPhoneNumber: "0912738809",
   isSeller: true,
+  userProvidedEmail: SellerCredential.email,
 };
