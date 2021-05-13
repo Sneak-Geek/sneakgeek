@@ -86,7 +86,10 @@ export class OrderController extends AsbtractOrderController {
     // TO DO: Implement transactions with isolation and atomicity. Ref: https://docs.mongodb.com/manual/core/transactions/
     const { paymentType, shoeId, addressLine1, addressLine2, soldPrice } = req.body;
     // Bank transfer needs shoeId, soldPrice to find corresponding inventory
-    const inventory = await this.inventoryDao.getMatchingInventory(shoeId, parseInt(soldPrice, 10));
+    const inventory = await this.inventoryDao.getMatchingInventory(
+      shoeId,
+      parseInt(soldPrice, 10)
+    );
 
     const user = req.user as UserAccount;
     const updatedInventory = await this.inventoryDao.updateInventoryWhenCreateOrder(
