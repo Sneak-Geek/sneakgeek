@@ -70,6 +70,7 @@ export const themes = {
     body: {
       fontSize: 17,
       fontFamily: 'RobotoCondensed-Regular',
+      fontWeight: '400',
     },
 
     largecallout: {
@@ -95,6 +96,8 @@ export const themes = {
     footnote: {
       fontSize: 13,
       fontFamily: 'RobotoCondensed-Light',
+      fontWeight: '400',
+      opacity: 0.6,
     },
 
     footnoteRegular: {

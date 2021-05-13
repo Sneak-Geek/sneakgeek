@@ -1,161 +1,265 @@
 import React from 'react';
-import { PaymentType, IOrderService, FactoryKeys } from 'business';
-import { getDependency, connect, getToken } from 'utilities';
-import { toggleIndicator, showSuccessNotification } from 'actions';
-import { strings, themes } from 'resources';
-import { IAppState } from 'store/AppStore';
-import { View, StyleSheet } from 'react-native';
-import { WebView, WebViewMessageEvent } from 'react-native-webview';
-import { RouteProp } from '@react-navigation/native';
-import { RootStackParams } from 'navigations/RootStack';
-import { SafeAreaConsumer } from 'react-native-safe-area-context';
 import {
-  HeaderHeightContext,
-  StackNavigationProp,
-} from '@react-navigation/stack';
-import { AppText } from 'screens/Shared';
-import { Icon } from 'react-native-elements';
-
-type Props = {
-  route: RouteProp<RootStackParams, 'OrderPayment'>;
-  navigation: StackNavigationProp<RootStackParams, 'OrderPayment'>;
-  toggleLoading: (isLoading: boolean) => void;
-  showMessage: (message: string) => void;
-};
-
-type State = {
-  paymentUrl: string;
-};
-
-type PaymentResult = 'success' | 'failed';
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Clipboard,
+  SafeAreaView,
+  Image,
+} from 'react-native';
+import {AppText, BottomButton, Header} from 'screens/Shared';
+import {toCurrencyString} from 'utilities';
+import {useNavigation} from '@react-navigation/native';
+import {images} from 'resources';
 
 const styles = StyleSheet.create({
-  header: {
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    flexDirection: 'row',
+  root: {
+    display: 'flex',
+    flex: 1,
     backgroundColor: 'white',
-    paddingHorizontal: 15,
-    borderBottomColor: themes.DisabledColor,
-    borderBottomWidth: 0.5,
+    flexDirection: 'column',
+    paddingBottom: 35,
+  },
+  orderIdContainer: {
+    paddingLeft: 20,
+    paddingRight: 20,
+    backgroundColor: 'white',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    height: 48,
+    alignItems: 'center',
+  },
+  textBoxContainer: {
+    paddingLeft: 20,
+    paddingRight: 20,
+    paddingBottom: 20,
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  sectionHeader: {
+    paddingTop: 14.5,
+    paddingBottom: 14.5,
+    backgroundColor: 'rgba(30,35,48,0.1)',
+  },
+  sectionContainer: {
+    backgroundColor: 'white',
+    paddingTop: 12,
+  },
+  bankInfoHeaderContainer: {
+    paddingLeft: 20,
+    marginBottom: 8,
+  },
+  textAndCopyButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  bottomButtonContainer: {
+    height: 52,
+    backgroundColor: '#1E2330',
+    borderRadius: 40,
+    marginBottom: 35,
+  },
+  copyButtonContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignContent: 'center',
+    justifyContent: 'center',
+  },
+  copyIconContainer: {
+    width: 19,
+    height: 22,
+    marginRight: 8,
   },
 });
 
-@connect(
-  (_: IAppState) => ({}),
-  (dispatch: Function) => ({
-    toggleLoading: (isLoading: boolean): void => {
-      dispatch(toggleIndicator({ isLoading, message: strings.PleaseWait }));
-    },
-    showMessage: (message: string): void => {
-      dispatch(showSuccessNotification(message));
-    },
-  }),
-)
-export class Payment extends React.Component<Props, State> {
-  private orderService: IOrderService;
-  private paymentType: PaymentType;
-  private inventoryId: string;
-  private addressLine1: string;
-  private addressLine2: string;
-
-  public constructor(props: Props) {
-    super(props);
-    this.orderService = getDependency<IOrderService>(FactoryKeys.IOrderService);
-    this.inventoryId = this.props.route.params.inventoryId;
-    this.paymentType = this.props.route.params.paymentType;
-    this.addressLine1 = this.props.route.params.addressLine1;
-    this.addressLine2 = this.props.route.params.addressLine2;
-
-    this.state = {
-      paymentUrl: '',
-    };
-  }
-
-  public componentDidMount(): void {
-    this._getPaymentUrl();
-  }
-
-  public render(): JSX.Element {
-    return (
-      <SafeAreaConsumer>
-        {(insets): JSX.Element => (
-          <View
-            style={{ paddingTop: insets.top, backgroundColor: 'white', flex: 1 }}>
-            {this._renderHeader(insets.top)}
-            {this.state.paymentUrl !== '' && (
-              <WebView
-                source={{ uri: this.state.paymentUrl }}
-                style={{ flex: 1 }}
-                onMessage={this._onWebViewMessage.bind(this)}
-              />
-            )}
-          </View>
-        )}
-      </SafeAreaConsumer>
-    );
-  }
-
-  private async _getPaymentUrl(): Promise<void> {
-    this.props.toggleLoading(true);
-    try {
-      const paymentUrl = await this.orderService.getCheckoutUrlForPurchase(
-        getToken(),
-        this.paymentType,
-        this.inventoryId,
-        this.addressLine1,
-        this.addressLine2,
-      );
-      this.setState({ paymentUrl });
-    } catch (error) {
-      console.warn(JSON.stringify(error, null, 2));
-    } finally {
-      this.props.toggleLoading(false);
-    }
-  }
-
-  private _renderHeader(top: number): JSX.Element {
-    const title =
-      this.paymentType === 'intl'
-        ? strings.IntlPayment
-        : strings.DomesticPayment;
-
-    return (
-      <HeaderHeightContext.Consumer>
-        {(headerHeight): JSX.Element => (
-          <View
-            style={[
-              styles.header,
-              {
-                height:
-                  headerHeight > 0
-                    ? headerHeight + top
-                    : themes.IosHeaderHeight,
-              },
-            ]}>
-            <View style={{ width: themes.IconSize, aspectRatio: 1 }} />
-            <AppText.Title3>{title}</AppText.Title3>
-            <Icon
-              name={'x'}
-              type={'feather'}
-              size={themes.IconSize}
-              onPress={(): void => this.props.navigation.goBack()}
-            />
-          </View>
-        )}
-      </HeaderHeightContext.Consumer>
-    );
-  }
-
-  private _onWebViewMessage(event: WebViewMessageEvent): void {
-    const data = event.nativeEvent.data as PaymentResult;
-    if (data === 'success') {
-      this.props.showMessage(strings.PaymentSuccess);
-      this.props.navigation.goBack();
-      this.props.navigation.goBack();
-    } else if (data === 'failed') {
-      this.props.navigation.goBack();
-      this.props.showMessage('Đã có lỗi xảy ra, xin vui lòng thử lại');
-    }
-  }
+enum BankInfoComponentType {
+  TEXT_ONLY = 1,
+  TEXT_AND_COPY_BUTTON = 2,
 }
+
+export const Payment: React.FC<any> = ({route}) => {
+  const {navigate} = useNavigation();
+  const {sellPrice} = route.params;
+  return (
+    <SafeAreaView style={styles.root}>
+      <Header topInset={1} title={'Thông tin chuyển khoản'} />
+      <View style={styles.orderIdContainer}>
+        <AppText.SubHeadline>Mã giao dịch</AppText.SubHeadline>
+        <AppText.Headline>aoei201293</AppText.Headline>
+      </View>
+      <BankInfo orderId={'aoei201293'} sellPrice={sellPrice} />
+      <BottomButton
+        title={'Xác nhận chuyển khoản'.toUpperCase()}
+        style={styles.bottomButtonContainer}
+        onPress={() => {
+          navigate('OrderConfirmation');
+        }}
+      />
+      <TransferInstruction sellPrice={sellPrice} />
+    </SafeAreaView>
+  );
+};
+
+type BankInfoProp = {
+  orderId: string;
+  sellPrice: number;
+};
+
+const BankInfo: React.FC<BankInfoProp> = (props: BankInfoProp) => {
+  const {orderId, sellPrice} = props;
+  const components: Array<BankInfoComponentProp> = [
+    {
+      type: BankInfoComponentType.TEXT_ONLY,
+      header: 'Chi nhánh ngân hàng',
+      content: 'Ngân hàng TMCP Việt Nam thịnh vương (VPBank)',
+    },
+    {
+      type: BankInfoComponentType.TEXT_AND_COPY_BUTTON,
+      header: 'Số tài khoản',
+      content: '19024705183012',
+    },
+    {
+      type: BankInfoComponentType.TEXT_ONLY,
+      header: 'Tên tài khoản',
+      content: 'Trần Quang Đại',
+    },
+    {
+      type: BankInfoComponentType.TEXT_ONLY,
+      header: 'Giá trị chuyển',
+      content: toCurrencyString(sellPrice),
+    },
+    {
+      type: BankInfoComponentType.TEXT_AND_COPY_BUTTON,
+      header: 'Nội dung chuyển tiền',
+      content: `Thanh toán SneakGeek + ${orderId}`,
+    },
+  ];
+
+  return (
+    <View>
+      <View style={[styles.textBoxContainer, styles.sectionHeader]}>
+        <AppText.SubHeadline> THÔNG TIN NGÂN HÀNG</AppText.SubHeadline>
+      </View>
+      <View style={styles.sectionContainer}>
+        {components.map((c) => {
+          return (
+            <BankInfoComponent
+              key={c.header}
+              type={c.type}
+              content={c.content}
+              header={c.header}
+              orderId={c.orderId}
+            />
+          );
+        })}
+      </View>
+    </View>
+  );
+};
+
+type BankInfoComponentProp = {
+  orderId?: string;
+  type: BankInfoComponentType;
+  header: string;
+  content: string;
+};
+
+const BankInfoComponent: React.FC<BankInfoComponentProp> = (
+  props: BankInfoComponentProp,
+) => {
+  const {orderId, type, header, content} = props;
+  let component = <View />;
+
+  switch (type) {
+    case BankInfoComponentType.TEXT_ONLY:
+      component = (
+        <View style={[styles.textBoxContainer]}>
+          <AppText.Body>{content}</AppText.Body>
+        </View>
+      );
+      break;
+    case BankInfoComponentType.TEXT_AND_COPY_BUTTON:
+      component = (
+        <View
+          style={[styles.textBoxContainer, styles.textAndCopyButtonContainer]}>
+          <AppText.Body>{content}</AppText.Body>
+          <CopyButton text={content} />
+        </View>
+      );
+      break;
+    default:
+      break;
+  }
+
+  return (
+    <View>
+      <View style={[styles.bankInfoHeaderContainer]}>
+        <AppText.Footnote>{header.toUpperCase()}</AppText.Footnote>
+      </View>
+      {component}
+    </View>
+  );
+};
+
+type CopyButtonProp = {
+  text: string;
+};
+
+const CopyButton: React.FC<CopyButtonProp> = (props: CopyButtonProp) => {
+  const {text} = props;
+
+  const copyToClipboard = () => {
+    Clipboard.setString(text);
+  };
+
+  return (
+    <TouchableOpacity
+      onPress={copyToClipboard}
+      style={styles.copyButtonContainer}>
+      <Image source={images.CopyIcon} style={styles.copyIconContainer} />
+      <AppText.Headline style={{color: '#E2603F'}}>COPY</AppText.Headline>
+    </TouchableOpacity>
+  );
+};
+
+type TransferInstructionProp = {
+  sellPrice: number;
+};
+
+const TransferInstruction: React.FC<TransferInstructionProp> = (
+  props: TransferInstructionProp,
+) => {
+  const {sellPrice} = props;
+  const instructions = [
+    {
+      key: 1,
+      content: 'Bấm nút xác nhận chuyển khoản',
+    },
+    {
+      key: 2,
+      content: `Trong vòng 30 phút kể từ khi bấm nút xác nhận, bạn hãy chuyển ${toCurrencyString(
+        sellPrice,
+      )} vào TKNH bên trên kèm theo nội dung chuyển tiền như hướng dẫn.`,
+    },
+    {
+      key: 3,
+      content:
+        'SneakGeek Team sẽ check giao dịch và thông báo nếu như đặt hàng thành công/thất bại',
+    },
+  ];
+  return (
+    <View>
+      <View style={[styles.textBoxContainer, styles.sectionHeader]}>
+        <AppText.SubHeadline>Hướng dẫn chuyển khoản</AppText.SubHeadline>
+      </View>
+      <View style={styles.sectionContainer}>
+        {instructions.map((i) => (
+          <View style={[styles.textBoxContainer]}>
+            <AppText.Body>{i.key}.</AppText.Body>
+            <AppText.Body> {i.content}</AppText.Body>
+          </View>
+        ))}
+      </View>
+    </View>
+  );
+};
