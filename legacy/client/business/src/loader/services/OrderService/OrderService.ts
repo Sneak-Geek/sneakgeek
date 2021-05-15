@@ -166,4 +166,18 @@ export class OrderService extends BaseService implements IOrderService {
         }
       });
   }
+
+  public async bankTransfer(token: string, paymentType: string, inventoryId: string, addressLine1: string, addressLine2: string, soldPrice: number): Promise<any> {
+    return await this.apiClient.getInstance().post(`/order/bank-transfer`, {
+      paymentType,
+      inventoryId,
+      addressLine1,
+      addressLine2,
+      soldPrice
+    }, {
+      headers: {
+        authorization: token
+      }
+    })
+  }
 }

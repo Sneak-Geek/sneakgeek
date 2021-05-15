@@ -1,10 +1,17 @@
 import React from 'react';
-import {Shoe, Profile, PaymentType, Account} from 'business';
+import {
+  Shoe,
+  Profile,
+  PaymentType,
+  Account,
+  IOrderService,
+  FactoryKeys,
+} from 'business';
 import {SafeAreaConsumer} from 'react-native-safe-area-context';
 import {View, ScrollView, FlatList, Alert} from 'react-native';
 import {RootStackParams} from 'navigations/RootStack';
 import {RouteProp} from '@react-navigation/native';
-import {connect} from 'utilities';
+import {connect, getDependency, getToken} from 'utilities';
 import {IAppState} from 'store/AppStore';
 import {
   showErrorNotification,
@@ -71,6 +78,9 @@ export class NewBuyOrder extends React.Component<Props, State> {
   private _shoe: Shoe;
   private _childFlatList: FlatList<NewBuyOrderChild>;
   private _childComponents: NewBuyOrderChild[];
+  private readonly _orderService = getDependency<IOrderService>(
+    FactoryKeys.IOrderService,
+  );
 
   public constructor(props: Props) {
     super(props);
@@ -284,7 +294,22 @@ export class NewBuyOrder extends React.Component<Props, State> {
       return;
     }
 
+    const profile = this.props.profile;
+
     // TO DO: Create new Order, return orderId
+    this._orderService
+      .bankTransfer(
+        getToken(),
+        'BANK_TRANSFER',
+        this.state.buyOrder.inventoryId,
+        profile.userProvidedAddress?.addressLine1,
+        profile.userProvidedAddress?.addressLine2,
+        this.state.buyOrder.sellPrice,
+      )
+      .then((res) => {
+        // alert(JSON.stringify(res));
+      })
+      .catch((error) => alert(error));
 
     this.props.navigation.push(RouteNames.Order.Payment, {
       inventoryId: this.state.buyOrder.inventoryId,
