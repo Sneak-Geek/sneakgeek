@@ -284,11 +284,11 @@ export class NewBuyOrder extends React.Component<Props, State> {
       return;
     }
 
+    // TO DO: Create new Order, return orderId
+
     this.props.navigation.push(RouteNames.Order.Payment, {
-      paymentType,
       inventoryId: this.state.buyOrder.inventoryId,
-      addressLine1: this.props.profile.userProvidedAddress.addressLine1,
-      addressLine2: this.props.profile.userProvidedAddress.addressLine2,
+      sellPrice: this.state.buyOrder.sellPrice,
     });
   }
 

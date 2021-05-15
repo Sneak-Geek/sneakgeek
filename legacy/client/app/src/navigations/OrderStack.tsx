@@ -10,6 +10,7 @@ import {
 import {NewSellOrder} from 'screens/Order/NewSellOrder';
 import {NewBuyOrder} from 'screens/Order/NewBuyOrder';
 import {strings, themes} from 'resources';
+import { OrderConfirmation } from 'screens/Order/OrderConfirmation';
 
 const Stack = createStackNavigator();
 
@@ -38,6 +39,14 @@ export const OrderStack = (): JSX.Element => (
       options={{
         headerTransparent: true,
         headerShown: false,
+      }}
+    />
+    <Stack.Screen
+      name={"OrderConfirmation"}
+      component={OrderConfirmation}
+      options={{
+        headerTransparent: true,
+        headerShown: false
       }}
     />
   </Stack.Navigator>
