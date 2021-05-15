@@ -41,6 +41,7 @@ export class OrderController extends AsbtractOrderController {
     const user = req.user as UserAccount;
     const profileId = (user.profile as mongoose.Types.ObjectId).toHexString();
 
+    // Check lai phan condition
     if (user.accessLevel !== AccessLevel.User && user.accessLevel !== AccessLevel.Seller) {
       return res.status(HttpStatus.BAD_REQUEST).send({
         message: "Not seller or buyer",
@@ -73,10 +74,11 @@ export class OrderController extends AsbtractOrderController {
   @httpPost(
     "/bank-transfer",
     body("paymentType").isIn(Object.keys(PaymentMethod)),
-    body("shoeId").isMongoId(),
+    body("inventoryId").isMongoId(),
     body("addressLine1").isString(),
     body("addressLine2").optional().isString(),
     body("soldPrice").isInt(),
+    body("shoeId").optional(),
     AuthMiddleware,
     AccountVerifiedMiddleware,
     ValidationPassedMiddleware
@@ -84,16 +86,23 @@ export class OrderController extends AsbtractOrderController {
   public async bankTransfer(@request() req: Request, @response() res: Response) {
     // Update inventory and create order
     // TO DO: Implement transactions with isolation and atomicity. Ref: https://docs.mongodb.com/manual/core/transactions/
-    const { paymentType, shoeId, addressLine1, addressLine2, soldPrice } = req.body;
-    // Bank transfer needs shoeId, soldPrice to find corresponding inventory
-    const inventory = await this.inventoryDao.getMatchingInventory(
+    const {
+      paymentType,
       shoeId,
-      parseInt(soldPrice, 10)
-    );
+      addressLine1,
+      addressLine2,
+      soldPrice,
+      inventoryId,
+    } = req.body;
+    // Bank transfer needs shoeId, soldPrice to find corresponding inventory
+    // const inventory = await this.inventoryDao.getMatchingInventory(
+    //   shoeId,
+    //   parseInt(soldPrice, 10)
+    // );
 
     const user = req.user as UserAccount;
     const updatedInventory = await this.inventoryDao.updateInventoryWhenCreateOrder(
-      inventory._id
+      inventoryId
     );
 
     if (!updatedInventory) {
@@ -109,7 +118,7 @@ export class OrderController extends AsbtractOrderController {
     const newOrder = {
       buyerId: (user.profile as unknown) as string,
       sellerId: updatedInventory.sellerId,
-      inventoryId: (inventory._id as unknown) as string,
+      inventoryId: (inventoryId as unknown) as string,
       shoeId: (updatedInventory.shoeId as unknown) as string,
       shippingAddress: {
         addressLine1: (addressLine1 as unknown) as string,
