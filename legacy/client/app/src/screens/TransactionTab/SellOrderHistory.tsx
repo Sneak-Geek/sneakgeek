@@ -21,7 +21,7 @@ import {
   toVnDateFormat,
 } from 'utilities';
 import {IAppState} from 'store/AppStore';
-import {FlatList, ScrollView} from 'react-native-gesture-handler';
+import {FlatList} from 'react-native-gesture-handler';
 import {
   View,
   Image,
@@ -33,12 +33,12 @@ import {
   RefreshControl,
 } from 'react-native';
 import {themes, strings} from 'resources';
-import {AppText, ShoeHeaderSummary} from 'screens/Shared';
+import {AppText} from 'screens/Shared';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RootStackParams} from 'navigations/RootStack';
-import {Icon, Chip} from 'react-native-elements';
-import {images} from '../../resources/';
+import {Chip} from 'react-native-elements';
 import {SectionList} from 'react-native';
+import {NewOrderDetail} from './NewOrderDetail';
 
 const styles = StyleSheet.create({
   orderContainer: {
@@ -314,168 +314,13 @@ export class SellOrderHistory extends React.Component<Props, State> {
         visible={this.state.modalVisible}
         animationType="slide"
         presentationStyle={'formSheet'}>
-        {this._renderOrderDetail()}
-      </Modal>
-    );
-  }
-
-  private _renderOrderDetail() {
-    const order = this.state.selectedOrder;
-    const latestStatus =
-      order.trackingStatus[order.trackingStatus.length - 1].status;
-
-    return (
-      <View style={styles.modalContentContainer}>
-        <AppText.Title3 style={{alignSelf: 'center', marginTop: 20}}>
-          Thông tin giao dịch
-        </AppText.Title3>
-        <Icon
-          containerStyle={{position: 'absolute', top: 20, right: 20}}
-          name="close"
-          onPress={() => {
-            this.setState({modalVisible: false});
-          }}
+        <NewOrderDetail
+          order={this.state.selectedOrder}
+          onClose={() =>
+            this.setState({modalVisible: false}, () => this._getOrders())
+          }
         />
-        {this._renderOrderActionForSeller()}
-        <ShoeHeaderSummary shoe={order.shoe} />
-        <ScrollView style={{flex: 1, padding: 20, alignSelf: 'stretch'}}>
-          {this.modalInfo.map((info) => {
-            return (
-              <View style={styles.infoContainer}>
-                <AppText.Body style={{color: 'rgba(0,0,0,0.6)'}}>
-                  {info.header}
-                </AppText.Body>
-                <AppText.Body>
-                  {info.value(this.state.selectedOrder)}
-                </AppText.Body>
-              </View>
-            );
-          })}
-          <Chip
-            buttonStyle={{
-              borderRadius: 4,
-              backgroundColor: statusToColor.get(latestStatus),
-              paddingVertical: 5,
-              paddingHorizontal: 0,
-            }}
-            titleStyle={{
-              ...themes.TextStyle.callout,
-            }}
-            title={statusToVietString.get(latestStatus)}
-          />
-          {this._renderLine()}
-          <AppText.SubHeadline style={{color: 'rgba(0,0,0,0.6)'}}>
-            Thông tin giao hàng
-          </AppText.SubHeadline>
-          {this._renderShippingInfoDetails(order)}
-          {this._renderLine()}
-          <View style={{marginBottom: 100}}>
-            <Image
-              style={{width: 170, resizeMode: 'contain', height: 300}}
-              source={images.ShippingStatusBuyer}
-            />
-          </View>
-        </ScrollView>
-      </View>
-    );
-  }
-
-  private _renderOrderActionForSeller() {
-    const order = this.state.selectedOrder;
-    const account = this.props.account;
-
-    if (!this.state.shouldRenderSellerAction) {
-      return <></>;
-    }
-
-    if (!account || (account && account.accessLevel !== 'Seller')) {
-      return <></>;
-    }
-
-    if (getLastestStatus(order) !== TrackingStatus.RECEIVED_BANK_TRANSFER) {
-      return <></>;
-    }
-
-    return (
-      <View style={{flexDirection: 'column', padding: 20}}>
-        <AppText.Body style={{marginHorizontal: 10, textAlign: 'center'}}>
-          Có người đặt mua sản phẩm của bạn. Bạn muốn bán sản phẩm không?
-        </AppText.Body>
-        <View
-          style={{
-            flexDirection: 'row',
-            marginTop: 20,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-          <TouchableOpacity onPress={() => this._sellerUpdate(true)}>
-            <View style={styles.sellerActionButton}>
-              <AppText.Body style={{textAlign: 'center'}}>
-                {'Từ chối'.toUpperCase()}
-              </AppText.Body>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => this._sellerUpdate(false)}>
-            <View
-              style={[styles.sellerActionButton, styles.sellerAcceptButton]}>
-              <AppText.Body style={{textAlign: 'center', color: 'white'}}>
-                {'Chấp nhận'.toUpperCase()}
-              </AppText.Body>
-            </View>
-          </TouchableOpacity>
-        </View>
-      </View>
-    );
-  }
-
-  private async _sellerUpdate(rejected: boolean) {
-    const order = this.state.selectedOrder;
-    await this.orderService.updateBySeller(
-      getToken(),
-      order._id,
-      rejected
-        ? TrackingStatus.SELLER_REJECTED_ORDER
-        : TrackingStatus.SELLER_APPROVED_ORDER,
-    );
-    this.setState({shouldRenderSellerAction: false});
-    this._getOrders();
-  }
-
-  private _renderLine(): JSX.Element {
-    return (
-      <View
-        style={{
-          borderBottomColor: '#BCBBC1',
-          borderBottomWidth: 1,
-          marginVertical: 20,
-        }}
-      />
-    );
-  }
-
-  private _renderShippingInfoDetails(order: OrderHistory): JSX.Element {
-    const profile = this.props.userProfile;
-    const email = profile?.userProvidedEmail;
-    const phoneNumber = profile?.userProvidedPhoneNumber;
-    const {addressLine1, addressLine2} = order.shippingAddress;
-
-    const name = `${this.props.userProfile?.userProvidedName.lastName} ${this.props.userProfile?.userProvidedName.firstName}`;
-    return (
-      <>
-        <AppText.Body style={{marginTop: 20}}>{name}</AppText.Body>
-        <AppText.Subhead style={styles.shippingInfoDetails}>
-          {phoneNumber}
-        </AppText.Subhead>
-        <AppText.Subhead style={styles.shippingInfoDetails}>
-          {email}
-        </AppText.Subhead>
-        <AppText.Subhead style={styles.shippingInfoDetails}>
-          {strings.Address}: {addressLine1}
-        </AppText.Subhead>
-        <AppText.Subhead style={styles.shippingInfoDetails}>
-          {addressLine2}
-        </AppText.Subhead>
-      </>
+      </Modal>
     );
   }
 }

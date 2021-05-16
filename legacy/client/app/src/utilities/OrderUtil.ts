@@ -2,7 +2,7 @@ import {TrackingStatus, Order} from 'business';
 import {themes} from 'resources';
 
 export const statusToVietString = new Map<TrackingStatus, string>([
-  [TrackingStatus.WAITING_FOR_BANK_TRANSFER, 'Đang chờ chuyển khoản '],
+  [TrackingStatus.WAITING_FOR_BANK_TRANSFER, 'Đang chờ chuyển khoản'],
   [TrackingStatus.RECEIVED_BANK_TRANSFER, 'Chờ nhận đơn'],
   [TrackingStatus.NOT_RECEIVED_BANK_TRANSFER, 'Không nhận được chuyển khoản'],
   [TrackingStatus.SELLER_REJECTED_ORDER, 'Đơn hàng bị huỷ'],
@@ -33,6 +33,20 @@ export const statusToColor = new Map<TrackingStatus, string>([
   [TrackingStatus.SHOE_UNQUALIFIED, themes.AppErrorColor],
   [TrackingStatus.DELIVERING_TO_BUYER, 'rgba(30, 35, 48, 0.6)'],
   [TrackingStatus.BUYER_RECEIVED, 'rgba(26, 188, 156, 1)'],
+]);
+
+export const statusSentiment = new Map<TrackingStatus, boolean>([
+  [TrackingStatus.WAITING_FOR_BANK_TRANSFER, true],
+  [TrackingStatus.RECEIVED_BANK_TRANSFER, true],
+  [TrackingStatus.NOT_RECEIVED_BANK_TRANSFER, false],
+  [TrackingStatus.SELLER_REJECTED_ORDER, false],
+  [TrackingStatus.SELLER_APPROVED_ORDER, true],
+  [TrackingStatus.REFUND_TO_BUYER, true],
+  [TrackingStatus.ORDER_BEING_SENT_TO_SNKGK_FOR_AUTHENTICATION, true],
+  [TrackingStatus.SHOE_VERIFIED, true],
+  [TrackingStatus.SHOE_UNQUALIFIED, false],
+  [TrackingStatus.DELIVERING_TO_BUYER, true],
+  [TrackingStatus.BUYER_RECEIVED, true],
 ]);
 
 export function getLastestStatus(order: Order) {
