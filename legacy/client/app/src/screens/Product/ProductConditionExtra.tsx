@@ -132,6 +132,7 @@ export class ProductConditionExtra extends React.PureComponent<Props, State> {
         <Input
           style={{marginTop: 30}}
           inputStyle={themes.TextStyle.callout}
+          placeholderTextColor={themes.AppDisabledColor}
           placeholder={strings.ProductOtherDetail}
           onChangeText={(value): void => this.props.onSetShoeOtherDetail(value)}
         />

@@ -117,6 +117,7 @@ export class EmailSignUpScreen extends React.Component<Props, State> {
         <TextInput
           autoFocus={true}
           style={styles.input}
+          placeholderTextColor={themes.AppDisabledColor}
           placeholder={strings.Email}
           value={email}
           onChangeText={(email) => this.setState({email})}

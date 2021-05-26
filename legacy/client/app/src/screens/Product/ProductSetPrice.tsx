@@ -116,6 +116,7 @@ export class ProductSetPrice extends React.Component<Props, State> {
               this.setState({shoePrice: ''});
             }}
             placeholder={toCurrencyString('1000000')}
+            placeholderTextColor={themes.AppDisabledColor}
             style={themes.TextStyle.body}
           />
         </View>
