@@ -103,6 +103,7 @@ import "../../infra/controllers/NotificationController";
 import "../../infra/controllers/BalanceHistoryController";
 import "../../infra/controllers/InventoryController";
 import "../../infra/admin_controllers/AdminOrderControllers";
+import "../../infra/controllers/HealthController";
 
 // Creating new container
 const container = new Container();
