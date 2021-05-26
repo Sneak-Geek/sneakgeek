@@ -532,6 +532,7 @@ export class AccountTabEditProfile extends React.Component<Props, State> {
       return (
         <TextInput
           value={textValue}
+          placeholderTextColor={themes.AppDisabledColor}
           placeholder={item.placeholder}
           onChangeText={(value): void => {
             if (updatedInfo && item.onUpdate) {

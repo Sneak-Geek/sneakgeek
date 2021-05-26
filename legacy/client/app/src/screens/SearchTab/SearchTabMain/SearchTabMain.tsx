@@ -147,6 +147,7 @@ export class SearchTabMain extends React.Component<Props, State> {
             })
           }>
           <SearchBar
+            placeholderTextColor={themes.AppDisabledColor}
             placeholder={strings.SearchTab}
             lightTheme={true}
             round={true}

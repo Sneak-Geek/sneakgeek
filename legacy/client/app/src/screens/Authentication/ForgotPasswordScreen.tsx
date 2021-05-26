@@ -101,7 +101,7 @@ export class ForgotPasswordScreen extends React.Component<Props, State> {
       passcode: '',
       password: '',
       reenteredPassWord: '',
-      inputError: undefined
+      inputError: undefined,
     };
     this.childComponents = [
       {
@@ -206,25 +206,26 @@ export class ForgotPasswordScreen extends React.Component<Props, State> {
       case strings.EmailStringCap:
         return (
           <View>
-          <View style={styles.emailContainer}>
-            <TextInput
-              autoFocus={true}
-              style={
-                this.childComponents[this.state.currentScreen].canProceed()
-                  ? styles.input
-                  : styles.incorrectEmailStyle
-              }
-              placeholder={strings.Email}
-              value={this.state.email}
-              onChangeText={(email) => this.setState({email})}
-              selectionColor={themes.AppSecondaryColor}
-              autoCapitalize={'none'}
-            />
+            <View style={styles.emailContainer}>
+              <TextInput
+                autoFocus={true}
+                style={
+                  this.childComponents[this.state.currentScreen].canProceed()
+                    ? styles.input
+                    : styles.incorrectEmailStyle
+                }
+                placeholderTextColor={themes.AppDisabledColor}
+                placeholder={strings.Email}
+                value={this.state.email}
+                onChangeText={(email) => this.setState({email})}
+                selectionColor={themes.AppSecondaryColor}
+                autoCapitalize={'none'}
+              />
+            </View>
+            {this._renderInputError(this.state.inputError)}
           </View>
-           {this._renderInputError(this.state.inputError)}
-           </View>
         );
-       
+
       case strings.Passcode:
         return (
           <View>
@@ -232,6 +233,7 @@ export class ForgotPasswordScreen extends React.Component<Props, State> {
               <TextInput
                 autoFocus={true}
                 style={styles.input}
+                placeholderTextColor={themes.AppDisabledColor}
                 placeholder={strings.Passcode}
                 value={this.state.passcode}
                 onChangeText={(passcode) => this.setState({passcode})}
@@ -251,33 +253,36 @@ export class ForgotPasswordScreen extends React.Component<Props, State> {
                 style={styles.input}
                 secureTextEntry={true}
                 placeholder={strings.Password}
+                placeholderTextColor={themes.AppDisabledColor}
                 value={this.state.password}
                 onChangeText={(password) => this.setState({password})}
                 selectionColor={themes.AppSecondaryColor}
                 autoCapitalize={'none'}
               />
             </View>
-            {this.state.inputError === strings.InvalidPasswordErrorType1 && this._renderInputError(this.state.inputError)}
+            {this.state.inputError === strings.InvalidPasswordErrorType1 &&
+              this._renderInputError(this.state.inputError)}
           </View>
         );
       case strings.ReenterPassword:
         return (
           <View>
-          <View style={styles.emailContainer}>
-            <TextInput
-              autoFocus={true}
-              style={styles.input}
-              placeholder={strings.ReenterPassword}
-              secureTextEntry={true}
-              value={this.state.reenteredPassWord}
-              onChangeText={(reenteredPassWord) =>
-                this.setState({reenteredPassWord})
-              }
-              selectionColor={themes.AppSecondaryColor}
-              autoCapitalize={'none'}
-            />
-          </View>
-          {this.state.inputError === strings.UnmatchedPasswords && this._renderInputError(this.state.inputError)}
+            <View style={styles.emailContainer}>
+              <TextInput
+                autoFocus={true}
+                style={styles.input}
+                placeholder={strings.ReenterPassword}
+                secureTextEntry={true}
+                value={this.state.reenteredPassWord}
+                onChangeText={(reenteredPassWord) =>
+                  this.setState({reenteredPassWord})
+                }
+                selectionColor={themes.AppSecondaryColor}
+                autoCapitalize={'none'}
+              />
+            </View>
+            {this.state.inputError === strings.UnmatchedPasswords &&
+              this._renderInputError(this.state.inputError)}
           </View>
         );
       default:
@@ -298,7 +303,7 @@ export class ForgotPasswordScreen extends React.Component<Props, State> {
   private async _handleContinueButton() {
     const {currentScreen} = this.state;
     const shouldContinue = this.childComponents[currentScreen].canProceed();
-    this.setState({inputError:undefined})
+    this.setState({inputError: undefined});
 
     switch (currentScreen) {
       case ScreenType.EMAIL_SCREEN:
@@ -340,13 +345,13 @@ export class ForgotPasswordScreen extends React.Component<Props, State> {
 
   private async _handleEmailScreenAction(shouldContinue: boolean) {
     if (!shouldContinue) {
-      this.setState({inputError:strings.NotEmailType})
+      this.setState({inputError: strings.NotEmailType});
       this.setState({currentScreenStatus: Status.ERROR});
       return;
     }
     await this._getForgotPasswordToken();
     if (this.state.currentScreenStatus === Status.ERROR) {
-      this.setState({inputError:strings.EmailNotFound})
+      this.setState({inputError: strings.EmailNotFound});
       return;
     }
   }
@@ -354,7 +359,7 @@ export class ForgotPasswordScreen extends React.Component<Props, State> {
   private async _handlePasscodeScreenAction() {
     await this._verifyForgotPasswordToken();
     if (this.state.currentScreenStatus === Status.ERROR) {
-      this.setState({inputError:strings.ResetPasswordVerificationError})
+      this.setState({inputError: strings.ResetPasswordVerificationError});
     }
   }
 
@@ -374,11 +379,11 @@ export class ForgotPasswordScreen extends React.Component<Props, State> {
 
   private _notifyPasswordError() {
     if (!isValidPassword(this.state.password, 1)) {
-      this.setState({inputError:strings.InvalidPasswordErrorType1})
+      this.setState({inputError: strings.InvalidPasswordErrorType1});
     } else if (this.state.password !== this.state.reenteredPassWord) {
-      this.setState({inputError:strings.UnmatchedPasswords})
+      this.setState({inputError: strings.UnmatchedPasswords});
     } else {
-      this.setState({inputError:strings.Error})
+      this.setState({inputError: strings.Error});
     }
   }
 
@@ -413,8 +418,6 @@ export class ForgotPasswordScreen extends React.Component<Props, State> {
   }
 
   private _renderInputError(inputError: string): JSX.Element {
-    return(
-      <WrongInputError errorDescription={inputError}/>
-    );
+    return <WrongInputError errorDescription={inputError} />;
   }
 }

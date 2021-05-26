@@ -1,25 +1,25 @@
 import React from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { TextInput, View } from 'react-native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { themes, strings } from 'resources';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {TextInput, View} from 'react-native';
+import {StackNavigationProp} from '@react-navigation/stack';
+import {themes, strings} from 'resources';
 import {
   ShoeHeaderSummary,
   BottomButton,
   AppText,
   DismissKeyboardView,
 } from 'screens/Shared';
-import { Shoe, FactoryKeys, Profile, Inventory } from 'business';
-import { RouteProp } from '@react-navigation/native';
-import { RootStackParams } from 'navigations/RootStack';
-import { connect, getToken, getDependency } from 'utilities';
+import {Shoe, FactoryKeys, Profile, Inventory} from 'business';
+import {RouteProp} from '@react-navigation/native';
+import {RootStackParams} from 'navigations/RootStack';
+import {connect, getToken, getDependency} from 'utilities';
 import {
   showErrorNotification,
   showSuccessNotification,
   toggleIndicator,
 } from 'actions';
-import { IInventoryService } from 'business/src';
-import { IAppState } from 'store/AppStore';
+import {IInventoryService} from 'business/src';
+import {IAppState} from 'store/AppStore';
 
 type Props = {
   userProfile: Profile;
@@ -46,7 +46,7 @@ type State = {
   }),
   (dispatch: Function) => ({
     toggleLoading: (isLoading: boolean) => {
-      dispatch(toggleIndicator({ isLoading, message: strings.PleaseWait }));
+      dispatch(toggleIndicator({isLoading, message: strings.PleaseWait}));
     },
     showErrorNotification: (message: string): void => {
       dispatch(showErrorNotification(message));
@@ -76,8 +76,8 @@ export class NewSellOrder extends React.Component<Props, State> {
 
   public render(): JSX.Element {
     return (
-      <SafeAreaView style={{ flex: 1, paddingTop: 0 }}>
-        <DismissKeyboardView style={{ flex: 1, backgroundColor: 'white' }}>
+      <SafeAreaView style={{flex: 1, paddingTop: 0}}>
+        <DismissKeyboardView style={{flex: 1, backgroundColor: 'white'}}>
           <ShoeHeaderSummary shoe={this._shoe} />
           {this._renderInventory()}
           {this._renderBottomButton()}
@@ -126,7 +126,7 @@ export class NewSellOrder extends React.Component<Props, State> {
       },
     ];
     return (
-      <View style={{ padding: 20, flex: 1, flexDirection: 'column' }}>
+      <View style={{padding: 20, flex: 1, flexDirection: 'column'}}>
         {inventoryItems.map((t) => (
           <View
             style={{
@@ -136,9 +136,10 @@ export class NewSellOrder extends React.Component<Props, State> {
             }}>
             <AppText.SubHeadline>{t.title}</AppText.SubHeadline>
             <TextInput
+              placeholderTextColor={themes.AppDisabledColor}
               placeholder={t.title}
               numberOfLines={1}
-              style={{ ...themes.TextStyle.body, marginBottom: 20 }}
+              style={{...themes.TextStyle.body, marginBottom: 20}}
               keyboardType={'numeric'}
               onChangeText={t.onUpdate}
             />
@@ -168,24 +169,15 @@ export class NewSellOrder extends React.Component<Props, State> {
       FactoryKeys.IInventoryService,
     );
     try {
-      const { quantity, sellPrice, shoeSize } = inventory;
+      const {quantity, sellPrice, shoeSize} = inventory;
       if (!shoeSize) {
-        this.props.showErrorNotification(
-          'Hãy nhập cỡ giày'
-
-        );
+        this.props.showErrorNotification('Hãy nhập cỡ giày');
         return;
-      }
-      else if (!quantity) {
-        this.props.showErrorNotification(
-          'Hãy nhập số lượng giày'
-        )
+      } else if (!quantity) {
+        this.props.showErrorNotification('Hãy nhập số lượng giày');
         return;
-      }
-      else if (!sellPrice) {
-        this.props.showErrorNotification(
-          'Hãy nhập giá bán'
-        );
+      } else if (!sellPrice) {
+        this.props.showErrorNotification('Hãy nhập giá bán');
         return;
       }
 

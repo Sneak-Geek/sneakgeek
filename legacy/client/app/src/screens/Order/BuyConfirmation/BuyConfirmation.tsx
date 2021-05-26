@@ -5,7 +5,7 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInput,
-  Dimensions
+  Dimensions,
 } from 'react-native';
 import {BottomButton, ShoeHeaderSummary, AppText} from 'screens/Shared';
 import {themes, strings} from 'resources';
@@ -57,8 +57,6 @@ type Props = {
   onSetBuyPrice: (buyPrice: number, isBuyNow: boolean) => void;
   // shoe: Shoe;
   // size: string;
-
-
 
   // highestBuyOrder?: BuyOrder;
   // lowestSellOrder?: SellOrder;
@@ -123,14 +121,14 @@ export class BuyConfirmation extends React.Component<Props, State> {
   public componentDidUpdate(prevProps: Props) {
     if (this.props.highestBuyOrder && !prevProps.highestBuyOrder) {
       this.setState({
-        highestBuyOrder: this.props.highestBuyOrder
+        highestBuyOrder: this.props.highestBuyOrder,
       });
     }
 
     if (this.props.lowestSellOrder && !prevProps.lowestSellOrder) {
       this.setState({
-        lowestSellOrder: this.props.lowestSellOrder
-      })
+        lowestSellOrder: this.props.lowestSellOrder,
+      });
     }
   }
 
@@ -182,26 +180,30 @@ export class BuyConfirmation extends React.Component<Props, State> {
 
   public render(): JSX.Element {
     return (
-        <View style={{flex: 1, backgroundColor: 'white', width: Dimensions.get('window').width}}>
-          <View style={styles.orderTypeOutterContainer}>
-            {this._renderOrderTypeSelector()}
-          </View>
-          <View
-            style={{flex: 1, marginBottom: themes.RegularButtonHeight}}>
-            <View style={{padding: 20}}>
-              <View style={{flex: 1, flexDirection: 'column'}}>
-                {this._renderOrderConfirmationDetail()}
-              </View>
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: 'white',
+          width: Dimensions.get('window').width,
+        }}>
+        <View style={styles.orderTypeOutterContainer}>
+          {this._renderOrderTypeSelector()}
+        </View>
+        <View style={{flex: 1, marginBottom: themes.RegularButtonHeight}}>
+          <View style={{padding: 20}}>
+            <View style={{flex: 1, flexDirection: 'column'}}>
+              {this._renderOrderConfirmationDetail()}
             </View>
           </View>
-          {/* <BottomButton
+        </View>
+        {/* <BottomButton
             style={{backgroundColor: themes.AppSecondaryColor}}
             // onPress={this._onPurchaseButtonClicked.bind(this)}
             title={
               this.state.isBuyNow ? strings.BuyProduct : strings.SetBuyPrice
             }
           /> */}
-        </View>
+      </View>
     );
   }
 
@@ -211,11 +213,19 @@ export class BuyConfirmation extends React.Component<Props, State> {
         <View>
           <OrderSectionWithTitle
             title={strings.BuyNowPrice}
-            value={this.state.lowestSellOrder ? toCurrencyString(this.state.lowestSellOrder.sellPrice) : '-'}
+            value={
+              this.state.lowestSellOrder
+                ? toCurrencyString(this.state.lowestSellOrder.sellPrice)
+                : '-'
+            }
           />
           <OrderSectionWithTitle
             title={strings.HighestBuyOrderPrice}
-            value={this.state.highestBuyOrder ? toCurrencyString(this.state.highestBuyOrder.buyPrice) : '-'}
+            value={
+              this.state.highestBuyOrder
+                ? toCurrencyString(this.state.highestBuyOrder.buyPrice)
+                : '-'
+            }
             tooltip={strings.HighestBuyOrderExplanation}
           />
           {this._renderSetPriceBox()}
@@ -231,16 +241,12 @@ export class BuyConfirmation extends React.Component<Props, State> {
     // ];
     // const {shoePrice, shippingFee} = this.state.totalFee;
 
-    return (
-      <View>
-        {this._renderSetPriceBox()}
-      </View>
-    );
+    return <View>{this._renderSetPriceBox()}</View>;
   }
 
   private _renderSetPriceBox(): JSX.Element {
     return (
-      <View style={{flex:1}}>
+      <View style={{flex: 1}}>
         <View style={styles.inputContainer}>
           <TextInput
             editable={!this.state.isBuyNow}
@@ -248,15 +254,27 @@ export class BuyConfirmation extends React.Component<Props, State> {
             value={this.state.displayBuyOrderPrice}
             // placeholder={strings.SetBuyPrice}
             placeholder={toCurrencyString(1000000)}
-            style={[themes.TextStyle.body, { alignSelf:'stretch', textAlign:'center'}]}
+            placeholderTextColor={themes.AppDisabledColor}
+            style={[
+              themes.TextStyle.body,
+              {alignSelf: 'stretch', textAlign: 'center'},
+            ]}
             onChangeText={(text): void => {
               const currentPrice = isNaN(parseInt(text)) ? 0 : parseInt(text);
-              if (this.state.lowestSellOrder && currentPrice >= this.state.lowestSellOrder.sellPrice) {
-                this.props.onSetBuyPrice(this.state.lowestSellOrder.sellPrice, true);
+              if (
+                this.state.lowestSellOrder &&
+                currentPrice >= this.state.lowestSellOrder.sellPrice
+              ) {
+                this.props.onSetBuyPrice(
+                  this.state.lowestSellOrder.sellPrice,
+                  true,
+                );
                 this.setState({
                   isBuyNow: true,
-                  displayBuyOrderPrice: toCurrencyString(this.state.lowestSellOrder.sellPrice),
-                })  
+                  displayBuyOrderPrice: toCurrencyString(
+                    this.state.lowestSellOrder.sellPrice,
+                  ),
+                });
               } else {
                 this.setState({
                   displayBuyOrderPrice: text,
@@ -268,7 +286,10 @@ export class BuyConfirmation extends React.Component<Props, State> {
               }
             }}
             onEndEditing={(): void => {
-              this.props.onSetBuyPrice(parseInt(this.state.displayBuyOrderPrice), this.state.isBuyNow);
+              this.props.onSetBuyPrice(
+                parseInt(this.state.displayBuyOrderPrice),
+                this.state.isBuyNow,
+              );
               this.setState({
                 displayBuyOrderPrice: toCurrencyString(
                   this.state.displayBuyOrderPrice,
@@ -280,7 +301,9 @@ export class BuyConfirmation extends React.Component<Props, State> {
             }}
           />
         </View>
-        <AppText.SubHeadline style={{alignSelf:'center',marginTop:8}}>{strings.SetBuyPrice.toUpperCase()}</AppText.SubHeadline>
+        <AppText.SubHeadline style={{alignSelf: 'center', marginTop: 8}}>
+          {strings.SetBuyPrice.toUpperCase()}
+        </AppText.SubHeadline>
       </View>
     );
   }
@@ -298,7 +321,7 @@ export class BuyConfirmation extends React.Component<Props, State> {
           ]}
           onPress={(): void => {
             this.props.onSetBuyPrice(0, false);
-            this.setState({isBuyNow: false,displayBuyOrderPrice:''});
+            this.setState({isBuyNow: false, displayBuyOrderPrice: ''});
           }}>
           <AppText.Callout
             style={[!isBuyNow ? {color: 'white'} : {}, {textAlign: 'center'}]}>
@@ -312,9 +335,17 @@ export class BuyConfirmation extends React.Component<Props, State> {
             styles.commonOrderType,
           ]}
           onPress={(): void => {
-            this.props.onSetBuyPrice(this.state.lowestSellOrder.sellPrice, true);
-            this.setState({isBuyNow: true,displayBuyOrderPrice:toCurrencyString(this.state.lowestSellOrder.sellPrice)})}
-          }>
+            this.props.onSetBuyPrice(
+              this.state.lowestSellOrder.sellPrice,
+              true,
+            );
+            this.setState({
+              isBuyNow: true,
+              displayBuyOrderPrice: toCurrencyString(
+                this.state.lowestSellOrder.sellPrice,
+              ),
+            });
+          }}>
           <AppText.Callout
             style={[
               isBuyNow || isBuyNowDisabled ? {color: 'white'} : {},
