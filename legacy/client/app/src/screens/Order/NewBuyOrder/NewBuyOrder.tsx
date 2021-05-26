@@ -281,14 +281,13 @@ export class NewBuyOrder extends React.Component<Props, State> {
       !profile ||
       !profile.userProvidedEmail ||
       !profile.userProvidedAddress?.addressLine1 ||
-      !profile.userProvidedAddress?.addressLine2 ||
       !profile.userProvidedName?.firstName ||
       !profile.userProvidedName.lastName;
 
     return isMissingInfo;
   }
 
-  private _purchaseProduct(paymentType: PaymentType): void {
+  private _purchaseProduct(): void {
     if (this._isMissingInfo) {
       this._alertMissingInfo();
       return;
