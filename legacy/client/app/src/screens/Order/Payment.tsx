@@ -81,16 +81,16 @@ enum BankInfoComponentType {
 
 export const Payment: React.FC<any> = ({route}) => {
   const {navigate} = useNavigation();
-  const {sellPrice} = route.params;
+  const {sellPrice, orderId} = route.params;
   return (
     <SafeAreaView style={styles.root}>
       <Header topInset={1} title={'Thông tin chuyển khoản'} leftIcon={false} />
       <ScrollView>
         <View style={styles.orderIdContainer}>
           <AppText.SubHeadline>Mã giao dịch</AppText.SubHeadline>
-          <AppText.Headline>aoei201293</AppText.Headline>
+          <AppText.Headline>{orderId}</AppText.Headline>
         </View>
-        <BankInfo orderId={'aoei201293'} sellPrice={sellPrice} />
+        <BankInfo orderId={orderId} sellPrice={sellPrice} />
         <TransferInstruction sellPrice={sellPrice} />
       </ScrollView>
       <BottomButton
