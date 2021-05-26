@@ -85,6 +85,9 @@ export class EmailSignUpScreen extends React.Component<Props, State> {
         case strings.EmailRegisteredEng:
           Alert.alert(strings.EmailRegisteredVN);
           break;
+        case undefined:
+        case '':
+          break;
         default:
           showErrorNotification(strings.InvalidLogin);
           break;
@@ -135,6 +138,7 @@ export class EmailSignUpScreen extends React.Component<Props, State> {
         <TextInput
           style={styles.input}
           placeholder={strings.Password}
+          placeholderTextColor={themes.AppDisabledColor}
           value={password}
           onChangeText={(password): void => this.setState({password})}
           selectionColor={themes.AppPrimaryColor}
@@ -166,7 +170,10 @@ export class EmailSignUpScreen extends React.Component<Props, State> {
       <BottomButton
         title={strings.SignUp}
         onPress={() => this.props.emailSignUp(email, password)}
-        style={{backgroundColor: themes.AppPrimaryColor}}
+        style={{
+          backgroundColor: themes.AppPrimaryColor,
+          borderRadius: themes.LargeBorderRadius,
+        }}
       />
     );
   }

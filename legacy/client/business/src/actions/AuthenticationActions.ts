@@ -93,6 +93,7 @@ export const authenticateWithEmail = (
         );
       }
     } catch (error) {
+      console.log("Error auth with email", error);
       dispatch(
         updateAuthenticationState({ state: NetworkRequestState.FAILED, error })
       );
