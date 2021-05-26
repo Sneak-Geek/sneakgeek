@@ -172,7 +172,6 @@ export class AccountTabMain extends React.Component<Props> {
             {setting.title}
           </ListItem.Title>
         </ListItem.Content>
-        <ListItem.Chevron />
       </ListItem>
     ));
   }
@@ -196,7 +195,6 @@ export class AccountTabMain extends React.Component<Props> {
         <ListItem.Content>
           <ListItem.Title style={themes.TextStyle.body}>{title}</ListItem.Title>
         </ListItem.Content>
-        <ListItem.Chevron />
       </ListItem>
     );
   }
