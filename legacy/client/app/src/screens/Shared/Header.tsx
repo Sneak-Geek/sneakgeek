@@ -8,24 +8,31 @@ import {useNavigation} from '@react-navigation/native';
 
 const styles = StyleSheet.create({
   headerContainer: {
+    display: 'flex',
     backgroundColor: 'white',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     borderBottomColor: themes.DisabledColor,
     borderBottomWidth: 1,
     paddingHorizontal: 10,
+  },
+  transparent: {
+    color: 'transparent',
   },
 });
 
 type HeaderProp = {
   topInset: number;
   title: string;
+  leftIcon: boolean;
 };
 
 export const Header: React.FC<HeaderProp> = (props: HeaderProp) => {
-  const {topInset, title} = props;
+  const {topInset, title, leftIcon} = props;
   const navigation = useNavigation();
+  const leftIconColor = leftIcon ? 'black' : 'transparent';
+  const leftIconHandler = leftIcon ? navigation.goBack() : {};
   return (
     <HeaderHeightContext.Consumer>
       {(headerHeight) => (
@@ -41,9 +48,8 @@ export const Header: React.FC<HeaderProp> = (props: HeaderProp) => {
             name={'ios-arrow-back'}
             type={'ionicon'}
             size={30}
-            onPress={() => {
-              navigation.goBack();
-            }}
+            onPress={() => leftIconHandler}
+            color={leftIconColor}
             hitSlop={{}}
           />
           <AppText.Title3>{title.toUpperCase()}</AppText.Title3>

@@ -310,9 +310,22 @@ export class NewBuyOrder extends React.Component<Props, State> {
       })
       .catch((error) => alert(error));
 
-    this.props.navigation.push(RouteNames.Order.Payment, {
-      inventoryId: this.state.buyOrder.inventoryId,
-      sellPrice: this.state.buyOrder.sellPrice,
+    // this.props.navigation.navigate(RouteNames.Order.Payment, {
+    //   inventoryId: this.state.buyOrder.inventoryId,
+    //   sellPrice: this.state.buyOrder.sellPrice,
+    // });
+
+    this.props.navigation.reset({
+      index: 0,
+      routes: [
+        {
+          name: RouteNames.Order.Payment,
+          params: {
+            inventoryId: this.state.buyOrder.inventoryId,
+            sellPrice: this.state.buyOrder.sellPrice,
+          },
+        },
+      ],
     });
   }
 
