@@ -5,3 +5,7 @@ liveness_check:
   timeout_sec: 5
   failure_threshold: 5
   success_threshold: 2
+automatic_scaling:
+  min_idle_instances: 1
+inbound_services:
+  - warmup
