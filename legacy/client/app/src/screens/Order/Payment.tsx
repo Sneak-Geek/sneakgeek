@@ -6,6 +6,7 @@ import {
   Clipboard,
   SafeAreaView,
   Image,
+  ScrollView,
 } from 'react-native';
 import {AppText, BottomButton, Header} from 'screens/Shared';
 import {toCurrencyString} from 'utilities';
@@ -57,6 +58,7 @@ const styles = StyleSheet.create({
     height: 52,
     backgroundColor: '#1E2330',
     borderRadius: 40,
+    zIndex: 1,
     marginBottom: 35,
   },
   copyButtonContainer: {
@@ -79,15 +81,18 @@ enum BankInfoComponentType {
 
 export const Payment: React.FC<any> = ({route}) => {
   const {navigate} = useNavigation();
-  const {sellPrice} = route.params;
+  const {sellPrice, orderId} = route.params;
   return (
     <SafeAreaView style={styles.root}>
-      <Header topInset={1} title={'Thông tin chuyển khoản'} />
-      <View style={styles.orderIdContainer}>
-        <AppText.SubHeadline>Mã giao dịch</AppText.SubHeadline>
-        <AppText.Headline>aoei201293</AppText.Headline>
-      </View>
-      <BankInfo orderId={'aoei201293'} sellPrice={sellPrice} />
+      <Header topInset={1} title={'Thông tin chuyển khoản'} leftIcon={false} />
+      <ScrollView>
+        <View style={styles.orderIdContainer}>
+          <AppText.SubHeadline>Mã giao dịch</AppText.SubHeadline>
+          <AppText.Headline>{orderId}</AppText.Headline>
+        </View>
+        <BankInfo orderId={orderId} sellPrice={sellPrice} />
+        <TransferInstruction sellPrice={sellPrice} />
+      </ScrollView>
       <BottomButton
         title={'Xác nhận chuyển khoản'.toUpperCase()}
         style={styles.bottomButtonContainer}
@@ -95,7 +100,6 @@ export const Payment: React.FC<any> = ({route}) => {
           navigate('OrderConfirmation');
         }}
       />
-      <TransferInstruction sellPrice={sellPrice} />
     </SafeAreaView>
   );
 };
@@ -248,7 +252,7 @@ const TransferInstruction: React.FC<TransferInstructionProp> = (
     },
   ];
   return (
-    <View>
+    <View style={{marginBottom: 70}}>
       <View style={[styles.textBoxContainer, styles.sectionHeader]}>
         <AppText.SubHeadline>Hướng dẫn chuyển khoản</AppText.SubHeadline>
       </View>

@@ -281,14 +281,13 @@ export class NewBuyOrder extends React.Component<Props, State> {
       !profile ||
       !profile.userProvidedEmail ||
       !profile.userProvidedAddress?.addressLine1 ||
-      !profile.userProvidedAddress?.addressLine2 ||
       !profile.userProvidedName?.firstName ||
       !profile.userProvidedName.lastName;
 
     return isMissingInfo;
   }
 
-  private _purchaseProduct(paymentType: PaymentType): void {
+  private _purchaseProduct(): void {
     if (this._isMissingInfo) {
       this._alertMissingInfo();
       return;
@@ -307,14 +306,21 @@ export class NewBuyOrder extends React.Component<Props, State> {
         this.state.buyOrder.sellPrice,
       )
       .then((res) => {
-        // alert(JSON.stringify(res));
+        this.props.navigation.reset({
+          index: 0,
+          routes: [
+            {
+              name: RouteNames.Order.Payment,
+              params: {
+                inventoryId: this.state.buyOrder.inventoryId,
+                sellPrice: this.state.buyOrder.sellPrice,
+                orderId: res?.data?._id,
+              },
+            },
+          ],
+        });
       })
       .catch((error) => alert(error));
-
-    this.props.navigation.push(RouteNames.Order.Payment, {
-      inventoryId: this.state.buyOrder.inventoryId,
-      sellPrice: this.state.buyOrder.sellPrice,
-    });
   }
 
   private _alertMissingInfo(): void {
