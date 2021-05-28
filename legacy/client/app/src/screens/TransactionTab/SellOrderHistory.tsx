@@ -167,6 +167,12 @@ export class SellOrderHistory extends React.Component<Props, State> {
     };
   }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.navigation !== this.props.navigation) {
+      this._getOrders();
+    }
+  }
+
   public render(): JSX.Element {
     const {orders} = this.state;
     return (
