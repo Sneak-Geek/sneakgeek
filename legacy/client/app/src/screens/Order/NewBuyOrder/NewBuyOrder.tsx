@@ -55,6 +55,7 @@ type State = {
   };
   currentIndex: number;
   isBuyNow: boolean;
+  isPressed: boolean;
 };
 
 @connect(
@@ -93,6 +94,7 @@ export class NewBuyOrder extends React.Component<Props, State> {
       },
       currentIndex: 0,
       isBuyNow: false,
+      isPressed: false,
     };
 
     this._shoe = this.props.route.params.shoe;
@@ -249,6 +251,7 @@ export class NewBuyOrder extends React.Component<Props, State> {
     return (
       <View>
         <BottomButton
+          disabled={this.state.isPressed}
           title={(shouldBuyShoe
             ? this.state.isBuyNow
               ? strings.BuyShoe
@@ -268,7 +271,7 @@ export class NewBuyOrder extends React.Component<Props, State> {
           onPress={() =>
             this.state.currentIndex !== this._childComponents.length - 1
               ? this._onListScroll()
-              : this._purchaseProduct('domestic')
+              : this._purchaseProduct()
           }
         />
       </View>
@@ -292,6 +295,8 @@ export class NewBuyOrder extends React.Component<Props, State> {
       this._alertMissingInfo();
       return;
     }
+
+    this.setState({isPressed: true});
 
     const profile = this.props.profile;
 

@@ -186,7 +186,7 @@ const BankInfoComponent: React.FC<BankInfoComponentProp> = (
       component = (
         <View
           style={[styles.textBoxContainer, styles.textAndCopyButtonContainer]}>
-          <AppText.Body>{content}</AppText.Body>
+          <AppText.Body style={{maxWidth: 355}}>{content}</AppText.Body>
           <CopyButton text={content} />
         </View>
       );
