@@ -112,8 +112,10 @@ const styles = StyleSheet.create({
     marginVertical: 5,
   },
   trendingImgStyle: {
-    width: null, resizeMode:'contain', height: 440
-  }
+    width: null,
+    resizeMode: 'contain',
+    height: 440,
+  },
 });
 
 type Props = {
@@ -149,8 +151,16 @@ export class HomeTabMain extends React.Component<Props, State> {
     trendingOrders: new Array<TrendingOrder>(),
   };
 
+  _unsubscribe = undefined;
+
   public componentDidMount(): void {
-    this._getData();
+    this._unsubscribe = this.props.navigation.addListener('focus', () => {
+      this._getData();
+    });
+  }
+
+  public componentWillUnmount() {
+    this._unsubscribe();
   }
 
   public render(): JSX.Element {
@@ -199,7 +209,7 @@ export class HomeTabMain extends React.Component<Props, State> {
   private _renderTopTrending(): JSX.Element {
     const {trendingOrders} = this.state;
     return (
-      <View style={{display:'flex', width}}>
+      <View style={{display: 'flex', width}}>
         {/* <AppText.Title2 style={styles.sectionTitle}>
           {strings.TopTrending}
         </AppText.Title2>
@@ -208,7 +218,7 @@ export class HomeTabMain extends React.Component<Props, State> {
           {trendingOrders.length > 5 &&
             this._renderRankingList(trendingOrders.slice(6, 11), 6)}
         </ScrollView> */}
-        <Image style={styles.trendingImgStyle}  source={images.TopTrending}/>
+        <Image style={styles.trendingImgStyle} source={images.TopTrending} />
       </View>
     );
   }
@@ -259,8 +269,8 @@ export class HomeTabMain extends React.Component<Props, State> {
       <View style={{marginVertical: 20}}>
         <View style={styles.brandTitleContainer}>
           <AppText.Title2>{strings.Selling}</AppText.Title2>
-          {this.state.selling.length >= 4 &&
-              <AppText.Footnote
+          {this.state.selling.length >= 4 && (
+            <AppText.Footnote
               style={{textDecorationLine: 'underline'}}
               onPress={() => {
                 this.props.navigation.push(RouteNames.Tab.HomeTab.SeeMore, {
@@ -269,7 +279,7 @@ export class HomeTabMain extends React.Component<Props, State> {
               }}>
               {strings.SeeMore}
             </AppText.Footnote>
-          }
+          )}
         </View>
         <FlatList
           horizontal={true}
