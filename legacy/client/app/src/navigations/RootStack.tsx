@@ -20,7 +20,9 @@ import {SplashScreen} from 'screens/SplashScreen';
 import {ProductDetail} from 'screens/Product';
 import {strings, themes} from 'resources';
 import {AccountTabEditProfile} from 'screens/AccountTab';
-import { SeeMore } from 'screens/HomeTab';
+import {SeeMore} from 'screens/HomeTab';
+import {Payment} from 'screens/Order';
+import {OrderConfirmation} from 'screens/Order/OrderConfirmation';
 
 export type RootStackParams = {
   ProductRequest: undefined;
@@ -104,6 +106,22 @@ const RootStack = (): JSX.Element => (
         component={OrderStack}
         options={{
           gestureEnabled: false,
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name={RouteNames.Order.Payment}
+        component={Payment}
+        options={{
+          headerTransparent: true,
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name={'OrderConfirmation'}
+        component={OrderConfirmation}
+        options={{
+          headerTransparent: true,
           headerShown: false,
         }}
       />

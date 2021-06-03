@@ -29,7 +29,6 @@ import {IAppState} from 'store/AppStore';
 import {RootStackParams} from './RootStack';
 import {connect} from 'utilities';
 import {SellOrderHistory} from 'screens/TransactionTab';
-import {TransactionHistory} from 'screens/TransactionTab/TransactionHistory';
 
 const Tab = createBottomTabNavigator();
 
