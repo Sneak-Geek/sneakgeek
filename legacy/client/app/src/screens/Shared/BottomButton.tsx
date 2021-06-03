@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   StyleSheet,
   StyleProp,
@@ -10,6 +10,7 @@ import {
 import {themes} from 'resources';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {AppText} from './Text';
+import {debounce} from '../../utilities';
 
 const styles = StyleSheet.create({
   containerStyle: {
@@ -36,17 +37,25 @@ type Props = {
   onPress: () => void;
   style?: StyleProp<ViewStyle>;
   titleStyle?: StyleProp<TextStyle>;
+  debounce?: boolean;
+  disabled?: boolean;
 } & TouchableOpacityProps;
 
-export const BottomButton = (props: Props) => (
-  <View style={[styles.containerStyle, props.style]}>
-    <TouchableOpacity
-      style={styles.buttonStyle}
-      onPress={props.onPress}
-      disabled={props.disabled}>
-      <AppText.Headline style={[props.titleStyle, styles.titleStyle]}>
-        {props.title}
-      </AppText.Headline>
-    </TouchableOpacity>
-  </View>
-);
+export const BottomButton = (props: Props) => {
+  const buttonHandler = props.debounce
+    ? debounce(props.onPress)
+    : props.onPress;
+
+  return (
+    <View style={[styles.containerStyle, props.style]}>
+      <TouchableOpacity
+        style={styles.buttonStyle}
+        onPress={buttonHandler}
+        disabled={props.disabled}>
+        <AppText.Headline style={[props.titleStyle, styles.titleStyle]}>
+          {props.title}
+        </AppText.Headline>
+      </TouchableOpacity>
+    </View>
+  );
+};

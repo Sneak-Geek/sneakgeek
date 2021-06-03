@@ -73,7 +73,12 @@ export class InventoryDao implements IInventoryDao {
   public async getPriceBySize(shoeId: string) {
     return this.inventoryRepository
       .aggregate([
-        { $match: { shoeId: mongoose.Types.ObjectId(shoeId) } },
+        {
+          $match: {
+            shoeId: mongoose.Types.ObjectId(shoeId),
+            quantity: { $gt: 0 },
+          },
+        },
         {
           $group: {
             _id: "$shoeSize",
@@ -94,6 +99,7 @@ export class InventoryDao implements IInventoryDao {
   }
 
   public async getCurrentlySelling() {
+    // TO DO: quantity of an individual seller can be 0 => return error when create order.
     return this.inventoryRepository
       .aggregate([
         {
@@ -101,11 +107,13 @@ export class InventoryDao implements IInventoryDao {
             _id: "$shoeId",
             sellPrice: { $min: "$sellPrice" },
             stock: { $sum: 1 },
+            quantity: { $sum: "$quantity" },
           },
         },
         {
           $match: {
             stock: { $gt: 0 },
+            quantity: { $gt: 0 },
           },
         },
         {
