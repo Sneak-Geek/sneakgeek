@@ -1,3 +1,3 @@
 export interface IAppleAuthSdk {
-  signIn: () => Promise<string>;
+  signIn: () => Promise<{idToken: string, email: string}>;
 }

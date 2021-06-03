@@ -8,6 +8,7 @@ import { Types } from "../../../configuration/inversify";
 import { IJwtService } from "../JwtService";
 import NodeRsa from "node-rsa";
 import { EnvironmentProvider } from "../../providers";
+import FormData from "form-data";
 
 type AppleJWKSetKey = {
   alg: string;
@@ -34,11 +35,11 @@ enum AuthScheme {
 @injectable()
 export class AppleAuthService extends BaseExternalApiService implements IAppleAuthService {
   private readonly clientId = EnvironmentProvider.env.AppleBundleId;
-  private readonly wwdrCertPath = path.join(
+  private readonly authKey = path.join(
     process.cwd(),
     "resources",
     "certificates",
-    "WWDRCert.cer"
+    "AuthKey_TWRTMUPS5C.p8"
   );
   private readonly keyIdentifier = EnvironmentProvider.env.AppleKeyId;
   private readonly hostname = EnvironmentProvider.env.Host;
@@ -60,21 +61,19 @@ export class AppleAuthService extends BaseExternalApiService implements IAppleAu
   }
 
   public async authorizeAppleUser(authCode: string): Promise<AppleTokenResponse> {
-    const result = await this.apiClient.post(
-      `${this.appleAuthorityUrl}/auth/token`,
-      {
-        client_id: this.clientId,
-        client_secret: this._getClientSecret(),
-        code: authCode,
-        grant_type: AuthScheme.AUTHORIZATION,
-        redirectUrl: `${this.hostname}/api/v1/account/auth/apple/callback`,
+    const body = new FormData();
+    const clientSecret = this._getClientSecret();
+    console.log(clientSecret);
+    body.append("client_id", this.clientId);
+    body.append("client_secret", clientSecret);
+    body.append("code", authCode);
+    body.append("grant_type", AuthScheme.AUTHORIZATION);
+
+    const result = await this.apiClient.post(`${this.appleAuthorityUrl}/auth/token`, body, {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
       },
-      {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-      }
-    );
+    });
 
     return result.data;
   }
@@ -115,7 +114,7 @@ export class AppleAuthService extends BaseExternalApiService implements IAppleAu
       kid: this.keyIdentifier,
     };
 
-    const key = fs.readFileSync(this.wwdrCertPath);
+    const key = fs.readFileSync(this.authKey);
 
     // sign with key and returning JWT token
     return jwt.sign(secretBody, key, {
