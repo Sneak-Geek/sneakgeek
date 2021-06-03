@@ -75,7 +75,7 @@ export class QueryBuilder {
     }
 
     if (this.brands && this.brands.length > 0) {
-      filter.push({ terms: { "brand.keyword": this.brands } });
+      filter.push({ terms: { brand: this.brands } });
     }
 
     if (this.gender) {
@@ -229,6 +229,7 @@ export class SearchService implements ISearchService {
       .setGender(gender)
       .build();
 
+    console.log("Query", JSON.stringify(query, null, 2));
     const { body, statusCode } = await this.client.search({
       method: "POST",
       index: this.shoeIndexName,
