@@ -202,8 +202,8 @@ export const authenticateWithApple = () => {
     );
 
     try {
-      const userToken = await appleSdk.signIn();
-      const accountPayload = await accountService.login(userToken, "apple");
+      const payload = await appleSdk.signIn();
+      const accountPayload = await accountService.login(`${payload.email}+${payload.idToken}`, "apple");
       await settings.setValue(
         SettingsKey.CurrentAccessToken,
         accountPayload?.token

@@ -120,10 +120,11 @@ export class AccountDao implements IAccountDao {
       .exec();
   }
 
-  public async createAppleAccount(userId: string) {
+  public async createAppleAccount(userId: string, email: string) {
     return this.accountRepo.create({
       accountProvider: AccountProvider.apple,
       accountIdByProvider: userId,
+      accountEmailByProvider: email,
     });
   }
 }

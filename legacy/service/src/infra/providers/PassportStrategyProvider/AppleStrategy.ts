@@ -7,7 +7,7 @@ import { UserAccount } from "../../../infra/database";
 import { LogProvider } from "../LogProvider";
 
 export type AppleStrategyCallback = (
-  userId: string,
+  userInfo: {userId: string, email: string},
   callback: (error: any, account: UserAccount) => any
 ) => void;
 
@@ -32,11 +32,12 @@ export class AppleStrategy extends Strategy {
       );
       this.fail(HttpStatus.UNAUTHORIZED);
     } else {
-      const token = (req.headers["access_token"] || req.body["access_token"]) as string;
+      const tokenHeader = (req.headers["access_token"] || req.body["access_token"]) as string;
+      const [email, token] = tokenHeader.split("+");
       try {
-        const userToken = (await this.appleAuthService.getUserToken(token)).sub;
+        const userId = (await this.appleAuthService.getUserToken(token)).sub;
 
-        this.callback(userToken, this._onVerified.bind(this));
+        this.callback({userId, email}, this._onVerified.bind(this));
       } catch (error) {
         LogProvider.instance.error(`Error authenticate with Apple\n${error.stack}`);
         this.fail(HttpStatus.INTERNAL_SERVER_ERROR);

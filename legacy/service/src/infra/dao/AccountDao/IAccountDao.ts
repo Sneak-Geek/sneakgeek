@@ -10,6 +10,7 @@ export interface AccountUpdateInput {
   isVerified?: boolean;
   accessLevel?: AccessLevel;
   password?: string;
+  accountEmailByProvider?: string;
 }
 
 export interface IAccountDao {
@@ -20,7 +21,7 @@ export interface IAccountDao {
   createVerification(accountId: string): Promise<Verification>;
   createFacebookAccount(profile: PassportFacebookToken.Profile): Promise<UserAccount>;
   createEmailAccount(email: string, password: string): Promise<UserAccount>;
-  createAppleAccount(accountId: string): Promise<UserAccount>;
+  createAppleAccount(accountId: string, email: string): Promise<UserAccount>;
   destroyById(accountId: string): Promise<UserAccount | undefined>;
   updateById(
     accountId: string,
