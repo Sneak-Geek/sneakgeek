@@ -24,6 +24,7 @@ export const themes = {
   AppPendingColor: '#E2C115',
   AppBackgroundColor: 'white',
   NotificationBackground: '#D8F2ED',
+  ButtonColorDark: '#1E2330',
   IconHitSlop: {top: 20, bottom: 20, left: 50, right: 50},
   ButtonShadow: Platform.select({
     android: {elevation: 5},
