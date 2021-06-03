@@ -21,6 +21,7 @@ import {RootStackParams} from 'navigations/RootStack';
 import {getDependency} from 'utilities';
 import {ISettingsProvider, SettingsKey} from 'business/src';
 import {styles} from './styles';
+import {Avatar} from 'react-native-elements/dist/avatar/Avatar';
 
 const ListChoice = (props: {
   isMultiple: boolean;
@@ -38,15 +39,6 @@ const ListChoice = (props: {
       {props.options.map((item, index) => (
         <ListItem
           key={index}
-          title={item}
-          titleStyle={[
-            themes.TextStyle.body,
-            {
-              color: isChosen(item)
-                ? themes.AppSecondaryColor
-                : themes.AppAccentColor,
-            },
-          ]}
           onPress={(): void => props.onSelect(item)}
           bottomDivider={true}
           containerStyle={{
@@ -62,8 +54,21 @@ const ListChoice = (props: {
                 color={themes.AppPrimaryColor}
               />
             ) : null
-          }
-        />
+          }>
+          <ListItem.Content>
+            <ListItem.Title
+              style={[
+                themes.TextStyle.body,
+                {
+                  color: isChosen(item)
+                    ? themes.AppSecondaryColor
+                    : themes.AppAccentColor,
+                },
+              ]}>
+              {item}
+            </ListItem.Title>
+          </ListItem.Content>
+        </ListItem>
       ))}
     </View>
   );
@@ -263,12 +268,15 @@ export class SearchTabMain extends React.Component<Props, State> {
             {this.state.shoes.map((s: Shoe) => (
               <ListItem
                 key={s._id}
-                leftAvatar={renderLeftAvatar(s)}
-                title={s.title}
-                titleStyle={themes.TextStyle.subhead}
                 accessible={true}
-                onPress={(): void => this._goToProduct(s)}
-              />
+                onPress={(): void => this._goToProduct(s)}>
+                {renderLeftAvatar(s)}
+                <ListItem.Content>
+                  <ListItem.Title style={themes.TextStyle.subhead}>
+                    {s.title}
+                  </ListItem.Title>
+                </ListItem.Content>
+              </ListItem>
             ))}
           </ScrollView>
         )}
