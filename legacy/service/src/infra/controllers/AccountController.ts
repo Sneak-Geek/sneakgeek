@@ -219,7 +219,7 @@ export class AccountController {
     const jwtToken = this.jwtService.createJWToken(account.id);
 
     if (!account.isVerified) {
-      this._sendVerificationEmail(account, `${req.protocol}://${req.headers.host}`)
+      this._sendVerificationEmail(account, `${req.protocol}://${req.headers.host}`);
     }
 
     return res.status(HttpStatus.OK).send({ account, token: jwtToken });
@@ -484,7 +484,7 @@ export class AccountController {
   }
 
   private async _applePassportCallback(
-    userInfo: {userId: string, email: string},
+    userInfo: { userId: string; email: string },
     callback: (error: any, profile: any) => void
   ) {
     try {
@@ -493,7 +493,9 @@ export class AccountController {
         account = await this.accountDao.createAppleAccount(userInfo.userId, userInfo.email);
       }
       if (!account.accountEmailByProvider) {
-        account = await this.accountDao.updateById(account._id, {accountEmailByProvider: userInfo.email});
+        account = await this.accountDao.updateById(account._id, {
+          accountEmailByProvider: userInfo.email,
+        });
       }
       callback(null, account);
     } catch (error) {

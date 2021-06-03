@@ -35,7 +35,12 @@ enum AuthScheme {
 @injectable()
 export class AppleAuthService extends BaseExternalApiService implements IAppleAuthService {
   private readonly clientId = EnvironmentProvider.env.AppleBundleId;
-  private readonly authKey = path.join(process.cwd(), "resources", "certificates", "AuthKey_TWRTMUPS5C.p8");
+  private readonly authKey = path.join(
+    process.cwd(),
+    "resources",
+    "certificates",
+    "AuthKey_TWRTMUPS5C.p8"
+  );
   private readonly keyIdentifier = EnvironmentProvider.env.AppleKeyId;
   private readonly hostname = EnvironmentProvider.env.Host;
   private readonly snkgTeamId = EnvironmentProvider.env.AppleTeamId;
@@ -59,20 +64,16 @@ export class AppleAuthService extends BaseExternalApiService implements IAppleAu
     const body = new FormData();
     const clientSecret = this._getClientSecret();
     console.log(clientSecret);
-    body.append('client_id', this.clientId);
-    body.append('client_secret', clientSecret);
-    body.append('code', authCode);
-    body.append('grant_type', AuthScheme.AUTHORIZATION);
+    body.append("client_id", this.clientId);
+    body.append("client_secret", clientSecret);
+    body.append("code", authCode);
+    body.append("grant_type", AuthScheme.AUTHORIZATION);
 
-    const result = await this.apiClient.post(
-      `${this.appleAuthorityUrl}/auth/token`,
-      body,
-      {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-      }
-    );
+    const result = await this.apiClient.post(`${this.appleAuthorityUrl}/auth/token`, body, {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    });
 
     return result.data;
   }
