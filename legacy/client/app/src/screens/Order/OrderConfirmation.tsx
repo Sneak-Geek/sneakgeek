@@ -3,6 +3,7 @@ import {View, StyleSheet, Image} from 'react-native';
 import {images} from 'resources';
 import {AppText, BottomButton} from 'screens/Shared';
 import {useNavigation} from '@react-navigation/native';
+import RouteNames from 'navigations/RouteNames';
 
 const styles = StyleSheet.create({
   root: {
@@ -54,14 +55,14 @@ export const OrderConfirmation: React.FC = () => {
       <BottomButton
         title={'Chi tiết đơn hàng'.toUpperCase()}
         onPress={() => {
-          navigate('TransactionTab');
+          navigate(RouteNames.Tab.Name, {screen: 'TransactionTab'});
         }}
         style={[styles.button, styles.orderDetailButton]}
       />
       <BottomButton
         title={'Tiếp tục mua sắm'.toUpperCase()}
         onPress={() => {
-          navigate('HomeTab');
+          navigate(RouteNames.Tab.Name, {screen: 'HomeTab'});
         }}
         style={[styles.button, styles.continueShoppingButton]}
       />
