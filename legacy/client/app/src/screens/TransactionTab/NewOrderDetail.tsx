@@ -7,7 +7,7 @@ import {
 } from 'business';
 import React from 'react';
 import {View, StyleSheet, Dimensions} from 'react-native';
-import {Icon, Chip} from 'react-native-elements';
+import {Icon} from 'react-native-elements';
 import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
 import {useSelector} from 'react-redux';
 import {themes, strings} from 'resources';
@@ -198,7 +198,7 @@ export const NewOrderDetail: React.FC<Props> = (props) => {
           key={i}
           style={{
             width: 2,
-            height: 10,
+            height: 5,
             backgroundColor: themes.GreenSuccess,
             marginVertical: 2,
           }}
@@ -259,9 +259,12 @@ export const NewOrderDetail: React.FC<Props> = (props) => {
                 index !== trackingStatus.length - 1 &&
                 dashedLine()}
             </View>
-            <AppText.Body style={{marginLeft: 10, marginTop: 5}}>
-              {statusToVietString.get(item.status)}
-            </AppText.Body>
+            <View style={{marginLeft: 10, marginTop: 5}}>
+              <AppText.Body>{statusToVietString.get(item.status)}</AppText.Body>
+              <AppText.Callout style={{marginVertical: 8}}>
+                {toVnDateFormat(item.date)}
+              </AppText.Callout>
+            </View>
           </View>
         ))}
       </View>

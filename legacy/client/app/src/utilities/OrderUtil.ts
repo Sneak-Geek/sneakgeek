@@ -3,14 +3,14 @@ import {themes} from 'resources';
 
 export const statusToVietString = new Map<TrackingStatus, string>([
   [TrackingStatus.WAITING_FOR_BANK_TRANSFER, 'Đang chờ chuyển khoản'],
-  [TrackingStatus.RECEIVED_BANK_TRANSFER, 'Chờ nhận đơn'],
+  [TrackingStatus.RECEIVED_BANK_TRANSFER, 'Nhận được chuyển khoản'],
   [TrackingStatus.NOT_RECEIVED_BANK_TRANSFER, 'Không nhận được chuyển khoản'],
   [TrackingStatus.SELLER_REJECTED_ORDER, 'Đơn hàng bị huỷ'],
-  [TrackingStatus.SELLER_APPROVED_ORDER, 'Đang xác thực'],
+  [TrackingStatus.SELLER_APPROVED_ORDER, 'Người bán nhận đơn'],
   [TrackingStatus.REFUND_TO_BUYER, 'Hoàn tiền cho người mua'],
   [
     TrackingStatus.ORDER_BEING_SENT_TO_SNKGK_FOR_AUTHENTICATION,
-    'Đang Xác thực',
+    'Đang xác thực',
   ],
   [TrackingStatus.SHOE_VERIFIED, 'Giày được xác thực'],
   [TrackingStatus.SHOE_UNQUALIFIED, 'Giày không đủ tiêu chuẩn'],
