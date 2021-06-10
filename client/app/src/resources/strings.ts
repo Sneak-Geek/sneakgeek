@@ -93,7 +93,7 @@ export const strings = {
   NewSell: 'Bán sản phẩm',
   Sell: 'Bán',
   Deposit: 'Chuyển khoản',
-  NewBuyOrder: 'Đăng mua sản phẩm',
+  NewBuyOrder: 'Mua sản phẩm',
   Continue: 'Tiếp tục',
   Withdraw: 'Rút tiền',
   SellShoe: 'Đăng bán',

@@ -40,6 +40,7 @@ type State = {
   }),
 )
 export class SizeSelection extends React.Component<Props, State> {
+  // TODO(hoangpham95): Move to functional component and use useSelector for redux
   private shoeSizes: string[] = [];
   private orderType: OrderType;
   private shoe: Shoe;

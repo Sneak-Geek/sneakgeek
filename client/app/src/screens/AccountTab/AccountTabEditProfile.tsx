@@ -34,7 +34,7 @@ import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete'
 
 const styles = StyleSheet.create({
   headerContainer: {
-    paddingHorizontal: 10,
+    paddingHorizontal: 16,
     alignItems: 'center',
     justifyContent: 'space-between',
     flexDirection: 'row',

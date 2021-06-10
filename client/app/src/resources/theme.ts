@@ -3,7 +3,7 @@ import {StyleSheet, Platform} from 'react-native';
 export const themes = {
   IosHeaderHeight: 44,
   FacebookThemeColor: '#3B5998',
-  IconSize: 18,
+  IconSize: 25,
   RegularButtonHeight: 54,
   MediumButtonHeigt: 40,
   ButtonBorderRadius: 4,

@@ -9,7 +9,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
     borderBottomColor: themes.DisabledColor,
     borderBottomWidth: 1,
-    paddingHorizontal: 10,
+    paddingHorizontal: 16,
   },
   shoeDetailContainer: {
     marginTop: 20,
@@ -29,7 +29,6 @@ export const styles = StyleSheet.create({
     alignItems: 'flex-start',
     paddingRight: 5,
   },
-
 
   sectionContainer: {
     marginTop: 5,
