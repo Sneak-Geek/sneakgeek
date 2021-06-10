@@ -272,6 +272,7 @@ export class NewBuyOrder extends React.Component<Props, State> {
   }
 
   private get _isMissingInfo() {
+    const account = this.props.account;
     const profile = this.props.profile;
     const isMissingInfo =
       !profile ||
@@ -280,7 +281,7 @@ export class NewBuyOrder extends React.Component<Props, State> {
       !profile.userProvidedName?.firstName ||
       !profile.userProvidedName.lastName;
 
-    return isMissingInfo;
+    return isMissingInfo || !account || !account.isVerified;
   }
 
   private _purchaseProduct(): void {
@@ -323,7 +324,9 @@ export class NewBuyOrder extends React.Component<Props, State> {
 
   private _alertMissingInfo(): void {
     const message =
-      !this.props.account || !this.props.profile
+      !this.props.account ||
+      !this.props.profile ||
+      !this.props.account.isVerified
         ? strings.NotAuthenticated
         : strings.MissingProfileInfo;
     const {navigation} = this.props;

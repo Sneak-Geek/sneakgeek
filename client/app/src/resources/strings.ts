@@ -104,7 +104,8 @@ export const strings = {
   ErrorPleaseTryAgain: 'Đã có lỗi xảy ra, xin vui lòng thử lại',
   Error: 'Đã có lỗi xảy ra',
   AccountNotVerifieid: 'Tài khoản của bạn chưa được xác thực',
-  NotAuthenticated: 'Vui lòng đăng nhập để tiếp tục',
+  NotAuthenticated:
+    'Bạn chưa đăng nhập, hoặc tài khoản của bạn chưa được xác thực. Vui lòng đăng nhập hoặc xác nhận tài khoản để tiếp tục',
   MissingProfileInfo: 'Vui lòng nhập thông tin cá nhân để mua hàng',
   BuyNow: 'Mua ngay',
   SetBuyPrice: 'Giá đặt mua',
