@@ -85,7 +85,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 15,
+    paddingHorizontal: 16,
     borderBottomColor: themes.DisabledColor,
     borderBottomWidth: 0.5,
     backgroundColor: 'white',

@@ -51,7 +51,7 @@ export const AccountTabInventoryDetail: React.FC<{}> = () => {
       displayText: quantity.toString(),
       editable: true,
       onUpdate: (text: string) => {
-        setQuantity(parseInt(text));
+        setQuantity(parseInt(text, 10));
       },
     },
     {
@@ -59,7 +59,7 @@ export const AccountTabInventoryDetail: React.FC<{}> = () => {
       displayText: price.toString(),
       editable: true,
       onUpdate: (text: string) => {
-        setPrice(parseInt(text));
+        setPrice(parseInt(text, 10));
       },
     },
   ];

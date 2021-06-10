@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  Shoe,
-  Profile,
-  PaymentType,
-  Account,
-  IOrderService,
-  FactoryKeys,
-} from 'business';
+import {Shoe, Profile, Account, IOrderService, FactoryKeys} from 'business';
 import {SafeAreaConsumer} from 'react-native-safe-area-context';
 import {View, ScrollView, FlatList, Alert} from 'react-native';
 import {RootStackParams} from 'navigations/RootStack';
