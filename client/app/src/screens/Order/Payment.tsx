@@ -171,7 +171,7 @@ type BankInfoComponentProp = {
 const BankInfoComponent: React.FC<BankInfoComponentProp> = (
   props: BankInfoComponentProp,
 ) => {
-  const {orderId, type, header, content} = props;
+  const {type, header, content} = props;
   let component = <View />;
 
   switch (type) {
@@ -236,17 +236,14 @@ const TransferInstruction: React.FC<TransferInstructionProp> = (
   const {sellPrice} = props;
   const instructions = [
     {
-      key: 1,
       content: 'Bấm nút xác nhận chuyển khoản',
     },
     {
-      key: 2,
       content: `Trong vòng 30 phút kể từ khi bấm nút xác nhận, bạn hãy chuyển ${toCurrencyString(
         sellPrice,
       )} vào TKNH bên trên kèm theo nội dung chuyển tiền như hướng dẫn.`,
     },
     {
-      key: 3,
       content:
         'SneakGeek Team sẽ check giao dịch và thông báo nếu như đặt hàng thành công/thất bại',
     },
@@ -257,10 +254,10 @@ const TransferInstruction: React.FC<TransferInstructionProp> = (
         <AppText.SubHeadline>Hướng dẫn chuyển khoản</AppText.SubHeadline>
       </View>
       <View style={styles.sectionContainer}>
-        {instructions.map((i) => (
+        {instructions.map((item, idx) => (
           <View style={[styles.textBoxContainer]}>
-            <AppText.Body>{i.key}.</AppText.Body>
-            <AppText.Body> {i.content}</AppText.Body>
+            <AppText.Body>{idx + 1}</AppText.Body>
+            <AppText.Body> {item.content}</AppText.Body>
           </View>
         ))}
       </View>
