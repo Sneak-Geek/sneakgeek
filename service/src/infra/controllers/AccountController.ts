@@ -277,10 +277,12 @@ export class AccountController {
   )
   public async sendConfirmationToken(
     @request() req: express.Request,
-    @response() res: express.Response
+    @response() res: express.Response,
+    @queryParam("resetPassword") resetPassword: boolean
   ) {
     const email = req.body.email as string;
     const host = `${req.protocol}://${req.headers.host}`;
+    const isResetPassword = Boolean(resetPassword);
     const account = await this.accountDao.findByProviderEmail(email);
     if (!account) {
       return res.status(HttpStatus.NOT_FOUND).send({
@@ -288,7 +290,7 @@ export class AccountController {
       });
     } else {
       const verification = await this.accountDao.createVerification(account._id);
-      this.emailService.sendVerificationEmail(account, verification, host);
+      this.emailService.sendVerificationEmail(account, verification, host, isResetPassword);
       // DO NOT SEND VERIFICATION IN RESPONSE
       return res.status(HttpStatus.OK).send({
         message: "Confirmation token sent!",

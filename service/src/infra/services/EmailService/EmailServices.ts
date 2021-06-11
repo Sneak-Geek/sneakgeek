@@ -23,15 +23,20 @@ export class EmailService implements IEmailService {
   public sendVerificationEmail(
     account: UserAccount,
     verification: Verification,
-    host: string
+    host: string,
+    isResetPassword?: boolean
   ): Promise<any> {
     const userEmail = account.accountEmailByProvider;
 
     const mailOptions = {
       from: "no-reply@support.sneakgeek.io",
       to: userEmail,
-      subject: "Verify your account with SneakGeek",
-      text: `${host}/api/v1/account/verify?verificationToken=${verification.verificationToken}`,
+      subject: !isResetPassword
+        ? "Xác nhận tài khoản với SneakGeek"
+        : "Mã đổi mật khẩu của bạn",
+      text: !isResetPassword
+        ? `${host}/api/v1/account/verify?verificationToken=${verification.verificationToken}`
+        : `Mã đổi mật khẩu của bạn là: ${verification.verificationToken}`,
     };
 
     const deferred = Promise.defer();
