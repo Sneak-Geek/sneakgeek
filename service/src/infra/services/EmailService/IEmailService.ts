@@ -8,7 +8,8 @@ export interface IEmailService {
   sendVerificationEmail(
     account: UserAccount,
     verification: Verification,
-    host: string
+    host: string,
+    isResetPassword?: boolean
   ): Promise<any>;
   notifyUser(email: string, subject: string, text: string): Promise<any>;
 }
