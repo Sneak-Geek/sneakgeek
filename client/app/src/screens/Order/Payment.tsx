@@ -8,18 +8,17 @@ import {
   Image,
   ScrollView,
 } from 'react-native';
-import {AppText, BottomButton, Header} from 'screens/Shared';
+import {AppText, BottomButton} from 'screens/Shared';
 import {toCurrencyString} from 'utilities';
 import {useNavigation} from '@react-navigation/native';
-import {images} from 'resources';
+import {images, themes} from 'resources';
 
 const styles = StyleSheet.create({
   root: {
-    display: 'flex',
     flex: 1,
     backgroundColor: 'white',
     flexDirection: 'column',
-    paddingBottom: 35,
+    marginTop: 88,
   },
   orderIdContainer: {
     paddingLeft: 20,
@@ -80,11 +79,19 @@ enum BankInfoComponentType {
 }
 
 export const Payment: React.FC<any> = ({route}) => {
-  const {navigate} = useNavigation();
+  const navigation = useNavigation();
   const {sellPrice, orderId} = route.params;
+  const isDetailNotice = Boolean(route.params.isOrderDetailNotice);
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      ...themes.headerStyle,
+      headerShown: true,
+      headerTitle: 'Thông tin chuyển khoản',
+      ...(!isDetailNotice ? {headerLeft: null, gestureEnabled: false} : {}),
+    });
+  });
   return (
     <SafeAreaView style={styles.root}>
-      <Header topInset={1} title={'Thông tin chuyển khoản'} leftIcon={false} />
       <ScrollView>
         <View style={styles.orderIdContainer}>
           <AppText.SubHeadline>Mã giao dịch</AppText.SubHeadline>
@@ -93,13 +100,15 @@ export const Payment: React.FC<any> = ({route}) => {
         <BankInfo orderId={orderId} sellPrice={sellPrice} />
         <TransferInstruction sellPrice={sellPrice} />
       </ScrollView>
-      <BottomButton
-        title={'Xác nhận chuyển khoản'.toUpperCase()}
-        style={styles.bottomButtonContainer}
-        onPress={() => {
-          navigate('OrderConfirmation');
-        }}
-      />
+      {!isDetailNotice && (
+        <BottomButton
+          title={'Xác nhận chuyển khoản'.toUpperCase()}
+          style={styles.bottomButtonContainer}
+          onPress={() => {
+            navigation.navigate('OrderConfirmation');
+          }}
+        />
+      )}
     </SafeAreaView>
   );
 };
@@ -115,7 +124,7 @@ const BankInfo: React.FC<BankInfoProp> = (props: BankInfoProp) => {
     {
       type: BankInfoComponentType.TEXT_ONLY,
       header: 'Chi nhánh ngân hàng',
-      content: 'Ngân hàng TMCP Việt Nam thịnh vương (VPBank)',
+      content: 'Ngân hàng TMCP Việt Nam thịnh vượng (VPBank)',
     },
     {
       type: BankInfoComponentType.TEXT_AND_COPY_BUTTON,
@@ -241,7 +250,7 @@ const TransferInstruction: React.FC<TransferInstructionProp> = (
     {
       content: `Trong vòng 30 phút kể từ khi bấm nút xác nhận, bạn hãy chuyển ${toCurrencyString(
         sellPrice,
-      )} vào TKNH bên trên kèm theo nội dung chuyển tiền như hướng dẫn.`,
+      )} vào tài khoản ngân hàng bên trên kèm theo nội dung chuyển tiền như hướng dẫn.`,
     },
     {
       content:
