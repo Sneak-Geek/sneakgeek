@@ -54,7 +54,7 @@ export const OrderBankTransferNotice: React.FC<OrderNoticeProp> = (
         </View>
       );
     default:
-      return <View />;
+      return <></>;
   }
 };
 
