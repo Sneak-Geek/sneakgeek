@@ -119,7 +119,7 @@ export class NewBuyOrder extends React.Component<Props, State> {
               this._isMissingInfo
                 ? this._alertMissingInfo()
                 : this.props.navigation.push(
-                    RouteNames.Tab.AccountTab.EditProfile,
+                    RouteNames.Tab.AccountTab.ViewProfile,
                   )
             }
             userProfile={this.props.profile}
@@ -328,7 +328,7 @@ export class NewBuyOrder extends React.Component<Props, State> {
         text: strings.AddInfoForReview,
         onPress: (): void => {
           if (this.props.account) {
-            navigation.navigate(RouteNames.Tab.AccountTab.EditProfile);
+            navigation.navigate(RouteNames.Tab.AccountTab.ViewProfile);
           } else {
             navigation.navigate(RouteNames.Auth.Name, {
               screen: RouteNames.Auth.Login,

@@ -87,7 +87,7 @@ export class AccountTabMain extends React.Component<Props> {
       title: strings.AccountInfo,
       onClick: (): void =>
         this._onClickWithAccountGuarded(() =>
-          this.props.navigation.push(RouteNames.Tab.AccountTab.EditProfile),
+          this.props.navigation.push(RouteNames.Tab.AccountTab.ViewProfile),
         ),
       leftIcon: 'person',
     },

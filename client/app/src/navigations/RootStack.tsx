@@ -19,7 +19,7 @@ import {OrderStack} from './OrderStack';
 import {SplashScreen} from 'screens/SplashScreen';
 import {ProductDetail} from 'screens/Product';
 import {strings, themes} from 'resources';
-import {AccountTabEditProfile} from 'screens/AccountTab';
+import {AccountTabViewProfile, AccountTabEditProfile} from 'screens/AccountTab';
 import {SeeMore} from 'screens/HomeTab';
 import {Payment} from 'screens/Order';
 import {OrderConfirmation} from 'screens/Order/OrderConfirmation';
@@ -62,7 +62,7 @@ export type RootStackParams = {
   SearchTabMain: undefined;
   TrasactionTabMain: undefined;
   AccountTabMain: undefined;
-  AccountTabEditProfile: undefined;
+  AccountTabViewProfile: undefined;
   HomeTabNotification: undefined;
 };
 
@@ -125,9 +125,17 @@ const RootStack = (): JSX.Element => (
           headerShown: false,
         }}
       />
-      <Stack.Screen
+      <Stack.Screen 
         name={RouteNames.Tab.AccountTab.EditProfile}
         component={AccountTabEditProfile}
+        options={{
+          headerShown: false,
+          headerTransparent: true,
+        }}
+      />
+      <Stack.Screen
+        name={RouteNames.Tab.AccountTab.ViewProfile}
+        component={AccountTabViewProfile}
         options={{
           headerShown: false,
           headerTransparent: true,

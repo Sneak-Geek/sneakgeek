@@ -45,6 +45,7 @@ const RouteNames = {
       Name: 'AccountTab',
       Main: 'AccountTabMain',
       EditProfile: 'AccountTabEditProfile',
+      ViewProfile: 'AccountTabViewProfile',
       OrderHistory: 'OrderHistory',
       Inventory: 'AccountTabInventory',
       InventoryDetail: 'AccountTabInventoryDetail',
