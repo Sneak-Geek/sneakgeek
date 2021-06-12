@@ -85,6 +85,7 @@ export const NewOrderDetail: React.FC<Props> = (props) => {
   const [shouldRenderAction, setShouldRenderAction] = React.useState<boolean>(
     true,
   );
+  const [isActionAccept, setIsActionAccept] = React.useState<boolean>(false);
   const account = useSelector(
     (state: IAppState) => state.UserState.accountState.account,
   );
@@ -152,7 +153,11 @@ export const NewOrderDetail: React.FC<Props> = (props) => {
               </AppText.Body>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => sellerUpdateOrder(false)}>
+          <TouchableOpacity
+            onPress={() => {
+              sellerUpdateOrder(false);
+              setIsActionAccept(true);
+            }}>
             <View
               style={[styles.sellerActionButton, styles.sellerAcceptButton]}>
               <AppText.Body style={{textAlign: 'center', color: 'white'}}>
@@ -165,6 +170,35 @@ export const NewOrderDetail: React.FC<Props> = (props) => {
     );
   };
 
+  const renderSellerShippingInfo = () => {
+    if (
+      account.accessLevel === 'Seller' &&
+      (isActionAccept || latestStatus === TrackingStatus.SELLER_APPROVED_ORDER)
+    ) {
+      return (
+        <View
+          style={{
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderBottomWidth: 0.6,
+            borderBottomColor: themes.DisabledColor,
+          }}>
+          <AppText.Body
+            style={{
+              textAlign: 'center',
+              marginVertical: 20,
+              marginHorizontal: 30,
+            }}>
+            Bạn cần chuẩn bị hàng để SneakGeek có thể tới và nhận hàng để thực
+            hiện giao dịch.
+          </AppText.Body>
+        </View>
+      );
+    }
+
+    return false;
+  };
+
   const renderShippingInfo = () => {
     const email = profile?.userProvidedEmail;
     const phoneNumber = profile?.userProvidedPhoneNumber;
@@ -173,6 +207,9 @@ export const NewOrderDetail: React.FC<Props> = (props) => {
     const name = `${profile?.userProvidedName.lastName} ${profile?.userProvidedName.firstName}`;
     return (
       <>
+        <AppText.SubHeadline style={{color: 'rgba(0,0,0,0.6)'}}>
+          Thông tin giao hàng
+        </AppText.SubHeadline>
         <AppText.Body style={{marginTop: 20}}>{name}</AppText.Body>
         <AppText.Subhead style={styles.shippingInfoDetails}>
           {phoneNumber}
@@ -186,13 +223,14 @@ export const NewOrderDetail: React.FC<Props> = (props) => {
         <AppText.Subhead style={styles.shippingInfoDetails}>
           {addressLine2}
         </AppText.Subhead>
+        {renderLine()}
       </>
     );
   };
 
   const dashedLine = () => {
     const views = [];
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 6; i++) {
       views.push(
         <View
           key={i}
@@ -245,7 +283,11 @@ export const NewOrderDetail: React.FC<Props> = (props) => {
   const renderTrackingProgress = () => {
     const trackingStatus = props.order.trackingStatus;
     return (
-      <View style={{flexDirection: 'column', marginBottom: 100}}>
+      <View
+        style={{
+          flexDirection: 'column',
+          marginBottom: 100,
+        }}>
         {trackingStatus.map((item, index) => (
           <View
             key={index}
@@ -256,14 +298,22 @@ export const NewOrderDetail: React.FC<Props> = (props) => {
             <View style={{alignItems: 'center', justifyContent: 'center'}}>
               {circleIndicator(item.status)}
               {item.status !== TrackingStatus.BUYER_RECEIVED &&
-                index !== trackingStatus.length - 1 &&
-                dashedLine()}
+              index !== trackingStatus.length - 1 ? (
+                dashedLine()
+              ) : (
+                <View style={{height: 20}} />
+              )}
             </View>
-            <View style={{marginLeft: 10, marginTop: 5}}>
+            <View
+              style={{
+                marginLeft: 10,
+                alignItems: 'flex-start',
+                justifyContent: 'center',
+              }}>
               <AppText.Body>{statusToVietString.get(item.status)}</AppText.Body>
-              <AppText.Callout style={{marginVertical: 8}}>
+              <AppText.Footnote style={{marginVertical: 8}}>
                 {toVnDateFormat(item.date)}
-              </AppText.Callout>
+              </AppText.Footnote>
             </View>
           </View>
         ))}
@@ -288,6 +338,7 @@ export const NewOrderDetail: React.FC<Props> = (props) => {
         onCloseCallBack={props.onClose}
       />
       {renderOrderActionForSeller()}
+      {renderSellerShippingInfo()}
       <ShoeHeaderSummary shoe={props.order.shoe} />
       <ScrollView
         style={{
@@ -306,11 +357,7 @@ export const NewOrderDetail: React.FC<Props> = (props) => {
           );
         })}
         {renderLine()}
-        <AppText.SubHeadline style={{color: 'rgba(0,0,0,0.6)'}}>
-          Thông tin giao hàng
-        </AppText.SubHeadline>
-        {renderShippingInfo()}
-        {renderLine()}
+        {account.accessLevel !== 'Seller' && renderShippingInfo()}
         {renderTrackingProgress()}
       </ScrollView>
     </View>
