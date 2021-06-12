@@ -22,7 +22,7 @@ import {
   toCurrencyString,
   toVnDateFormat,
 } from 'utilities';
-import {OrderNotice} from './OrderNotice';
+import {OrderBankTransferNotice} from './OrderBankTransferNotice';
 
 const styles = StyleSheet.create({
   orderContainer: {
@@ -278,11 +278,14 @@ export const NewOrderDetail: React.FC<Props> = (props) => {
       <AppText.Title3 style={{alignSelf: 'center', marginTop: 20}}>
         Thông tin giao dịch
       </AppText.Title3>
-      <OrderNotice order={props.order} onCloseCallBack={props.onClose} />
       <Icon
         containerStyle={{position: 'absolute', top: 20, right: 20}}
         name="close"
         onPress={props.onClose}
+      />
+      <OrderBankTransferNotice
+        order={props.order}
+        onCloseCallBack={props.onClose}
       />
       {renderOrderActionForSeller()}
       <ShoeHeaderSummary shoe={props.order.shoe} />

@@ -24,7 +24,7 @@ type OrderNoticeProp = {
   onCloseCallBack: any;
 };
 
-export const OrderNotice: React.FC<OrderNoticeProp> = (
+export const OrderBankTransferNotice: React.FC<OrderNoticeProp> = (
   props: OrderNoticeProp,
 ) => {
   const {navigate} = useNavigation();
@@ -43,6 +43,7 @@ export const OrderNotice: React.FC<OrderNoticeProp> = (
             title={'Thông tin chuyển khoản'}
             onPress={() => {
               navigate(RouteNames.Order.Payment, {
+                isOrderDetailNotice: 'true',
                 inventoryId: order.inventory?.id,
                 sellPrice: order.inventory?.sellPrice,
                 orderId: order._id,
@@ -85,8 +86,7 @@ const OrderNoticeContent: React.FC<OrderNoticeContentProp> = (
           marginTop: 20,
           borderColor: themes.DisabledColor,
           width: 1000,
-          borderWidth: 1,
-          borderStyle: 'dotted',
+          borderWidth: 0.5,
         }}
       />
     </View>
