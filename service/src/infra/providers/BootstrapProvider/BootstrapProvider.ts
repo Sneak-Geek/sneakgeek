@@ -174,9 +174,9 @@ export class BootstrapProvider implements IBootstrapProvider {
     // this is assuming that shoe data is bootstrapped
     const [hot, nike, jordan, adidas, ranking] = await Promise.all([
       this.shoeRepository
-        .find({ "media.imageUrl": { $ne: "" } })
+        .find({ brand: "Jordan", "media.imageUrl": { $ne: "" } })
         .sort({ releaseDate: -1 })
-        .limit(15)
+        .limit(5)
         .exec(),
       this.shoeRepository
         .find({ brand: "Nike", "media.imageUrl": { $ne: "" } })

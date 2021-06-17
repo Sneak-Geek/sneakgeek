@@ -29,7 +29,8 @@ import {RootStackParams} from 'navigations/RootStack';
 import RouteNames from 'navigations/RouteNames';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {Avatar} from 'react-native-elements';
-import {images} from '../../resources';
+import {IAppState} from 'store/AppStore';
+import {Catalog} from 'business/src';
 
 const {width, height} = Dimensions.get('window');
 
@@ -119,6 +120,7 @@ const styles = StyleSheet.create({
 });
 
 type Props = {
+  topTrending: Catalog;
   navigation: StackNavigationProp<RootStackParams, 'HomeTabMain'>;
 
   toggleLoadingIndicator: (isLoading: boolean, message: string) => void;
@@ -136,14 +138,19 @@ type State = {
   trendingOrders: TrendingOrder[];
 };
 
-@connect(null, (dispatch: Function) => ({
-  toggleLoadingIndicator: (isLoading: boolean, message: string): void => {
-    dispatch(toggleIndicator({isLoading, message}));
-  },
-  getHomepageCatalogs: (): void => {
-    dispatch(getHomeCatalogs());
-  },
-}))
+@connect(
+  (state: IAppState) => ({
+    topTrending: state.CatalogState.homepageCatalogState?.catalogs?.hot,
+  }),
+  (dispatch: Function) => ({
+    toggleLoadingIndicator: (isLoading: boolean, message: string): void => {
+      dispatch(toggleIndicator({isLoading, message}));
+    },
+    getHomepageCatalogs: (): void => {
+      dispatch(getHomeCatalogs());
+    },
+  }),
+)
 export class HomeTabMain extends React.Component<Props, State> {
   state = {
     isGettingData: false,
@@ -154,6 +161,7 @@ export class HomeTabMain extends React.Component<Props, State> {
   _unsubscribe = undefined;
 
   public componentDidMount(): void {
+    this.props.getHomepageCatalogs();
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
       this._getData();
     });
@@ -207,38 +215,34 @@ export class HomeTabMain extends React.Component<Props, State> {
   }
 
   private _renderTopTrending(): JSX.Element {
-    const {trendingOrders} = this.state;
+    const {topTrending} = this.props;
     return (
       <View style={{display: 'flex', width}}>
-        {/* <AppText.Title2 style={styles.sectionTitle}>
+        <AppText.Title2 style={styles.sectionTitle}>
           {strings.TopTrending}
         </AppText.Title2>
-        <ScrollView horizontal={true} pagingEnabled={true}>
-          {this._renderRankingList(trendingOrders.slice(0, 5), 1)}
-          {trendingOrders.length > 5 &&
-            this._renderRankingList(trendingOrders.slice(6, 11), 6)}
-        </ScrollView> */}
-        <Image style={styles.trendingImgStyle} source={images.TopTrending} />
+        {this._renderRankingList(topTrending)}
       </View>
     );
   }
 
-  private _renderRankingList(
-    orders: TrendingOrder[],
-    startIndex: number,
-  ): JSX.Element {
+  private _renderRankingList(topTrending: Catalog): JSX.Element {
+    if (!topTrending) {
+      return <></>;
+    }
+    const shoes = topTrending?.products.slice(1, 6);
     return (
       <View style={styles.rankingRootContainer}>
         <View style={styles.rankingInnerContainer}>
-          {orders.map(
-            (order, index): JSX.Element => (
+          {shoes.map(
+            (shoe, index): JSX.Element => (
               <TouchableWithoutFeedback
-                key={order.shoe._id}
-                onPress={(): void => this._navigateToProductDetail(order.shoe)}>
+                key={shoe._id}
+                onPress={(): void => this._navigateToProductDetail(shoe)}>
                 <View style={styles.shoeRankingContainer}>
                   <Avatar
                     rounded
-                    title={(index + startIndex).toString()}
+                    title={(index + 1).toString()}
                     size={'medium'}
                     titleStyle={themes.TextStyle.body}
                     overlayContainerStyle={{
@@ -246,14 +250,14 @@ export class HomeTabMain extends React.Component<Props, State> {
                     }}
                   />
                   <Image
-                    source={{uri: order.shoe.media.imageUrl}}
+                    source={{uri: shoe.media.imageUrl}}
                     style={{width: 90, aspectRatio: 1, marginHorizontal: 20}}
                     resizeMode={'contain'}
                   />
                   <AppText.Subhead
                     style={{flex: 1, flexWrap: 'wrap'}}
                     numberOfLines={2}>
-                    {order.shoe.title}
+                    {shoe.title}
                   </AppText.Subhead>
                 </View>
               </TouchableWithoutFeedback>
