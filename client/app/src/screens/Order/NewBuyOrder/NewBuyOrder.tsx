@@ -90,7 +90,13 @@ export class NewBuyOrder extends React.Component<Props, State> {
       isPressed: false,
     };
 
-    this._shoe = this.props.route.params.shoe;
+    try {
+      this._shoe = this.props.route.params.shoe;
+    } catch (error) {
+      props.navigation.navigate(RouteNames.Tab.HomeTab.Name, {
+        screen: RouteNames.Tab.HomeTab.Main,
+      });
+    }
 
     this._childComponents = [
       {
