@@ -20,6 +20,7 @@ import {
 } from 'actions';
 import {IInventoryService} from 'business/src';
 import {IAppState} from 'store/AppStore';
+import RouteNames from 'navigations/RouteNames';
 
 type Props = {
   userProfile: Profile;
@@ -62,12 +63,18 @@ export class NewSellOrder extends React.Component<Props, State> {
   public constructor(props: Props) {
     super(props);
 
-    this._shoe = this.props.route.params.shoe;
+    try {
+      this._shoe = this.props.route.params.shoe;
+    } catch (error) {
+        props.navigation.navigate(RouteNames.Tab.HomeTab.Name, {
+        screen: RouteNames.Tab.HomeTab.Main,
+      });
+    }
 
     this.state = {
       inventory: {
         sellPrice: undefined,
-        shoeId: this._shoe._id,
+        shoeId: (this._shoe !== undefined) ? this._shoe._id: undefined,
         shoeSize: undefined,
         quantity: undefined,
       },

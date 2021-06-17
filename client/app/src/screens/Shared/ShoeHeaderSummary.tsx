@@ -32,17 +32,17 @@ const styles = StyleSheet.create({
 export const ShoeHeaderSummary = (props: {shoe: Shoe}): JSX.Element => (
   <View style={styles.summaryContainer}>
     <Image
-      source={{uri: props.shoe.media.imageUrl}}
+      source={{uri: props.shoe !== undefined ? props.shoe.media.imageUrl: undefined}}
       style={styles.shoeImage}
       resizeMode={'contain'}
     />
     <View style={styles.titleContainer}>
       <AppText.Body style={{flexWrap: 'wrap', marginBottom: 8}}>
-        {props.shoe.title}
+        {props.shoe !== undefined ? props.shoe.title: ""}
       </AppText.Body>
       <AppText.Subhead>
         {strings.Gender}:{' '}
-        {props.shoe.gender === 'men' ? strings.Men : strings.Women}
+        {props.shoe !== undefined && props.shoe.gender === 'men' ? strings.Men : strings.Women}
       </AppText.Subhead>
     </View>
   </View>

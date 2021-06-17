@@ -37,7 +37,7 @@ type DispatchProps = {
 
 type Props = StateProps &
   DispatchProps & {
-    navigation?: StackNavigationProp<any>;
+    navigation: StackNavigationProp<any>;
   };
 
 @connect<StateProps, DispatchProps>(
@@ -95,7 +95,15 @@ export class EmailLoginScreen extends React.Component<Props, State> {
             break;
         }
       } else if (state === NetworkRequestState.SUCCESS) {
-        navigation.push(RouteNames.Tab.Name);
+        try {
+            navigation.navigate(RouteNames.Order.Name, {
+              screen: RouteNames.Order.BuyConfirmation,
+            });
+        } catch (error) {
+          navigation.navigate(RouteNames.Tab.HomeTab.Name, {
+            screen: RouteNames.Tab.HomeTab.Main,
+          });
+        }
       }
     }
   }
