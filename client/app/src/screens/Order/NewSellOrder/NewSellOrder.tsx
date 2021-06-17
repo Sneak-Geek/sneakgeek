@@ -1,6 +1,6 @@
 import React from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {TextInput, View} from 'react-native';
+import {View} from 'react-native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {themes, strings} from 'resources';
 import {
@@ -20,6 +20,8 @@ import {
 } from 'actions';
 import {IInventoryService} from 'business/src';
 import {IAppState} from 'store/AppStore';
+import {TextInputMask} from 'react-native-masked-text';
+
 
 type Props = {
   userProfile: Profile;
@@ -38,6 +40,7 @@ type SellDetailChild = {
 
 type State = {
   inventory: Partial<Inventory>;
+  numText: Array<string>;
 };
 
 @connect(
@@ -71,7 +74,41 @@ export class NewSellOrder extends React.Component<Props, State> {
         shoeSize: undefined,
         quantity: undefined,
       },
+      numText: ['', '', '']
     };
+  }
+
+  onUpdate = (text, index) => {
+    if (index == 0)
+    {
+      this.setState({
+        inventory: {
+          ...this.state.inventory,
+          shoeSize: text,
+        },
+        numText: [text, this.state.numText[1], this.state.numText[2]],
+      })
+    }
+    if (index == 1)
+    {
+      this.setState({
+        inventory: {
+          ...this.state.inventory,
+          quantity: parseInt(text, 10),
+        },
+        numText: [this.state.numText[0], text, this.state.numText[2]],
+      })
+    }
+    if (index == 2)
+    {
+      this.setState({
+        inventory: {
+          ...this.state.inventory,
+          sellPrice: parseInt(text, 10),
+        },
+        numText: [this.state.numText[0], this.state.numText[1], text],
+      })
+    }
   }
 
   public render(): JSX.Element {
@@ -87,47 +124,25 @@ export class NewSellOrder extends React.Component<Props, State> {
   }
 
   private _renderInventory() {
+
     const inventoryItems = [
       {
         title: strings.ShoeSize,
         displayText: '',
-        onUpdate: (text) => {
-          this.setState({
-            inventory: {
-              ...this.state.inventory,
-              shoeSize: text,
-            },
-          });
-        },
       },
       {
         title: strings.InventoryQuantity,
         displayText: '',
-        onUpdate: (text) => {
-          this.setState({
-            inventory: {
-              ...this.state.inventory,
-              quantity: parseInt(text, 10),
-            },
-          });
-        },
       },
       {
         title: strings.Price,
         displayText: '',
-        onUpdate: (text) => {
-          this.setState({
-            inventory: {
-              ...this.state.inventory,
-              sellPrice: parseInt(text, 10),
-            },
-          });
-        },
       },
     ];
+
     return (
       <View style={{padding: 20, flex: 1, flexDirection: 'column'}}>
-        {inventoryItems.map((t) => (
+        {inventoryItems.map((t, index) => (
           <View
             style={{
               flexDirection: 'row',
@@ -135,14 +150,29 @@ export class NewSellOrder extends React.Component<Props, State> {
               justifyContent: 'space-between',
             }}>
             <AppText.SubHeadline>{t.title}</AppText.SubHeadline>
-            <TextInput
+            <TextInputMask
               placeholderTextColor={themes.AppDisabledColor}
               placeholder={t.title}
               numberOfLines={1}
+              keyboardType={'number-pad'}
+              type={index == 2 ? 'money' : 'custom'}
+              options={
+                index == 2 ? 
+                {
+                  precision: 0,
+                  separator: '.',
+                  delimiter: '.',
+                  unit: '',
+                  suffixUnit: 'đ'
+                } : 
+                {
+                  mask: ''
+                } 
+              }
+              value={this.state.numText[index]}
+              onChangeText={text => this.onUpdate(text, index)}
               style={{...themes.TextStyle.body, marginBottom: 20}}
-              keyboardType={'numeric'}
-              onChangeText={t.onUpdate}
-            />
+              />
           </View>
         ))}
       </View>
@@ -199,3 +229,4 @@ export class NewSellOrder extends React.Component<Props, State> {
     }
   }
 }
+
