@@ -61,6 +61,7 @@ type State = {
 )
 export class NewSellOrder extends React.Component<Props, State> {
   private _shoe: Shoe;
+  private MoneyField: TextInputMask
 
   public constructor(props: Props) {
     super(props);
@@ -110,7 +111,7 @@ export class NewSellOrder extends React.Component<Props, State> {
       this.setState({
         inventory: {
           ...this.state.inventory,
-          sellPrice: parseInt(text, 10),
+          sellPrice: parseInt(this.MoneyField.getRawValue(), 10) * 10,
         },
         numText: [this.state.numText[0], this.state.numText[1], text],
       })
@@ -161,23 +162,24 @@ export class NewSellOrder extends React.Component<Props, State> {
               placeholder={t.title}
               numberOfLines={1}
               keyboardType={'number-pad'}
-              type={index == 2 ? 'money' : 'custom'}
+              type={index === 2 ? 'money' : 'custom'}
               options={
-                index == 2 ? 
+                index === 2 ? 
                 {
                   precision: 0,
                   separator: '.',
                   delimiter: '.',
                   unit: '',
-                  suffixUnit: 'đ'
+                  suffixUnit: ''
                 } : 
                 {
-                  mask: ''
+                  mask: '****'
                 } 
               }
               value={this.state.numText[index]}
               onChangeText={text => this.onUpdate(text, index)}
               style={{...themes.TextStyle.body, marginBottom: 20}}
+              ref={(ref) => {index === 2 ? this.MoneyField = ref : undefined}}
               />
           </View>
         ))}
