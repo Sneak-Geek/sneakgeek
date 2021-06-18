@@ -168,7 +168,7 @@ export class NewSellOrder extends React.Component<Props, State> {
                 {
                   precision: 0,
                   separator: '.',
-                  delimiter: ',',
+                  delimiter: '.',
                   unit: '',
                   suffixUnit: 'đ'
                 } : 
