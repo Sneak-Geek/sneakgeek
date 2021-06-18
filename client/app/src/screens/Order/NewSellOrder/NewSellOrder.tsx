@@ -229,7 +229,6 @@ export class NewSellOrder extends React.Component<Props, State> {
       this.props.showSuccessNotification('Đã bán thành công sản phẩm!');
       this.props.navigation.goBack();
     } catch (error) {
-      console.log(error);
       this.props.showErrorNotification(
         'Đã có lỗi xảy ra, xin vui lòng thử lại',
       );
