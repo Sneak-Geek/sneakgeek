@@ -170,7 +170,7 @@ export class NewSellOrder extends React.Component<Props, State> {
                   separator: '.',
                   delimiter: '.',
                   unit: '',
-                  suffixUnit: 'đ'
+                  suffixUnit: ''
                 } : 
                 {
                   mask: '****'
