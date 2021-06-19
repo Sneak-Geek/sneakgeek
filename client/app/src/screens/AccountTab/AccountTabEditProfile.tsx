@@ -1,410 +1,344 @@
-import React from 'react';
-import {AppText, BottomButton, BottomPicker} from 'screens/Shared';
-import {
-  Profile,
-  IAccountService,
-  FactoryKeys,
-  updateProfile,
-  Ward,
-  District,
-} from 'business';
-import {
-  View,
-  KeyboardAvoidingView,
-  Keyboard,
-  EmitterSubscription,
-  TouchableWithoutFeedback,
-  Modal,
-} from 'react-native';
-import {ScrollView, TextInput, StyleSheet} from 'react-native';
-import {
-  StackNavigationProp,
-  HeaderHeightContext,
-} from '@react-navigation/stack';
-import {themes, strings} from 'resources';
-import {SafeAreaConsumer} from 'react-native-safe-area-context';
+import React, {FC, useCallback, useState} from 'react';
+import {StyleSheet, StyleProp, ViewStyle, Modal, View} from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import { IAppState } from 'store/AppStore';
+import { Input } from 'react-native-elements';
+import { Profile } from 'business/src';
+import { BottomPicker } from 'screens/Shared/BottomPicker';
+import { AppText, BottomButton, Header } from 'screens/Shared';
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { FactoryKeys, IAccountService, updateProfile } from 'business';
+import { getDependency, getToken } from 'utilities';
+import { showSuccessNotification } from 'actions';
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import {Icon} from 'react-native-elements';
-import {connect} from 'utilities/ReduxUtilities';
-import {IAppState} from 'store/AppStore';
-import {showSuccessNotification, toggleIndicator} from 'actions';
-import {getToken, getDependency} from 'utilities';
-import {RootStackParams} from 'navigations/RootStack';
-import _, {values} from 'lodash';
-import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
+import { strings, themes } from 'resources';
+import { useNavigation } from '@react-navigation/core';
 
 const styles = StyleSheet.create({
-  headerContainer: {
-    paddingHorizontal: 16,
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    flexDirection: 'row',
-    borderBottomColor: themes.DisabledColor,
-    borderBottomWidth: 0.5,
-    backgroundColor: 'white',
-  },
+    root: {
+        backgroundColor: 'white',
+        display: 'flex',
+        flex: 1,
 
-  title: {
-    marginVertical: 50,
-    fontSize: 24,
-  },
-
-  contentContainer: {
-    marginVertical: 100,
-  },
-
-  passwordContainer: {
-    marginVertical: 50,
-  },
-
-  addressContainer: {
-    marginVertical: 50,
-  },
-
-  infoButton: {
-    backgroundColor: '#E5E5E5',
-    color: '#FFFFFF',
-  },
-
-  buttonText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  settingsContainer: {
-    flex: 1,
-    flexDirection: 'column',
-  },
-  listItem: {
-    flex: 1,
-    flexDirection: 'row',
-    paddingHorizontal: 20,
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    height: themes.RegularButtonHeight,
-    borderTopWidth: 0.5,
-    borderTopColor: themes.DisabledColor,
-  },
-
-  logoutText: {
-    fontSize: 16,
-    color: 'red',
-  },
-
-  bottomButtonContainer: {
-    backgroundColor: themes.AppPrimaryColor,
-    bottom: 10,
-    borderRadius: themes.LargeBorderRadius,
-  },
-
-  input: {
-    flex: 2,
-    textAlign: 'right',
-  },
-
-  backHitSlop: {
-    top: 10,
-    bottom: 10,
-    left: 10,
-    right: 10,
-  },
-  settingContainer: {
-    borderBottomColor: themes.DisabledColor,
-    borderBottomWidth: 0.5,
-    backgroundColor: 'white',
-  },
-  rootContainer: {
-    flex: 1,
-    backgroundColor: 'white',
-  },
+    },
+    bottomButtonStyle:{
+        backgroundColor: "#1E2330",
+        borderRadius: 40,
+        bottom: 10
+    }
 });
 
-type Props = {
-  profile: Profile;
-  navigation?: StackNavigationProp<RootStackParams, 'AccountTabEditProfile'>;
-
-  updateProfile: (profile: Profile) => void;
-  showNotification: (message: string) => void;
-  toggleLoadingIndicator: (isLoading: boolean) => void;
-};
-
-enum PickerType {
-  GENDER,
-  SHOE_SIZE,
-  CITY,
-  DISTRICT,
-  WARD,
+type AccountTabEditProfileProp = {
 }
 
-type State = {
-  editMode: boolean;
-  updatedInfo?: Profile;
-  shouldShowConfirm: boolean;
-  pickerVisible: boolean;
-  pickerType: PickerType;
-  addressModalVisible: boolean;
-};
+type AccountTabViewProfileState = {
+    lastName: string;
+    firstName: string;
+    middleName: string;
+    gender: string;
+    shoeSize: string;
+    email: string;
+    phoneNumber: string;
+    pickerType: PickerType;
+    pickerVisible: boolean;
+    updatedInfo?: Profile;
+    addressModalVisible: boolean;
+    addressLine1: string;
+    addressLine2: string;
+}
 
-type Setting = {
-  title: string;
-  placeholder: string;
-  isPicker?: boolean;
-  pickerType?: PickerType;
-  value: (profile: Profile) => string | number;
-  options?: () => Array<string | number>;
-  onUpdate?: (value: string, profile: Profile) => Profile;
-  onPress?: () => void;
-};
+enum PickerType {
+    GENDER,
+    SHOE_SIZE,
+    CITY,
+    DISTRICT,
+    WARD,
+  }  
+
 
 type SettingSection = {
-  sectionName: string;
-  sectionFields: Array<Setting>;
+    sectionName: string;
+    sectionFields: Array<Setting>;
+  };
+  
+  type Setting = {
+    title: string;
+    placeholder: string;
+    isPicker?: boolean;
+    pickerType?: PickerType;
+    value: (profile: Profile) => string | number;
+    options?: () => Array<string | number>;
+    onUpdate?: (value: string, profile: Profile) => void;
+    onPress?: () => void;
+  };
+  
+
+export const AccountTabEditProfile: FC<AccountTabEditProfileProp> = (props: AccountTabEditProfileProp) => {
+    const profile: Profile = useSelector((state: IAppState) => state?.UserState?.profileState?.profile);
+    const [profileState, setProfileState] = useState<AccountTabViewProfileState>({
+        lastName: profile?.userProvidedName?.lastName,
+        firstName: profile?.userProvidedName?.firstName,
+        middleName: profile?.userProvidedName?.middleName,
+        gender: profile?.userProvidedGender,
+        shoeSize: profile?.userProvidedShoeSize,
+        email: profile?.userProvidedEmail,
+        phoneNumber: profile?.userProvidedPhoneNumber,
+        addressLine1: profile?.userProvidedAddress?.addressLine1,
+        addressLine2: profile?.userProvidedAddress?.addressLine2,
+        pickerType: undefined,
+        pickerVisible: false,
+        updatedInfo: Object.assign({}, profile),
+        addressModalVisible: false
+    });
+
+    const navigation = useNavigation();
+
+    const sectionList: Array<SettingSection>  = [
+        {
+          sectionName: '',
+          sectionFields: [
+            {
+              title: 'Giới tính',
+              placeholder: 'Giới tính',
+              isPicker: true,
+              pickerType: PickerType.GENDER,
+              options: (): string[] => ['Nam', 'Nữ', 'Khác'],
+              value: (profile: Profile): string => profile?.userProvidedGender,
+            },
+          ]
+        },
+      ];
+
+      const dispatch = useDispatch();
+
+      const showNotification = (value: string) => {dispatch(showSuccessNotification(value))};
+
+      const _accountService = getDependency<IAccountService>(
+        FactoryKeys.IAccountService,
+      );
+
+      const updateProfile = useCallback(async () => {
+        try {
+            const updatedProfile: Partial<Profile> = {
+                userProvidedName: {
+                    lastName: profileState.lastName,
+                    firstName: profileState.firstName,
+                    middleName: profileState.middleName
+                },
+                userProvidedGender: profileState.gender,
+                userProvidedShoeSize: profileState.shoeSize,
+                userProvidedEmail: profileState.email,
+                userProvidedPhoneNumber: profileState.phoneNumber,
+                userProvidedAddress: {
+                    addressLine1: profileState.addressLine1,
+                    addressLine2: profileState.addressLine2
+                },
+            };
+            const res = await _accountService.updateProfile(
+              getToken(),
+              updatedProfile,
+            );
+            showNotification('Cập nhật thông tin cá nhân thành công');
+            setProfileState({...profileState, ...updatedProfile});    
+            navigation.goBack();
+          } catch (error) {
+            showNotification('Đã có lỗi khi xảy ra, xin vui lòng thử lại');
+          }
+
+      },[profileState.addressLine1, profileState.addressLine2, profileState.email, profileState.firstName, profileState.lastName, profileState.phoneNumber, profileState.gender]);
+      
+      const setting = sectionList
+      .map((t) => t.sectionFields)
+      .reduce((x, y) => x.concat(y))
+      .find((t) => t.pickerType === profileState.pickerType);
+
+    const components = [
+        {
+            id: 'lastName',
+            type: 'TextInput',
+            placeholder: '',
+            value: profileState.lastName,
+            label: 'Họ',
+            onChangeText: (value: string) => {setProfileState({...profileState, lastName: value})},
+            containerStyle: {}
+        },
+        {
+            id: 'firstName',
+            type: 'TextInput',
+            placeholder: '',
+            value: profileState.firstName,
+            label: 'Tên',
+            onChangeText: (value: string) => {setProfileState({...profileState, firstName: value})},
+            containerStyle: {}
+        },
+        {
+            id: 'gender',
+            type: 'Picker',
+            onPress: () =>  setProfileState({...profileState, pickerType: PickerType.GENDER, pickerVisible: true}),
+            title: 'Giới tính',
+            value: profileState.gender ?? undefined
+        }
+        ,
+        {
+            id: 'email',
+            type: 'TextInput',
+            placeholder: '',
+            value: profileState.email,
+            label: 'Email',
+            onChangeText: (value: string) => {setProfileState({...profileState, email: value})},
+            containerStyle: {}
+        },
+        {
+            id: 'phoneNumber',
+            type: 'TextInput',
+            placeholder: '',
+            value: profileState.phoneNumber,
+            label: 'Số điện thoại',
+            onChangeText: (value: string) => {setProfileState({...profileState, phoneNumber: value})},
+            containerStyle: {}
+        },
+        {
+            id: 'addressLine1',
+            type: 'TextInputModal',
+            placeholder: '',
+            value: profileState.addressLine1,
+            label: 'Địa chỉ 1',
+            onChangeText: (value: string) => {setProfileState({...profileState, addressLine1: value})},
+            containerStyle: {}
+        },
+        {
+            id: 'addressLine2',
+            type: 'TextInput',
+            placeholder: '',
+            value: profileState.addressLine2,
+            label: 'Địa chỉ 2',
+            onChangeText: (value: string) => {setProfileState({...profileState, addressLine2: value})},
+            containerStyle: {}
+        }
+        
+    ];
+    
+    return (
+        <SafeAreaView style={styles.root}>
+            <Header title={"Thông tin cá nhân"} topInset={2} leftIcon={true}></Header>
+        <ScrollView style={{marginHorizontal: 20, flex: 1, marginTop: 34}}>
+            {components.map((c) => {
+                let content: JSX.Element = <></>;
+                
+                switch(c.type) {
+                    case 'TextInput':
+                        content = <SNKGKTextInput key={c.id} value={c.value} placeholder={c.placeholder} onChangeText={c.onChangeText} containerStyle={c.containerStyle} label={c.label}/>
+                        break;
+                    case 'Picker':
+                        content =    <SNKGKPickerRow key={c.id} title={c.title} value={c.value} 
+                        onPress={c.onPress}/>
+                        break;
+                    case 'TextInputModal':
+                        content = 
+                            <TouchableOpacity key={c.id} onPress={() => setProfileState({...profileState, addressModalVisible: true})}>
+
+                                <SNKGKTextInput disabled={true}  value={c.value} placeholder={c.placeholder} onChangeText={c.onChangeText} containerStyle={c.containerStyle} label={c.label}/>
+                            </TouchableOpacity>
+                        break;
+                }
+
+                return content;
+            })}
+            {profileState.pickerVisible? <BottomPicker
+                options={setting?.options?.()}
+                visible={profileState.pickerVisible}
+                onSelectPickerOK={(value: string): void => {
+                    setProfileState({
+                        ...profileState,
+                        pickerVisible: false,
+                        pickerType: undefined,
+                        gender: value
+                    });
+                }}
+                onSelectPickerCancel={(): void => {
+                    setProfileState({...profileState, pickerVisible: false, pickerType: undefined});
+                }
+                }
+                optionLabelToString={(t): string => t.toString()}
+            /> : null}
+         
+        </ScrollView>
+        <AddressModal addressModalVisible={profileState.addressModalVisible} iconOnPress={() => {setProfileState({...profileState, addressModalVisible: false})}} modalOnPress={(data) => {setProfileState({...profileState, addressLine1: data.description, addressModalVisible: false})}} onRequestClose={() => {setProfileState({...profileState, addressModalVisible: false})}}/>
+            <BottomButton style={styles.bottomButtonStyle} title={'Xác nhận'} onPress={updateProfile}/>
+        </SafeAreaView>
+    );
+}
+
+type SNKGKTextInputProp = {
+    label?: string;
+    placeholder: string;
+    onChangeText: (text:string) => void;
+    containerStyle?: StyleProp<ViewStyle>;
+    value: string;
+    disabled?: boolean;
+}
+
+const textInputStyles = StyleSheet.create({
+    containerStyle: {
+        paddingHorizontal: 0,
+        paddingVertical: 0,
+        marginVertical: 0,
+    },
+    inputContainerStyle: {
+        paddingVertical: 0,
+        marginVertical: 0
+    },
+    labelStyle: {
+        color: 'rgba(0,0,0,0.3)'
+    }
+});
+
+const SNKGKTextInput: FC<SNKGKTextInputProp> = (props: SNKGKTextInputProp) => {
+    const {label, placeholder, onChangeText, containerStyle, value, disabled} = props;
+    return (
+        <Input disabledInputStyle={{color: 'black', opacity: 1}} disabled={disabled} labelStyle={textInputStyles.labelStyle} value={value} onChangeText={onChangeText} inputContainerStyle={textInputStyles.inputContainerStyle} containerStyle={[textInputStyles.containerStyle, containerStyle]} label={label} placeholder={placeholder}/>
+    );
+}
+
+type SNKGKPickerRowProp = {
+    title: string;
+    value: string;
+    onPress?: () => void
 };
 
-@connect(
-  (state: IAppState) => ({
-    profile: state.UserState.profileState.profile,
-  }),
-  (dispatch: Function) => ({
-    updateProfile: (profile: Profile): void => {
-      dispatch(updateProfile(profile));
-    },
-    toggleLoadingIndicator: (isLoading: boolean): void => {
-      dispatch(toggleIndicator({isLoading, message: strings.PleaseWait}));
-    },
-    showNotification: (message: string): void =>
-      dispatch(showSuccessNotification(message)),
-  }),
-)
-export class AccountTabEditProfile extends React.Component<Props, State> {
-  private sectionList: Array<SettingSection> = [];
-  private _addressLine1OnUpdateDelayed: _.DebouncedFunc<any>;
-
-  public constructor(props: Props) {
-    super(props);
-    this.state = {
-      editMode: false,
-      updatedInfo: Object.assign({}, props.profile),
-      shouldShowConfirm: true,
-      pickerVisible: false,
-      pickerType: undefined,
-      addressModalVisible: false,
-    };
-
-    this._addressLine1OnUpdateDelayed = _.debounce(
-      this._addressLine1OnUpdate,
-      2000,
-    );
-
-    this.sectionList = [
-      {
-        sectionName: 'Thông tin cá nhân',
-        sectionFields: [
-          {
-            title: 'Họ',
-            placeholder: 'Họ',
-            value: (profile: Profile): string =>
-              profile && profile.userProvidedName
-                ? profile.userProvidedName.lastName
-                : '',
-            onUpdate: (value: string, profile: Profile): Profile => {
-              return Object.assign(profile, {
-                userProvidedName: {
-                  ...profile.userProvidedName,
-                  lastName: value,
-                },
-              });
-            },
-          },
-          {
-            title: 'Tên',
-            placeholder: 'Tên',
-            value: (profile?: Profile): string =>
-              profile && profile.userProvidedName
-                ? profile.userProvidedName.firstName
-                : '',
-            onUpdate: (value: string, profile: Profile): Profile => {
-              return Object.assign(profile, {
-                userProvidedName: {
-                  ...profile.userProvidedName,
-                  firstName: value,
-                },
-              });
-            },
-          },
-          {
-            title: 'Giới tính',
-            placeholder: 'Giới tính',
-            isPicker: true,
-            pickerType: PickerType.GENDER,
-            options: (): string[] => ['Nam', 'Nữ', 'Khác'],
-            value: (profile: Profile): string => profile?.userProvidedGender,
-            onUpdate: (value: string, profile: Profile): Profile => {
-              return Object.assign(profile, {
-                userProvidedGender: value,
-              });
-            },
-          },
-          {
-            title: 'Email',
-            placeholder: 'Email',
-            value: (profile: Profile): string => profile?.userProvidedEmail,
-            onUpdate: (value: string, profile: Profile): Profile => {
-              return Object.assign(profile, {
-                userProvidedEmail: value,
-              });
-            },
-          },
-          {
-            title: 'Điện thoại',
-            placeholder: 'Điện thoại',
-            value: (profile: Profile): string =>
-              profile?.userProvidedPhoneNumber,
-            onUpdate: (value: string, profile: Profile): Profile => {
-              return Object.assign(profile, {
-                userProvidedPhoneNumber: value,
-              });
-            },
-          },
-        ],
-      },
-      {
-        sectionName: 'Địa chỉ giao hàng',
-        sectionFields: [
-          {
-            title: 'Địa chỉ 1',
-            placeholder: 'Đường/phố, quận/huyện, tỉnh/thành phố',
-            isPicker: false,
-            value: (profile: Profile): string =>
-              profile?.userProvidedAddress?.addressLine1,
-            onPress: () => {
-              this.setState({addressModalVisible: true});
-            },
-          },
-          {
-            title: 'Địa chỉ 2',
-            placeholder: 'Ngõ, ngách, số phòng,...',
-            isPicker: false,
-            value: (profile: Profile): string =>
-              profile?.userProvidedAddress?.addressLine2,
-            onUpdate: (value: string, profile: Profile): Profile => {
-              return Object.assign(profile, {
-                userProvidedAddress: {
-                  ...profile.userProvidedAddress,
-                  addressLine2: value,
-                },
-              });
-            },
-          },
-        ],
-      },
-    ];
-
-    if (this.props.profile?.isSeller) {
-      this.sectionList.push({
-        sectionName: 'Tài khoản ngân hàng',
-        sectionFields: [
-          {
-            title: 'Số tài khoản',
-            placeholder: '01234567879',
-            isPicker: false,
-            value: (profile: Profile): string =>
-              profile.userProvidedBankAccount?.accountNumber,
-            onUpdate: (value: string, profile: Profile): Profile => {
-              return Object.assign(profile, {
-                userProvidedBankAccount: {
-                  ...profile.userProvidedBankAccount,
-                  accountNumber: value,
-                },
-              });
-            },
-          },
-          {
-            title: 'Chi nhánh',
-            placeholder: 'BIDV chi nhánh Đống Đa',
-            isPicker: false,
-            value: (profile: Profile): string =>
-              profile.userProvidedBankAccount?.bankBranch,
-            onUpdate: (value: string, profile: Profile): Profile => {
-              return Object.assign(profile, {
-                userProvidedBankAccount: {
-                  ...profile.userProvidedBankAccount,
-                  bankBranch: value,
-                },
-              });
-            },
-          },
-        ],
-      });
-    }
-  }
-
-  private _keyboardShowListener: EmitterSubscription;
-  private _keyboardHideListener: EmitterSubscription;
-  private readonly _accountService = getDependency<IAccountService>(
-    FactoryKeys.IAccountService,
-  );
-  private _validShippingAddress: {
-    districts: District[];
-    wards: Map<number, Ward[]>;
-  };
-
-  public render(): JSX.Element {
+const SNKGKPickerRow: FC<SNKGKPickerRowProp> = (props: SNKGKPickerRowProp) => {
+    const {title, value, onPress} = props;
     return (
-      <SafeAreaConsumer>
-        {(insets): JSX.Element => (
-          <KeyboardAvoidingView
-            behavior={'height'}
-            style={{
-              paddingTop: insets.top,
-              ...styles.rootContainer,
-            }}>
-            {this._renderHeader(insets.top)}
-            <ScrollView
-              showsVerticalScrollIndicator={false}
-              style={{
-                marginBottom: this.state.editMode
-                  ? themes.RegularButtonHeight
-                  : 0,
-              }}>
-              {this._renderSettingSections()}
-            </ScrollView>
-            {this._renderPicker()}
-            {this._renderUpdateButton()}
-            {this._renderAddressModal()}
-          </KeyboardAvoidingView>
-        )}
-      </SafeAreaConsumer>
+        <TouchableOpacity onPress={onPress} style={{display: 'flex', flexDirection: 'row', justifyContent:'space-between', marginBottom: 30}}>
+            <AppText.Body>{title}</AppText.Body>
+            <AppText.Body>{value}</AppText.Body>
+        </TouchableOpacity>
     );
-  }
+}
 
-  public componentDidMount(): void {
-    this._keyboardShowListener = Keyboard.addListener('keyboardDidShow', () => {
-      this.setState({shouldShowConfirm: false});
-    });
+type AddressModalProp = {
+    addressModalVisible: boolean;
+    onRequestClose: () => void;
+    iconOnPress: () => void;
+    modalOnPress: (data: any) => void;
+}
 
-    this._keyboardHideListener = Keyboard.addListener('keyboardDidHide', () => {
-      this.setState({shouldShowConfirm: true});
-    });
-  }
-
-  public componentWillUnmount(): void {
-    this._keyboardHideListener.remove();
-    this._keyboardShowListener.remove();
-    this._addressLine1OnUpdateDelayed.cancel();
-  }
-
-  private _renderAddressModal() {
+const AddressModal : FC<AddressModalProp> = (props: AddressModalProp) => {
+    const {addressModalVisible, onRequestClose, iconOnPress, modalOnPress} = props;
     return (
-      <Modal
-        visible={this.state.addressModalVisible}
+        <Modal
+        visible={addressModalVisible}
         hardwareAccelerated={true}
         animationType={'slide'}
         presentationStyle={'formSheet'}
-        onRequestClose={() => this.setState({addressModalVisible: false})}>
+        onRequestClose={onRequestClose}>
         <View style={{flex: 1, position: 'relative'}}>
           <Icon
             name={'close'}
             size={themes.IconSize * 1.5}
-            onPress={() => this.setState({addressModalVisible: false})}
+            onPress={iconOnPress}
             containerStyle={{position: 'absolute', right: 15, top: 15}}
           />
           <AppText.Title3 style={{margin: 20, marginTop: 30}}>
@@ -414,28 +348,14 @@ export class AccountTabEditProfile extends React.Component<Props, State> {
           <GooglePlacesAutocomplete
             placeholder={strings.Address}
             textInputProps={{
-              autoFocus: this.state.addressModalVisible,
+              autoFocus: addressModalVisible,
             }}
             query={{
               key: 'AIzaSyDlfZb9snIlXHI-vn6zeaIAJfR3lWJmGlI',
               language: 'vi',
               components: 'country:vn',
             }}
-            onPress={(data) => {
-              let info = this.state.updatedInfo;
-              info = {
-                ...info,
-                userProvidedAddress: {
-                  ...info.userProvidedAddress,
-                  addressLine1: data.description,
-                },
-              };
-
-              this.setState({
-                addressModalVisible: false,
-                updatedInfo: info,
-              });
-            }}
+            onPress={modalOnPress}
             styles={{
               textInput: themes.TextStyle.body,
               container: {flex: 1},
@@ -445,181 +365,6 @@ export class AccountTabEditProfile extends React.Component<Props, State> {
         </View>
       </Modal>
     );
-  }
-
-  private _renderHeader(topInsets: number): JSX.Element {
-    return (
-      <HeaderHeightContext.Consumer>
-        {(headerHeight): JSX.Element => (
-          <View
-            style={{
-              ...styles.headerContainer,
-              height:
-                headerHeight > 0
-                  ? headerHeight + topInsets
-                  : themes.IosHeaderHeight,
-            }}>
-            <Icon
-              name={'ios-arrow-back'}
-              type={'ionicon'}
-              size={themes.IconSize}
-              onPress={(): void => this.props.navigation.goBack()}
-              hitSlop={styles.backHitSlop}
-            />
-            <AppText.Title3>{strings.AccountInfo}</AppText.Title3>
-            <Icon
-              name={this.state.editMode ? 'x' : 'edit'}
-              type={'feather'}
-              size={themes.IconSize}
-              onPress={(): void =>
-                this.setState({editMode: !this.state.editMode})
-              }
-            />
-          </View>
-        )}
-      </HeaderHeightContext.Consumer>
-    );
-  }
-
-  private _renderSettingSections(): JSX.Element {
-    return (
-      <View>
-        {this.sectionList.map((item, i) => (
-          <View key={i} style={{marginVertical: 15}}>
-            <AppText.Headline style={{marginVertical: 8, marginLeft: 15}}>
-              {item.sectionName}
-            </AppText.Headline>
-            {this._renderSettings(item.sectionFields)}
-          </View>
-        ))}
-      </View>
-    );
-  }
-
-  private _renderSettings(options: Array<Setting>): JSX.Element {
-    return (
-      <View style={styles.settingContainer}>
-        {options.map((item, i) => (
-          <TouchableWithoutFeedback
-            key={i}
-            onPress={(): void => {
-              if (item.isPicker && this.state.editMode) {
-                this.setState({
-                  pickerVisible: true,
-                  pickerType: item.pickerType,
-                });
-              }
-            }}>
-            <View style={styles.listItem}>
-              <AppText.Body style={{flex: 1}}>{item.title}</AppText.Body>
-              {this._renderSetting(item)}
-            </View>
-          </TouchableWithoutFeedback>
-        ))}
-      </View>
-    );
-  }
-
-  private _renderSetting(item: Setting): JSX.Element {
-    const {updatedInfo, editMode} = this.state;
-    const {profile} = this.props;
-    const textValue =
-      updatedInfo && item.value(updatedInfo)
-        ? item.value(updatedInfo).toString()
-        : '';
-
-    if (editMode && !item.isPicker) {
-      return (
-        <TextInput
-          value={textValue}
-          placeholderTextColor={themes.AppDisabledColor}
-          placeholder={item.placeholder}
-          onChangeText={(value): void => {
-            if (updatedInfo && item.onUpdate) {
-              const newProfile = item.onUpdate(value, updatedInfo);
-              this.setState({updatedInfo: newProfile});
-            }
-          }}
-          onTouchStart={() => {
-            if (item.onPress) {
-              item.onPress();
-            }
-          }}
-          style={[styles.input, themes.TextStyle.subhead]}
-        />
-      );
-    } else if (editMode && item.isPicker) {
-      return (
-        <AppText.Subhead style={styles.input}>{textValue}</AppText.Subhead>
-      );
-    }
-
-    return (
-      <AppText.Subhead style={styles.input}>
-        {item.value(profile)}
-      </AppText.Subhead>
-    );
-  }
-
-  private _renderPicker(): JSX.Element {
-    if (!this.state.pickerVisible) {
-      return null;
-    }
-
-    const setting = this.sectionList
-      .map((t) => t.sectionFields)
-      .reduce((x, y) => x.concat(y))
-      .find((t) => t.pickerType === this.state.pickerType);
-
-    return (
-      <BottomPicker
-        options={setting.options?.()}
-        visible={this.state.pickerVisible}
-        onSelectPickerOK={(value: string): void => {
-          this.setState({
-            pickerVisible: false,
-            pickerType: undefined,
-            updatedInfo: setting.onUpdate(value, this.state.updatedInfo),
-          });
-        }}
-        onSelectPickerCancel={(): void =>
-          this.setState({pickerVisible: false, pickerType: undefined})
-        }
-        optionLabelToString={(t): string => t.toString()}
-      />
-    );
-  }
-
-  private _renderUpdateButton(): JSX.Element | null {
-    const {shouldShowConfirm, editMode} = this.state;
-
-    if (!shouldShowConfirm || !editMode) {
-      return null;
-    }
-
-    return (
-      <BottomButton
-        onPress={this._updateProfile.bind(this)}
-        title={'Xác nhận'}
-        style={styles.bottomButtonContainer}
-      />
-    );
-  }
-
-  private async _updateProfile(): Promise<void> {
-    try {
-      const profile = await this._accountService.updateProfile(
-        getToken(),
-        this.state.updatedInfo,
-      );
-      this.props.showNotification('Cập nhật thông tin cá nhân thành công');
-      this.props.updateProfile(profile);
-    } catch (error) {
-      this.props.showNotification('Đã có lỗi khi xảy ra, xin vui lòng thử lại');
-    } finally {
-      this.setState({updatedInfo: this.props.profile, editMode: false});
-    }
-  }
-
-  private _addressLine1OnUpdate(value: string): void {}
 }
+
+

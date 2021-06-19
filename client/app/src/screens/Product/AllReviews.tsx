@@ -313,7 +313,7 @@ export class AllReviews extends React.Component<Props> {
           // @ts-ignore
           navigation.navigate(RouteNames.Tab.AccountTab.Name, {
             // @ts-ignore
-            screen: RouteNames.Tab.AccountTab.EditProfile,
+            screen: RouteNames.Tab.AccountTab.ViewProfile,
           }),
       },
       {

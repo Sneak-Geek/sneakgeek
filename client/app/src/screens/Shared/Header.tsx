@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     borderBottomColor: themes.DisabledColor,
     borderBottomWidth: 1,
     paddingHorizontal: 10,
@@ -32,7 +32,7 @@ export const Header: React.FC<HeaderProp> = (props: HeaderProp) => {
   const {topInset, title, leftIcon} = props;
   const navigation = useNavigation();
   const leftIconColor = leftIcon ? 'black' : 'transparent';
-  const leftIconHandler = leftIcon ? navigation.goBack() : {};
+  const leftIconHandler = leftIcon ? () => navigation.goBack() : () => {};
   return (
     <HeaderHeightContext.Consumer>
       {(headerHeight) => (
@@ -47,8 +47,8 @@ export const Header: React.FC<HeaderProp> = (props: HeaderProp) => {
           <Icon
             name={'ios-arrow-back'}
             type={'ionicon'}
-            size={30}
-            onPress={() => leftIconHandler}
+            size={themes.IconSize}
+            onPress={leftIconHandler}
             color={leftIconColor}
             hitSlop={{}}
           />
