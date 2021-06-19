@@ -322,16 +322,21 @@ export class NewBuyOrder extends React.Component<Props, State> {
   }
 
   private _alertMissingInfo(): void {
-    const message =
-      !this.props.account ||
-      !this.props.profile ||
-      !this.props.account.isVerified
-        ? strings.NotAuthenticated
-        : strings.MissingProfileInfo;
+    let message = '';
+    let buttonText = '';
+    if (!this.props.account || !this.props.profile) {
+      message = strings.NotAuthenticated;
+      buttonText = strings.PleaseLogin;
+    } else if (!this.props.account.isVerified) {
+      message = strings.NotVerified;
+    } else {
+      message = strings.MissingProfileInfo;
+      buttonText = strings.AddInfoForReview;
+    }
     const {navigation} = this.props;
     Alert.alert(strings.AccountInfo, message, [
-      {
-        text: strings.AddInfoForReview,
+      buttonText !== '' && {
+        text: buttonText,
         onPress: (): void => {
           if (this.props.account) {
             navigation.navigate(RouteNames.Tab.AccountTab.EditProfile);
