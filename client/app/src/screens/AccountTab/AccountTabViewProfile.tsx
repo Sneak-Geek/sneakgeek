@@ -466,7 +466,7 @@ export class AccountTabViewProfile extends React.Component<Props, State> {
               onPress={(): void => this.props.navigation.goBack()}
               hitSlop={styles.backHitSlop}
             />
-            <AppText.Title3>{strings.AccountInfo}</AppText.Title3>
+            <AppText.Title3>{strings.AccountInfo.toUpperCase()}</AppText.Title3>
             <Icon
               name={''}
               type={'feather'}

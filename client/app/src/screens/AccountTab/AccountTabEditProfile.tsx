@@ -5,7 +5,7 @@ import { IAppState } from 'store/AppStore';
 import { Input } from 'react-native-elements';
 import { Profile } from 'business/src';
 import { BottomPicker } from 'screens/Shared/BottomPicker';
-import { AppText, BottomButton } from 'screens/Shared';
+import { AppText, BottomButton, Header } from 'screens/Shared';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FactoryKeys, IAccountService, updateProfile } from 'business';
@@ -222,7 +222,8 @@ export const AccountTabEditProfile: FC<AccountTabEditProfileProp> = (props: Acco
     
     return (
         <SafeAreaView style={styles.root}>
-        <ScrollView style={{marginHorizontal: 20, flex: 1,}}>
+            <Header title={"Thông tin cá nhân"} topInset={2} leftIcon={true}></Header>
+        <ScrollView style={{marginHorizontal: 20, flex: 1, marginTop: 34}}>
             {components.map((c) => {
                 let content: JSX.Element = <></>;
                 
