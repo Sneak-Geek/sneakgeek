@@ -176,7 +176,7 @@ export const strings = {
   NoMoneyInSneakGeekWallet: 'Ví SneakGeek chưa có tiền.',
   CannotWithdrawalMoreThanCurrentBalance:
     'Số tiền rút ra không thể lớn hơn số tiền hiện có.',
-  PleaseProvideAllInformation: 'Xin vui lòng điền đủ thông thin chuyển khoản.',
+  PleaseProvideAllInformation: 'Xin vui lòng điền đủ thông tin chuyển khoản.',
   Inventory: 'Kho hàng',
   InventoryDetail: 'Thông tin đơn bán',
   InventoryQuantity: 'Số lượng',
