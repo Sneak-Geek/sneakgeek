@@ -522,20 +522,11 @@ export class AccountTabViewProfile extends React.Component<Props, State> {
     if (!item.isPicker) {
       return (
         <TextInput
+          editable={false}
           value={textValue}
           placeholderTextColor={themes.AppDisabledColor}
           placeholder={item.placeholder}
-          onChangeText={(value): void => {
-            if (updatedInfo && item.onUpdate) {
-              const newProfile = item.onUpdate(value, updatedInfo);
-              this.setState({updatedInfo: newProfile});
-            }
-          }}
-          onTouchStart={() => {
-            if (item.onPress) {
-              item.onPress();
-            }
-          }}
+          
           style={[styles.input, themes.TextStyle.subhead]}
         />
       );
@@ -589,21 +580,6 @@ export class AccountTabViewProfile extends React.Component<Props, State> {
         style={styles.bottomButtonContainer}
       />
     );
-  }
-
-  private async _updateProfile(): Promise<void> {
-    try {
-      const profile = await this._accountService.updateProfile(
-        getToken(),
-        this.state.updatedInfo,
-      );
-      this.props.showNotification('Cập nhật thông tin cá nhân thành công');
-      this.props.updateProfile(profile);
-    } catch (error) {
-      this.props.showNotification('Đã có lỗi khi xảy ra, xin vui lòng thử lại');
-    } finally {
-      this.setState({updatedInfo: this.props.profile});
-    }
   }
 
   private _addressLine1OnUpdate(value: string): void {}

@@ -119,7 +119,7 @@ export class NewBuyOrder extends React.Component<Props, State> {
               this._isMissingInfo
                 ? this._alertMissingInfo()
                 : this.props.navigation.push(
-                    RouteNames.Tab.AccountTab.ViewProfile,
+                    RouteNames.Tab.AccountTab.EditProfile,
                   )
             }
             userProfile={this.props.profile}

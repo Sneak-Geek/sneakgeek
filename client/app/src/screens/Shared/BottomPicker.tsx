@@ -52,7 +52,7 @@ export class BottomPicker<T> extends React.PureComponent<Props<T>, State<T>> {
     this.state = {
       selectedItem:
         this.props.currentValue ||
-        (this.props.options.length > 0 ? this.props.options[0] : null),
+        (this.props.options?.length && this.props.options.length > 0 ? this.props.options[0] : null),
     };
   }
 
@@ -90,7 +90,7 @@ export class BottomPicker<T> extends React.PureComponent<Props<T>, State<T>> {
               selectedValue={this.state.selectedItem}
               onValueChange={(item: T) => this.setState({selectedItem: item})}
               itemStyle={{backgroundColor: 'white'}}>
-              {this.props.options.map((option, idx) => (
+              {this.props.options?.map((option, idx) => (
                 <Picker.Item
                   key={idx.toString()}
                   label={this.props.optionLabelToString(option)}
