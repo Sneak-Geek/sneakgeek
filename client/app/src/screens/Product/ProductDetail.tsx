@@ -7,7 +7,6 @@ import {
   Image,
   StyleSheet,
   Dimensions,
-  Alert,
   FlatList,
   TouchableOpacity,
   ScrollView,
@@ -350,11 +349,11 @@ export class ProductDetail extends React.Component<Props, State> {
         backgroundColor = themes.AppPrimaryColor;
         if (this.state.lowestPrice === 0) {
           backgroundColor = themes.AppDisabledColor;
+          actionType = strings.OutOfStock;
         }
         break;
       default:
         backgroundColor = themes.AppSellColor;
-        toCurrencyString;
     }
 
     const shouldRenderPrice =
