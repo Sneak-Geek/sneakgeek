@@ -39,6 +39,7 @@ import {RootStackParams} from 'navigations/RootStack';
 import {Chip} from 'react-native-elements';
 import {SectionList} from 'react-native';
 import {NewOrderDetail} from './NewOrderDetail';
+import {images} from '../../resources';
 
 const styles = StyleSheet.create({
   orderContainer: {
@@ -108,6 +109,9 @@ type State = {
   modalVisible: boolean;
   selectedOrder: OrderHistory;
   shouldRenderSellerAction: boolean;
+  minimizeWaitingForBankTransferOrders: boolean;
+  minimizePendingOrders: boolean;
+  minimizeOtherOrders: boolean;
 };
 
 @connect(
@@ -164,6 +168,9 @@ export class SellOrderHistory extends React.Component<Props, State> {
       orders: [],
       modalVisible: false,
       selectedOrder: undefined,
+      minimizeOtherOrders: false,
+      minimizePendingOrders: false,
+      minimizeWaitingForBankTransferOrders: false
     };
   }
 
@@ -196,50 +203,50 @@ export class SellOrderHistory extends React.Component<Props, State> {
     }
 
     if (account.accessLevel === 'User') {
-      return (
-        <FlatList
-          data={orders}
-          keyExtractor={(item): string => item._id}
-          renderItem={({item}): JSX.Element => this._renderOrder(item)}
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.refreshing}
-              onRefresh={() => this._getOrders()}
-            />
-          }
-        />
-      );
-    }
+      let waitingForBankTransferOrders = [];
+      let numberOfWaitingForBankTransferOrders = 0;
+      let otherOrders = [];
+      let numberOfOtherOrders = 0;
 
-    if (account.accessLevel === 'Seller') {
-      const pendingOrders = [];
-      const otherOrders = [];
-
-      orders.forEach((o) => {
-        if (getLastestStatus(o) === TrackingStatus.RECEIVED_BANK_TRANSFER) {
-          pendingOrders.push(o);
-        } else if (
-          ![
-            TrackingStatus.WAITING_FOR_BANK_TRANSFER,
-            TrackingStatus.NOT_RECEIVED_BANK_TRANSFER,
-            TrackingStatus.REFUND_TO_BUYER,
-          ].find((s) => getLastestStatus(o) === s)
-        ) {
+      orders.forEach(o => {
+        if (getLastestStatus(o) === TrackingStatus.WAITING_FOR_BANK_TRANSFER) {
+          numberOfWaitingForBankTransferOrders++;
+          waitingForBankTransferOrders.push(o);
+        }
+        else {
+          numberOfOtherOrders++;
           otherOrders.push(o);
         }
       });
 
-      if (pendingOrders.length === 0 && otherOrders.length === 0) {
-        return (
-          <View style={styles.noOrderContainer}>
-            <AppText.Body>Hiện chưa có đơn bán nào</AppText.Body>
-          </View>
-        );
+      if (numberOfOtherOrders === 0 && numberOfWaitingForBankTransferOrders === 0)
+      return (
+        <View style={styles.noOrderContainer}>
+          <AppText.Body>Hiện chưa có đơn mua nào</AppText.Body>
+        </View>
+      );
+
+      if (this.state.minimizeWaitingForBankTransferOrders) {
+        waitingForBankTransferOrders = []
       }
+
+      if (this.state.minimizeOtherOrders) {
+        otherOrders = []
+      }
+
       const listData = [
-        {title: 'Cần xác nhận', data: pendingOrders},
-        {title: 'Các đơn còn lại', data: otherOrders},
+        {title: `Chờ thanh toán (${numberOfWaitingForBankTransferOrders})`, data: waitingForBankTransferOrders, id: 1},
+        {title: `Các đơn còn lại (${numberOfOtherOrders})`, data: otherOrders, id: 2},
       ];
+
+      let ImgContent: React.FC<{id: number}> = (props: {id: number}) => {
+        const {id} = props;
+
+        if (id === 1 && !this.state.minimizeWaitingForBankTransferOrders || id === 2 && !this.state.minimizeOtherOrders)
+          return <Image source={images.SectionListUpArrow} style={{width: 32, height: 32, margin: 15}}/>
+       
+        return <Image source={images.SectionListDownArrow} style={{width: 32, height: 32, margin: 15}}/>
+      }
 
       return (
         <SectionList
@@ -252,8 +259,101 @@ export class SellOrderHistory extends React.Component<Props, State> {
           sections={listData}
           keyExtractor={(item) => item._id}
           renderItem={({item}) => this._renderOrder(item)}
-          renderSectionHeader={({section: {title}}) => (
-            <AppText.Title2 style={{margin: 15}}>{title}</AppText.Title2>
+          renderSectionHeader={({section: {title, id}}) => (
+            <View style={{backgroundColor: 'white', flexDirection: 'row', justifyContent: 'space-between'}}>
+              <AppText.Title2 style={{margin: 15}}>{title}</AppText.Title2>
+              <TouchableOpacity onPress={() => {
+                if (id === 1) {
+                  this.setState({...this.state, minimizeWaitingForBankTransferOrders: !this.state.minimizeWaitingForBankTransferOrders})
+                } else {
+                  this.setState({...this.state, minimizeOtherOrders: !this.state.minimizeOtherOrders})
+                }
+              }}>
+                <ImgContent id={id}/>
+              </TouchableOpacity>
+            </View>
+          )}
+        />
+      );
+    }
+
+    // TO DO (DUC): Duplicate codes
+    if (account.accessLevel === 'Seller') {
+      let pendingOrders = [];
+      let numberOfPendingOrders = 0;
+      let otherOrders = [];
+      let numberOfOtherOrders = 0;
+
+      orders.forEach((o) => {
+        if (getLastestStatus(o) === TrackingStatus.RECEIVED_BANK_TRANSFER) {
+          pendingOrders.push(o);
+          numberOfPendingOrders++;
+        } else if (
+          ![
+            TrackingStatus.WAITING_FOR_BANK_TRANSFER,
+            TrackingStatus.NOT_RECEIVED_BANK_TRANSFER,
+            TrackingStatus.REFUND_TO_BUYER,
+          ].find((s) => getLastestStatus(o) === s)
+        ) {
+          otherOrders.push(o);
+          numberOfOtherOrders++;
+        }
+      });
+
+      if (pendingOrders.length === 0 && otherOrders.length === 0) {
+        return (
+          <View style={styles.noOrderContainer}>
+            <AppText.Body>Hiện chưa có đơn bán nào</AppText.Body>
+          </View>
+        );
+      }
+
+      if (this.state.minimizePendingOrders) {
+        pendingOrders = []
+      }
+
+      if (this.state.minimizeOtherOrders) {
+        otherOrders = []
+      }
+
+      const listData = [
+        {title: `Cần xác nhận (${numberOfPendingOrders})`, data: pendingOrders, id: 1},
+        {title: `Các đơn còn lại (${numberOfOtherOrders})`, data: otherOrders, id: 2},
+      ];
+
+      let ImgContent: React.FC<{id: number}> = (props: {id: number}) => {
+        const {id} = props;
+
+        if (id === 1 && !this.state.minimizePendingOrders || id === 2 && !this.state.minimizeOtherOrders)
+          return <Image source={images.SectionListUpArrow} style={{width: 32, height: 32, margin: 15}}/>
+       
+        return <Image source={images.SectionListDownArrow} style={{width: 32, height: 32, margin: 15}}/>
+      }
+
+      return (
+        <SectionList
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={() => this._getOrders()}
+            />
+          }
+          sections={listData}
+          keyExtractor={(item) => item._id}
+          renderItem={({item}) => this._renderOrder(item)}
+          renderSectionHeader={({section: {title, id}}) => (
+            <View style={{backgroundColor: 'white', flexDirection: 'row', justifyContent: 'space-between'}}>
+              <AppText.Title2 style={{margin: 15}}>{title}</AppText.Title2>
+              <TouchableOpacity onPress={() => {
+                if (id === 1) {
+                  this.setState({...this.state, minimizePendingOrders: !this.state.minimizePendingOrders})
+                } else {
+                  this.setState({...this.state, minimizeOtherOrders: !this.state.minimizeOtherOrders})
+                }
+              }}>
+                <ImgContent id={id}/>
+              </TouchableOpacity>
+            </View>
           )}
         />
       );
