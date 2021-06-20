@@ -13,5 +13,7 @@ export const images = {
   ShippingStatusSeller: require('../../assets/icons/ShippingStatusSeller.png'),
   LeftArrow: require('../../assets/icons/Back.png'),
   GreenCheck: require('../../assets/icons/GreenCheck.png'),
-  CopyIcon: require('../../assets/icons/CopyIcon.png')
+  CopyIcon: require('../../assets/icons/CopyIcon.png'),
+  SectionListUpArrow: require('../../assets/icons/SectionListUpArrow.png'),
+  SectionListDownArrow: require('../../assets/icons/SectionListDownArrow.png')
 };
