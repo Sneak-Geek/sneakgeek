@@ -187,4 +187,5 @@ export const strings = {
   CustomerSupportEmail: 'support@sneakgeek.io',
   CustomerSupportPOCName: 'Trần Quang Đại',
   TransactionInfo: 'Lịch sử giao dịch',
+  OutOfStock: 'Hết hàng',
 };
