@@ -105,6 +105,8 @@ import "../../infra/controllers/InventoryController";
 import "../../infra/admin_controllers/AdminOrderControllers";
 import "../../infra/controllers/HealthController";
 import "../../infra/controllers/WarmupController";
+import { Migration_1624492681744 } from "../../infra/migrations/migration_1624492681744";
+import { MigrationProvider } from "../../infra/providers/MigrationProvider/MigrationProvider";
 
 // Creating new container
 const container = new Container();
@@ -139,6 +141,10 @@ container
   .to(BootstrapProvider)
   .inSingletonScope();
 container.bind<ISearchService>(Types.SearchService).to(SearchService);
+container
+  .bind<MigrationProvider>(Types.MigrationProvider)
+  .to(MigrationProvider)
+  .inSingletonScope();
 
 // Executor
 container
@@ -209,6 +215,11 @@ container.bind<IAccountDao>(Types.AccountDao).to(AccountDao);
 container.bind<INotificationDao>(Types.NotificationDao).to(NotificationDao);
 container.bind<IBalanceHistoryDao>(Types.BalanceHistoryDao).to(BalanceHistoryDao);
 container.bind<IShoeDao>(Types.ShoeDao).to(ShoeDao);
+
+// Migration
+container
+  .bind<Migration_1624492681744>(Migration_1624492681744.name)
+  .to(Migration_1624492681744);
 
 // Asynchronous bindings
 const asyncBindings = new AsyncContainerModule(async (bind) => {

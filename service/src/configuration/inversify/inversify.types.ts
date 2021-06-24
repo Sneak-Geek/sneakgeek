@@ -30,10 +30,11 @@ export const Types = {
   PaymentService: Symbol("PaymentService"),
   NotificationService: Symbol("NotificationService"),
   AppleAuthService: Symbol("AppleAuthService"),
+  SearchService: Symbol("SearchService"),
 
   // Provider
   BootstrapProvider: Symbol("BootstrapProvider"),
-  SearchService: Symbol("SearchService"),
+  MigrationProvider: Symbol("MigrationProvider"),
 
   // Dao
   ProfileDao: Symbol("ProfileDao"),

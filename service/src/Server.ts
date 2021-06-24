@@ -17,6 +17,7 @@ import { IBootstrapProvider, LogProvider } from "./infra/providers";
 import path from "path";
 import { DbClient } from "./infra/database";
 import { ISearchService } from "./infra/services";
+import { MigrationProvider } from "./infra/providers/MigrationProvider/MigrationProvider";
 
 export default class Server {
   private static _appInstance: express.Application;
@@ -85,8 +86,11 @@ export default class Server {
       // Bootstrapping user data
       await this._bootstrapSeededDataAsync();
 
+      // Migrating database
+      await this._migrateDatabaseAsync();
+
       try {
-        // Index data
+        // Index data for search
         await this._initializeIndex();
       } catch (error) {
         console.log(error);
@@ -128,6 +132,15 @@ export default class Server {
     await bootstrapProvider.bootstrapInventoryAndOrder();
 
     LogProvider.instance.info("Bootstrap data completed");
+  }
+
+  private static async _migrateDatabaseAsync(): Promise<any> {
+    const migrationProvider = this.container.get<MigrationProvider>(
+      Types.MigrationProvider
+    );
+    LogProvider.instance.info("Migrating database...");
+    await migrationProvider.run();
+    LogProvider.instance.info("Complete database migration...");
   }
 
   private static async _initializeIndex(): Promise<void> {

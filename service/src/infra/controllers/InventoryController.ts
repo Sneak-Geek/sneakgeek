@@ -114,4 +114,25 @@ export class InventoryController {
 
     return res.status(HttpStatus.OK).json({ price: lowest });
   }
+
+  @httpGet(
+    "/search",
+    query("page").exists().isInt({ min: 0 }),
+    query("title").optional().isString()
+  )
+  public async search(
+    @queryParam("page") page: number | string,
+    @queryParam("title") title: string,
+    @response() res: Response
+  ) {
+    page = typeof page === "string" ? parseInt(page, 10) : page;
+
+    const rawResult = await this.inventoryDao.findShoeInventoryWithPrice(page, title);
+    const result = rawResult.map((r) => ({
+      ...r.shoe,
+      sellPrice: r.sellPrice,
+      quantity: r.quantity,
+    }));
+    return res.status(HttpStatus.OK).send(result);
+  }
 }

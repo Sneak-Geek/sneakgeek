@@ -18,6 +18,16 @@ export const InventorySchema = new mongoose.Schema(
       ref: "Shoe",
       required: true,
     },
+    shoeInfo: {
+      type: {
+        title: String,
+        brand: String,
+        category: String,
+        gender: String,
+        name: String,
+        thumbnail: String,
+      },
+    },
     shoeSize: {
       type: String,
       required: true,
@@ -40,6 +50,13 @@ export type Inventory = Document<{
   shoeSize: string;
   sellPrice: number;
   quantity: number;
+  shoeInfo: {
+    title: string;
+    brand: string;
+    category: string;
+    gender: string;
+    name: string;
+  };
 }>;
 
 export const InventoryRepository: Repository<Inventory> = mongoose.model(
