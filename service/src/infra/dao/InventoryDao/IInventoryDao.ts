@@ -18,6 +18,13 @@ export type CurrentlySellData = {
   shoe: Shoe;
 };
 
+export type InventorySearchResult = {
+  shoeId: ObjectId;
+  sellPrice: number;
+  shoe: Shoe;
+  quantity: number;
+};
+
 export interface IInventoryDao {
   findById(inventoryId: string): Promise<Inventory>;
   findByUserId(
@@ -32,4 +39,5 @@ export interface IInventoryDao {
   getLowestPrice(shoeId: string): Promise<number>;
   updateInventoryWhenCreateOrder(inventoryId: string): Promise<Inventory>;
   getMatchingInventory(shoeId: string | ObjectId, price: number): Promise<Inventory>;
+  findShoeInventoryWithPrice(page: number, title: string): Promise<InventorySearchResult[]>;
 }
