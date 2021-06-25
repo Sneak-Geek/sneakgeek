@@ -224,7 +224,7 @@ const CopyButton: React.FC<CopyButtonProp> = (props: CopyButtonProp) => {
 
   const copyToClipboard = () => {
     Clipboard.setString(text);
-    Toast.showWithGravity('Text is copied',Toast.SHORT, Toast.BOTTOM);
+    Toast.showWithGravity('Sao chép thành công',Toast.SHORT, Toast.BOTTOM);
   };
 
   return (
