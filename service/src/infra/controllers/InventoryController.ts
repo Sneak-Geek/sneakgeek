@@ -94,7 +94,7 @@ export class InventoryController {
     const updateInventory = Object.assign(inventory, {
       sellPrice: req.body.sellPrice,
       quantity: req.body.quantity,
-      shoeSize: req.body.shoeSize
+      shoeSize: req.body.shoeSize,
     });
     await updateInventory.save();
     return res.status(HttpStatus.OK).send();
