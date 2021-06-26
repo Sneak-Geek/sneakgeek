@@ -4,9 +4,9 @@
 
 import { inject, injectable } from "inversify";
 import { Types } from "../../../configuration/inversify";
-import { Inventory, Repository } from "../../database";
+import { Inventory, Repository, Shoe } from "../../database";
 import { CreateInventoryDto } from "./CreateInventoryDto";
-import { IInventoryDao } from "./IInventoryDao";
+import { IInventoryDao, InventorySearchResult } from "./IInventoryDao";
 import mongoose from "mongoose";
 import { ObjectId } from "mongodb";
 
@@ -14,6 +14,9 @@ import { ObjectId } from "mongodb";
 export class InventoryDao implements IInventoryDao {
   @inject(Types.InventoryRepository)
   private readonly inventoryRepository!: Repository<Inventory>;
+
+  @inject(Types.ShoeRepository)
+  private readonly shoeRepository!: Repository<Shoe>;
 
   public async findById(inventoryId: string) {
     return this.inventoryRepository.findById(inventoryId).exec();
@@ -61,12 +64,24 @@ export class InventoryDao implements IInventoryDao {
   }
 
   public async create(inventoryDto: CreateInventoryDto) {
+    const shoe: Shoe = await this.shoeRepository.findOne({
+      _id: mongoose.Types.ObjectId(inventoryDto.shoeId),
+    });
+
     return this.inventoryRepository.create({
       sellerId: mongoose.Types.ObjectId(inventoryDto.sellerId),
       shoeId: mongoose.Types.ObjectId(inventoryDto.shoeId),
       shoeSize: inventoryDto.shoeSize,
       sellPrice: inventoryDto.sellPrice,
       quantity: inventoryDto.quantity,
+      shoeInfo: {
+        title: shoe.title,
+        brand: shoe.brand,
+        category: shoe.category,
+        gender: shoe.gender,
+        name: shoe.name,
+        thumbnail: shoe.media?.thumbUrl,
+      },
     });
   }
 
@@ -167,5 +182,64 @@ export class InventoryDao implements IInventoryDao {
       shoeId: new ObjectId(shoeId),
       sellPrice: price,
     });
+  }
+
+  public async findShoeInventoryWithPrice(
+    page: number,
+    title: string
+  ): Promise<InventorySearchResult[]> {
+    const pageSize = 20;
+    const query: any[] = [
+      {
+        $match: {
+          "shoeInfo.title": {
+            $regex: new RegExp(`^${title}`, "i"),
+          },
+        },
+      },
+      {
+        $group: {
+          _id: "$shoeId",
+          sellPrice: { $min: "$sellPrice" },
+          quantity: { $sum: "$quantity" },
+        },
+      },
+      {
+        $match: {
+          quantity: { $gt: 0 },
+        },
+      },
+      {
+        $limit: pageSize,
+      },
+      {
+        $lookup: {
+          from: "shoes",
+          localField: "_id",
+          foreignField: "_id",
+          as: "shoe",
+        },
+      },
+      {
+        $unwind: { path: "$shoe" },
+      },
+      {
+        $project: {
+          _id: 0,
+          shoeId: "$_id",
+          sellPrice: 1,
+          quantity: 1,
+          shoe: 1,
+        },
+      },
+    ];
+
+    if (page > 0) {
+      query.splice(3, 0, {
+        $skip: pageSize * page,
+      });
+    }
+
+    return this.inventoryRepository.aggregate(query);
   }
 }

@@ -13,15 +13,24 @@ import {
 import {SafeAreaConsumer, SafeAreaView} from 'react-native-safe-area-context';
 import {SearchBar, Icon, ListItem, Button} from 'react-native-elements';
 import {themes, strings, images} from 'resources';
-import {IShoeService, ObjectFactory, FactoryKeys, Shoe, Gender} from 'business';
+import {
+  IShoeService,
+  ObjectFactory,
+  FactoryKeys,
+  Shoe,
+  Gender,
+  IInventoryService,
+  Account,
+  InventorySearchResult,
+} from 'business';
 import {ScrollView, FlatList} from 'react-native-gesture-handler';
 import {StackNavigationProp} from '@react-navigation/stack';
 import RouteNames from 'navigations/RouteNames';
 import {RootStackParams} from 'navigations/RootStack';
-import {getDependency} from 'utilities';
+import {connect, getDependency} from 'utilities';
 import {ISettingsProvider, SettingsKey} from 'business/src';
 import {styles} from './styles';
-import {Avatar} from 'react-native-elements/dist/avatar/Avatar';
+import {IAppState} from 'store/AppStore';
 
 const ListChoice = (props: {
   isMultiple: boolean;
@@ -76,12 +85,13 @@ const ListChoice = (props: {
 
 type Props = {
   navigation: StackNavigationProp<RootStackParams, 'SearchTabMain'>;
+  account: Account;
 };
 
 type State = {
   searchText: string;
   isSearching: boolean;
-  shoes: Shoe[];
+  shoes: (Shoe | InventorySearchResult)[];
   showDropDown: boolean;
   currentSearchPage: number;
   shouldSearchScrollEnd: boolean;
@@ -93,9 +103,15 @@ type State = {
   };
 };
 
+@connect((appState: IAppState) => ({
+  account: appState.UserState.accountState.account,
+}))
 export class SearchTabMain extends React.Component<Props, State> {
   private _shoeService: IShoeService = ObjectFactory.getObjectInstance(
     FactoryKeys.IShoeService,
+  );
+  private _inventoryService: IInventoryService = getDependency(
+    FactoryKeys.IInventoryService,
   );
   private _keyboardHideListener: EmitterSubscription;
   private _hotKeyWords = ['Nike', 'adidas', 'Jordan', 'Off-White'];
@@ -313,12 +329,7 @@ export class SearchTabMain extends React.Component<Props, State> {
   }
 
   private async _search(scrollEnd = false): Promise<void> {
-    const {
-      searchText,
-      shoes,
-      currentSearchPage,
-      shouldSearchScrollEnd,
-    } = this.state;
+    const {shoes, shouldSearchScrollEnd} = this.state;
     const shouldSearch =
       this.state.searchText.length >= 3 || this._isFiltered();
 
@@ -328,32 +339,69 @@ export class SearchTabMain extends React.Component<Props, State> {
     });
 
     if (shouldSearch || (scrollEnd && shouldSearchScrollEnd)) {
-      const result = await this._shoeService.searchShoes(
-        searchText,
-        currentSearchPage,
-        this._getStandardizedGender(),
-        this.state.filter.brand,
-      );
-      this.setState({
-        isSearching: false,
-      });
-
-      if (result && result.shoes) {
-        let newShoes = result.shoes;
-        const shouldSearchScrollEnd = !(
-          newShoes.length === 0 && currentSearchPage > 0
-        );
-        newShoes = newShoes.filter(
-          (t) => !shoes.some((old) => old._id === t._id),
-        );
-
-        this.setState({
-          shoes: [...this.state.shoes, ...newShoes],
-          shouldSearchScrollEnd,
-          currentSearchPage:
-            scrollEnd && shouldSearchScrollEnd ? currentSearchPage + 1 : 0,
-        });
+      if (this._isSeller()) {
+        this._searchForSeller(scrollEnd);
+      } else {
+        this._searchForBuyer(scrollEnd);
       }
+    }
+  }
+
+  private _isSeller(): boolean {
+    return this.props.account && this.props.account.accessLevel === 'Seller';
+  }
+
+  private async _searchForSeller(scrollEnd: boolean) {
+    const {searchText, shoes, currentSearchPage} = this.state;
+    const result = await this._shoeService.searchShoes(
+      searchText,
+      currentSearchPage,
+      this._getStandardizedGender(),
+      this.state.filter.brand,
+    );
+    this.setState({
+      isSearching: false,
+    });
+
+    if (result && result.shoes) {
+      let newShoes = result.shoes;
+      const shouldSearchScrollEnd = !(
+        newShoes.length === 0 && currentSearchPage > 0
+      );
+      newShoes = newShoes.filter(
+        (t) => !shoes.some((old) => old._id === t._id),
+      );
+
+      this.setState({
+        shoes: [...this.state.shoes, ...newShoes],
+        shouldSearchScrollEnd,
+        currentSearchPage:
+          scrollEnd && shouldSearchScrollEnd ? currentSearchPage + 1 : 0,
+      });
+    }
+  }
+
+  private async _searchForBuyer(scrollEnd: boolean) {
+    const {searchText, shoes, currentSearchPage} = this.state;
+    const result = await this._inventoryService.search(
+      searchText,
+      currentSearchPage,
+    );
+    this.setState({});
+    if (result) {
+      const shouldSearchScrollEnd = !(
+        result.length === 0 && currentSearchPage > 0
+      );
+      const newShoes = result.filter(
+        (t) => !shoes.some((old) => old._id !== t._id),
+      );
+
+      this.setState({
+        shoes: [...shoes, ...newShoes],
+        shouldSearchScrollEnd,
+        currentSearchPage:
+          scrollEnd && shouldSearchScrollEnd ? currentSearchPage + 1 : 0,
+      });
     }
   }
 

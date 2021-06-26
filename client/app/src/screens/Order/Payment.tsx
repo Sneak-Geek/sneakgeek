@@ -3,7 +3,6 @@ import {
   View,
   StyleSheet,
   TouchableOpacity,
-  Clipboard,
   SafeAreaView,
   Image,
   ScrollView,
@@ -12,6 +11,8 @@ import {AppText, BottomButton} from 'screens/Shared';
 import {toCurrencyString} from 'utilities';
 import {useNavigation} from '@react-navigation/native';
 import {images, themes} from 'resources';
+import Clipboard from '@react-native-clipboard/clipboard';
+import Toast from 'react-native-simple-toast';
 
 const styles = StyleSheet.create({
   root: {
@@ -124,7 +125,7 @@ const BankInfo: React.FC<BankInfoProp> = (props: BankInfoProp) => {
     {
       type: BankInfoComponentType.TEXT_ONLY,
       header: 'Chi nhánh ngân hàng',
-      content: 'Ngân hàng TMCP Việt Nam thịnh vượng (VPBank)',
+      content: 'Ngân hàng TMCP Việt Nam Thịnh Vượng (VPBank)',
     },
     {
       type: BankInfoComponentType.TEXT_AND_COPY_BUTTON,
@@ -144,7 +145,7 @@ const BankInfo: React.FC<BankInfoProp> = (props: BankInfoProp) => {
     {
       type: BankInfoComponentType.TEXT_AND_COPY_BUTTON,
       header: 'Nội dung chuyển tiền',
-      content: `Thanh toán SneakGeek + ${orderId}`,
+      content: `Thanh toán SneakGeek ${orderId}`,
     },
   ];
 
@@ -223,6 +224,7 @@ const CopyButton: React.FC<CopyButtonProp> = (props: CopyButtonProp) => {
 
   const copyToClipboard = () => {
     Clipboard.setString(text);
+    Toast.showWithGravity('Sao chép thành công',Toast.SHORT, Toast.BOTTOM);
   };
 
   return (

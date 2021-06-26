@@ -1,9 +1,10 @@
 import React from 'react';
-import {Shoe} from 'business';
+import {InventorySearchResult, Shoe} from 'business';
 import {View, Image, StyleSheet} from 'react-native';
 import {AppText} from './Text';
 import {themes, Constants} from 'resources';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import {toCurrencyString} from 'utilities';
 
 const styles = StyleSheet.create({
   rootContainer: {
@@ -36,9 +37,11 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     flexDirection: 'row',
-    backgroundColor: themes.DisabledTheme,
+    backgroundColor: themes.AppSecondaryColor,
     minHeight: 52,
     alignItems: 'center',
+    borderBottomEndRadius: themes.ButtonBorderRadius,
+    borderBottomStartRadius: themes.ButtonBorderRadius,
   },
   title: {
     textAlign: 'left',
@@ -50,7 +53,7 @@ const styles = StyleSheet.create({
 });
 
 export const ColumnShoeCard = (props: {
-  shoe: Shoe;
+  shoe: Shoe | InventorySearchResult;
   onPress: () => void;
 }): JSX.Element => (
   <View style={styles.rootContainer}>
@@ -63,20 +66,20 @@ export const ColumnShoeCard = (props: {
           style={styles.cardImage}
           resizeMode={'contain'}
         />
-        <View style={styles.titleContainer}>
-          <AppText.Subhead
-            numberOfLines={2}
-            textBreakStrategy={'highQuality'}
-            ellipsizeMode={'tail'}
-            style={styles.title}>
-            {props.shoe.title}
-          </AppText.Subhead>
-        </View>
-        {props.shoe.retailPrice && (
-          <View style={styles.priceContainer}>
-            <AppText.Footnote style={{color: 'white'}}>
-              ${props.shoe.retailPrice}
-            </AppText.Footnote>
+        <AppText.Subhead
+          numberOfLines={2}
+          textBreakStrategy={'highQuality'}
+          ellipsizeMode={'tail'}
+          style={styles.title}>
+          {props.shoe.title}
+        </AppText.Subhead>
+        {(props.shoe as InventorySearchResult).sellPrice && (
+          <View style={styles.titleContainer}>
+            <AppText.Body style={{color: 'white', marginLeft: 8}}>
+              {toCurrencyString(
+                (props.shoe as InventorySearchResult).sellPrice,
+              )}
+            </AppText.Body>
           </View>
         )}
       </View>
