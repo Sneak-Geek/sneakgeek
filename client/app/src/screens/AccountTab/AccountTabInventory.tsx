@@ -3,7 +3,7 @@ import {FlatList, Image, StyleSheet, View, TextInput} from 'react-native';
 import {getDependency, getToken, toCurrencyString} from 'utilities';
 import {IInventoryService, FactoryKeys, Inventory} from 'business';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {AppText, BottomButton, ShoeHeaderSummary} from 'screens/Shared';
+import {AppText, BottomButton, BottomPicker, ShoeHeaderSummary} from 'screens/Shared';
 import {strings, themes} from 'resources';
 import {Shoe} from 'business/src';
 import {SearchBar} from 'react-native-elements';
@@ -11,6 +11,10 @@ import {useNavigation, useRoute} from '@react-navigation/native';
 import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 import RouteNames from 'navigations/RouteNames';
 import {DismissKeyboardView} from 'screens/Shared';
+import { SNKGKPickerRow } from './AccountTabEditProfile';
+import { useDispatch } from 'react-redux';
+import { showSuccessNotification } from 'actions';
+import { useCallback } from 'react';
 
 const styles = StyleSheet.create({
   inventoryContainer: {
@@ -32,11 +36,24 @@ const styles = StyleSheet.create({
   },
 });
 
+type PickerState = {
+  pickerVisible: boolean;
+  pickerValue: string;
+}
+
 export const AccountTabInventoryDetail: React.FC<{}> = () => {
   const route = useRoute();
   const inventory: Inventory & {shoe: Shoe} = (route.params as any).inventory;
 
   const [quantity, setQuantity] = useState<number>(inventory.quantity);
+  const [pickerState, setPickerState] = useState<PickerState>({
+    pickerVisible: false,
+    pickerValue: inventory?.shoeSize
+  });
+  const [submitted, setSubmitted] = useState<boolean>(false);
+
+  const dispatch = useDispatch();
+
   const [price, setPrice] = useState<number>(inventory.sellPrice);
   const navigation = useNavigation();
 
@@ -64,36 +81,62 @@ export const AccountTabInventoryDetail: React.FC<{}> = () => {
     },
   ];
 
+  const shoeSizeOptions = ['1','1.5','2','2.5','3','3.5','4','4.5','5','5.5','6','6.5','7','7.5','8','8.5','9','9.5','10','10.5','11','11.5','12','12.5','13','13.5','14','14.5','15','15.5']
+
   return (
     <DismissKeyboardView
       style={{flex: 1, backgroundColor: 'white', paddingTop: 0}}>
       <ShoeHeaderSummary shoe={inventory.shoe} />
       <View style={{padding: 20, flex: 1, flexDirection: 'column'}}>
-        {items.map((t) => (
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}>
-            <AppText.SubHeadline>{t.title}</AppText.SubHeadline>
-            <TextInput
-              defaultValue={t.displayText}
-              numberOfLines={1}
-              editable={t.editable}
-              style={{
-                ...themes.TextStyle.body,
-                marginBottom: 20,
-                width: 300,
-                textAlign: 'right',
-              }}
-              keyboardType={'number-pad'}
-              onChangeText={t.onUpdate}
-            />
-          </View>
-        ))}
+        {items.map((t) => {
+          switch (t.title) {
+            case strings.ShoeSize:
+              // TO DO (DUC): Combine Picker Row with Picker Modal in AccountTabEditProfile 
+              return <SNKGKPickerRow style={{marginBottom: 20}} title={t.title} value={pickerState.pickerValue} onPress={() =>  setPickerState({...pickerState, pickerVisible: true})}/>;
+            default:
+              return (
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginBottom: 20,
+                  }}>
+                  <AppText.SubHeadline>{t.title}</AppText.SubHeadline>
+                  <TextInput
+                    defaultValue={t.displayText}
+                    numberOfLines={1}
+                    editable={t.editable}
+                    style={{
+                      ...themes.TextStyle.body,
+                     
+                      width: 300,
+                      textAlign: 'right',
+                    }}
+                    keyboardType={'number-pad'}
+                    onChangeText={t.onUpdate}
+                  />
+                </View>
+              );
+          }
+        })}
       </View>
       <BottomButton
+        disabled={submitted}
+        style={{
+          backgroundColor: 'white',
+          borderRadius: themes.LargeBorderRadius,
+          marginBottom: 80,
+          alignSelf: 'flex-end',
+        }}
+        title={'Huỷ'}
+        titleStyle={{color: themes.AppPrimaryColor}}
+        onPress={() => {
+          navigation.goBack()
+        }}
+      />
+      <BottomButton
+        disabled={submitted}
         style={{
           backgroundColor: themes.AppSecondaryColor,
           borderRadius: themes.LargeBorderRadius,
@@ -107,17 +150,39 @@ export const AccountTabInventoryDetail: React.FC<{}> = () => {
             FactoryKeys.IInventoryService,
           );
           const updatedInventory = {
-            _id: inventory.id,
+            // TO DO (DUC): Fix mismatch id key for Inventory type for be and fe
+            id: inventory._id,
             sellerId: inventory.sellerId,
             shoeId: inventory.shoeId,
-            shoeSize: inventory.shoeSize,
+            shoeSize: pickerState.pickerValue,
             quantity,
             sellPrice: price,
           };
+          setSubmitted(true);
           await inventoryService.updateInventory(token, updatedInventory);
           navigation.goBack();
+          dispatch(showSuccessNotification("Thay đổi đơn hàng thành công!"))
         }}
       />
+      {pickerState.pickerVisible ? (
+          <BottomPicker
+            options={shoeSizeOptions}
+            visible={pickerState.pickerVisible}
+            onSelectPickerOK={(value: string): void => {
+              setPickerState({
+                pickerVisible: false,
+                pickerValue: value,
+              });
+            }}
+            onSelectPickerCancel={(): void => {
+              setPickerState({
+                pickerVisible: false,
+                pickerValue: inventory?.shoeSize,
+              });
+            }}
+            optionLabelToString={(t): string => t.toString()}
+          />
+        ) : null}
     </DismissKeyboardView>
   );
 };
@@ -134,7 +199,7 @@ const InventoryItem: React.FC<{inventory: Inventory & {shoe: Shoe}}> = (
     <TouchableWithoutFeedback
       style={styles.inventoryContainer}
       onPress={() => {
-        navigation.navigate(RouteNames.Tab.AccountTab.InventoryDetail, {
+        navigation.navigate(RouteNames.Tab.InventoryTab.InventoryDetail, {
           inventory,
         });
       }}>
@@ -173,14 +238,34 @@ export const AccountTabInventory: React.FC<{}> = () => {
   );
   const [searchKey, setSearchKey] = useState<string>('');
 
+  // inventoryService.getInventories(token, searchKey).then((i) => {
+  //   setInventories(i);
+  // });
+
+  
+  const navigation = useNavigation();
   useEffect(() => {
     inventoryService.getInventories(token, searchKey).then((i) => {
       setInventories(i);
     });
-  }, [inventoryService, token, searchKey]);
+    
+    const unsubscribe = navigation.addListener('focus', () => {
+      inventoryService.getInventories(token, searchKey).then((i) => {
+        setInventories(i);
+      });
+    });
+
+    return unsubscribe;
+  }, [inventoryService, token, searchKey, navigation]);
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: 'white', paddingTop: 0}}>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: 'white',
+        paddingTop: 0,
+        paddingBottom: 0,
+      }}>
       <SearchBar
         lightTheme={true}
         round={true}

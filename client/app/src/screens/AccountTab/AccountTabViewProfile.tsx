@@ -304,43 +304,43 @@ export class AccountTabViewProfile extends React.Component<Props, State> {
       },
     ];
 
-    if (this.props.profile?.isSeller) {
-      this.sectionList.push({
-        sectionName: 'Tài khoản ngân hàng',
-        sectionFields: [
-          {
-            title: 'Số tài khoản',
-            placeholder: '01234567879',
-            isPicker: false,
-            value: (profile: Profile): string =>
-              profile.userProvidedBankAccount?.accountNumber,
-            onUpdate: (value: string, profile: Profile): Profile => {
-              return Object.assign(profile, {
-                userProvidedBankAccount: {
-                  ...profile.userProvidedBankAccount,
-                  accountNumber: value,
-                },
-              });
-            },
-          },
-          {
-            title: 'Chi nhánh',
-            placeholder: 'BIDV chi nhánh Đống Đa',
-            isPicker: false,
-            value: (profile: Profile): string =>
-              profile.userProvidedBankAccount?.bankBranch,
-            onUpdate: (value: string, profile: Profile): Profile => {
-              return Object.assign(profile, {
-                userProvidedBankAccount: {
-                  ...profile.userProvidedBankAccount,
-                  bankBranch: value,
-                },
-              });
-            },
-          },
-        ],
-      });
-    }
+    // if (this.props.profile?.isSeller) {
+    //   this.sectionList.push({
+    //     sectionName: 'Tài khoản ngân hàng',
+    //     sectionFields: [
+    //       {
+    //         title: 'Số tài khoản',
+    //         placeholder: '01234567879',
+    //         isPicker: false,
+    //         value: (profile: Profile): string =>
+    //           profile.userProvidedBankAccount?.accountNumber,
+    //         onUpdate: (value: string, profile: Profile): Profile => {
+    //           return Object.assign(profile, {
+    //             userProvidedBankAccount: {
+    //               ...profile.userProvidedBankAccount,
+    //               accountNumber: value,
+    //             },
+    //           });
+    //         },
+    //       },
+    //       {
+    //         title: 'Chi nhánh',
+    //         placeholder: 'BIDV chi nhánh Đống Đa',
+    //         isPicker: false,
+    //         value: (profile: Profile): string =>
+    //           profile.userProvidedBankAccount?.bankBranch,
+    //         onUpdate: (value: string, profile: Profile): Profile => {
+    //           return Object.assign(profile, {
+    //             userProvidedBankAccount: {
+    //               ...profile.userProvidedBankAccount,
+    //               bankBranch: value,
+    //             },
+    //           });
+    //         },
+    //       },
+    //     ],
+    //   });
+    // }
   }
 
   private _keyboardShowListener: EmitterSubscription;
