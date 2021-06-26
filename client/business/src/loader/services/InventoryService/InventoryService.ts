@@ -20,7 +20,6 @@ export class InventoryService extends BaseService implements IInventoryService {
   }
 
   public async updateInventory(token: string, inventory: Inventory) {
-    alert(inventory.id);
     const { data } = await this.apiClient.getInstance().put(
       '/inventory/update',
       inventory,
@@ -39,5 +38,10 @@ export class InventoryService extends BaseService implements IInventoryService {
     const { data } = await this.apiClient.getInstance().get(`/inventory/lowest?shoeId=${shoeId}`);
 
     return data.price;
+  }
+
+  public async search(query: string, page: number) {
+    const { data } = await this.apiClient.getInstance().get(`/inventory/search?title=${query}&page=${page}`);
+    return data;
   }
 }
