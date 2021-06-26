@@ -20,6 +20,7 @@ export class InventoryService extends BaseService implements IInventoryService {
   }
 
   public async updateInventory(token: string, inventory: Inventory) {
+    alert(inventory.id);
     const { data } = await this.apiClient.getInstance().put(
       '/inventory/update',
       inventory,
