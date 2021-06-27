@@ -1,0 +1,71 @@
+platform :ios do
+	before_all do
+	  ENV["CODE_SIGN_STYLE"] = "Manual"
+	end
+	desc "Fastlane for iOS"
+	xcproj = "./ios/app.xcodeproj"
+      
+	lane :bump_version_number do
+	  increment_version_number_in_xcodeproj(
+      bump_type: "minor",
+      xcodeproj: xcproj
+    )
+    commit_version_bump(
+      message: "Fastlane: auto commit version bump",
+      xcodeproj: xcproj, 
+      no_verify: true
+    )
+	end
+      
+	lane :bump_build_number do
+	  increment_build_number(xcodeproj: xcproj)
+	  commit_version_bump(
+	    message: "Fastlane: auto commit build bump",
+	    xcodeproj: xcproj,
+	    no_verify: true
+	  )
+	end
+      
+	lane :reset_build_number do
+	  increment_build_number(xcodeproj: xcproj, build_number: 0)
+	  commit_version_bump(
+	    message: "Fastlane: auto commit version bump",
+	    xcodeproj: xcproj
+	  )
+	end
+      
+	lane :archive do
+	  # Install pods
+	  cocoapods(
+      use_bundle_exec: false,
+	    clean_install: true,
+	    podfile: "./ios/Podfile"
+	  )
+	  # Setup provisioning profiles and certificates
+	  match(
+	    type: "adhoc", 
+	    app_identifier: "app.sneakgeek.mobile", 
+	    username: "huyhoang.pham95@gmail.com", 
+	    team_id: "VVPX9A83PB"
+	  )
+	  # Build
+	  gym(
+	    workspace: "ios/app.xcworkspace",
+	    scheme: "app",
+	    configuration: "Release",
+	    clean: true,
+	    derived_data_path: "ios/build",
+	    output_directory: "ios/build",
+	    sdk: "iphoneos14.4",
+	    export_method: "ad-hoc",
+	    xcargs: "-allowProvisioningUpdates"
+	  )
+	end
+
+  lane :distribute do 
+    upload_to_testflight(
+      username: "huyhoang.pham95@gmail.com",
+      ipa: "ios/build/SneakGeek.ipa"
+    )
+  end
+end
