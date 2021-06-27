@@ -8,7 +8,6 @@ import {
   AccountTabFaq,
   AccountTabPaymentInfo,
   AccountTabInventory,
-  AccountTabInventoryDetail,
   ContactUs,
 } from 'screens/AccountTab';
 import {
@@ -22,6 +21,8 @@ import {
   ObjectFactory as Factory,
   ISettingsProvider,
   FactoryKeys as Keys,
+  Profile,
+  Account,
 } from 'business';
 import {NotificationsScreen} from 'screens/HomeTab';
 import {ProductRequest} from 'screens/SearchTab';
@@ -29,6 +30,7 @@ import {IAppState} from 'store/AppStore';
 import {RootStackParams} from './RootStack';
 import {connect} from 'utilities';
 import {SellOrderHistory} from 'screens/TransactionTab';
+import {useSelector} from 'react-redux';
 
 const Tab = createBottomTabNavigator();
 
@@ -49,14 +51,6 @@ const AccountTab = (): JSX.Element => (
         title: 'Tài khoản',
         ...themes.headerStyle,
         headerLeft: () => null,
-      }}
-    />
-    <AccountStack.Screen
-      name={RouteNames.Tab.AccountTab.Inventory}
-      component={AccountTabInventory}
-      options={{
-        ...themes.headerStyle,
-        title: strings.Inventory,
       }}
     />
     <AccountStack.Screen
@@ -178,6 +172,24 @@ export const TransactionTab = (): JSX.Element => {
   );
 };
 
+const InventoryStack = createStackNavigator();
+export const InventoryTab = (): JSX.Element => {
+  return (
+    <InventoryStack.Navigator>
+      <InventoryStack.Screen
+        name={RouteNames.Tab.InventoryTab.Inventory}
+        component={AccountTabInventory}
+        options={{
+          gestureEnabled: null,
+          ...themes.headerStyle,
+          title: strings.Inventory,
+          headerLeft: () => <View />,
+        }}
+      />
+    </InventoryStack.Navigator>
+  );
+};
+
 type RootTabProps = {
   pushDeviceToken: string;
   getNotifications: () => void;
@@ -190,6 +202,14 @@ export const TabStack: React.FC<RootTabProps> = () => {
     );
     settingsProvider.loadServerSettings();
   });
+
+  const profile: Profile = useSelector(
+    (state: IAppState) => state?.UserState?.profileState?.profile,
+  );
+  const account: Account = useSelector(
+    (state: IAppState) => state?.UserState?.accountState?.account,
+  );
+  const showInventory = Boolean(profile && account) && profile?.isSeller;
 
   return (
     <Tab.Navigator
@@ -222,6 +242,16 @@ export const TabStack: React.FC<RootTabProps> = () => {
           title: strings.TransactionTab,
         }}
       />
+      {showInventory && (
+        <Tab.Screen
+          name={RouteNames.Tab.InventoryTab.Name}
+          component={InventoryTab}
+          options={{
+            tabBarIcon: TabBarIcon('store'),
+            title: strings.Inventory,
+          }}
+        />
+      )}
       <Tab.Screen
         name={RouteNames.Tab.AccountTab.Name}
         component={AccountTab}

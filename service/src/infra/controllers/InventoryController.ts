@@ -81,7 +81,7 @@ export class InventoryController {
     middlewares.AuthMiddleware,
     middlewares.AccountVerifiedMiddleware,
     Types.IsSellerMiddleware,
-    body("_id").isMongoId(),
+    body("id").isMongoId(),
     body("shoeId").isMongoId(),
     body("shoeSize").isString(),
     body("sellPrice").isNumeric(),
@@ -89,11 +89,12 @@ export class InventoryController {
     middlewares.ValidationPassedMiddleware
   )
   public async updateInventory(@request() req: Request, @response() res: Response) {
-    const inventoryId = req.body._id as string;
+    const inventoryId = req.body?.id as string;
     const inventory = await this.inventoryDao.findById(inventoryId);
     const updateInventory = Object.assign(inventory, {
       sellPrice: req.body.sellPrice,
       quantity: req.body.quantity,
+      shoeSize: req.body.shoeSize,
     });
     await updateInventory.save();
     return res.status(HttpStatus.OK).send();

@@ -52,7 +52,7 @@ export const BottomButton = (props: Props) => {
         style={styles.buttonStyle}
         onPress={buttonHandler}
         disabled={props.disabled}>
-        <AppText.Headline style={[props.titleStyle, styles.titleStyle]}>
+        <AppText.Headline style={[ styles.titleStyle, props.titleStyle]}>
           {props.title}
         </AppText.Headline>
       </TouchableOpacity>

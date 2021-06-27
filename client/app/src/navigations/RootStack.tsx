@@ -19,10 +19,11 @@ import {OrderStack} from './OrderStack';
 import {SplashScreen} from 'screens/SplashScreen';
 import {ProductDetail} from 'screens/Product';
 import {strings, themes} from 'resources';
-import {AccountTabViewProfile, AccountTabEditProfile} from 'screens/AccountTab';
+import {AccountTabViewProfile, AccountTabEditProfile, AccountTabInventoryDetail} from 'screens/AccountTab';
 import {SeeMore} from 'screens/HomeTab';
 import {Payment} from 'screens/Order';
 import {OrderConfirmation} from 'screens/Order/OrderConfirmation';
+import { View } from 'react-native';
 
 export type RootStackParams = {
   ProductRequest: undefined;
@@ -123,6 +124,16 @@ const RootStack = (): JSX.Element => (
         options={{
           headerTransparent: true,
           headerShown: false,
+        }}
+      />
+      <Stack.Screen 
+        name={RouteNames.Tab.InventoryTab.InventoryDetail}
+        component={AccountTabInventoryDetail}
+        options={{
+          gestureEnabled: null,
+          ...themes.headerStyle,
+          title: strings.Inventory,
+          headerLeft: () => <View />,
         }}
       />
       <Stack.Screen 
