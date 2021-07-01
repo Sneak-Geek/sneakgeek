@@ -316,7 +316,7 @@ export class ProductDetail extends React.Component<Props, State> {
     const isSell = account && profile && profile.isSeller && account.isVerified;
     if ((!account && profile) || (account && !profile))
     {
-      return;
+      return <></>;
     }
     else if (!account && !profile)
     {
