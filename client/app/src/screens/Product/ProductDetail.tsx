@@ -33,6 +33,7 @@ import {
 } from 'business';
 import RouteNames from 'navigations/RouteNames';
 import {FactoryKeys, InventoryService} from 'business/src';
+import { acc } from 'react-native-reanimated';
 
 type Props = {
   account: Account;
@@ -158,6 +159,8 @@ export class ProductDetail extends React.Component<Props, State> {
   private inventoryService: InventoryService = getDependency(
     FactoryKeys.IInventoryService,
   );
+
+  private prevIsSell = true;
 
   state = {
     lowestPrice: 0,
@@ -311,9 +314,29 @@ export class ProductDetail extends React.Component<Props, State> {
   private _renderActionButtons(bottom: number): JSX.Element {
     const {profile, account} = this.props;
     const isSell = account && profile && profile.isSeller && account.isVerified;
+    if ((!account && profile) || (account && !profile))
+    {
+      return <></>;
+    }
+    else if (!account && !profile)
+    {
+      return(<View style={{bottom, ...styles.bottomContainer}}>
+        {
+        this._renderSingleActionButton('Mua', () => {
+        // @ts-ignore
+        this.props.navigation.push(RouteNames.Order.Name, {
+          screen: RouteNames.Order.NewBuyOrder,
+          params: {
+            shoe: this._shoe,
+          },
+        });
+      })}
+      </View>
+      )
+    }
     return (
       <View style={{bottom, ...styles.bottomContainer}}>
-        {!isSell &&
+        {!isSell ?
           this._renderSingleActionButton('Mua', () => {
             // @ts-ignore
             this.props.navigation.push(RouteNames.Order.Name, {
@@ -322,9 +345,7 @@ export class ProductDetail extends React.Component<Props, State> {
                 shoe: this._shoe,
               },
             });
-          })}
-        {isSell &&
-          this._renderSingleActionButton('Bán', () => {
+          }): this._renderSingleActionButton('Bán', () => {
             // @ts-ignore
             this.props.navigation.push(RouteNames.Order.Name, {
               screen: RouteNames.Order.NewSellOrder,
