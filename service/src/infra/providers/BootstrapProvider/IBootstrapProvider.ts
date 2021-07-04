@@ -6,8 +6,10 @@ import { Shoe } from "../../database";
 
 export interface IBootstrapProvider {
   getRawShoesData: () => Partial<Shoe>[];
-  bootstrapUsersData: () => Promise<any>;
+  bootstrapProdUserData: () => Promise<any>;
+  bootstrapDevUserData: () => Promise<any>;
   bootstrapShoesData: () => Promise<any>;
   bootstrapCatalogData: () => Promise<any>;
-  bootstrapInventoryAndOrder: () => Promise<void>;
+  bootstrapDevInventoryAndOrder: () => Promise<void>;
+  bootstrapProdInventory: () => Promise<void>;
 }
