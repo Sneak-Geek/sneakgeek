@@ -29,7 +29,12 @@ export const ProductRequestSchema = new mongoose.Schema(
     },
     size: {
       type: String,
-      enum: ShoeSize.Adult,
+      enum: [
+        ...ShoeSize.Adult,
+        ...ShoeSize.GradeSchool,
+        ...ShoeSize.PreSchool,
+        ...ShoeSize.Toddler,
+      ],
     },
     requestStatus: {
       type: String,
