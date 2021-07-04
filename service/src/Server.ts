@@ -126,10 +126,15 @@ export default class Server {
     );
     LogProvider.instance.info("Bootstrapping data");
 
-    await bootstrapProvider.bootstrapUsersData();
     await bootstrapProvider.bootstrapShoesData();
+    if (process.env.NODE_ENV !== "prod") {
+      await bootstrapProvider.bootstrapDevUserData();
+      await bootstrapProvider.bootstrapDevInventoryAndOrder();
+    } else {
+      await bootstrapProvider.bootstrapProdUserData();
+      await bootstrapProvider.bootstrapProdInventory();
+    }
     await bootstrapProvider.bootstrapCatalogData();
-    await bootstrapProvider.bootstrapInventoryAndOrder();
 
     LogProvider.instance.info("Bootstrap data completed");
   }

@@ -30,11 +30,29 @@ import path from "path";
 import fs from "fs";
 import _ from "lodash";
 import { PaymentMethod, TrackingStatus } from "../../../assets/constants";
+import csv from "csv-parser";
+import {
+  HeatFactoryAccount,
+  HeatFactoryCredential,
+  HeatFactoryProfile,
+  LuckyStarAccount,
+  LuckyStarCredential,
+  LuckystarProfile,
+} from "../../../assets/seeds/sellers";
 
 type AccountInfo = {
   accountId: mongoose.Types.ObjectId;
   profileId: mongoose.Types.ObjectId;
 };
+
+type InventoryRowData = {
+  shop: string;
+  sku: string;
+  size: string | number;
+  price: string | number;
+  link: string;
+};
+
 @injectable()
 export class BootstrapProvider implements IBootstrapProvider {
   constructor(
@@ -48,9 +66,16 @@ export class BootstrapProvider implements IBootstrapProvider {
 
   private levelToAccMap: Map<AccessLevel, AccountInfo> = new Map();
   private shoeIds: Array<mongoose.Types.ObjectId>;
+  private readonly prodInventorySeeds: string = path.join(
+    process.cwd(),
+    "resources",
+    "seeds",
+    "inventory-data.csv"
+  );
+  private readonly shops: Map<string, string> = new Map<string, string>();
 
-  public async bootstrapUsersData(): Promise<any> {
-    Promise.all([
+  public async bootstrapDevUserData(): Promise<any> {
+    return Promise.all([
       this._createUserData(AdminCredential, AdminAccount, AdminProfile, AccessLevel.Admin),
       this._createUserData(
         UserCredential,
@@ -65,6 +90,15 @@ export class BootstrapProvider implements IBootstrapProvider {
         AccessLevel.Seller
       ),
     ]);
+  }
+
+  public async bootstrapProdUserData(): Promise<any> {
+    return Promise.all([this._createUserData(
+      HeatFactoryCredential,
+      HeatFactoryAccount,
+      HeatFactoryProfile,
+      null
+    ), this._createUserData(LuckyStarCredential, LuckyStarAccount, LuckystarProfile, null)]);
   }
 
   private async _createUserData(
@@ -95,7 +129,11 @@ export class BootstrapProvider implements IBootstrapProvider {
         }),
       ]);
 
-      this.levelToAccMap.set(acl, { accountId, profileId });
+      if (acl) {
+        this.levelToAccMap.set(acl, { accountId, profileId });
+      } else {
+        this.shops.set(profile.userProvidedName.firstName, profileId.toHexString());
+      }
     }
   }
 
@@ -223,7 +261,7 @@ export class BootstrapProvider implements IBootstrapProvider {
     ]);
   }
 
-  public async bootstrapInventoryAndOrder(): Promise<void> {
+  public async bootstrapDevInventoryAndOrder(): Promise<void> {
     // Already bootstrapped
     if (this.levelToAccMap.size === 0) {
       return;
@@ -271,5 +309,46 @@ export class BootstrapProvider implements IBootstrapProvider {
     }));
 
     return this.orderRepo.insertMany(orders, { ordered: false, rawResult: false });
+  }
+
+  public bootstrapProdInventory(): Promise<void> {
+    const inventories: Array<Partial<Inventory>> = [];
+    return new Promise<void>((resolve, reject) => {
+      fs.createReadStream(this.prodInventorySeeds)
+        .pipe(csv())
+        .on("data", async (row) => {
+          const shopName = row["Shop"];
+          const sku = row["SKU"];
+          const size = row["Size"];
+          const price = row["Price"];
+          const link = row["Link"];
+
+          const shoe = await this.shoeRepository.findOne({
+            styleId: (sku as string).toUpperCase(),
+          });
+
+          if (!shoe) {
+            LogProvider.instance.warn(`Shoe not found: ${JSON.stringify(row, null, 2)}`);
+          } else {
+            inventories.push({
+              sellerId: new mongoose.Types.ObjectId(this.shops.get(shopName)),
+              shoeId: shoe._id,
+              shoeSize: size,
+              sellPrice: parseInt(price, 10),
+              quantity: 1,
+              note: link,
+            });
+          }
+        })
+        .on("error", (err) => {
+          LogProvider.instance.error(`Error bootstrapped inventory ${err}`);
+          reject(err);
+        })
+        .on("end", async () => {
+          await this.inventoryRepo.insertMany(inventories);
+          LogProvider.instance.info("Successfully bootstraped inventory data");
+          resolve();
+        });
+    });
   }
 }

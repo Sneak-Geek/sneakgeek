@@ -40,6 +40,7 @@ export const InventorySchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    note: String,
   },
   { timestamps: true }
 );
@@ -57,6 +58,7 @@ export type Inventory = Document<{
     gender: string;
     name: string;
   };
+  note: string;
 }>;
 
 export const InventoryRepository: Repository<Inventory> = mongoose.model(
