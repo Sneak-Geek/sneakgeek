@@ -93,12 +93,15 @@ export class BootstrapProvider implements IBootstrapProvider {
   }
 
   public async bootstrapProdUserData(): Promise<any> {
-    return Promise.all([this._createUserData(
-      HeatFactoryCredential,
-      HeatFactoryAccount,
-      HeatFactoryProfile,
-      null
-    ), this._createUserData(LuckyStarCredential, LuckyStarAccount, LuckystarProfile, null)]);
+    return Promise.all([
+      this._createUserData(
+        HeatFactoryCredential,
+        HeatFactoryAccount,
+        HeatFactoryProfile,
+        null
+      ),
+      this._createUserData(LuckyStarCredential, LuckyStarAccount, LuckystarProfile, null),
+    ]);
   }
 
   private async _createUserData(
