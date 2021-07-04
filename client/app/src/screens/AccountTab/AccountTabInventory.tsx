@@ -1,9 +1,20 @@
 import React, {useEffect, useState} from 'react';
 import {FlatList, Image, StyleSheet, View, TextInput} from 'react-native';
 import {getDependency, getToken, toCurrencyString} from 'utilities';
-import {IInventoryService, FactoryKeys, Inventory} from 'business';
+import {
+  IInventoryService,
+  FactoryKeys,
+  Inventory,
+  ISettingsProvider,
+  SettingsKey,
+} from 'business';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {AppText, BottomButton, BottomPicker, ShoeHeaderSummary} from 'screens/Shared';
+import {
+  AppText,
+  BottomButton,
+  BottomPicker,
+  ShoeHeaderSummary,
+} from 'screens/Shared';
 import {strings, themes} from 'resources';
 import {Shoe} from 'business/src';
 import {SearchBar} from 'react-native-elements';
@@ -11,10 +22,10 @@ import {useNavigation, useRoute} from '@react-navigation/native';
 import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 import RouteNames from 'navigations/RouteNames';
 import {DismissKeyboardView} from 'screens/Shared';
-import { SNKGKPickerRow } from './AccountTabEditProfile';
-import { useDispatch } from 'react-redux';
-import { showSuccessNotification } from 'actions';
-import { useCallback } from 'react';
+import {SNKGKPickerRow} from './AccountTabEditProfile';
+import {useDispatch} from 'react-redux';
+import {showSuccessNotification} from 'actions';
+import {useCallback} from 'react';
 
 const styles = StyleSheet.create({
   inventoryContainer: {
@@ -39,7 +50,7 @@ const styles = StyleSheet.create({
 type PickerState = {
   pickerVisible: boolean;
   pickerValue: string;
-}
+};
 
 export const AccountTabInventoryDetail: React.FC<{}> = () => {
   const route = useRoute();
@@ -48,7 +59,7 @@ export const AccountTabInventoryDetail: React.FC<{}> = () => {
   const [quantity, setQuantity] = useState<number>(inventory.quantity);
   const [pickerState, setPickerState] = useState<PickerState>({
     pickerVisible: false,
-    pickerValue: inventory?.shoeSize
+    pickerValue: inventory?.shoeSize,
   });
   const [submitted, setSubmitted] = useState<boolean>(false);
 
@@ -59,7 +70,7 @@ export const AccountTabInventoryDetail: React.FC<{}> = () => {
 
   const items = [
     {
-      title: strings.ShoeSize,
+      title: strings.Size,
       displayText: inventory.shoeSize,
       editable: false,
     },
@@ -81,7 +92,33 @@ export const AccountTabInventoryDetail: React.FC<{}> = () => {
     },
   ];
 
-  const shoeSizeOptions = ['1','1.5','2','2.5','3','3.5','4','4.5','5','5.5','6','6.5','7','7.5','8','8.5','9','9.5','10','10.5','11','11.5','12','12.5','13','13.5','14','14.5','15','15.5']
+  let shoeSizeOptions = [];
+  const settings: ISettingsProvider = getDependency(
+    FactoryKeys.ISettingsProvider,
+  );
+  const remoteSettings: {
+    shoeSizes: {
+      Adult: Array<string>;
+      GradeSchool: Array<string>;
+      PreSchool: Array<string>;
+      Toddler: Array<string>;
+    };
+  } = settings.getValue(SettingsKey.RemoteSettings);
+  switch (inventory.shoe.gender) {
+    case 'men':
+    case 'women':
+      shoeSizeOptions = remoteSettings.shoeSizes.Adult;
+      break;
+    case 'child':
+      shoeSizeOptions = remoteSettings.shoeSizes.GradeSchool;
+      break;
+    case 'preschool':
+      shoeSizeOptions = remoteSettings.shoeSizes.PreSchool;
+      break;
+    case 'toddler':
+      shoeSizeOptions = remoteSettings.shoeSizes.Toddler;
+      break;
+  }
 
   return (
     <DismissKeyboardView
@@ -91,8 +128,17 @@ export const AccountTabInventoryDetail: React.FC<{}> = () => {
         {items.map((t) => {
           switch (t.title) {
             case strings.ShoeSize:
-              // TO DO (DUC): Combine Picker Row with Picker Modal in AccountTabEditProfile 
-              return <SNKGKPickerRow style={{marginBottom: 20}} title={t.title} value={pickerState.pickerValue} onPress={() =>  setPickerState({...pickerState, pickerVisible: true})}/>;
+              // TO DO (DUC): Combine Picker Row with Picker Modal in AccountTabEditProfile
+              return (
+                <SNKGKPickerRow
+                  style={{marginBottom: 20}}
+                  title={t.title}
+                  value={pickerState.pickerValue}
+                  onPress={() =>
+                    setPickerState({...pickerState, pickerVisible: true})
+                  }
+                />
+              );
             default:
               return (
                 <View
@@ -109,7 +155,7 @@ export const AccountTabInventoryDetail: React.FC<{}> = () => {
                     editable={t.editable}
                     style={{
                       ...themes.TextStyle.body,
-                     
+
                       width: 300,
                       textAlign: 'right',
                     }}
@@ -132,7 +178,7 @@ export const AccountTabInventoryDetail: React.FC<{}> = () => {
         title={'Huỷ'}
         titleStyle={{color: themes.AppPrimaryColor}}
         onPress={() => {
-          navigation.goBack()
+          navigation.goBack();
         }}
       />
       <BottomButton
@@ -161,28 +207,28 @@ export const AccountTabInventoryDetail: React.FC<{}> = () => {
           setSubmitted(true);
           await inventoryService.updateInventory(token, updatedInventory);
           navigation.goBack();
-          dispatch(showSuccessNotification("Thay đổi đơn hàng thành công!"))
+          dispatch(showSuccessNotification('Thay đổi đơn hàng thành công!'));
         }}
       />
       {pickerState.pickerVisible ? (
-          <BottomPicker
-            options={shoeSizeOptions}
-            visible={pickerState.pickerVisible}
-            onSelectPickerOK={(value: string): void => {
-              setPickerState({
-                pickerVisible: false,
-                pickerValue: value,
-              });
-            }}
-            onSelectPickerCancel={(): void => {
-              setPickerState({
-                pickerVisible: false,
-                pickerValue: inventory?.shoeSize,
-              });
-            }}
-            optionLabelToString={(t): string => t.toString()}
-          />
-        ) : null}
+        <BottomPicker
+          options={shoeSizeOptions}
+          visible={pickerState.pickerVisible}
+          onSelectPickerOK={(value: string): void => {
+            setPickerState({
+              pickerVisible: false,
+              pickerValue: value,
+            });
+          }}
+          onSelectPickerCancel={(): void => {
+            setPickerState({
+              pickerVisible: false,
+              pickerValue: inventory?.shoeSize,
+            });
+          }}
+          optionLabelToString={(t): string => t.toString()}
+        />
+      ) : null}
     </DismissKeyboardView>
   );
 };
@@ -242,13 +288,12 @@ export const AccountTabInventory: React.FC<{}> = () => {
   //   setInventories(i);
   // });
 
-  
   const navigation = useNavigation();
   useEffect(() => {
     inventoryService.getInventories(token, searchKey).then((i) => {
       setInventories(i);
     });
-    
+
     const unsubscribe = navigation.addListener('focus', () => {
       inventoryService.getInventories(token, searchKey).then((i) => {
         setInventories(i);
