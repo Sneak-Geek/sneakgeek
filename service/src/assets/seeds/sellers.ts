@@ -10,6 +10,7 @@ export const HeatFactoryCredential = {
 export const HeatFactoryAccount = {
   accountProvider: "email",
   accountIdByProvider: HeatFactoryCredential.email,
+  accountEmailByProvider: HeatFactoryCredential.email,
   password: hashSync(HeatFactoryCredential.password, saltRounds),
   accessLevel: AccessLevel.Seller,
   isVerified: true,
@@ -38,6 +39,7 @@ export const LuckyStarCredential = {
 export const LuckyStarAccount = {
   accountProvider: "email",
   accountIdByProvider: HeatFactoryCredential.email,
+  accountEmailByProvider: HeatFactoryCredential.email,
   password: hashSync(HeatFactoryCredential.password, saltRounds),
   accessLevel: AccessLevel.Seller,
   isVerified: true,
