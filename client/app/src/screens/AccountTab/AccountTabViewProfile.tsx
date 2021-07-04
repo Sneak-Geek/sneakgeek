@@ -7,6 +7,7 @@ import {
   updateProfile,
   Ward,
   District,
+  getCurrentUser,
 } from 'business';
 import {
   View,
@@ -122,6 +123,7 @@ type Props = {
   updateProfile: (profile: Profile) => void;
   showNotification: (message: string) => void;
   toggleLoadingIndicator: (isLoading: boolean) => void;
+  getCurrentUser: () => void;
 };
 
 enum PickerType {
@@ -169,6 +171,9 @@ type SettingSection = {
     },
     showNotification: (message: string): void =>
       dispatch(showSuccessNotification(message)),
+    getCurrentUser: (): void => {
+      dispatch(getCurrentUser());
+    },
   }),
 )
 export class AccountTabViewProfile extends React.Component<Props, State> {
@@ -303,44 +308,6 @@ export class AccountTabViewProfile extends React.Component<Props, State> {
         ],
       },
     ];
-
-    // if (this.props.profile?.isSeller) {
-    //   this.sectionList.push({
-    //     sectionName: 'Tài khoản ngân hàng',
-    //     sectionFields: [
-    //       {
-    //         title: 'Số tài khoản',
-    //         placeholder: '01234567879',
-    //         isPicker: false,
-    //         value: (profile: Profile): string =>
-    //           profile.userProvidedBankAccount?.accountNumber,
-    //         onUpdate: (value: string, profile: Profile): Profile => {
-    //           return Object.assign(profile, {
-    //             userProvidedBankAccount: {
-    //               ...profile.userProvidedBankAccount,
-    //               accountNumber: value,
-    //             },
-    //           });
-    //         },
-    //       },
-    //       {
-    //         title: 'Chi nhánh',
-    //         placeholder: 'BIDV chi nhánh Đống Đa',
-    //         isPicker: false,
-    //         value: (profile: Profile): string =>
-    //           profile.userProvidedBankAccount?.bankBranch,
-    //         onUpdate: (value: string, profile: Profile): Profile => {
-    //           return Object.assign(profile, {
-    //             userProvidedBankAccount: {
-    //               ...profile.userProvidedBankAccount,
-    //               bankBranch: value,
-    //             },
-    //           });
-    //         },
-    //       },
-    //     ],
-    //   });
-    // }
   }
 
   private _keyboardShowListener: EmitterSubscription;
@@ -352,6 +319,8 @@ export class AccountTabViewProfile extends React.Component<Props, State> {
     districts: District[];
     wards: Map<number, Ward[]>;
   };
+
+  private _unsubscribe;
 
   public render(): JSX.Element {
     return (
@@ -390,6 +359,7 @@ export class AccountTabViewProfile extends React.Component<Props, State> {
     this._keyboardHideListener.remove();
     this._keyboardShowListener.remove();
     this._addressLine1OnUpdateDelayed.cancel();
+    // this._unsubscribe();
   }
 
   private _renderAddressModal() {
@@ -518,26 +488,8 @@ export class AccountTabViewProfile extends React.Component<Props, State> {
         ? item.value(updatedInfo).toString()
         : '';
 
-    // TO DO (Duc): Get rid of Picker
-    if (!item.isPicker) {
-      return (
-        <TextInput
-          editable={false}
-          value={textValue}
-          placeholderTextColor={themes.AppDisabledColor}
-          placeholder={item.placeholder}
-          
-          style={[styles.input, themes.TextStyle.subhead]}
-        />
-      );
-    } else if (item.isPicker) {
-      return (
-        <AppText.Subhead style={styles.input}>{textValue}</AppText.Subhead>
-      );
-    }
-
     return (
-      <AppText.Subhead style={styles.input}>
+      <AppText.Subhead style={[styles.input, themes.TextStyle.subhead]}>
         {item.value(profile)}
       </AppText.Subhead>
     );

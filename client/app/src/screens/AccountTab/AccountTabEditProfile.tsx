@@ -3,12 +3,12 @@ import {StyleSheet, StyleProp, ViewStyle, Modal, View} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {IAppState} from 'store/AppStore';
 import {Input} from 'react-native-elements';
-import {Profile} from 'business/src';
+import {NetworkRequestState, Profile, updateStateGetUserProfile} from 'business/src';
 import {BottomPicker} from 'screens/Shared/BottomPicker';
 import {AppText, BottomButton, Header} from 'screens/Shared';
 import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {FactoryKeys, IAccountService, updateProfile} from 'business';
+import {FactoryKeys, getCurrentUser, IAccountService, updateProfile} from 'business';
 import {getDependency, getToken} from 'utilities';
 import {showSuccessNotification} from 'actions';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
@@ -144,6 +144,7 @@ export const AccountTabEditProfile: FC<AccountTabEditProfileProp> = (
         updatedProfile,
       );
       showNotification('Cập nhật thông tin cá nhân thành công');
+      dispatch(updateStateGetUserProfile({ state: NetworkRequestState.SUCCESS, data: { profile: res }}));
       setProfileState({...profileState, ...updatedProfile});
       navigation.goBack();
     } catch (error) {
