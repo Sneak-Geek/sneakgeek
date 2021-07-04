@@ -48,12 +48,7 @@ export class SizeSelection extends React.Component<Props, State> {
   public constructor(props: any) {
     super(props);
 
-    const settings = getDependency<ISettingsProvider>(
-      FactoryKeys.ISettingsProvider,
-    );
-    this.shoeSizes = settings.getValue(
-      SettingsKey.RemoteSettings,
-    ).shoeSizes.Adult;
+    this.shoeSizes = this._getShoeSizes();
     this.shoe = this.props.shoe;
     this.orderType = this.props.orderType;
 
@@ -89,6 +84,33 @@ export class SizeSelection extends React.Component<Props, State> {
         />
       </View>
     );
+  }
+
+  private _getShoeSizes() {
+    const settings: ISettingsProvider = getDependency(
+      FactoryKeys.ISettingsProvider,
+    );
+    const remoteSettings: {
+      shoeSizes: {
+        Adult: Array<string>;
+        GradeSchool: Array<string>;
+        PreSchool: Array<string>;
+        Toddler: Array<string>;
+      };
+    } = settings.getValue(SettingsKey.RemoteSettings);
+    switch (this.shoe.gender) {
+      case 'men':
+      case 'women':
+        return remoteSettings.shoeSizes.Adult;
+      case 'child':
+        return remoteSettings.shoeSizes.GradeSchool;
+      case 'preschool':
+        return remoteSettings.shoeSizes.PreSchool;
+      case 'toddler':
+        return remoteSettings.shoeSizes.Toddler;
+      default:
+        return [];
+    }
   }
 
   private async _getPriceMap(): Promise<void> {
