@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-export function initDb() {    
+export function initDb() {
   return new Promise<void>((resolve, reject) => {
     mongoose.connect('mongodb://localhost:27017/stockx', { useNewUrlParser: true });
     const db = mongoose.connection;
@@ -17,7 +17,7 @@ const CompleteSchema = new mongoose.Schema({
   completed: {
     type: Boolean,
     default: false
-  } 
+  }
 }, { timestamps: true });
 
 CompleteSchema.index({ gender: 1, brand: 1, releaseTime: 1 }, { unique: true });
@@ -43,7 +43,10 @@ const ProductSchema = new mongoose.Schema({
   retailPrice: Number,
   shoe: String,
   urlKey: String,
-  styleId: String,
+  styleId: {
+    type: String,
+    unique: true
+  },
   year: Number,
   title: String,
   tags: { type: [String] }

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseUrl = 'https://stockx.com/api/browse';
+const baseUrl = 'https://stockx.com/api/browse?productCategory=sneakers';
 const headers = {
   'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.67 Safari/537.36'
 }
@@ -44,7 +44,7 @@ type Product = {
 };
 
 export async function getBrands(): Promise<string[]> {
-  const { data } = await axios.get(`${baseUrl}?productCategory=sneakers`, { 
+  const { data } = await axios.get(`${baseUrl}`, { 
     headers,
   });
   const brands = (data as StockxResponse).Facets.brand;
@@ -53,14 +53,14 @@ export async function getBrands(): Promise<string[]> {
 }
 
 export async function getReleaseTime(brand: string): Promise<string[]> {
-  const { data } = await axios.get(`${baseUrl}?productCategory=sneakers&brand=${brand}`, { headers });
+  const { data } = await axios.get(`${baseUrl}s&brand=${brand}`, { headers });
   const years = (data as StockxResponse).Facets.releaseTime;
 
   return Object.keys(years || []).sort((a, b) => parseFloat(b) - parseFloat(a));
 }
 
 export async function getProducts(gender: string, brand: string, releaseTime: string) {
-  const { data } = await axios.get(`${baseUrl}?productCategory=sneakers&brand=${brand}&gender=${gender}&releaseTime=${releaseTime}`, { 
+  const { data } = await axios.get(`${baseUrl}&brand=${brand}&gender=${gender}&releaseTime=${releaseTime}&resultsPerPage=500`, { 
     headers 
   });
 
@@ -71,7 +71,7 @@ export async function getProductsWithMap(map: Map<string, string>) {
   let query = '';
   map.forEach((value, key) => query = `${key}=${value}&${query}`);
 
-  const { data } = await axios.get(`${baseUrl}?productCategory=sneakers&${query}`, { headers });
+  const { data } = await axios.get(`${baseUrl}&${query}`, { headers });
   
   return (data as StockxResponse).Products;
 }

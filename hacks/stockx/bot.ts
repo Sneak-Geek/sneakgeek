@@ -30,7 +30,7 @@ const topBrand = [
 
 export async function getRecords() {
   const brands = await getBrands();
-  const genders = ["men", "women"];
+  const genders = ["men", "women", "unisex", "child", "preschool", "toddler"];
   
   for (let gender of genders) {
     for (let brand of brands) {
@@ -99,5 +99,5 @@ async function scrappers() {
 }
 
 initDb()
-// .then(() => getRecords())
+.then(() => getRecords())
 .then(() => scrappers());
