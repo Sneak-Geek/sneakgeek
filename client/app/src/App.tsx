@@ -51,8 +51,8 @@ export default function App(): JSX.Element {
     );
     Factory.register<IEnvVar>(Keys.IEnvVar, {
       dev: __DEV__,
-      devUrl: 'http://localhost:8080/api/v1',
-      prodUrl: 'https://dev.sneakgeek.io/api/v1',
+      devUrl: 'https://dev.sneakgeek.io/api/v1',
+      prodUrl: 'https://prod.sneakgeek.io/api/v1',
     });
     Factory.register<IFacebookSDK>(Keys.IFacebookSDK, new FacebookSdk());
     Factory.register<IGoogleSDK>(Keys.IGoogleSDK, new GoogleSdk());

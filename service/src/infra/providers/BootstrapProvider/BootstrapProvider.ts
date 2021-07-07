@@ -24,7 +24,7 @@ import {
   UserCredential,
   UserRegularAccount,
   UserRegularProfile,
-} from "../../../assets/seeds/user";
+} from "../../../assets/seeds/dev";
 import { LogProvider } from "../LogProvider";
 import path from "path";
 import fs from "fs";
@@ -38,7 +38,10 @@ import {
   LuckyStarAccount,
   LuckyStarCredential,
   LuckystarProfile,
-} from "../../../assets/seeds/sellers";
+  ProdAdminAccount,
+  ProdAdminCredential,
+  ProdAdminProfile,
+} from "../../../assets/seeds/prod";
 
 type AccountInfo = {
   accountId: mongoose.Types.ObjectId;
@@ -101,6 +104,7 @@ export class BootstrapProvider implements IBootstrapProvider {
         null
       ),
       this._createUserData(LuckyStarCredential, LuckyStarAccount, LuckystarProfile, null),
+      this._createUserData(ProdAdminCredential, ProdAdminAccount, ProdAdminProfile, null),
     ]);
   }
 
