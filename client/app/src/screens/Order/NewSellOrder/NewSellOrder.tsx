@@ -8,8 +8,16 @@ import {
   BottomButton,
   AppText,
   DismissKeyboardView,
+  BottomPicker,
 } from 'screens/Shared';
-import {Shoe, FactoryKeys, Profile, Inventory} from 'business';
+import {
+  Shoe,
+  FactoryKeys,
+  Profile,
+  Inventory,
+  ISettingsProvider,
+  SettingsKey,
+} from 'business';
 import {RouteProp} from '@react-navigation/native';
 import {RootStackParams} from 'navigations/RootStack';
 import {connect, getToken, getDependency} from 'utilities';
@@ -39,6 +47,7 @@ type SellDetailChild = {
 };
 
 type State = {
+  pickerVisible?: boolean;
   inventory: Partial<Inventory>;
   numText: Array<string>;
 };
@@ -61,7 +70,7 @@ type State = {
 )
 export class NewSellOrder extends React.Component<Props, State> {
   private _shoe: Shoe;
-  private MoneyField: TextInputMask
+  private moneyField: TextInputMask;
 
   public constructor(props: Props) {
     super(props);
@@ -69,54 +78,52 @@ export class NewSellOrder extends React.Component<Props, State> {
     try {
       this._shoe = this.props.route.params.shoe;
     } catch (error) {
-        props.navigation.navigate(RouteNames.Tab.HomeTab.Name, {
+      props.navigation.navigate(RouteNames.Tab.HomeTab.Name, {
         screen: RouteNames.Tab.HomeTab.Main,
       });
     }
 
     this.state = {
+      pickerVisible: false,
       inventory: {
         sellPrice: undefined,
-        shoeId: (this._shoe !== undefined) ? this._shoe._id: undefined,
+        shoeId: this._shoe !== undefined ? this._shoe._id : undefined,
         shoeSize: undefined,
         quantity: undefined,
       },
-      numText: ['', '', '']
+      numText: ['', '', ''],
     };
   }
 
   onUpdate = (text, index) => {
-    if (index == 0)
-    {
+    if (index === 0) {
       this.setState({
         inventory: {
           ...this.state.inventory,
           shoeSize: text,
         },
         numText: [text, this.state.numText[1], this.state.numText[2]],
-      })
+      });
     }
-    if (index == 1)
-    {
+    if (index === 1) {
       this.setState({
         inventory: {
           ...this.state.inventory,
           quantity: parseInt(text, 10),
         },
         numText: [this.state.numText[0], text, this.state.numText[2]],
-      })
+      });
     }
-    if (index == 2)
-    {
+    if (index === 2) {
       this.setState({
         inventory: {
           ...this.state.inventory,
-          sellPrice: parseInt(this.MoneyField.getRawValue(), 10) * 10,
+          sellPrice: parseInt(this.moneyField.getRawValue(), 10) * 10,
         },
         numText: [this.state.numText[0], this.state.numText[1], text],
-      })
+      });
     }
-  }
+  };
 
   public render(): JSX.Element {
     return (
@@ -131,11 +138,11 @@ export class NewSellOrder extends React.Component<Props, State> {
   }
 
   private _renderInventory() {
-
     const inventoryItems = [
       {
         title: strings.ShoeSize,
         displayText: '',
+        isPicker: true,
       },
       {
         title: strings.InventoryQuantity,
@@ -164,27 +171,81 @@ export class NewSellOrder extends React.Component<Props, State> {
               keyboardType={'number-pad'}
               type={index === 2 ? 'money' : 'custom'}
               options={
-                index === 2 ? 
-                {
-                  precision: 0,
-                  separator: '.',
-                  delimiter: '.',
-                  unit: '',
-                  suffixUnit: ''
-                } : 
-                {
-                  mask: '****'
-                } 
+                index === 2
+                  ? {
+                      precision: 0,
+                      separator: '.',
+                      delimiter: '.',
+                      unit: '',
+                      suffixUnit: '',
+                    }
+                  : {
+                      mask: '****',
+                    }
               }
               value={this.state.numText[index]}
-              onChangeText={text => this.onUpdate(text, index)}
+              editable={!t.isPicker}
+              onTouchStart={() =>
+                t.isPicker && this.setState({pickerVisible: true})
+              }
+              onChangeText={(text) => this.onUpdate(text, index)}
               style={{...themes.TextStyle.body, marginBottom: 20}}
-              ref={(ref) => {index === 2 ? this.MoneyField = ref : undefined}}
-              />
+              ref={(ref) => {
+                index === 2 ? (this.moneyField = ref) : undefined;
+              }}
+            />
           </View>
         ))}
+        {this._renderSizePicker()}
       </View>
     );
+  }
+
+  private _renderSizePicker() {
+    return (
+      <BottomPicker
+        options={this._getShoePickerValue()}
+        visible={this.state.pickerVisible}
+        onSelectPickerOK={(value: string) => {
+          this.setState({
+            pickerVisible: false,
+            numText: [value, this.state.numText[1], this.state.numText[2]],
+            inventory: {...this.state.inventory, shoeSize: value},
+          });
+        }}
+        onSelectPickerCancel={() => {
+          this.setState({pickerVisible: false});
+        }}
+        optionLabelToString={(t) => t}
+      />
+    );
+  }
+
+  private _getShoePickerValue() {
+    const settings: ISettingsProvider = getDependency(
+      FactoryKeys.ISettingsProvider,
+    );
+    const remoteSettings: {
+      shoeSizes: {
+        Adult: Array<string>;
+        GradeSchool: Array<string>;
+        PreSchool: Array<string>;
+        Toddler: Array<string>;
+      };
+    } = settings.getValue(SettingsKey.RemoteSettings);
+    switch (this._shoe?.gender) {
+      case 'men':
+      case 'women':
+        return remoteSettings.shoeSizes.Adult;
+      case 'child':
+        return remoteSettings.shoeSizes.GradeSchool;
+      case 'preschool':
+        return remoteSettings.shoeSizes.PreSchool;
+      case 'toddler':
+        return remoteSettings.shoeSizes.Toddler;
+      default:
+        return [];
+    }
   }
 
   private _renderBottomButton() {
@@ -237,4 +298,3 @@ export class NewSellOrder extends React.Component<Props, State> {
     }
   }
 }
-
