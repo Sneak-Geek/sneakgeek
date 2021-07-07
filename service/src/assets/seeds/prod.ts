@@ -59,3 +59,32 @@ export const LuckystarProfile = {
   isSeller: true,
   userProvidedEmail: HeatFactoryCredential.email,
 };
+
+export const ProdAdminCredential = {
+  email: "admin@sneakgeek.io",
+  password: "sneakgeek",
+};
+
+export const ProdAdminAccount = {
+  accountProvider: "email",
+  accountIdByProvider: ProdAdminCredential.email,
+  accountEmailByProvider: ProdAdminCredential.email,
+  password: hashSync(ProdAdminCredential.password, saltRounds),
+  accessLevel: AccessLevel.Admin,
+  isVerified: true,
+};
+
+export const ProdAdminProfile = {
+  userProvidedName: {
+    firstName: "Trần",
+    middlename: "Quang",
+    lastName: "Đại",
+  },
+  userProvidedAddress: {
+    addressLine1: "",
+    addressLine2: "",
+  },
+  userProvidedPhoneNumber: "",
+  isSeller: false,
+  userProvidedEmail: ProdAdminCredential.email,
+};

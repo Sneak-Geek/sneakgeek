@@ -33,7 +33,7 @@ import {
 } from "../services";
 import mongoose from "mongoose";
 import HttpStatus from "http-status";
-import { AdminProfile } from "../../assets/seeds/user";
+import { AdminProfile } from "../../assets/seeds/dev";
 import { ObjectId } from "mongodb";
 import { PaymentStatus, PaymentCallbackResponse } from "../../assets/constants";
 import { ITransactionDao, INotificationDao, IProfileDao } from "../dao";
