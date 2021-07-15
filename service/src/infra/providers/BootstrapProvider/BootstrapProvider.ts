@@ -30,7 +30,7 @@ import path from "path";
 import fs from "fs";
 import _ from "lodash";
 import { PaymentMethod, TrackingStatus } from "../../../assets/constants";
-import csv from "csv-parser";
+import * as csv from "fast-csv";
 import {
   HeatFactoryAccount,
   HeatFactoryCredential,
@@ -73,7 +73,7 @@ export class BootstrapProvider implements IBootstrapProvider {
     process.cwd(),
     "resources",
     "seeds",
-    "inventory-data.csv"
+    "inventories-07152021.csv"
   );
   private readonly shops: Map<string, string> = new Map<string, string>();
 
@@ -172,7 +172,7 @@ export class BootstrapProvider implements IBootstrapProvider {
   }
 
   public getRawShoesData(): Partial<Shoe>[] {
-    const seedPath = path.join(process.cwd(), "resources", "seeds", "shoes-new.json");
+    const seedPath = path.join(process.cwd(), "resources", "seeds", "shoes.json");
     const rawShoes: any[] = JSON.parse(fs.readFileSync(seedPath).toString());
 
     return rawShoes.map((shoe) => ({
@@ -318,43 +318,78 @@ export class BootstrapProvider implements IBootstrapProvider {
     return this.orderRepo.insertMany(orders, { ordered: false, rawResult: false });
   }
 
-  public bootstrapProdInventory(): Promise<void> {
+  public async bootstrapProdInventory(): Promise<void> {
+    // const count = await this.inventoryRepo.countDocuments().exec();
+    // if (count > 0) {
+    //   return;
+    // }
+    const rawInventories = await this._getProdInventory();
+    const notFoundSku = [];
+    const mappedInventories = rawInventories.map(async (i) => {
+      let sku: string = (i as any).sku;
+      if (sku.indexOf(" ") >= 0) {
+        sku = sku.split(" ").join("-").toUpperCase();
+      }
+      const shoe = await this.shoeRepository.findOne({ styleId: sku }).exec();
+
+      if (!shoe) {
+        LogProvider.instance.error(`Shoe not found in db with SKU: ${sku}`);
+        notFoundSku.push(sku);
+      } else {
+        let size = i.shoeSize.toUpperCase();
+        if (size.toUpperCase().endsWith("US")) {
+          size = size.slice(0, -2);
+        }
+        if (shoe.gender === "women" && !size.endsWith("W")) {
+          size = `${size}W`;
+        }
+        return {
+          shoeId: shoe._id,
+          sellerId: i.sellerId,
+          shoeSize: size,
+          sellPrice: i.sellPrice,
+          quantity: i.quantity,
+          note: (i as any).link,
+        };
+      }
+      return null;
+    });
+    const inventories = (await Promise.all(mappedInventories)).filter((t) => t !== null);
+    const result = await this.inventoryRepo.insertMany(inventories);
+    LogProvider.instance.info(
+      `Successfully added ${result.length} inventory entries, not found entries: ${notFoundSku.length}`
+    );
+  }
+
+  private _getProdInventory(): Promise<Array<Partial<Inventory>>> {
     const inventories: Array<Partial<Inventory>> = [];
-    return new Promise<void>((resolve, reject) => {
+
+    return new Promise<Array<Partial<Inventory>>>((resolve, reject) => {
       fs.createReadStream(this.prodInventorySeeds)
-        .pipe(csv())
+        .pipe(csv.parse({ headers: true }))
         .on("data", async (row) => {
           const shopName = row["Shop"];
-          const sku = row["SKU"];
+          const sku = row["SKU"].toUpperCase();
           const size = row["Size"];
           const price = row["Price"];
           const link = row["Link"];
 
-          const shoe = await this.shoeRepository.findOne({
-            styleId: (sku as string).toUpperCase(),
-          });
-
-          if (!shoe) {
-            LogProvider.instance.warn(`Shoe not found: ${JSON.stringify(row, null, 2)}`);
-          } else {
-            inventories.push({
-              sellerId: new mongoose.Types.ObjectId(this.shops.get(shopName)),
-              shoeId: shoe._id,
-              shoeSize: size,
-              sellPrice: parseInt(price, 10),
-              quantity: 1,
-              note: link,
-            });
-          }
+          const invt = {
+            sellerId: new mongoose.Types.ObjectId(this.shops.get(shopName)),
+            shoeSize: size,
+            sellPrice: parseInt(price, 10),
+            quantity: 1,
+            note: link,
+            sku,
+          };
+          inventories.push(invt);
         })
         .on("error", (err) => {
           LogProvider.instance.error(`Error bootstrapped inventory ${err}`);
           reject(err);
         })
         .on("end", async () => {
-          await this.inventoryRepo.insertMany(inventories);
-          LogProvider.instance.info("Successfully bootstraped inventory data");
-          resolve();
+          resolve(inventories);
         });
     });
   }

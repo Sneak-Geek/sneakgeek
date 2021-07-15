@@ -5,6 +5,7 @@
 import mongoose from "mongoose";
 import { Repository, Document } from "./Repository";
 import { ObjectId } from "mongodb";
+import { ShoeSize } from "../../assets";
 
 export const InventorySchema = new mongoose.Schema(
   {
@@ -31,6 +32,13 @@ export const InventorySchema = new mongoose.Schema(
     shoeSize: {
       type: String,
       required: true,
+      enum: [
+        ...ShoeSize.Adult,
+        ...ShoeSize.Women,
+        ...ShoeSize.GradeSchool,
+        ...ShoeSize.PreSchool,
+        ...ShoeSize.Toddler,
+      ],
     },
     sellPrice: {
       type: Number,

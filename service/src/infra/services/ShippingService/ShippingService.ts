@@ -8,7 +8,6 @@ import { UserProfile } from "../../database/UserProfile";
 import { AdminProfile } from "../../../assets/seeds/dev";
 import path from "path";
 import fs from "fs";
-import { Parser } from "csv-parse";
 import Q from "q";
 import { BaseExternalApiService } from "../BaseExternalApiService";
 import { LogProvider, EnvironmentProvider } from "../../providers";
@@ -285,88 +284,7 @@ export class ShippingService extends BaseExternalApiService implements IShipping
    * Parse GhnDistrictWards.xls provided by Ghn and cache it
    */
   public parseGhnShippingData(): Promise<void> {
-    const defer: Q.Deferred<void> = Q.defer();
-
-    const ghnDataPath = path.resolve(
-      __dirname,
-      process.cwd(),
-      "resources",
-      "seeds",
-      "GhnDistrictWards.csv"
-    );
-    const parser = new Parser({
-      delimiter: ",",
-    });
-
-    parser.on("readable", () => {
-      let row: any;
-      let isHeaderParsed = false;
-      while ((row = parser.read())) {
-        if (!isHeaderParsed) {
-          isHeaderParsed = true;
-          continue;
-        }
-
-        const ProvinceName = row[0];
-        const ProvinceID = parseInt(row[1], 10);
-        const ProvinceCode = parseInt(row[2], 10);
-        const DistrictName = row[3];
-        const DistrictCode = row[4];
-        const DistrictID = parseInt(row[5], 10);
-        const WardName = row[6];
-        const WardCode = row[8];
-
-        const isDistrictAdded = this.districts.some((t) => t.DistrictID === DistrictID);
-
-        if (!isDistrictAdded) {
-          this.districts.push({
-            ProvinceName,
-            ProvinceID,
-            ProvinceCode,
-            DistrictID,
-            DistrictName,
-            Code: DistrictCode,
-          } as GhnDistrict);
-        }
-
-        const wards = this.wards.get(DistrictID) || [];
-        const isWardAdded = wards.some(
-          (t) => t.WardCode === WardCode || t.WardName === WardName
-        );
-        if (!isWardAdded) {
-          this.wards.set(
-            DistrictID,
-            wards.concat({
-              WardName,
-              WardCode,
-              DistrictCode,
-              ProvinceID,
-              DistrictID,
-            })
-          );
-        }
-      }
-
-      defer.resolve();
-    });
-
-    parser.on("error", (error) => {
-      LogProvider.instance.debug(
-        "[GHN] Error parsing GHN wards info",
-        error.name,
-        error.stack
-      );
-      defer.reject();
-    });
-
-    parser.on("end", () => {
-      LogProvider.instance.info("[GHN] Complete parsing GHN wards/districts data");
-    });
-
-    fs.createReadStream(ghnDataPath).pipe(parser);
-
-    // a little unsafe
-    return (defer.promise as unknown) as Promise<void>;
+    return;
   }
 
   public serializeShippingData() {
