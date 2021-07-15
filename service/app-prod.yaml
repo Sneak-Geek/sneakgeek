@@ -12,3 +12,4 @@ inbound_services:
   - warmup
 env_variables:
   NODE_ENV: "prod"
+instance_class: F2

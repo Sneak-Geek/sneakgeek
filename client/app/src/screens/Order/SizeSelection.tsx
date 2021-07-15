@@ -48,8 +48,8 @@ export class SizeSelection extends React.Component<Props, State> {
   public constructor(props: any) {
     super(props);
 
-    this.shoeSizes = this._getShoeSizes();
     this.shoe = this.props.shoe;
+    this.shoeSizes = this._getShoeSizes();
     this.orderType = this.props.orderType;
 
     this.state = {

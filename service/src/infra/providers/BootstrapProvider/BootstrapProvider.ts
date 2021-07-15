@@ -371,7 +371,7 @@ export class BootstrapProvider implements IBootstrapProvider {
           const shopName = row["Shop"];
           const sku = row["SKU"].toUpperCase();
           const size = row["Size"];
-          const price = row["Price"];
+          const price = row["Price"].split(",").join("");
           const link = row["Link"];
 
           const invt = {
