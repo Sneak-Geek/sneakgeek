@@ -1,8 +1,11 @@
 import mongoose from 'mongoose';
 
+// const url = 'mongodb+srv://admin:prosneakgeekadmin@sneakgeek-dev-cluster.b96ec.mongodb.net/stockx?retryWrites=true&w=majority';
+const url = 'mongodb://localhost:27017/stockx';
+
 export function initDb() {
   return new Promise<void>((resolve, reject) => {
-    mongoose.connect('mongodb://localhost:27017/stockx', { useNewUrlParser: true });
+    mongoose.connect(url, { useNewUrlParser: true });
     const db = mongoose.connection;
 
     db.once('open', () => resolve());
@@ -11,17 +14,16 @@ export function initDb() {
 }
 
 const CompleteSchema = new mongoose.Schema({
-  gender: String,
   brand: String,
-  releaseTime: String,
+  year: String,
+  count: Number,
   completed: {
     type: Boolean,
     default: false
-  }
+  },
+  gender: String,
 }, { timestamps: true });
-
-CompleteSchema.index({ gender: 1, brand: 1, releaseTime: 1 }, { unique: true });
-const CompleteModel = mongoose.model('Complete', CompleteSchema);
+const CompleteModel = mongoose.model('Complete2', CompleteSchema);
 
 const ProductSchema = new mongoose.Schema({
   stockxId: String,

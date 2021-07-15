@@ -52,8 +52,13 @@ export async function getBrands(): Promise<string[]> {
   return Object.keys(brands);
 }
 
+export async function getYearlyRecord(brand: string, gender: string): Promise<{[year: string]: number}> {
+  const { data } = await axios.get(`${baseUrl}&brand=${brand}&gender=${gender}`, { headers });
+  return data.Facets.year;
+}
+
 export async function getReleaseTime(brand: string): Promise<string[]> {
-  const { data } = await axios.get(`${baseUrl}s&brand=${brand}`, { headers });
+  const { data } = await axios.get(`${baseUrl}&brand=${brand}`, { headers });
   const years = (data as StockxResponse).Facets.releaseTime;
 
   return Object.keys(years || []).sort((a, b) => parseFloat(b) - parseFloat(a));
@@ -65,6 +70,15 @@ export async function getProducts(gender: string, brand: string, releaseTime: st
   });
 
  return (data as StockxResponse).Products; 
+}
+
+export async function getProducts2(params: {[key: string]: string}, url = baseUrl) {
+  for (let key in params) {
+    url = `${url}&${key}=${params[key]}`;
+  }
+  console.log("Query URL", url);
+  const { data } = await axios.get(url, { headers });
+  return data.Products;
 }
 
 export async function getProductsWithMap(map: Map<string, string>) {
