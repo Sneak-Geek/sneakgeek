@@ -4,6 +4,9 @@
 
 export const ShoeSize = {
   Adult: [
+    "3.5",
+    "4",
+    "4.5",
     "5",
     "5.5",
     "6",
@@ -23,6 +26,7 @@ export const ShoeSize = {
     "13",
     "14",
     "15",
+    "16"
   ],
   Women: [
     "5W",
@@ -47,7 +51,7 @@ export const ShoeSize = {
     "15W",
     "15.5W",
     "16W",
-    "16.5W",
+    "16.5W"
   ],
   GradeSchool: ["3.5Y", "4Y", "4.5Y", "5Y", "5.5Y", "6Y", "6.5Y", "7Y"],
   PreSchool: [
