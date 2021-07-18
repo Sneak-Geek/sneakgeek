@@ -319,10 +319,10 @@ export class BootstrapProvider implements IBootstrapProvider {
   }
 
   public async bootstrapProdInventory(): Promise<void> {
-    // const count = await this.inventoryRepo.countDocuments().exec();
-    // if (count > 0) {
-    //   return;
-    // }
+    const count = await this.inventoryRepo.countDocuments().exec();
+    if (count > 0) {
+      return;
+    }
     const rawInventories = await this._getProdInventory();
     const notFoundSku = [];
     const mappedInventories = rawInventories.map(async (i) => {
