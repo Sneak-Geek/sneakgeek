@@ -1,0 +1,30 @@
+name: Backend prod workflow deployment
+on: workflow_dispatch
+jobs:
+  deploy_prod:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: service
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup NodeJS
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+      - name: Install packages
+        run: yarn install --frozen-lockfile
+      - name: Build
+        run: yarn build
+      - name: Setup gcloud CLI
+        uses: google-github-actions/setup-gcloud@master
+        with:
+          service_account_email: ${{ secrets.GAE_PROD_SERVICE_ACCOUNT }}
+          service_account_key: ${{ secrets.GAE_PROD_SERVICE_ACCOUNT_KEY }}
+          project_id: ${{ env.PROD_PROJECT_ID }}
+      - name: Deploy to Google App Engine prod
+        run: |
+          gcloud app deploy ./service/deployment/app-prod.yaml \
+          --no-cache --promote --verbosity=info --quiet \
+          --account=${{ secrets.GAE_PROD_SERVICE_ACCOUNT }} \
+          --project=${{ secrets.PROD_PROJECT_ID }}
