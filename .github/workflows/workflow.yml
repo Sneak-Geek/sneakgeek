@@ -24,7 +24,7 @@ jobs:
           project_id: ${{ secrets.PROD_PROJECT_ID }}
       - name: Deploy to Google App Engine prod
         run: |
-          gcloud app deploy ./deployment/app-prod.yaml \
+          gcloud app deploy ./app-prod.yaml \
           --no-cache --promote --verbosity=info --quiet \
           --account=${{ secrets.GAE_PROD_SERVICE_ACCOUNT }} \
           --project=${{ secrets.PROD_PROJECT_ID }}
