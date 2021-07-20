@@ -1,4 +1,3 @@
-service: prod
 runtime: nodejs12
 liveness_check:
   path: "/api/v1/health"
