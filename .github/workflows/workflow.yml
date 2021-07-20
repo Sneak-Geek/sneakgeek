@@ -21,7 +21,7 @@ jobs:
         with:
           service_account_email: ${{ secrets.GAE_PROD_SERVICE_ACCOUNT }}
           service_account_key: ${{ secrets.GAE_PROD_SERVICE_ACCOUNT_KEY }}
-          project_id: ${{ env.PROD_PROJECT_ID }}
+          project_id: ${{ secrets.PROD_PROJECT_ID }}
       - name: Deploy to Google App Engine prod
         run: |
           gcloud app deploy ./deployment/app-prod.yaml \
