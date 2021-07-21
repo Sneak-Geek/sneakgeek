@@ -1,0 +1,10 @@
+{
+    "app": {
+        "version": "1.0.072021",
+        "build": "1"
+    },
+    "service": {
+        "version": "1.0.072021",
+        "build": 1
+    }
+}

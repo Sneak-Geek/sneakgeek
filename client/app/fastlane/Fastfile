@@ -1,7 +1,4 @@
 platform :ios do
-	before_all do
-	  ENV["CODE_SIGN_STYLE"] = "Manual"
-	end
 	desc "Fastlane for iOS"
 	xcproj = "./ios/app.xcodeproj"
       
@@ -34,7 +31,7 @@ platform :ios do
 	  )
 	end
       
-	lane :archive do
+	lane :archive_staging do
 	  # Install pods
 	  cocoapods(
       use_bundle_exec: false,
@@ -44,28 +41,30 @@ platform :ios do
 	  # Setup provisioning profiles and certificates
 	  match(
 	    type: "adhoc", 
-	    app_identifier: "app.sneakgeek.mobile", 
+	    app_identifier: "app.sneakgeek.mobile.staging", 
 	    username: "huyhoang.pham95@gmail.com", 
 	    team_id: "VVPX9A83PB"
 	  )
 	  # Build
 	  gym(
 	    workspace: "ios/app.xcworkspace",
-	    scheme: "app",
+	    scheme: "app-staging",
 	    configuration: "Release",
 	    clean: true,
-	    derived_data_path: "ios/build",
-	    output_directory: "ios/build",
-	    sdk: "iphoneos14.4",
+	    derived_data_path: "ios/build/staging",
+	    output_directory: "ios/build/staging",
 	    export_method: "ad-hoc",
 	    xcargs: "-allowProvisioningUpdates"
 	  )
 	end
 
-  lane :distribute do 
-    upload_to_testflight(
-      username: "huyhoang.pham95@gmail.com",
-      ipa: "ios/build/SneakGeek.ipa"
-    )
+  lane :distribute_staging_app_center do 
+    appcenter_upload(
+		api_token: ENV["APP_CENTER_API_TOKEN"],
+		owner_name: "SneakGeek",
+		owner_type: "organization",
+		app_name: "sneakgeek",
+		file: "ios/build/staging/SneakGeek.ipa"
+	)
   end
 end

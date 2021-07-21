@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+   Created by Hoang Pham on 7/20/21.
+   Copyright (c) 2021 SneakGeek. All rights reserved.
+-->
+<plist version="1.0">
+  <dict>
+  <key>AppSecret</key>
+  <string>849afa50-49d2-44f3-82c7-3291e088a171</string>
+  </dict>
+</plist>

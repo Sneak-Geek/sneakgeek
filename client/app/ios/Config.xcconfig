@@ -1,0 +1,6 @@
+//
+//  Config.xcconfig
+//  Created by Hoang Pham on 7/20/21.
+//
+
+#include? "tmp.xcconfig"
