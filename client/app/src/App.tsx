@@ -24,9 +24,7 @@ import {
   InventoryService,
 } from 'business';
 import {Provider} from 'react-redux';
-
 import {SettingsProvider, FacebookSdk, KeyExtensions, GoogleSdk} from 'common';
-
 import {AppStore} from 'store/AppStore';
 import {InAppNotification} from 'screens/InAppNotification';
 import {AppLoadingIndicator} from 'screens/AppLoadingIndicator';
@@ -36,10 +34,10 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 import ErrorBoundary from 'ErrorBoundary';
 import {Platform, StatusBar} from 'react-native';
 import {themes} from 'resources';
+import Config from 'react-native-config';
 
 export default function App(): JSX.Element {
   const [depLoaded, setDepLoaded] = useState(false);
-
   const initializeBusinessDep = async (): Promise<void> => {
     const settingsProvider = new SettingsProvider();
     await settingsProvider.load();
@@ -50,9 +48,7 @@ export default function App(): JSX.Element {
       settingsProvider,
     );
     Factory.register<IEnvVar>(Keys.IEnvVar, {
-      dev: __DEV__,
-      devUrl: 'https://dev.sneakgeek.io/api/v1',
-      prodUrl: 'https://prod-dot-sneakgeek-dev-299009.et.r.appspot.com/api/v1',
+      apiEndpoint: Config.API_ENDPOINT, 
     });
     Factory.register<IFacebookSDK>(Keys.IFacebookSDK, new FacebookSdk());
     Factory.register<IGoogleSDK>(Keys.IGoogleSDK, new GoogleSdk());

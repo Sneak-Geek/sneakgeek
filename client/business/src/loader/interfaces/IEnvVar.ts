@@ -3,7 +3,5 @@
 //!
 
 export interface IEnvVar {
-  dev: boolean;
-  devUrl?: string;
-  prodUrl?: string;
+  apiEndpoint: string;
 }
