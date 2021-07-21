@@ -5,29 +5,16 @@
 import axios, { AxiosInstance } from "axios";
 
 export class Builder {
-  private isDev: boolean | undefined;
-  private devUrl: string | undefined;
-  private prodUrl: string | undefined;
+  private apiEndpoint!: string;
 
-  public registerDevUrl(devUrl: string): Builder {
-    this.devUrl = devUrl;
+  public registerApiEndpoint(endpoint: string): Builder {
+    this.apiEndpoint = endpoint;
     return this;
   }
-
-  public registerProdUrl(prodUrl: string): Builder {
-    this.prodUrl = prodUrl;
-    return this;
-  }
-
-  public registerDevState(isDev: boolean): Builder {
-    this.isDev = isDev;
-    return this;
-  }
-
   public build(): Instance {
     return new Instance(
       axios.create({
-        baseURL: this.isDev ? this.devUrl : this.prodUrl,
+        baseURL: this.apiEndpoint,
         timeout: 5 * 1000 * 60
       })
     );
