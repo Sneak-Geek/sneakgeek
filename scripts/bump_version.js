@@ -1,5 +1,5 @@
 const version = require("../version.json");
-const { exec } = require("child_process");
+const { execute } = require("./util");
 const flags = require("flags");
 const fs = require("fs");
 
@@ -21,20 +21,20 @@ function increateVersionAndTag() {
     }
     version[type].version = commonVersion;
     const gitClientTag = `${commonVersion}-${version.app.build}-${type}`;
-    exec(`git tag ${gitClientTag}`);
+    execute(`git tag ${gitClientTag}`);
 }
 
 function main() {
     increateVersionAndTag();
     switch (type) {
         case "app":
-            exec(`
-            cd ${process.cwd()}/client/app; \
-            export IOS_VERSION_NUMBER=${version.app.version}; \
-            export IOS_BUILD_NUMBER=${version.app.build}; \
-            fastlane ios bump_version_number; \
-            fastlane ios bump_build_number; \
-        `);
+            execute(`
+                cd ${process.cwd()}/client/app
+                export IOS_VERSION_NUMBER=${version.app.version}
+                export IOS_BUILD_NUMBER=${version.app.build}
+                fastlane ios bump_version_number
+                fastlane ios bump_build_number
+            `);
             break;
         case "service":
             break;
