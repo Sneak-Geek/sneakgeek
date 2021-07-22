@@ -21,7 +21,7 @@ function increateVersionAndTag() {
   }
   type === "app" ? version[type].version = commonVersion : version[type].version = today;
   const gitClientTag = `${commonVersion}-${version.app.build}-${type}`;
-  execute(`git tag ${gitClientTag}`);
+  execute(`echo "GIT_TAG=${gitClientTag}" >> ${GITHUB_ENV}`);
 }
 
 function main() {
