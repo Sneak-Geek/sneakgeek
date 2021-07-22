@@ -1,5 +1,5 @@
-const version = require("../version.json");
-const { execute } = require("./util");
+const version = require("../../version.json");
+const { execute } = require("../../scripts/util");
 
 const backendVersion = `${version.service.version}-${version.service.build}-service`;
 execute(`gcloud app deploy ./app-prod.yaml
