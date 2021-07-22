@@ -1,9 +1,5 @@
 name: Backend prod workflow deployment
-# on: workflow_dispatch
-on:
-  push:
-    branch:
-      - feature/add-release-script
+on: workflow_dispatch
 jobs:
   deploy_prod:
     runs-on: ubuntu-latest
@@ -16,6 +12,19 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 12.x
+      - name: Bump version number:
+        run: |
+          cd ../
+          node scripts/bump_version.js --type=service
+      - name: Commit new version and tag
+        uses: EndBug/add-and-commit@v7.2.1
+        with:
+          cwd: '..'
+          add: '.'
+          author_name: Github Actions
+          default_author: github_action
+          push: true
+          signoff: false
       - name: Install packages
         run: yarn install --frozen-lockfile
       - name: Build
