@@ -23,7 +23,7 @@ jobs:
           cwd: '..'
           add: '.'
           author_name: Github Actions
-          default_author: github_action
+          default_author: github_actor
           push: true
           signoff: false
       - name: Install packages
