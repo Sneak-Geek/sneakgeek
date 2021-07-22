@@ -2,7 +2,7 @@ const { execFile } = require("child_process");
 const fs = require("fs");
 
 function execute(command) {
-    const script = "/tmp/util_execute";
+    const script = "./util_execute";
     fs.writeFileSync(script, command);
     fs.chmodSync(script, 0755);
 
