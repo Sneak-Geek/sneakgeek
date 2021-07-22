@@ -1,16 +1,25 @@
-const { spawn } = require("child_process");
+const { execFile } = require("child_process");
+const fs = require("fs");
 
 function execute(command) {
-    const result = spawn(command);
-    result.stdout.on("data", function (data) {
-        console.log(data);
+    const script = "/tmp/util_execute";
+    fs.writeFileSync(script, command);
+    fs.chmodSync(script, 0755);
+
+    execFile(script, (error, stdout, stderr) => {
+        try {
+            fs.unlinkSync(script);
+        } catch (error) {
+
+        }
+        if (error) {
+            console.error(stderr);
+            console.error(error);
+            throw error;
+        }
+        console.log(stdout);
+
     });
-    result.stderr.on("data", function (error) {
-        console.error(error);
-    });
-    result.on("exit", function (code) {
-        console.log(`Execute "${command}" exited with code ${code}`);
-    })
 }
 
 module.exports = { execute };
