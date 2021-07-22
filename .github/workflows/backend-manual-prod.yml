@@ -1,5 +1,9 @@
 name: Backend prod workflow deployment
-on: workflow_dispatch
+# on: workflow_dispatch
+on:
+  push:
+    branch:
+      - feature/add-release-script
 jobs:
   deploy_prod:
     runs-on: ubuntu-latest
