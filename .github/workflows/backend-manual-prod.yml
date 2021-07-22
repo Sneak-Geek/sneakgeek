@@ -23,8 +23,8 @@ jobs:
           service_account_key: ${{ secrets.GAE_PROD_SERVICE_ACCOUNT_KEY }}
           project_id: ${{ secrets.PROD_PROJECT_ID }}
       - name: Deploy to Google App Engine prod
+        env:
+          GAE_PROD_SERVICE_ACCOUNT: ${{ secrets.GAE_PROD_SERVICE_ACCOUNT }}
+          PROD_PROJECT_ID: ${{ secrets.PROD_PROJECT_ID }}
         run: |
-          gcloud app deploy ./app-prod.yaml \
-          --no-cache --promote --verbosity=info --quiet \
-          --account=${{ secrets.GAE_PROD_SERVICE_ACCOUNT }} \
-          --project=${{ secrets.PROD_PROJECT_ID }}
+          node ../scripts/release_service.js
