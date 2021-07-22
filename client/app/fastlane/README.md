@@ -26,11 +26,6 @@ Fastlane for iOS
 fastlane ios bump_build_number
 ```
 
-### ios reset_build_number
-```
-fastlane ios reset_build_number
-```
-
 ### ios archive_staging
 ```
 fastlane ios archive_staging
