@@ -5,8 +5,6 @@ on:
     - main
     paths:
     - service/**
-    - .github/workflows/backend-auto-staging.yaml
-    - scripts/**
 jobs:
   deploy_staging:
     runs-on: ubuntu-latest
@@ -44,12 +42,12 @@ jobs:
       - name: Setup gcloud CLI
         uses: google-github-actions/setup-gcloud@master
         with:
-          service_account_email: ${{ secrets.GAE_PROD_SERVICE_ACCOUNT }}
-          service_account_key: ${{ secrets.GAE_PROD_SERVICE_ACCOUNT_KEY }}
-          project_id: ${{ secrets.PROD_PROJECT_ID }}
+          service_account_email: ${{ secrets.GAE_STAGING_SERVICE_ACCOUNT }}
+          service_account_key: ${{ secrets.GAE_STAGING_SERVICE_ACCOUNT_KEY }}
+          project_id: ${{ secrets.STAGING_PROJECT_ID }}
       - name: Deploy to Google App Engine prod
         env:
-          GAE_PROD_SERVICE_ACCOUNT: ${{ secrets.GAE_PROD_SERVICE_ACCOUNT }}
-          PROD_PROJECT_ID: ${{ secrets.PROD_PROJECT_ID }}
+          GAE_PROD_SERVICE_ACCOUNT: ${{ secrets.GAE_STAGING_SERVICE_ACCOUNT }}
+          PROD_PROJECT_ID: ${{ secrets.STAGING_PROJECT_ID }}
         run: |
           node ./scripts/release_service.js
