@@ -51,4 +51,3 @@ jobs:
           TAG: ${{ github.event.inputs.service_tag }}
         run: |
           git branch -d build/$TAG
-          git push
