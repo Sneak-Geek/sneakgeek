@@ -30,7 +30,8 @@ platform :ios do
 	    app_identifier: "app.sneakgeek.mobile.staging", 
 	    username: "huyhoang.pham95@gmail.com", 
 	    team_id: "VVPX9A83PB",
-		git_basic_authorization: ENV["GIT_BASIC_AUTH"] 
+		git_basic_authorization: ENV["GIT_BASIC_AUTH"],
+		api_key: ENV["APPLE_API_KEY"]
 	  )
 	  # Build
 	  gym(

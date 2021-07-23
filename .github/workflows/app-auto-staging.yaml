@@ -42,8 +42,7 @@ jobs:
           FASTLANE_PASSWORD: ${{ secrets.IOS_FASTLANE_PWD }}
           GIT_BASIC_AUTH: ${{ secrets.GIT_BASIC_AUTH }}
           GIT_TERMINAL_PROMPT: 1
-          SPACESHIP_ONLY_ALLOW_INTERACTIVE_2FA: 1
-          FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD }} 
+          APPLE_API_KEY: ${{ secrets.APPLE_API_KEY }}
         run: fastlane ios archive_staging
       - name: Distribute to AppCenter
         env:
