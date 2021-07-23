@@ -2,7 +2,8 @@ name: Backend service auto rollout (staging)
 on:
   push:
     branches:
-    - main
+    # - main
+    - feature-test
     paths:
     - service/**
     - .github/workflows/backend-auto-staging.yaml
