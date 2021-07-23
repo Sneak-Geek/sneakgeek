@@ -37,8 +37,14 @@ jobs:
           fastlane ios bump_version_number
           fastlane ios bump_build_number
       - name: Archive for staging
+        env:
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }} 
+          GIT_BASIC_AUTH: ${{ secrets.GIT_BASIC_AUTH }}
+          GIT_TERMINAL_PROMPT: 1 
         run: fastlane ios archive_staging
       - name: Distribute to AppCenter
+        env:
+          APP_CENTER_API_TOKEN: ${{ secrets.APP_CENTER_API_TOKEN }}
         run: fastlane ios distribute_staging_app_center
       - name: Commit new version and tag after successful run
         uses: EndBug/add-and-commit@v7.2.1
