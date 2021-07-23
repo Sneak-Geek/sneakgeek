@@ -27,7 +27,11 @@ function increateVersionAndTag() {
 }
 
 async function main() {
-  await increateVersionAndTag();
+  try {
+    await increateVersionAndTag();
+  } catch (error) {
+    process.exit(1);
+  }
   switch (type) {
     case "app":
       await execute(`
