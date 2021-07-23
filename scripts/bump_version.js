@@ -21,7 +21,9 @@ function increateVersionAndTag() {
   }
   type === "app" ? version[type].version = commonVersion : version[type].version = today;
   const gitTag = `${commonVersion}-${version.app.build}-${type}`;
-  return execute(`echo "GIT_TAG=${gitTag}" >> $GITHUB_ENV`);
+  const command = `echo "GIT_TAG=${gitTag}" >> $GITHUB_ENV`;
+  console.log("Running tag command", command);
+  return execute(command);
 }
 
 async function main() {
