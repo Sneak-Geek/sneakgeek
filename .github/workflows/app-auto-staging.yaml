@@ -42,7 +42,8 @@ jobs:
           FASTLANE_PASSWORD: ${{ secrets.IOS_FASTLANE_PWD }}
           GIT_BASIC_AUTH: ${{ secrets.GIT_BASIC_AUTH }}
           GIT_TERMINAL_PROMPT: 1
-          APPLE_API_KEY: ${{ secrets.APPLE_API_KEY }}
+          APPSTORE_CONNECT_KEY_ID: ${{ secrets.APPSTORE_CONNECT_KEY_ID }}
+          APPSTORE_CONNECT_ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_ISSUER_ID }}
         run: fastlane ios archive_staging
       - name: Distribute to AppCenter
         env:
