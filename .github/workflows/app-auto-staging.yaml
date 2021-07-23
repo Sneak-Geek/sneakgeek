@@ -39,6 +39,7 @@ jobs:
       - name: Archive for staging
         env:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }} 
+          FASTLANE_PASSWORD: ${{ secrets.IOS_FASTLANE_PWD }}
           GIT_BASIC_AUTH: ${{ secrets.GIT_BASIC_AUTH }}
           GIT_TERMINAL_PROMPT: 1 
         run: fastlane ios archive_staging
