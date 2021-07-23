@@ -36,7 +36,11 @@ jobs:
           IOS_BUILD_NUMBER=`node -e "const v=require('../../version.json');console.log(v.app.build)"`
           fastlane ios bump_version_number
           fastlane ios bump_build_number
-      - name: Commit new version and tag
+      - name: Archive for staging
+        run: fastlane ios archive_staging
+      - name: Distribute to AppCenter
+        run: fastlane ios distribute_staging_app_center
+      - name: Commit new version and tag after successful run
         uses: EndBug/add-and-commit@v7.2.1
         with:
           add: '.'
@@ -44,7 +48,4 @@ jobs:
           push: true
           signoff: false
           tag: ${{ env.GIT_TAG }}
-      - name: Archive for staging
-        run: fastlane ios archive_staging
-      - name: Distribute to AppCenter
-        run: fastlane ios distribute_staging_app_center
+      
