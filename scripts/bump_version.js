@@ -5,7 +5,12 @@ const fs = require("fs");
 
 flags.defineString("type", "", "Release type, either \"service\" or \"app\"");
 flags.parse();
-const type = flags.get("type");
+const releaseType = flags.get("type");
+
+if (releaseType !== "app" && releaseType !== "service") {
+  console.error(`Wrong type input: ${releaseType}`);
+  process.exit(1);
+}
 
 const releaseBaseVersion = "1.0";
 const date = new Date();
@@ -13,19 +18,22 @@ const today = `${(date.getMonth() + 1).toString().padStart(2, '0')}${date.getDat
 const commonVersion = `${releaseBaseVersion}.${today}`;
 
 function increateVersionAndTag() {
-  const curVer = version[type].version.split(".")[2];
-  if (today === curVer) {
-    version[type].build += 1;
-  } else {
-    version[type].build = 1;
+  let curVer = version[releaseType].version; 
+  if (releaseType === "app") {
+    curVer = curVer.split(".")[2];
   }
-  type === "app" ? version[type].version = commonVersion : version[type].version = today;
-  return `${commonVersion}-${version.app.build}-${type}`;
+  if (today === curVer) {
+    version[releaseType].build += 1;
+  } else {
+    version[releaseType].build = 1;
+  }
+  releaseType === "app" ? version[releaseType].version = commonVersion : version[releaseType].version = today;
+  return `${commonVersion}-${version.app.build}-${releaseType}`;
 }
 
 async function main() {
   const tag = increateVersionAndTag();
-  switch (type) {
+  switch (releaseType) {
     case "app":
       await execute(`
         cd ${process.cwd()}/client/app
@@ -42,12 +50,7 @@ async function main() {
       process.exit(1);
   }
   const versionString = JSON.stringify(version, null, 2);
-  fs.writeFile(`${process.cwd()}/version.json`, versionString, (err) => {
-    if (err) {
-      console.error(err);
-      process.exit(1);
-    }
-  })
+  fs.writeFileSync(`${process.cwd()}/version.json`, versionString);
   console.log(tag);
 }
 
