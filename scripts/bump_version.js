@@ -20,34 +20,35 @@ function increateVersionAndTag() {
     version[type].build = 1;
   }
   type === "app" ? version[type].version = commonVersion : version[type].version = today;
-  const gitClientTag = `${commonVersion}-${version.app.build}-${type}`;
-  execute(`echo "GIT_TAG=${gitClientTag}" >> ${GITHUB_ENV}`);
+  const gitTag = `${commonVersion}-${version.app.build}-${type}`;
+  const command = `echo "GIT_TAG=${gitTag}" >> $GITHUB_ENV`;
+  console.log("Running tag command", command);
+  return execute(command);
 }
 
-function main() {
-  increateVersionAndTag();
+async function main() {
+  await increateVersionAndTag();
   switch (type) {
     case "app":
-      execute(`
-                cd ${process.cwd()}/client/app
-                export IOS_VERSION_NUMBER=${version.app.version}
-                export IOS_BUILD_NUMBER=${version.app.build}
-                fastlane ios bump_version_number
-                fastlane ios bump_build_number
-            `);
+      await execute(`
+        cd ${process.cwd()}/client/app
+        export IOS_VERSION_NUMBER=${version.app.version}
+        export IOS_BUILD_NUMBER=${version.app.build}
+        fastlane ios bump_version_number
+        fastlane ios bump_build_number
+      `);
       break;
     case "service":
       break;
     default:
       console.error("Invalid \"type\" flag, exit");
       process.exit(1);
-      break;
   }
   const versionString = JSON.stringify(version, null, 2);
   fs.writeFile(`${process.cwd()}/version.json`, versionString, (err) => {
     if (err) {
-      process.exit(1);
       console.error(err);
+      process.exit(1);
     }
   })
 }
