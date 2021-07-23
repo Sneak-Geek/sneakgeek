@@ -6,8 +6,8 @@ on:
     - feature/release-app-staging
     paths:
     - .github/workflows/app-auto-staging.yaml
-    - client/app
-    - client/business
+    - client/app/**
+    - client/business/**
 jobs:
   appcenter_deploy:
     runs-on: macos-latest
