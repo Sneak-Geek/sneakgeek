@@ -1,5 +1,8 @@
 platform :ios do
-	desc "Fastlane for iOS"
+	before_all do
+    ENV["CODE_SIGN_STYLE"] = "Manual"
+  end
+  desc "Fastlane for iOS"
 	xcproj = "./ios/app.xcodeproj"
       
 	lane :bump_version_number do
