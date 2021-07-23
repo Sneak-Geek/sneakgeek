@@ -34,7 +34,7 @@ jobs:
         run: |
           pwd
           ls -la
-          cat version.js
+          cat ../version.js
       - name: Commit new version and tag
         uses: EndBug/add-and-commit@v7.2.1
         with:
