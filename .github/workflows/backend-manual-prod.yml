@@ -1,5 +1,10 @@
 name: Backend prod workflow deployment
-on: workflow_dispatch
+on: 
+  workflow_dispatch:
+    inputs:
+      service_tag:
+        description: "Service release tag, more info at: https://github.com/Sneak-Geek/sneakgeek/tags"
+        required: true
 jobs:
   deploy_prod:
     runs-on: ubuntu-latest
@@ -8,25 +13,23 @@ jobs:
         working-directory: service
     steps:
       - uses: actions/checkout@v2
+      - name: Checkout branch with tags
+        env: 
+          TAG: ${{ github.event.inputs.service_tag }} 
+        run: |
+          git checkout tags/$TAG -b build/$TAG
+          git push -u origin build/$TAG
+      - uses: actions/checkout@v2
+        env:
+          TAG: ${{ github.event.inputs.service_tag }}
+        with:
+          ref: build/$TAG 
+      - name: Check release version
+        run: cat ../version.json
       - name: Setup NodeJS
         uses: actions/setup-node@v1
         with:
           node-version: 12.x
-      - name: Bump version number
-        run: |
-          cd ../
-          yarn install
-          node scripts/bump_version.js --type=service
-      - name: Commit new version and tag
-        uses: EndBug/add-and-commit@v7.2.1
-        with:
-          cwd: '..'
-          add: '.'
-          author_name: Github Actions
-          default_author: github_actor
-          push: true
-          signoff: false
-          tag: ${{ env.GIT_TAG }}
       - name: Install packages
         run: yarn install --frozen-lockfile
       - name: Build
@@ -43,3 +46,12 @@ jobs:
           PROD_PROJECT_ID: ${{ secrets.PROD_PROJECT_ID }}
         run: |
           node ./scripts/release_service.js
+      - uses: actions/checkout@v2
+        with: 
+          ref: 'main'
+      - name: Delete build branch
+        env:
+          TAG: ${{ github.event.inputs.service_tag }}
+        run: |
+          git branch -d build/$TAG
+          git push
