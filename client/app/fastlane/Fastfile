@@ -1,8 +1,5 @@
 platform :ios do
-	before_all do
-    ENV["CODE_SIGN_STYLE"] = "Manual"
-  end
-  desc "Fastlane for iOS"
+	desc "Fastlane for iOS"
 	xcproj = "./ios/app.xcodeproj"
       
 	lane :bump_version_number do
@@ -27,6 +24,9 @@ platform :ios do
 	    clean_install: true,
 	    podfile: "./ios/Podfile"
 	  )
+    # Disable automatic code sign
+    disable_automatic_code_signing(path: xcproj)
+
     # Setup app_store_connect_api_key
     app_store_connect_api_key(
       key_id: ENV["APPSTORE_CONNECT_KEY_ID"],
@@ -53,6 +53,8 @@ platform :ios do
 	    export_method: "ad-hoc",
 	    xcargs: "-allowProvisioningUpdates"
 	  )
+    # Re-enable code sign
+    enable_automatic_code_signing(path: xcproj)
 	end
 
   lane :distribute_staging_app_center do 
