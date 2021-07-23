@@ -2,8 +2,7 @@ name: Backend service auto rollout (staging)
 on:
   push:
     branches:
-    # - main
-    - feature-test
+    - main
     paths:
     - service/**
     - .github/workflows/backend-auto-staging.yaml
@@ -31,10 +30,11 @@ jobs:
           GIT_TAG=`node scripts/bump_version.js --type=service`
           echo "GIT_TAG=$GIT_TAG" >> $GITHUB_ENV
           echo $GITHUB_ENV
-      - name: Get current folder
+      - name: Get current folder and check version
         run: |
           pwd
           ls -la
+          cat version.js
       - name: Commit new version and tag
         uses: EndBug/add-and-commit@v7.2.1
         with:
