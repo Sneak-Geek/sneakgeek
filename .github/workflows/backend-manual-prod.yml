@@ -43,10 +43,8 @@ jobs:
           PROD_PROJECT_ID: ${{ secrets.PROD_PROJECT_ID }}
         run: |
           node ./scripts/release_service.js
-      - uses: actions/checkout@v2
-        with: 
-          ref: 'main'
       - name: Delete build branch
+        continue-on-error: true
         env:
           TAG: ${{ github.event.inputs.service_tag }}
         run: |
