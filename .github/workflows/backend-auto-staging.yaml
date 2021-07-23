@@ -30,10 +30,8 @@ jobs:
           GIT_TAG=`node scripts/bump_version.js --type=service`
           echo "GIT_TAG=$GIT_TAG" >> $GITHUB_ENV
           echo $GITHUB_ENV
-      - name: Get current folder and check version
+      - name: Get current version
         run: |
-          pwd
-          ls -la
           cat ../version.json
       - name: Commit new version and tag
         uses: EndBug/add-and-commit@v7.2.1
