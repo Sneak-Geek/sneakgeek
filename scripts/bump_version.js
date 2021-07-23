@@ -28,7 +28,7 @@ function increateVersionAndTag() {
     version[releaseType].build = 1;
   }
   releaseType === "app" ? version[releaseType].version = commonVersion : version[releaseType].version = today;
-  return `${commonVersion}-${version.app.build}-${releaseType}`;
+  return `${commonVersion}-${version[releaseType].build}-${releaseType}`;
 }
 
 async function main() {
