@@ -19,11 +19,8 @@ jobs:
         run: |
           git fetch --prune --unshallow --tags
           git checkout tags/$TAG -b build/$TAG
-      - uses: actions/checkout@v2
-        env:
-          TAG: ${{ github.event.inputs.service_tag }}
-        with:
-          ref: build/$TAG 
+      - name: Get current git branch
+        run: git branch --show-current
       - name: Check release version
         run: cat ../version.json
       - name: Setup NodeJS
