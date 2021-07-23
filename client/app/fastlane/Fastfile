@@ -18,7 +18,7 @@ platform :ios do
 	end
          
 	lane :archive_staging do
-	  Install pods
+	  # Install pods
 	  cocoapods(
       use_bundle_exec: false,
 	    clean_install: true,
