@@ -12,7 +12,7 @@ const date = new Date();
 const today = `${(date.getMonth() + 1).toString().padStart(2, '0')}${date.getDate()}${date.getFullYear().toString().slice(2, 4)}`;
 const commonVersion = `${releaseBaseVersion}.${today}`;
 
-async function increateVersionAndTag() {
+function increateVersionAndTag() {
   const curVer = version[type].version.split(".")[2];
   if (today === curVer) {
     version[type].build += 1;
@@ -20,19 +20,11 @@ async function increateVersionAndTag() {
     version[type].build = 1;
   }
   type === "app" ? version[type].version = commonVersion : version[type].version = today;
-  const gitTag = `${commonVersion}-${version.app.build}-${type}`;
-  const command = `echo "GIT_TAG=${gitTag}" >> $GITHUB_ENV`;
-  console.log("Running tag command", command);
-  await execute("echo $GITHUB_ENV");
-  return execute(command);
+  return `${commonVersion}-${version.app.build}-${type}`;
 }
 
 async function main() {
-  try {
-    await increateVersionAndTag();
-  } catch (error) {
-    process.exit(1);
-  }
+  const tag = increateVersionAndTag();
   switch (type) {
     case "app":
       await execute(`
@@ -56,6 +48,7 @@ async function main() {
       process.exit(1);
     }
   })
+  console.log(tag);
 }
 
 main();
