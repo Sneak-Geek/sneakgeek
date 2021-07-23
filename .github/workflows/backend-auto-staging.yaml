@@ -4,7 +4,7 @@ on:
     branches:
     - main
     paths:
-    - "service/**"
+    - "service"
 jobs:
   deploy_staging:
     runs-on: ubuntu-latest
