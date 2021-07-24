@@ -32,21 +32,13 @@ jobs:
       - name: Get current version
         run: |
           cat ../version.json
-      - name: Commit new version and tag
-        uses: EndBug/add-and-commit@v7.2.1
-        with:
-          add: '.'
-          default_author: github_actor
-          push: true
-          signoff: false
-          tag: ${{ env.GIT_TAG }}
       - name: Setup gcloud CLI
         uses: google-github-actions/setup-gcloud@master
         with:
           service_account_email: ${{ secrets.GAE_STAGING_SERVICE_ACCOUNT }}
           service_account_key: ${{ secrets.GAE_STAGING_SERVICE_ACCOUNT_KEY }}
           project_id: ${{ secrets.STAGING_PROJECT_ID }}
-      - name: Deploy to Google App Engine prod
+      - name: Deploy to Google App Engine (staging) 
         env:
           GAE_STAGING_SERVICE_ACCOUNT: ${{ secrets.GAE_STAGING_SERVICE_ACCOUNT }}
           STAGING_PROJECT_ID: ${{ secrets.STAGING_PROJECT_ID }}
@@ -57,3 +49,11 @@ jobs:
             --no-cache --promote --verbosity=info --quiet \
             --account=$GAE_STAGING_SERVICE_ACCOUNT \
             --project=$STAGING_PROJECT_ID
+      - name: Commit new version and tag
+        uses: EndBug/add-and-commit@v7.2.1
+        with:
+          add: '.'
+          default_author: github_actor
+          push: true
+          signoff: false
+          tag: ${{ env.GIT_TAG }}
