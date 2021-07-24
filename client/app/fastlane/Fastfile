@@ -33,7 +33,7 @@ platform :ios do
     )
 	  # Setup provisioning profiles and certificates
 	  match(
-	    type: "adhoc", 
+	    type: "development", 
 	    app_identifier: "app.sneakgeek.mobile.staging", 
 	    username: "huyhoang.pham95@gmail.com", 
 	    team_id: "VVPX9A83PB",
@@ -44,7 +44,7 @@ platform :ios do
       path: xcproj,
       code_sign_identity: "iPhone Distribution",
       bundle_identifier: "app.sneakgeek.mobile.staging",
-      profile_name: "match AdHoc app.sneakgeek.mobile.staging",
+      profile_name: "match Development app.sneakgeek.mobile.staging",
     )
     # Build
 	  gym(
@@ -54,10 +54,16 @@ platform :ios do
 	    clean: true,
 	    derived_data_path: "ios/build/staging",
 	    output_directory: "ios/build/staging",
-	    export_method: "ad-hoc",
+	    export_method: "development",
       xcargs: "-allowProvisioningUpdates",
       silent: true,
-      suppress_xcode_output: true
+      suppress_xcode_output: true,
+      include_bit_code: false,
+      export_options: {
+        uploadBitcode: false,
+        uploadSymbols: false,
+        compileBitcode: false,
+      }
     )
     update_code_signing_settings(
       use_automatic_signing: true,
