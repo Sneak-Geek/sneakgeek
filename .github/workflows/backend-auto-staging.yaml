@@ -51,7 +51,7 @@ jobs:
           STAGING_PROJECT_ID: ${{ secrets.STAGING_PROJECT_ID }}
         run: |
           VERSION=`node -e "const v=require('../version.json');console.log(v.service.version+'-'+v.service.build)"`
-          gcloud app deploy ./app-staging.yaml \
+          gcloud app deploy ./app-dev.yaml \
             --version=$VERSION \
             --no-cache --promote --verbosity=info --quiet \
             --account=$GAE_STAGING_SERVICE_ACCOUNT \
