@@ -57,7 +57,6 @@ platform :ios do
 	    export_method: "ad-hoc",
       xcargs: "-allowProvisioningUpdates",
       silent: true,
-      suppress_xcode_output: true,
       include_bitcode: false,
       export_options: {
         uploadBitcode: false,
