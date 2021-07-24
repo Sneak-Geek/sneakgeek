@@ -2,7 +2,7 @@
 runtime: nodejs12
 liveness_check:
   path: "/api/v1/health"
-  check_interval_sec: 60
+  check_interval_sec: 300
   timeout_sec: 5
   failure_threshold: 5
   success_threshold: 2
