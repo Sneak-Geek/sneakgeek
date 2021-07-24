@@ -38,6 +38,7 @@ platform :ios do
 	    username: "huyhoang.pham95@gmail.com", 
 	    team_id: "VVPX9A83PB",
 		  git_basic_authorization: ENV["GIT_BASIC_AUTH"],
+      xcargs: "-allowProvisioningUpdates" 
 	  )
 	  # Build
 	  gym(
