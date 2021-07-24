@@ -300,9 +300,10 @@ export class BootstrapProvider implements IBootstrapProvider {
     return this.inventoryRepo.insertMany(rawInventories);
   }
 
-  private _bootstrapOrders(inventories: Array<Inventory>): Promise<any> {
+  private async _bootstrapOrders(inventories: Array<Inventory>): Promise<any> {
+    const buyer = await this.accountRepository.findOne({ accountEmailByProvider: "sneakgeek.test+user@gmail.com" }).exec();
     const orders = inventories.slice(0, 10).map((inv) => ({
-      buyerId: this.levelToAccMap.get(AccessLevel.User).profileId,
+      buyerId: buyer.profile as mongoose.Types.ObjectId,
       sellerId: inv.sellerId,
       shoeId: inv.shoeId,
       inventoryId: inv._id,
