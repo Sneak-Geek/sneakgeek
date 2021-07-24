@@ -48,7 +48,11 @@ platform :ios do
 	    derived_data_path: "ios/build/staging",
 	    output_directory: "ios/build/staging",
 	    export_method: "ad-hoc",
-      xcargs: "-allowProvisioningUpdates"
+      export_options: {
+        provisioningProfiles: {
+          "app.sneakgeek.mobile.staging" => "match AdHoc app.sneakgeek.mobile.staging"
+        }
+      }
     )
 	end
   lane :distribute_staging_app_center do 
