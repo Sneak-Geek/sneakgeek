@@ -54,7 +54,7 @@ platform :ios do
 	    clean: true,
 	    derived_data_path: "ios/build/staging",
 	    output_directory: "ios/build/staging",
-	    export_method: "development",
+	    export_method: "ad-hoc",
       xcargs: "-allowProvisioningUpdates",
       suppress_xcode_output: true
     )
