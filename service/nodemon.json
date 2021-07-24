@@ -7,7 +7,7 @@
   },
   "watch": ["**/*.ts"],
   "env": {
-    "NODE_ENV": "local"
+    "NODE_ENV": "dev"
   },
   "ext": "js,json,ts"
 }

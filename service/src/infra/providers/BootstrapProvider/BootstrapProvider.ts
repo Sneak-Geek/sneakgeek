@@ -65,7 +65,7 @@ export class BootstrapProvider implements IBootstrapProvider {
     @inject(Types.CatalogueRepository) private catalogRepository: Repository<Catalogue>,
     @inject(Types.InventoryRepository) private inventoryRepo: Repository<Inventory>,
     @inject(Types.OrderRepository) private orderRepo: Repository<Order>
-  ) {}
+  ) { }
 
   private levelToAccMap: Map<AccessLevel, AccountInfo> = new Map();
   private shoeIds: Array<mongoose.Types.ObjectId>;
@@ -270,7 +270,8 @@ export class BootstrapProvider implements IBootstrapProvider {
 
   public async bootstrapDevInventoryAndOrder(): Promise<void> {
     // Already bootstrapped
-    if (this.levelToAccMap.size === 0) {
+    const inventoryCount = await this.inventoryRepo.countDocuments({}).exec();
+    if (this.levelToAccMap.size === 0 && inventoryCount > 0) {
       return;
     }
 
@@ -279,6 +280,7 @@ export class BootstrapProvider implements IBootstrapProvider {
   }
 
   private async _bootstrapInventory(): Promise<Inventory[]> {
+    const seller = await this.accountRepository.findOne({ accountEmailByProvider: "sneakgeek.test+seller@gmail.com" }).exec();
     const shoeIds = (
       await this.shoeRepository
         .find({ brand: "Jordan" })
@@ -286,7 +288,7 @@ export class BootstrapProvider implements IBootstrapProvider {
         .limit(50)
         .exec()
     ).map((s) => s._id);
-    const sellerId = this.levelToAccMap.get(AccessLevel.Seller).profileId;
+    const sellerId = seller.profile as mongoose.Types.ObjectId;
     const rawInventories: Array<Partial<Inventory>> = shoeIds.map((s) => ({
       sellerId,
       shoeId: s,
