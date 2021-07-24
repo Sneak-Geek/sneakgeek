@@ -270,7 +270,8 @@ export class BootstrapProvider implements IBootstrapProvider {
 
   public async bootstrapDevInventoryAndOrder(): Promise<void> {
     // Already bootstrapped
-    if (this.levelToAccMap.size === 0) {
+    const inventoryCount = await this.inventoryRepo.countDocuments({}).exec();
+    if (this.levelToAccMap.size === 0 && inventoryCount > 0) {
       return;
     }
 
@@ -279,6 +280,9 @@ export class BootstrapProvider implements IBootstrapProvider {
   }
 
   private async _bootstrapInventory(): Promise<Inventory[]> {
+    const seller = await this.accountRepository
+      .findOne({ accountEmailByProvider: "sneakgeek.test+seller@gmail.com" })
+      .exec();
     const shoeIds = (
       await this.shoeRepository
         .find({ brand: "Jordan" })
@@ -286,7 +290,7 @@ export class BootstrapProvider implements IBootstrapProvider {
         .limit(50)
         .exec()
     ).map((s) => s._id);
-    const sellerId = this.levelToAccMap.get(AccessLevel.Seller).profileId;
+    const sellerId = seller.profile as mongoose.Types.ObjectId;
     const rawInventories: Array<Partial<Inventory>> = shoeIds.map((s) => ({
       sellerId,
       shoeId: s,
@@ -298,9 +302,12 @@ export class BootstrapProvider implements IBootstrapProvider {
     return this.inventoryRepo.insertMany(rawInventories);
   }
 
-  private _bootstrapOrders(inventories: Array<Inventory>): Promise<any> {
+  private async _bootstrapOrders(inventories: Array<Inventory>): Promise<any> {
+    const buyer = await this.accountRepository
+      .findOne({ accountEmailByProvider: "sneakgeek.test+user@gmail.com" })
+      .exec();
     const orders = inventories.slice(0, 10).map((inv) => ({
-      buyerId: this.levelToAccMap.get(AccessLevel.User).profileId,
+      buyerId: buyer.profile as mongoose.Types.ObjectId,
       sellerId: inv.sellerId,
       shoeId: inv.shoeId,
       inventoryId: inv._id,
