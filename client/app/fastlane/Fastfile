@@ -40,8 +40,9 @@ platform :ios do
 		  git_basic_authorization: ENV["GIT_BASIC_AUTH"],
 	  )
     # Enable automatic code sign
-    enable_automatic_code_signing(
-      team_id: "VVPX9A83PB"
+    update_code_signing_settings(
+      use_automatic_signing: true,
+      path: xcproj
     )
 	  # Build
 	  gym(
@@ -52,11 +53,6 @@ platform :ios do
 	    derived_data_path: "ios/build/staging",
 	    output_directory: "ios/build/staging",
 	    export_method: "ad-hoc",
-      # export_options: {
-      #   provisioningProfiles: {
-      #     "app.sneakgeek.mobile.staging" => "match AdHoc app.sneakgeek.mobile.staging"
-      #   }
-      # }
       xcargs: "-allowProvisioningUpdates"
     )
 	end
