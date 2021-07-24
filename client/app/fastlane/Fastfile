@@ -24,10 +24,7 @@ platform :ios do
 	    clean_install: true,
 	    podfile: "./ios/Podfile"
 	  )
-    # Disable automatic code sign
-    disable_automatic_code_signing(path: xcproj)
-
-    # Setup app_store_connect_api_key
+   # Setup app_store_connect_api_key
     app_store_connect_api_key(
       key_id: ENV["APPSTORE_CONNECT_KEY_ID"],
       issuer_id: ENV["APPSTORE_CONNECT_ISSUER_ID"],
@@ -36,7 +33,7 @@ platform :ios do
     )
 	  # Setup provisioning profiles and certificates
 	  match(
-	    type: "development", 
+	    type: "adhoc", 
 	    app_identifier: "app.sneakgeek.mobile.staging", 
 	    username: "huyhoang.pham95@gmail.com", 
 	    team_id: "VVPX9A83PB",
@@ -51,12 +48,8 @@ platform :ios do
 	    derived_data_path: "ios/build/staging",
 	    output_directory: "ios/build/staging",
 	    export_method: "ad-hoc",
-	    xcargs: "-allowProvisioningUpdates"
 	  )
-    # Re-enable code sign
-    enable_automatic_code_signing(path: xcproj)
 	end
-
   lane :distribute_staging_app_center do 
 		appcenter_upload(
 			api_token: ENV["APP_CENTER_API_TOKEN"],
