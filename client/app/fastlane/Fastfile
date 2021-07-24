@@ -36,7 +36,7 @@ platform :ios do
     )
 	  # Setup provisioning profiles and certificates
 	  match(
-	    type: "adhoc", 
+	    type: "development", 
 	    app_identifier: "app.sneakgeek.mobile.staging", 
 	    username: "huyhoang.pham95@gmail.com", 
 	    team_id: "VVPX9A83PB",
