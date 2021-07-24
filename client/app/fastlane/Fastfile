@@ -56,7 +56,6 @@ platform :ios do
 	    output_directory: "ios/build/staging",
 	    export_method: "ad-hoc",
       xcargs: "-allowProvisioningUpdates",
-      # suppress_xcode_output: true,
     )
     update_code_signing_settings(
       use_automatic_signing: true,
