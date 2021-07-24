@@ -222,9 +222,7 @@ container
   .bind<Migration_1624492681744>(Migration_1624492681744.name)
   .to(Migration_1624492681744);
 
-container
-  .bind<Migration_07232021>(Migration_07232021.name)
-  .to(Migration_07232021);
+container.bind<Migration_07232021>(Migration_07232021.name).to(Migration_07232021);
 
 // Asynchronous bindings
 const asyncBindings = new AsyncContainerModule(async (bind) => {
