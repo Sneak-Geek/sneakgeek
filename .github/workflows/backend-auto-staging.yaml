@@ -54,5 +54,5 @@ jobs:
           gcloud app deploy ./app-prod.yaml \
             --version=$VERSION \
             --no-cache --promote --verbosity=info --quiet \
-            --account=$GAE_STAGING_SERVICE_ACCOUNT
+            --account=$GAE_STAGING_SERVICE_ACCOUNT \
             --project=$STAGING_PROJECT_ID
