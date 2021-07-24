@@ -44,7 +44,8 @@ jobs:
           GIT_TERMINAL_PROMPT: 1
           APPSTORE_CONNECT_KEY_ID: ${{ secrets.APPSTORE_CONNECT_KEY_ID }}
           APPSTORE_CONNECT_ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_ISSUER_ID }}
-        run: fastlane ios archive_staging
+          RCT_NO_LAUNCH_PACKAGER: 1
+          run: fastlane ios archive_staging
       - name: Distribute to AppCenter
         env:
           APP_CENTER_API_TOKEN: ${{ secrets.APP_CENTER_API_TOKEN }}
