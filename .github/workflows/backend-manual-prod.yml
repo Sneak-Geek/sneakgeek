@@ -42,7 +42,12 @@ jobs:
           GAE_PROD_SERVICE_ACCOUNT: ${{ secrets.GAE_PROD_SERVICE_ACCOUNT }}
           PROD_PROJECT_ID: ${{ secrets.PROD_PROJECT_ID }}
         run: |
-          node ./scripts/release_service.js
+          VERSION=`node -e "const v=require('../version.json');console.log(v.service.version+'-'+v.service.build)"`  
+          gcloud app deploy ./app-prod.yaml \
+            --version=$VERSION \
+            --no-cache --promote --verbosity=info --quiet \
+            --account=$GAE_PROD_SERVICE_ACCOUNT
+            --project=$PROD_PROJECT_ID
       - name: Delete build branch
         continue-on-error: true
         env:
