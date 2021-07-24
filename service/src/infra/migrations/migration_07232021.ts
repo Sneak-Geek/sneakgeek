@@ -19,7 +19,7 @@ export class Migration_07232021 extends BaseMigration {
         createdAt: {
           $lt: new Date(2021, 7, 17) 
         },
-      }); 
+      }).exec(); 
       LogProvider.instance.info(`Deleted result ${result}`); 
     } 
     catch (error) { 
