@@ -24,7 +24,7 @@ platform :ios do
 	    clean_install: true,
 	    podfile: "./ios/Podfile"
 	  )
-   # Setup app_store_connect_api_key
+  #  # Setup app_store_connect_api_key
     app_store_connect_api_key(
       key_id: ENV["APPSTORE_CONNECT_KEY_ID"],
       issuer_id: ENV["APPSTORE_CONNECT_ISSUER_ID"],
@@ -48,11 +48,12 @@ platform :ios do
 	    derived_data_path: "ios/build/staging",
 	    output_directory: "ios/build/staging",
 	    export_method: "ad-hoc",
-      export_options: {
-        provisioningProfiles: {
-          "app.sneakgeek.mobile.staging" => "match AdHoc app.sneakgeek.mobile.staging"
-        }
-      }
+      # export_options: {
+      #   provisioningProfiles: {
+      #     "app.sneakgeek.mobile.staging" => "match AdHoc app.sneakgeek.mobile.staging"
+      #   }
+      # }
+      xcargs: "-allowProvisioningUpdates"
     )
 	end
   lane :distribute_staging_app_center do 

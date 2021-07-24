@@ -31,11 +31,6 @@ fastlane ios bump_build_number
 fastlane ios archive_staging
 ```
 
-### ios archive
-```
-fastlane ios archive
-```
-
 ### ios distribute_staging_app_center
 ```
 fastlane ios distribute_staging_app_center
