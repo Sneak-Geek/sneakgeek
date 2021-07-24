@@ -58,7 +58,7 @@ platform :ios do
       xcargs: "-allowProvisioningUpdates",
       silent: true,
       suppress_xcode_output: true,
-      include_bit_code: false,
+      include_bitcode: false,
       export_options: {
         uploadBitcode: false,
         uploadSymbols: false,
