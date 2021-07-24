@@ -5,6 +5,7 @@ on:
     - main
     paths:
     - service/**
+    - .github/workflows/backend-auto-staging.yaml
 jobs:
   deploy_staging:
     runs-on: ubuntu-latest
