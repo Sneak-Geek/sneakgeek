@@ -18,6 +18,15 @@ platform :ios do
 	end
          
 	lane :archive_staging do
+    # Create keychain to store credentials
+    # create_keychain(
+    #   name: ENV["CI_KEYCHAIN_NAME"]
+    #   password: ENV["CI_KEYCHAIN_PASSWORD"]
+    #   default_keychain: true,
+    #   unlock: true,
+    #   timeout: 3600,
+    #   lock_when_sleeps: false
+    # )
     # Install pods
 	  cocoapods(
       use_bundle_exec: false,
@@ -39,12 +48,14 @@ platform :ios do
 	    team_id: "VVPX9A83PB",
 		  git_basic_authorization: ENV["GIT_BASIC_AUTH"],
 	  )
-    # Enable automatic code sign
-    update_code_signing_settings(
-      use_automatic_signing: true,
-      path: xcproj
+	  update_code_signing_settings(
+      use_automatic_signing: false,
+      path: xcproj,
+      code_sign_identity: "iPhone Distribution",
+      bundle_identifier: "app.sneakgeek.mobile.staging",
+      profile_name: "match AdHoc app.sneakgeek.mobile.staging"
     )
-	  # Build
+    # Build
 	  gym(
 	    workspace: "ios/app.xcworkspace",
 	    scheme: "app-staging",
@@ -52,8 +63,12 @@ platform :ios do
 	    clean: true,
 	    derived_data_path: "ios/build/staging",
 	    output_directory: "ios/build/staging",
-	    export_method: "ad-hoc",
-      xcargs: "-allowProvisioningUpdates"
+	    export_method: "development",
+      xcargs: "-allowProvisioningUpdates",
+    )
+    update_code_signing_settings(
+      use_automatic_signing: true,
+      path: xcproj,
     )
 	end
   lane :distribute_staging_app_center do 
