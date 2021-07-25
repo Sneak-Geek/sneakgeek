@@ -179,7 +179,7 @@ export class SearchTabMain extends React.Component<Props, State> {
             inputStyle={themes.TextStyle.body}
             onChangeText={(text: string): void => {
               const oldText = this.state.searchText;
-              this.setState({showDropDown: true, searchText: text}, () => {
+              this.setState({showDropDown: true, searchText: text, shoes: []}, () => {
                 if (text.length > oldText.length) {
                   this._search();
                 }
@@ -240,6 +240,8 @@ export class SearchTabMain extends React.Component<Props, State> {
                 this.setState(
                   {
                     searchText: k,
+                    shoes: [],
+                    currentSearchPage: 0
                   },
                   () => {
                     this._search();
@@ -320,7 +322,8 @@ export class SearchTabMain extends React.Component<Props, State> {
           )}
           columnWrapperStyle={{flex: 1, justifyContent: 'space-around'}}
           numColumns={2}
-          onEndReached={(): Promise<void> => this._search(true)}
+          onEndReached={(): Promise<void> => this._search(true)
+          }
           style={{marginHorizontal: 5}}
         />
         {this.state.isSearching && <ActivityIndicator size={'small'} />}
@@ -385,9 +388,10 @@ export class SearchTabMain extends React.Component<Props, State> {
     const {searchText, shoes, currentSearchPage} = this.state;
     const result = await this._inventoryService.search(
       searchText,
-      currentSearchPage,
+      currentSearchPage + (scrollEnd ? 1 : 0),
     );
-    this.setState({});
+    this.setState({isSearching:false, shoes: []});
+
     if (result) {
       const shouldSearchScrollEnd = !(
         result.length === 0 && currentSearchPage > 0
@@ -395,7 +399,7 @@ export class SearchTabMain extends React.Component<Props, State> {
       const newShoes = result.filter(
         (t) => !shoes.some((old) => old._id !== t._id),
       );
-
+    
       this.setState({
         shoes: [...shoes, ...newShoes],
         shouldSearchScrollEnd,
@@ -490,12 +494,12 @@ export class SearchTabMain extends React.Component<Props, State> {
     const brands = settings.getValue(SettingsKey.RemoteSettings).shoeBrands;
 
     return (
-      <View style={{marginBottom: themes.RegularButtonHeight}}>
+      <View style={{marginBottom: themes.RegularButtonHeight, backgroundColor: 'red'}}>
         <AppText.Title2 style={styles.filterTitle}>
           {strings.Brand}
         </AppText.Title2>
         <FlatList
-          style={{marginBottom: 5}}
+          style={{marginBottom: 5, display: 'flex', flex: 1, backgroundColor: 'red'}}
           horizontal={true}
           data={this.state.filter.brand}
           showsHorizontalScrollIndicator={false}
