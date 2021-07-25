@@ -1,13 +1,14 @@
-name: App staging deployment (auto)
+name: App manual staging deployment
+# on:
+#   push:
+#     branches:
+#     - main
+#     paths:
+#     - .github/workflows/app-auto-staging.yaml
+#     - client/app/**
+#     - client/business/**
 on:
-  push:
-    branches:
-    - main
-    - feature/release-app-staging
-    paths:
-    - .github/workflows/app-auto-staging.yaml
-    - client/app/**
-    - client/business/**
+  workflow_dispatch
 jobs:
   appcenter_deploy:
     runs-on: macos-latest
@@ -45,8 +46,6 @@ jobs:
           APPSTORE_CONNECT_KEY_ID: ${{ secrets.APPSTORE_CONNECT_KEY_ID }}
           APPSTORE_CONNECT_ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_ISSUER_ID }}
           RCT_NO_LAUNCH_PACKAGER: 1
-          CI_KEYCHAIN_NAME: ${{ secrets.CI_KEYCHAIN_NAME }}
-          CI_KEYCHAIN_PASSWORD: ${{ secrets.CI_KEYCHAIN_PASSWORD }}
         run: fastlane ios archive_staging
       - name: Distribute to AppCenter
         env:
