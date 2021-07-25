@@ -3,54 +3,80 @@ platform :ios do
 	xcproj = "./ios/app.xcodeproj"
       
 	lane :bump_version_number do
-	  increment_version_number(
-		version_number: ENV["IOS_VERSION_NUMBER"],
-		bump_type: "minor",
-		xcodeproj: xcproj
-      )
+	  increment_version_number_in_xcodeproj(
+      version_number: ENV["IOS_VERSION_NUMBER"],
+      xcodeproj: xcproj,
+      scheme: ENV["CI_SCHEME"]
+    )
     end
       
 	lane :bump_build_number do
 	  increment_build_number(
-		xcodeproj: xcproj,
-		build_number: ENV["IOS_BUILD_NUMBER"]
+		  xcodeproj: xcproj,
+		  build_number: ENV["IOS_BUILD_NUMBER"]
 	  )
 	end
          
 	lane :archive_staging do
-	  # Install pods
+    # Install pods
 	  cocoapods(
       use_bundle_exec: false,
 	    clean_install: true,
 	    podfile: "./ios/Podfile"
 	  )
+    # Setup app_store_connect_api_key
+    app_store_connect_api_key(
+      key_id: ENV["APPSTORE_CONNECT_KEY_ID"],
+      issuer_id: ENV["APPSTORE_CONNECT_ISSUER_ID"],
+      key_filepath: "./fastlane/AuthKey_T3JM22TFR3.p8",
+      in_house: false
+    )
+    setup_ci()
 	  # Setup provisioning profiles and certificates
 	  match(
 	    type: "adhoc", 
 	    app_identifier: "app.sneakgeek.mobile.staging", 
 	    username: "huyhoang.pham95@gmail.com", 
-	    team_id: "VVPX9A83PB"
+	    team_id: "VVPX9A83PB",
+		  git_basic_authorization: ENV["GIT_BASIC_AUTH"],
 	  )
-	  # Build
+	  update_code_signing_settings(
+      use_automatic_signing: false,
+      path: xcproj,
+      code_sign_identity: "iPhone Distribution",
+      bundle_identifier: "app.sneakgeek.mobile.staging",
+      profile_name: "match AdHoc app.sneakgeek.mobile.staging",
+    )
+    # Build
 	  gym(
 	    workspace: "ios/app.xcworkspace",
-	    scheme: "app-staging",
-	    configuration: "Release",
+	    scheme: ENV["CI_SCHEME"],
+      configuration: "Release",
 	    clean: true,
 	    derived_data_path: "ios/build/staging",
 	    output_directory: "ios/build/staging",
 	    export_method: "ad-hoc",
-	    xcargs: "-allowProvisioningUpdates"
-	  )
+      xcargs: "-allowProvisioningUpdates",
+      silent: true,
+      include_bitcode: false,
+      export_options: {
+        uploadBitcode: false,
+        uploadSymbols: true,
+        compileBitcode: false,
+      }
+    )
+    update_code_signing_settings(
+      use_automatic_signing: true,
+      path: xcproj,
+    )
 	end
-
   lane :distribute_staging_app_center do 
-    appcenter_upload(
-		api_token: ENV["APP_CENTER_API_TOKEN"],
-		owner_name: "SneakGeek",
-		owner_type: "organization",
-		app_name: "sneakgeek",
-		file: "ios/build/staging/SneakGeek.ipa"
-	)
+		appcenter_upload(
+			api_token: ENV["APP_CENTER_API_TOKEN"],
+			owner_name: "SneakGeek",
+			owner_type: "organization",
+			app_name: "sneakgeek",
+			file: "ios/build/staging/SneakGeek.ipa"
+		)
   end
 end
