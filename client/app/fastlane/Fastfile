@@ -5,7 +5,8 @@ platform :ios do
 	lane :bump_version_number do
 	  increment_version_number_in_xcodeproj(
       version_number: ENV["IOS_VERSION_NUMBER"],
-      xcodeproj: xcproj
+      xcodeproj: xcproj,
+      scheme: ENV["CI_SCHEME"]
     )
     end
       
@@ -49,8 +50,8 @@ platform :ios do
     # Build
 	  gym(
 	    workspace: "ios/app.xcworkspace",
-	    scheme: "app-staging",
-	    configuration: "Release",
+	    scheme: ENV["CI_SCHEME"],
+      configuration: "Release",
 	    clean: true,
 	    derived_data_path: "ios/build/staging",
 	    output_directory: "ios/build/staging",
