@@ -33,22 +33,6 @@ function increateVersionAndTag() {
 
 async function main() {
   const tag = increateVersionAndTag();
-  switch (releaseType) {
-    case "app":
-      await execute(`
-        cd ${process.cwd()}/client/app
-        export IOS_VERSION_NUMBER=${version.app.version}
-        export IOS_BUILD_NUMBER=${version.app.build}
-        fastlane ios bump_version_number
-        fastlane ios bump_build_number
-      `);
-      break;
-    case "service":
-      break;
-    default:
-      console.error("Invalid \"type\" flag, exit");
-      process.exit(1);
-  }
   const versionString = JSON.stringify(version, null, 2);
   fs.writeFileSync(`${process.cwd()}/version.json`, versionString);
   console.log(tag);
