@@ -37,7 +37,7 @@ export abstract class AsbtractOrderController {
     let sellerText = `Order number ${orderId} status has been changed to ${status}`;
     var sellerSubject = "";
 
-    if (status === TrackingStatus.WAITING_FOR_BANK_TRANSFER){
+    if (status === TrackingStatus.WAITING_FOR_BANK_TRANSFER) {
       buyerSubject = "[SneakGeek] Đơn hàng khởi tạo thành công";
       buyerText = `Đơn hàng của bạn đã được khởi tạo thành công:
                     Mã đơn hàng: ${orderId}
@@ -46,14 +46,14 @@ export abstract class AsbtractOrderController {
                     Đơn giá: ${inventory.sellPrice}
                     Quý khách vui lòng chuyển khoản theo thông tin trên ứng dụng trong vòng 12h để hoàn tất đơn hàng.
                     
-                    SneakGeek Team`
-      adminSubject = `Đơn hàng ${orderId} được khởi tạo`
+                    SneakGeek Team`;
+      adminSubject = `Đơn hàng ${orderId} được khởi tạo`;
       adminText = `Đơn hàng mới ${orderId} đc khởi tạo, check xem đã nhận được tiền trong tài khoản ngân hàng chưa?
                    Tên người mua: ${buyer.userProvidedName}
                    Thông tin sản phẩm: 
                       Tên giày: ${inventory.shoeInfo.name}
                       Size: ${inventory.shoeSize}
-                   Số tiền: ${inventory.sellPrice}`
+                   Số tiền: ${inventory.sellPrice}`;
     }
     if (status === TrackingStatus.RECEIVED_BANK_TRANSFER) {
       buyerSubject = "[SneakGeek] Đơn hàng được hoàn tất";
@@ -71,30 +71,25 @@ export abstract class AsbtractOrderController {
                     Trân trọng cảm ơn!
                     
                     SneakGeek team`;
-    } 
-    else if (status === TrackingStatus.NOT_RECEIVED_BANK_TRANSFER)
-    {
+    } else if (status === TrackingStatus.NOT_RECEIVED_BANK_TRANSFER) {
       buyerSubject = "[SneakGeek] Đơn hàng chưa được hoàn tất";
       buyerText = `Đơn hàng ${orderId} của bạn đã chưa được hoàn tất do thanh toán chưa được xác nhận thành công trong 12h. 
                    Đơn hàng sẽ được hủy.
                    Quý khách vui lòng liên hệ qua email: support@sneakgeek.io để nhận hỗ trợ. 
                    Xin cảm ơn!
                     
-                   SneakGeek Team`
-    }
-    else if (status === TrackingStatus.SELLER_APPROVED_ORDER)
-    {
+                   SneakGeek Team`;
+    } else if (status === TrackingStatus.SELLER_APPROVED_ORDER) {
       var deadline = new Date();
-      deadline.setHours(deadline.getHours()+ 48);
+      deadline.setHours(deadline.getHours() + 48);
       adminSubject = `Seller đã approve đơn hàng ${orderId}`;
       adminText = `Seller đã approved đơn hàng. Seller sẽ chuyển hàng cho SneakGeek trong vòng 48h. 
                    Đơn hàng: ${orderId}
                    Thông tin sản phẩm: 
                     Tên giày: ${inventory.shoeInfo.name}
                     Size: ${inventory.shoeSize}
-                   Hạn nhận hàng: ${deadline.getDay()}/${deadline.getMonth()}/${deadline.getFullYear()}`
-    }
-    else if(
+                   Hạn nhận hàng: ${deadline.getDay()}/${deadline.getMonth()}/${deadline.getFullYear()}`;
+    } else if (
       status === TrackingStatus.SELLER_REJECTED_ORDER ||
       status === TrackingStatus.SHOE_UNQUALIFIED
     ) {
@@ -123,8 +118,7 @@ export abstract class AsbtractOrderController {
 
                    SneakGeek Team`;
     }
-    if (status === TrackingStatus.SHOE_UNQUALIFIED)
-    {
+    if (status === TrackingStatus.SHOE_UNQUALIFIED) {
       sellerSubject = "[SneakGeek] Giày không đạt chất lượng";
       sellerText = `Hàng đang được gửi trả cho quý khách.
                     Đơn hàng: ${orderId}
@@ -137,16 +131,15 @@ export abstract class AsbtractOrderController {
                     SneakGeek Team`;
     }
     const notiEmail = [];
-    if (adminSubject !== "")
-    {
-      notiEmail.push(this.emailService.notifyUser("ntduc97@gmail.com", adminSubject, adminText));
+    if (adminSubject !== "") {
+      notiEmail.push(
+        this.emailService.notifyUser("ntduc97@gmail.com", adminSubject, adminText)
+      );
     }
-    if (buyerSubject !== "")
-    {
+    if (buyerSubject !== "") {
       notiEmail.push(this.emailService.notifyUser(buyerEmail, buyerSubject, buyerText));
     }
-    if (sellerSubject !== "")
-    {
+    if (sellerSubject !== "") {
       notiEmail.push(this.emailService.notifyUser(sellerEmail, sellerSubject, sellerText));
     }
     await Promise.all(notiEmail);
