@@ -31,15 +31,7 @@ platform :ios do
       key_filepath: "./fastlane/AuthKey_T3JM22TFR3.p8",
       in_house: false
     )
-	# Setup keychain
-	create_keychain(
-		name: ENV["CI_KEYCHAIN_NAME"],
-		password: ENV["CI_KEYCHAIN_PASSWORD"],
-		default_keychain: true,
-		unlock: true,
-		timeout: 3600,
-		lock_when_sleeps: false
-    )
+    setup_ci()
 	  # Setup provisioning profiles and certificates
 	  match(
 	    type: "adhoc", 
