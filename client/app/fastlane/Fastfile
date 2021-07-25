@@ -76,7 +76,8 @@ platform :ios do
 			owner_name: "SneakGeek",
 			owner_type: "organization",
 			app_name: "sneakgeek",
-			file: "ios/build/staging/SneakGeek.ipa"
+			file: "ios/build/staging/SneakGeek.ipa",
+      notify_testers: true
 		)
   end
 end
