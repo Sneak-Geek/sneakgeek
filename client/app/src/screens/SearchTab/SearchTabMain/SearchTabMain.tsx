@@ -397,7 +397,7 @@ export class SearchTabMain extends React.Component<Props, State> {
         result.length === 0 && currentSearchPage > 0
       );
       const newShoes = result.filter(
-        (t) => !shoes.some((old) => old._id !== t._id),
+        (t) => !shoes.some((old) => old._id === t._id),
       );
     
       this.setState({
