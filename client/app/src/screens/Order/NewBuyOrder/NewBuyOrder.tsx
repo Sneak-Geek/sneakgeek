@@ -324,6 +324,7 @@ export class NewBuyOrder extends React.Component<Props, State> {
   private _alertMissingInfo(): void {
     let message = '';
     let buttonText = '';
+
     if (!this.props.account || !this.props.profile) {
       message = strings.NotAuthenticated;
       buttonText = strings.PleaseLogin;
@@ -333,9 +334,11 @@ export class NewBuyOrder extends React.Component<Props, State> {
       message = strings.MissingProfileInfo;
       buttonText = strings.AddInfoForReview;
     }
-    const {navigation} = this.props;
-    Alert.alert(strings.AccountInfo, message, [
-      buttonText !== '' && {
+
+    var textDisplay = [];
+    if (buttonText !== '')
+    {
+      textDisplay.push({
         text: buttonText,
         onPress: (): void => {
           if (this.props.account) {
@@ -345,14 +348,34 @@ export class NewBuyOrder extends React.Component<Props, State> {
               screen: RouteNames.Auth.Login,
             });
           }
+         },
+        }
+      );
+    }
+    if (this.props.account && !this.props.account.isVerified)
+    {
+      textDisplay.push({
+        text: strings.Cancel,
+        onPress: (): void => {
+          navigation.navigate(RouteNames.Tab.HomeTab.Name, {
+            screen: RouteNames.Tab.HomeTab.Main,
+          });
         },
-      },
-      {
+        style: 'cancel',
+        }
+      );
+    }
+    else
+    {
+      textDisplay.push({
         text: strings.Cancel,
         onPress: null,
         style: 'cancel',
-      },
-    ]);
+        }
+      );
+    }
+    const {navigation} = this.props;
+    Alert.alert(strings.AccountInfo, message, textDisplay);
   }
 
   private _setShoeSizeAndPrice(priceMap: SizePriceMap): void {
