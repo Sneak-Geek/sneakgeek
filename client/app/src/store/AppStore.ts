@@ -27,6 +27,7 @@ import {
   IEnvironmentState,
   EnvironmentReducers,
 } from 'reducers';
+import { BaseActions } from 'actions';
 
 export type IAppState = {
   UserState: IUserState;
@@ -39,7 +40,7 @@ export type IAppState = {
   EnvironmentState: IEnvironmentState;
 };
 
-const rootReducers = combineReducers({
+const appReducers = combineReducers({
   UserState: UserReducers,
   ProductState: ProductReducers,
   AppNotificationState: AppNotificationReducers,
@@ -49,6 +50,13 @@ const rootReducers = combineReducers({
   OrderState: OrderReducers,
   EnvironmentState: EnvironmentReducers,
 });
+
+const rootReducers = (state, action) => {
+  if (action === BaseActions.RESET) {
+    return appReducers(undefined, action);
+  }
+  return appReducers(state, action);
+}
 
 const composeEnhancers =
   (window && (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose;
