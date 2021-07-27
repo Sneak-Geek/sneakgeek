@@ -1,0 +1,2 @@
+[![App manual staging deployment](https://github.com/Sneak-Geek/sneakgeek/actions/workflows/app-manual-staging.yaml/badge.svg?branch=main)](https://github.com/Sneak-Geek/sneakgeek/actions/workflows/app-manual-staging.yaml)
+[![Backend prod workflow deployment](https://github.com/Sneak-Geek/sneakgeek/actions/workflows/backend-manual-prod.yml/badge.svg)](https://github.com/Sneak-Geek/sneakgeek/actions/workflows/backend-manual-prod.yml)
