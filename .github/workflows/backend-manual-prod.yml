@@ -46,7 +46,7 @@ jobs:
           gcloud app deploy ./app-prod.yaml \
             --version=$VERSION \
             --no-cache --promote --verbosity=info --quiet \
-            --account=$GAE_PROD_SERVICE_ACCOUNT
+            --account=$GAE_PROD_SERVICE_ACCOUNT \
             --project=$PROD_PROJECT_ID
       - name: Delete build branch
         continue-on-error: true
