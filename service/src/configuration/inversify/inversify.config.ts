@@ -105,8 +105,11 @@ import "../../infra/controllers/InventoryController";
 import "../../infra/admin_controllers/AdminOrderControllers";
 import "../../infra/controllers/HealthController";
 import "../../infra/controllers/WarmupController";
-import { Migration_1624492681744 } from "../../infra/migrations/migration_1624492681744";
-import { Migration_07232021 } from "../../infra/migrations/migration_07232021";
+import {
+  Migration_1624492681744,
+  Migration_07232021,
+  Migration_07272021,
+} from "../../infra/migrations";
 import { MigrationProvider } from "../../infra/providers/MigrationProvider/MigrationProvider";
 
 // Creating new container
@@ -221,8 +224,8 @@ container.bind<IShoeDao>(Types.ShoeDao).to(ShoeDao);
 container
   .bind<Migration_1624492681744>(Migration_1624492681744.name)
   .to(Migration_1624492681744);
-
 container.bind<Migration_07232021>(Migration_07232021.name).to(Migration_07232021);
+container.bind<Migration_07272021>(Migration_07272021.name).to(Migration_07272021);
 
 // Asynchronous bindings
 const asyncBindings = new AsyncContainerModule(async (bind) => {
