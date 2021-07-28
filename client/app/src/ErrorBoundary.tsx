@@ -46,7 +46,7 @@ export default class ErrorBoundary extends React.Component<{}, State> {
       <SafeAreaView style={styles.flexAll}>
         <View style={[styles.container, styles.flexAll]}>
           <AppText.Body style={styles.flexWrap}>
-            {strings.ErrorPleaseTryAgain} {'\n'} {this.state.error.stack}
+            {strings.ErrorPleaseTryAgain} {'\n'} 
           </AppText.Body>
         </View>
       </SafeAreaView>

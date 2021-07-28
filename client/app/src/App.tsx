@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import RootStack from 'navigations/RootStack';
 import {
   ObjectFactory as Factory,
@@ -23,17 +23,17 @@ import {
   IInventoryService,
   InventoryService,
 } from 'business';
-import {Provider} from 'react-redux';
-import {SettingsProvider, FacebookSdk, KeyExtensions, GoogleSdk} from 'common';
-import {AppStore} from 'store/AppStore';
-import {InAppNotification} from 'screens/InAppNotification';
-import {AppLoadingIndicator} from 'screens/AppLoadingIndicator';
-import {IDeviceInfoProvider, DeviceInfoProvider} from 'providers';
-import {AppleAuthSdk} from 'common/AppleAuthSdk';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
+import { Provider } from 'react-redux';
+import { SettingsProvider, FacebookSdk, KeyExtensions, GoogleSdk } from 'common';
+import { AppStore } from 'store/AppStore';
+import { InAppNotification } from 'screens/InAppNotification';
+import { AppLoadingIndicator } from 'screens/AppLoadingIndicator';
+import { IDeviceInfoProvider, DeviceInfoProvider } from 'providers';
+import { AppleAuthSdk } from 'common/AppleAuthSdk';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import ErrorBoundary from 'ErrorBoundary';
-import {Platform, StatusBar} from 'react-native';
-import {themes} from 'resources';
+import { Platform, StatusBar } from 'react-native';
+import { themes } from 'resources';
 import Config from 'react-native-config';
 
 export default function App(): JSX.Element {
@@ -48,7 +48,7 @@ export default function App(): JSX.Element {
       settingsProvider,
     );
     Factory.register<IEnvVar>(Keys.IEnvVar, {
-      apiEndpoint: Config.API_ENDPOINT, 
+      apiEndpoint: Config.API_ENDPOINT,
     });
     Factory.register<IFacebookSDK>(Keys.IFacebookSDK, new FacebookSdk());
     Factory.register<IGoogleSDK>(Keys.IGoogleSDK, new GoogleSdk());
@@ -86,25 +86,23 @@ export default function App(): JSX.Element {
 
   return (
     <SafeAreaProvider>
-      <ErrorBoundary>
-        <Provider store={AppStore}>
-          {Platform.OS === 'android' && (
-            <StatusBar
-              backgroundColor={themes.AppAccentColor}
-              barStyle={'light-content'}
-            />
-          )}
-          {depLoaded ? (
-            <>
-              <RootStack />
-              <InAppNotification />
-              <AppLoadingIndicator />
-            </>
-          ) : (
-            <></>
-          )}
-        </Provider>
-      </ErrorBoundary>
+      <Provider store={AppStore}>
+        {Platform.OS === 'android' && (
+          <StatusBar
+            backgroundColor={themes.AppAccentColor}
+            barStyle={'light-content'}
+          />
+        )}
+        {depLoaded ? (
+          <>
+            <RootStack />
+            <InAppNotification />
+            <AppLoadingIndicator />
+          </>
+        ) : (
+          <></>
+        )}
+      </Provider>
     </SafeAreaProvider>
   );
 }
