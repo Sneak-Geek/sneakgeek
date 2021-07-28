@@ -105,7 +105,11 @@ import "../../infra/controllers/InventoryController";
 import "../../infra/admin_controllers/AdminOrderControllers";
 import "../../infra/controllers/HealthController";
 import "../../infra/controllers/WarmupController";
-import { Migration_1624492681744, Migration_07232021, Migration_07272021 } from "../../infra/migrations";
+import {
+  Migration_1624492681744,
+  Migration_07232021,
+  Migration_07272021,
+} from "../../infra/migrations";
 import { MigrationProvider } from "../../infra/providers/MigrationProvider/MigrationProvider";
 
 // Creating new container
