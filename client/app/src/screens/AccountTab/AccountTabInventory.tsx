@@ -26,6 +26,7 @@ import {SNKGKPickerRow} from './AccountTabEditProfile';
 import {useDispatch} from 'react-redux';
 import {showSuccessNotification} from 'actions';
 import {useCallback} from 'react';
+import {TextInputMask} from 'react-native-masked-text';
 
 const styles = StyleSheet.create({
   inventoryContainer: {
@@ -52,9 +53,14 @@ type PickerState = {
   pickerValue: string;
 };
 
+type TextInputState = {
+  displayTextPrice: string
+}
+
 export const AccountTabInventoryDetail: React.FC<{}> = () => {
   const route = useRoute();
   const inventory: Inventory & {shoe: Shoe} = (route.params as any).inventory;
+  var moneyField: TextInputMask;
 
   const [quantity, setQuantity] = useState<number>(inventory.quantity);
   const [pickerState, setPickerState] = useState<PickerState>({
@@ -67,7 +73,11 @@ export const AccountTabInventoryDetail: React.FC<{}> = () => {
 
   const [price, setPrice] = useState<number>(inventory.sellPrice);
   const navigation = useNavigation();
-
+  
+  const [inputState, setInputState] = useState<TextInputState>({
+    displayTextPrice: toCurrencyString(inventory.sellPrice),
+  });
+  
   const items = [
     {
       title: strings.Size,
@@ -84,10 +94,10 @@ export const AccountTabInventoryDetail: React.FC<{}> = () => {
     },
     {
       title: strings.Price,
-      displayText: price.toString(),
       editable: true,
       onUpdate: (text: string) => {
-        setPrice(parseInt(text, 10));
+        setPrice(parseInt(moneyField.getRawValue(), 10) * 10);
+        setInputState({...inputState, displayTextPrice: text});
       },
     },
   ];
@@ -139,6 +149,41 @@ export const AccountTabInventoryDetail: React.FC<{}> = () => {
                   }
                 />
               );
+            case strings.Price:
+              return (
+              <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}>
+              <AppText.SubHeadline>{t.title}</AppText.SubHeadline>
+              <TextInputMask
+                placeholderTextColor={themes.AppDisabledColor}
+                placeholder={t.title}
+                numberOfLines={1}
+                keyboardType={'number-pad'}
+                type= 'money'
+                options={
+                  {
+                    precision: 0,
+                    separator: '.',
+                    delimiter: '.',
+                    unit: '',
+                    suffixUnit: '',
+                  }
+                }
+                value={inputState.displayTextPrice}
+                editable={t.editable}
+                onChangeText={(text) => t.onUpdate(text)}
+                style={{
+                  ...themes.TextStyle.body,
+
+                  textAlign: 'right',
+                }}
+                ref={(ref) => {moneyField = ref;}}
+              />
+              </View>);
             default:
               return (
                 <View
@@ -156,7 +201,6 @@ export const AccountTabInventoryDetail: React.FC<{}> = () => {
                     style={{
                       ...themes.TextStyle.body,
 
-                      width: 300,
                       textAlign: 'right',
                     }}
                     keyboardType={'number-pad'}

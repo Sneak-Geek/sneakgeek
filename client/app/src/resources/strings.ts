@@ -162,6 +162,7 @@ export const strings = {
   SetSellPrice: 'Giá đặt bán',
   SetPriceSuccess: 'Đặt giá thành công',
   SellPrice: 'Giá bán',
+  Size: 'Cỡ giày',
   ProductPictures: 'Ảnh sản phẩm',
   ProductOtherDetail: 'Các chi tiết khác của sản phẩm',
   UpdateOrder: 'Cập nhật đơn hàng',
