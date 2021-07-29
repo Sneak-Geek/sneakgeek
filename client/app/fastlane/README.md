@@ -36,6 +36,11 @@ fastlane ios archive_staging
 fastlane ios distribute_staging_app_center
 ```
 
+### ios add_device
+```
+fastlane ios add_device
+```
+
 
 ----
 

@@ -80,4 +80,12 @@ platform :ios do
       notify_testers: true
 		)
   end
+
+  lane :add_device do
+    register_devices(
+      devices_file: "./devices.txt",
+      team_id: "VVPX9A83PB",
+      username: "huyhoang.pham95@gmail.com"
+    )
+  end
 end
