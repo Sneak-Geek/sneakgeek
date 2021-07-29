@@ -283,17 +283,10 @@ export class BootstrapProvider implements IBootstrapProvider {
     const seller = await this.accountRepository
       .findOne({ accountEmailByProvider: "sneakgeek.test+seller@gmail.com" })
       .exec();
+    const brands = ["Jordan", "Nike", "adidas"];
     const shoeIds = (
-      await this.shoeRepository
-        .find({
-          brand: {
-            $in: ["Jordan", "Nike", "adidas"],
-          },
-        })
-        .sort({ createdAt: -1 })
-        .limit(50)
-        .exec()
-    ).map((s) => s._id);
+      await Promise.all(brands.map((b) => this._getShoeIdsByBrand(b)))
+    ).reduce((prev, cur) => [...prev, ...cur]);
     const sellerId = seller.profile as mongoose.Types.ObjectId;
     const rawInventories: Array<Partial<Inventory>> = shoeIds.map((s) => ({
       sellerId,
@@ -304,6 +297,12 @@ export class BootstrapProvider implements IBootstrapProvider {
     }));
 
     return this.inventoryRepo.insertMany(rawInventories);
+  }
+
+  private async _getShoeIdsByBrand(brand: string) {
+    return (
+      await this.shoeRepository.find({ brand }).sort({ createdAt: -1 }).limit(100).exec()
+    ).map((s) => s._id);
   }
 
   private async _bootstrapOrders(inventories: Array<Inventory>): Promise<any> {
