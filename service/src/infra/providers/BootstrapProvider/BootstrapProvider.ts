@@ -65,7 +65,7 @@ export class BootstrapProvider implements IBootstrapProvider {
     @inject(Types.CatalogueRepository) private catalogRepository: Repository<Catalogue>,
     @inject(Types.InventoryRepository) private inventoryRepo: Repository<Inventory>,
     @inject(Types.OrderRepository) private orderRepo: Repository<Order>
-  ) {}
+  ) { }
 
   private levelToAccMap: Map<AccessLevel, AccountInfo> = new Map();
   private shoeIds: Array<mongoose.Types.ObjectId>;
@@ -114,10 +114,10 @@ export class BootstrapProvider implements IBootstrapProvider {
     profile: any,
     acl: AccessLevel
   ) {
-    const count = await this.accountRepository
-      .count({ accountEmailByProvider: credential.email })
+    const found = await this.accountRepository
+      .findOne({ accountEmailByProvider: credential.email })
       .exec();
-    if (count === 0) {
+    if (!found) {
       LogProvider.instance.info("Creating account");
 
       const accountId = new mongoose.Types.ObjectId();
@@ -271,7 +271,7 @@ export class BootstrapProvider implements IBootstrapProvider {
   public async bootstrapDevInventoryAndOrder(): Promise<void> {
     // Already bootstrapped
     const inventoryCount = await this.inventoryRepo.countDocuments({}).exec();
-    if (this.levelToAccMap.size === 0 && inventoryCount > 0) {
+    if (inventoryCount > 0) {
       return;
     }
 
@@ -285,7 +285,11 @@ export class BootstrapProvider implements IBootstrapProvider {
       .exec();
     const shoeIds = (
       await this.shoeRepository
-        .find({ brand: "Jordan" })
+        .find({
+          brand: {
+            "$in": ["Jordan", "Nike", "adidas"]
+          }
+        })
         .sort({ createdAt: -1 })
         .limit(50)
         .exec()
