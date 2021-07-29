@@ -65,7 +65,7 @@ export class BootstrapProvider implements IBootstrapProvider {
     @inject(Types.CatalogueRepository) private catalogRepository: Repository<Catalogue>,
     @inject(Types.InventoryRepository) private inventoryRepo: Repository<Inventory>,
     @inject(Types.OrderRepository) private orderRepo: Repository<Order>
-  ) { }
+  ) {}
 
   private levelToAccMap: Map<AccessLevel, AccountInfo> = new Map();
   private shoeIds: Array<mongoose.Types.ObjectId>;
@@ -287,8 +287,8 @@ export class BootstrapProvider implements IBootstrapProvider {
       await this.shoeRepository
         .find({
           brand: {
-            "$in": ["Jordan", "Nike", "adidas"]
-          }
+            $in: ["Jordan", "Nike", "adidas"],
+          },
         })
         .sort({ createdAt: -1 })
         .limit(50)
