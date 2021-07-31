@@ -1,0 +1,5 @@
+# app.yaml
+runtime: nodejs12
+
+env_variables:
+  ENABLE_CLOUD_LOGGING: true
