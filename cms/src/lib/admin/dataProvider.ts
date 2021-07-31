@@ -1,7 +1,8 @@
 import {DataProvider, fetchUtils} from 'react-admin';
 import restProvider from 'ra-data-simple-rest';
-import {SERVICE_ENDPOINT} from '../service/common';
 import {StorageKey} from './authProvider';
+
+const {REACT_APP_SERVER_ENDPOINT} = process.env;
 
 const defaultHttpClient = (url: string, options: any) => {
   options = options || {};
@@ -20,6 +21,6 @@ const defaultHttpClient = (url: string, options: any) => {
 };
 
 const getDataProvider = (httpClient = defaultHttpClient): DataProvider =>
-  restProvider(SERVICE_ENDPOINT, httpClient, 'X-Total-Count');
+  restProvider(REACT_APP_SERVER_ENDPOINT!, httpClient, 'X-Total-Count');
 
 export default getDataProvider;

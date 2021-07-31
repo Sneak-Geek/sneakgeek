@@ -1,6 +1,8 @@
 import axios, {AxiosResponse} from 'axios';
 import Account from '../../models/Account';
-import {SERVICE_ENDPOINT} from './common';
+const {REACT_APP_SERVER_ENDPOINT} = process.env;
+
+console.log("server endpoint", REACT_APP_SERVER_ENDPOINT);
 
 export type IdentityPayload = {
   account: Account;
@@ -12,20 +14,20 @@ const login = (
   username: string,
   password: string,
 ): Promise<AxiosResponse<AuthPayload>> => {
-  return axios.post(`${SERVICE_ENDPOINT}/account/auth/email/login`, {
+  return axios.post(`${REACT_APP_SERVER_ENDPOINT}/account/auth/email/login`, {
     email: username,
     password,
   });
 };
 
 const logout = (): Promise<AxiosResponse<void>> => {
-  return axios.get(`${SERVICE_ENDPOINT}/account/logout`);
+  return axios.get(`${REACT_APP_SERVER_ENDPOINT}/account/logout`);
 };
 
 const getIdentity = (
   token: string,
 ): Promise<AxiosResponse<IdentityPayload>> => {
-  return axios.get(`${SERVICE_ENDPOINT}/account`, {
+  return axios.get(`${REACT_APP_SERVER_ENDPOINT}/account`, {
     headers: {
       authorization: token,
     },
