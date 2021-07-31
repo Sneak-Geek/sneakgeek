@@ -1,4 +1,5 @@
 # app.yaml
+service: cms
 runtime: nodejs12
 
 env_variables:

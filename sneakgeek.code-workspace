@@ -1,0 +1,16 @@
+{
+  "folders": [
+    {
+      "path": "cms"
+    },
+    {
+      "path": "service"
+    },
+    {
+      "path": "client/app"
+    },
+    {
+      "path": "client/business"
+    }
+  ]
+}
