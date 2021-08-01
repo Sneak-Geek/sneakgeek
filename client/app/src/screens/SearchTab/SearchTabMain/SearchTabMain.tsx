@@ -105,7 +105,8 @@ type State = {
 
 @connect((appState: IAppState) => ({
   account: appState.UserState.accountState.account,
-}))
+  })
+)
 export class SearchTabMain extends React.Component<Props, State> {
   private _shoeService: IShoeService = ObjectFactory.getObjectInstance(
     FactoryKeys.IShoeService,
@@ -130,10 +131,25 @@ export class SearchTabMain extends React.Component<Props, State> {
     },
   };
 
-  public componentDidMount(): void {
+  public async componentDidMount(): void {
     this._keyboardHideListener = Keyboard.addListener('keyboardDidHide', () => {
       this.state.showDropDown && this.setState({showDropDown: false});
     });
+    if (!this._isSeller()) {
+      this.setState({isSearching: true});
+      const inventories = await this._inventoryService.getSelling();
+      this.setState({isSearching: false});
+      const shoes = inventories.map(inventory => {
+        return {
+          ...inventory.shoe,
+          sellPrice: inventory.sellPrice
+        }
+      });
+      this.setState({shoes: shoes});
+    } else {
+      this.setState({searchText: 'Nike'});
+      this._searchForSeller(false);
+    }
   }
 
   public componentWillUnmount(): void {
