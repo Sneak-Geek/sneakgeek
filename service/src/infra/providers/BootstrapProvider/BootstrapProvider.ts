@@ -73,7 +73,7 @@ export class BootstrapProvider implements IBootstrapProvider {
     process.cwd(),
     "resources",
     "seeds",
-    "inventories-07192021.csv"
+    "inventories-07152021.csv"
   );
   private readonly shops: Map<string, string> = new Map<string, string>();
 
