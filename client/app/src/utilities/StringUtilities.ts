@@ -31,6 +31,31 @@ export function toCurrencyString(amount: string | number, maxDigit?: number) {
   return '';
 }
 
+export function toMoneyString(amount: string | number, maxDigit?: number) {
+  let converted = typeof amount === 'string' ? parseInt(amount, 10) : amount;
+  var priceString = "";
+  if (converted) {
+    if (converted > 1000000000){
+      priceString = (converted / 1000000000).toString();
+      return priceString + ' tỉ VND';
+    }
+    else if (converted > 1000000){
+      priceString = (converted / 1000000).toString();
+      return priceString + ' triệu VND';
+    }
+    else if (converted > 1000){
+      priceString = (converted / 1000).toString();
+      return priceString + ' nghìn VND';
+    }
+    else
+    {
+      return converted.toString() + ' VND';
+    }
+  }
+
+  return '';
+}
+
 export function isValidEmail(email: string) {
   const regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return regex.test(email.toLowerCase());
