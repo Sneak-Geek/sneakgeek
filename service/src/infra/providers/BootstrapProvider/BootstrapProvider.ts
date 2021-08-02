@@ -41,6 +41,9 @@ import {
   ProdAdminAccount,
   ProdAdminCredential,
   ProdAdminProfile,
+  THCAccount,
+  THCCredential,
+  THCProfile,
 } from "../../../assets/seeds/prod";
 
 type AccountInfo = {
@@ -75,6 +78,7 @@ export class BootstrapProvider implements IBootstrapProvider {
     "seeds",
     "inventories-07152021.csv"
   );
+  private readonly thcSeeds: string = path.join(process.cwd(), "resources", "seeds", "THC_08012021.csv");
   private readonly shops: Map<string, string> = new Map<string, string>();
 
   public async bootstrapDevUserData(): Promise<any> {
@@ -105,6 +109,7 @@ export class BootstrapProvider implements IBootstrapProvider {
       ),
       this._createUserData(LuckyStarCredential, LuckyStarAccount, LuckystarProfile, null),
       this._createUserData(ProdAdminCredential, ProdAdminAccount, ProdAdminProfile, null),
+      this._createUserData(THCCredential, THCAccount, THCProfile, null),
     ]);
   }
 
@@ -333,7 +338,7 @@ export class BootstrapProvider implements IBootstrapProvider {
     if (count > 0) {
       return;
     }
-    const rawInventories = await this._getProdInventory();
+    const rawInventories = await this._getTHCProdInventory();
     const notFoundSku = [];
     const mappedInventories = rawInventories.map(async (i) => {
       let sku: string = (i as any).sku;
@@ -371,6 +376,7 @@ export class BootstrapProvider implements IBootstrapProvider {
     );
   }
 
+  // TODO: temporary disable other stores inventories
   private _getProdInventory(): Promise<Array<Partial<Inventory>>> {
     const inventories: Array<Partial<Inventory>> = [];
 
@@ -402,5 +408,44 @@ export class BootstrapProvider implements IBootstrapProvider {
           resolve(inventories);
         });
     });
+  }
+
+  private async _getTHCProdInventory(): Promise<Array<Partial<Inventory>>> {
+    const inventories: Array<Partial<Inventory>> = [];
+    const thc = await this.accountRepository.findOne({ accountEmailByProvider: "dehype.duco@gmail.com" });
+
+    return new Promise((resolve, reject) => {
+      fs.createReadStream(this.thcSeeds)
+        .pipe(csv.parse({ headers: true }))
+        .on("data", async (row) => {
+          const sku = row["SKU"].toUpperCase();
+          let size = row["Size"];
+          if (size.endsWith("us") || size.endsWith("US")) {
+            size = size.slice(0, -2);
+          }
+          let price = row["Price"];
+          if (typeof price === "string") {
+            price = parseInt(price, 10);
+          }
+          price = Math.round(price / 1000) * 1000;
+          const quantity = row["Quantity"];
+
+          const invt = {
+            sellerId: thc._id,
+            shoeSize: size,
+            sellPrice: typeof price === "string" ? parseInt(price, 10) : price,
+            quantity: typeof quantity === "string" ? parseInt(quantity, 10) : quantity,
+            sku,  
+          };
+          inventories.push(invt);
+        })
+        .on("error", (err) => {
+          LogProvider.instance.error(`Error bootstrapped inventory ${err}`);
+          reject(err);
+        })
+        .on("end", () => {
+          resolve(inventories);
+        });
+    })
   }
 }

@@ -88,3 +88,29 @@ export const ProdAdminProfile = {
   isSeller: false,
   userProvidedEmail: ProdAdminCredential.email,
 };
+
+export const THCCredential = {
+  email: "dehype.duco@gmail.com",
+  password: "dehype123"
+};
+
+export const THCAccount = {
+  accountProvider: "email",
+  accountIdByProvider: THCCredential.email,
+  accountEmailByProvider: THCCredential.email,
+  password: hashSync(THCCredential.password, saltRounds),
+  accessLevel: AccessLevel.Seller,
+  isVerified: true,
+};
+export const THCProfile = {
+  userProvidedName: {
+    firstName: "The Hype Collector",
+  },
+  userProvidedAddress: {
+    addressLine1: "",
+    addressLine2: "",
+  },
+  userProvidedPhoneNumber: "",
+  isSeller: true,
+  userProvidedEmail: THCCredential.email,
+};

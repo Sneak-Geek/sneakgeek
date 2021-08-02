@@ -29,6 +29,9 @@ export const ShoeSize = {
     "16",
   ],
   Women: [
+    "3.5W",
+    "4W",
+    "4.5W",
     "5W",
     "5.5W",
     "6W",
