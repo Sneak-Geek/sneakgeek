@@ -37,19 +37,19 @@ export function toMoneyString(amount: string | number, maxDigit?: number) {
   if (converted) {
     if (converted > 1000000000){
       priceString = (converted / 1000000000).toString();
-      return priceString + ' tỉ VND';
+      return priceString + ' tỉ ₫';
     }
     else if (converted > 1000000){
       priceString = (converted / 1000000).toString();
-      return priceString + ' triệu VND';
+      return priceString + ' triệu ₫';
     }
     else if (converted > 1000){
       priceString = (converted / 1000).toString();
-      return priceString + ' nghìn VND';
+      return priceString + ' nghìn ₫';
     }
     else
     {
-      return converted.toString() + ' VND';
+      return converted.toString() + ' ₫';
     }
   }
 

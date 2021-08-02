@@ -102,8 +102,6 @@ export const SizePricePicker = (props: {
   {
     if (!props.priceMap.get(item))
     {
-      /*var index = tempSizes.indexOf(item);
-      delete tempSizes[index];*/
       tempSizes = tempSizes.filter(currItem => currItem !== item)
     }
   } 
