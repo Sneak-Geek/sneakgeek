@@ -130,10 +130,10 @@ export default class Server {
     if (process.env.NODE_ENV !== "prod") {
       await bootstrapProvider.bootstrapDevUserData();
       await bootstrapProvider.bootstrapDevInventoryAndOrder();
-    } else {
-      await bootstrapProvider.bootstrapProdUserData();
-      await bootstrapProvider.bootstrapProdInventory();
     }
+    // Bootstrap prod data so we can test parser
+    await bootstrapProvider.bootstrapProdUserData();
+    await bootstrapProvider.bootstrapProdInventory();
     await bootstrapProvider.bootstrapCatalogData();
 
     LogProvider.instance.info("Bootstrap data completed");
