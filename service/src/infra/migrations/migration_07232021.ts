@@ -18,11 +18,11 @@ export class Migration_07232021 extends BaseMigration {
       const result = await this.inventoryRepository
         .deleteMany({
           createdAt: {
-            $lt: new Date(2021, 7, 17),
+            $lt: new Date(2021, 7, 17).toISOString(),
           },
         })
         .exec();
-      LogProvider.instance.info(`Deleted result ${result}`);
+      LogProvider.instance.info(`Deleted ${result.deletedCount} entries`);
     } catch (error) {
       LogProvider.instance.error("Failed to delete old repository.");
     }
