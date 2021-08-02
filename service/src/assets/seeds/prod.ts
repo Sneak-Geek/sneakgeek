@@ -91,7 +91,7 @@ export const ProdAdminProfile = {
 
 export const THCCredential = {
   email: "dehype.duco@gmail.com",
-  password: "dehype123"
+  password: "dehype123",
 };
 
 export const THCAccount = {

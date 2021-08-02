@@ -130,7 +130,7 @@ export default class Server {
     if (process.env.NODE_ENV !== "prod") {
       await bootstrapProvider.bootstrapDevUserData();
       await bootstrapProvider.bootstrapDevInventoryAndOrder();
-    } 
+    }
     // Bootstrap prod data so we can test parser
     await bootstrapProvider.bootstrapProdUserData();
     await bootstrapProvider.bootstrapProdInventory();

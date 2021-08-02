@@ -78,7 +78,12 @@ export class BootstrapProvider implements IBootstrapProvider {
     "seeds",
     "inventories-07152021.csv"
   );
-  private readonly thcSeeds: string = path.join(process.cwd(), "resources", "seeds", "THC_08012021.csv");
+  private readonly thcSeeds: string = path.join(
+    process.cwd(),
+    "resources",
+    "seeds",
+    "THC_08012021.csv"
+  );
   private readonly shops: Map<string, string> = new Map<string, string>();
 
   public async bootstrapDevUserData(): Promise<any> {
@@ -412,7 +417,9 @@ export class BootstrapProvider implements IBootstrapProvider {
 
   private async _getTHCProdInventory(): Promise<Array<Partial<Inventory>>> {
     const inventories: Array<Partial<Inventory>> = [];
-    const thc = await this.accountRepository.findOne({ accountEmailByProvider: "dehype.duco@gmail.com" });
+    const thc = await this.accountRepository.findOne({
+      accountEmailByProvider: "dehype.duco@gmail.com",
+    });
 
     return new Promise((resolve, reject) => {
       fs.createReadStream(this.thcSeeds)
@@ -435,7 +442,7 @@ export class BootstrapProvider implements IBootstrapProvider {
             shoeSize: size,
             sellPrice: typeof price === "string" ? parseInt(price, 10) : price,
             quantity: typeof quantity === "string" ? parseInt(quantity, 10) : quantity,
-            sku,  
+            sku,
           };
           inventories.push(invt);
         })
@@ -446,6 +453,6 @@ export class BootstrapProvider implements IBootstrapProvider {
         .on("end", () => {
           resolve(inventories);
         });
-    })
+    });
   }
 }
