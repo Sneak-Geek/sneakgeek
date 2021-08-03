@@ -17,6 +17,8 @@
 		415273B37D6245B19EC32C41 /* RobotoCondensed-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 73B8135B1F4D4A4290048004 /* RobotoCondensed-Light.ttf */; };
 		46C8FCDBD4CEF8A7BEFB8DF6 /* libPods-app.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DBC5E9EF9334E66D50AA917 /* libPods-app.a */; };
 		584065CB26A7DC2500521ED1 /* AppCenter-Config.plist in Resources */ = {isa = PBXBuildFile; fileRef = 584065CA26A7DC2500521ED1 /* AppCenter-Config.plist */; };
+		588BA02226B8C4B9005DD7DC /* GoogleService-Info-Staging.plist in Resources */ = {isa = PBXBuildFile; fileRef = 588BA02126B8C4B9005DD7DC /* GoogleService-Info-Staging.plist */; };
+		588BA02426B8C4C3005DD7DC /* GoogleService-Info-Prod.plist in Resources */ = {isa = PBXBuildFile; fileRef = 588BA02326B8C4C3005DD7DC /* GoogleService-Info-Prod.plist */; };
 		5D9D0FDC34454E39AA238932 /* RobotoCondensed-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2DB6BF0CE6214526AA91D33A /* RobotoCondensed-Bold.ttf */; };
 		7D45047EC18D48499DC1FF30 /* RobotoCondensed-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 42F2227BB55845FBB7594318 /* RobotoCondensed-Regular.ttf */; };
 		A398036BDC304B0DA4ED5162 /* RobotoCondensed-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A21EADE202914F05AFE24B69 /* RobotoCondensed-Italic.ttf */; };
@@ -47,6 +49,8 @@
 		463FFC1A7A814ADF8282A271 /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
 		584065CA26A7DC2500521ED1 /* AppCenter-Config.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "AppCenter-Config.plist"; sourceTree = "<group>"; };
 		585FA09B26A7EB500095E7FD /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
+		588BA02126B8C4B9005DD7DC /* GoogleService-Info-Staging.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Staging.plist"; sourceTree = "<group>"; };
+		588BA02326B8C4C3005DD7DC /* GoogleService-Info-Prod.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Prod.plist"; sourceTree = "<group>"; };
 		6444D3C914E682932CB96E2B /* Pods-app.staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-app.staging.xcconfig"; path = "Target Support Files/Pods-app/Pods-app.staging.xcconfig"; sourceTree = "<group>"; };
 		6771E5BF766F475E850337B2 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
 		715FFBA259934DC4BC5E9B40 /* RobotoCondensed-LightItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "RobotoCondensed-LightItalic.ttf"; path = "../assets/fonts/RobotoCondensed-LightItalic.ttf"; sourceTree = "<group>"; };
@@ -127,6 +131,15 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		588BA02526B8C4D1005DD7DC /* GoogleService */ = {
+			isa = PBXGroup;
+			children = (
+				588BA02326B8C4C3005DD7DC /* GoogleService-Info-Prod.plist */,
+				588BA02126B8C4B9005DD7DC /* GoogleService-Info-Staging.plist */,
+			);
+			path = GoogleService;
+			sourceTree = "<group>";
+		};
 		7FA7594F5CF3426CB0F62CA0 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -169,6 +182,7 @@
 				585FA09B26A7EB500095E7FD /* Config.xcconfig */,
 				584065CA26A7DC2500521ED1 /* AppCenter-Config.plist */,
 				13B07FAE1A68108700A75B9A /* app */,
+				588BA02526B8C4D1005DD7DC /* GoogleService */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* appTests */,
 				83CBBA001A601CBA00E9B192 /* Products */,
@@ -273,6 +287,8 @@
 				1C7AD14D4DBD436AA6B16B2D /* RobotoCondensed-BoldItalic.ttf in Resources */,
 				A398036BDC304B0DA4ED5162 /* RobotoCondensed-Italic.ttf in Resources */,
 				415273B37D6245B19EC32C41 /* RobotoCondensed-Light.ttf in Resources */,
+				588BA02426B8C4C3005DD7DC /* GoogleService-Info-Prod.plist in Resources */,
+				588BA02226B8C4B9005DD7DC /* GoogleService-Info-Staging.plist in Resources */,
 				045054A9CB8144779D3FB5A1 /* RobotoCondensed-LightItalic.ttf in Resources */,
 				7D45047EC18D48499DC1FF30 /* RobotoCondensed-Regular.ttf in Resources */,
 			);

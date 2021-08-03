@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>975044705060-us52b2q5j3rmf5u63jjik6lfc6r54drp.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.975044705060-us52b2q5j3rmf5u63jjik6lfc6r54drp</string>
+	<key>API_KEY</key>
+	<string>AIzaSyByLPZLW7EGMOQxZlnQQZgpQTRg0DAcMY0</string>
+	<key>GCM_SENDER_ID</key>
+	<string>975044705060</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>app.sneakgeek.mobile.prod</string>
+	<key>PROJECT_ID</key>
+	<string>sneakgeek-prod</string>
+	<key>STORAGE_BUCKET</key>
+	<string>sneakgeek-prod.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:975044705060:ios:2d293dc3e32a15fc1fd1b1</string>
+</dict>
+</plist>
