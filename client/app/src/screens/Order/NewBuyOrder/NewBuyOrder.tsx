@@ -228,7 +228,7 @@ export class NewBuyOrder extends React.Component<Props, State> {
       <FlatList
         ref={(ref) => (this._childFlatList = ref)}
         bounces={false}
-        style={{flex: 1, marginTop: 10, height: '100%'}}
+        style={{flex: 1, marginTop: 0, height: '100%'}}
         horizontal={true}
         pagingEnabled={true}
         data={this._childComponents}

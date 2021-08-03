@@ -8,22 +8,32 @@ import {
 } from 'react-native';
 import {AppText} from './Text';
 import {themes} from 'resources';
-import {toCurrencyString} from 'utilities';
+import {toCurrencyString, toMoneyString} from 'utilities';
 
 const styles = StyleSheet.create({
   row: {
-    flex: 1,
+    flex: 4,
     justifyContent: 'space-between',
   },
   priceBoxContainer: {
     flex: 1,
-    aspectRatio: 1,
-    padding: 8,
+    paddingTop: 16,
+    paddingRight: 10,
+  },
+  emptypriceBox: {
+    flex: 1,
+    borderRadius: 4,
+    borderWidth: 0,
+    height: 56,
+    borderColor: themes.AppSecondaryColor,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   priceBox: {
     flex: 1,
-    // aspectRatio: 1,
+    borderRadius: 4,
     borderWidth: 1,
+    height: 56,
     borderColor: themes.AppSecondaryColor,
     alignItems: 'center',
     justifyContent: 'center',
@@ -43,25 +53,42 @@ const PriceBox = (props: {
   const selected = props.size === props.selected;
   const color = selected ? themes.AppAccentColor : themes.AppSecondaryColor;
 
-  return (
-    <View style={styles.priceBoxContainer}>
-      <TouchableOpacity
-        style={[
-          styles.priceBox,
-          selected ? {backgroundColor: themes.AppSecondaryColor} : {},
-        ]}
-        onPress={(): void => props.onSelect(props.size)}>
-        <View style={[styles.priceTextContainer]}>
-          <AppText.SubCallout style={{marginBottom: 5, color}}>
-            {props.price ? toCurrencyString(props.price, 2) : '-'}
-          </AppText.SubCallout>
-          <AppText.SubCallout style={{color, opacity: selected ? 0.8 : 0.5}}>
-            Cỡ: {props.size}
-          </AppText.SubCallout>
+  if (props.price){
+    return (
+      <View style={styles.priceBoxContainer}>
+        <TouchableOpacity
+          style={[
+            styles.priceBox,
+            selected ? {backgroundColor: themes.AppSecondaryColor} : {},
+          ]}
+          onPress={(): void => props.onSelect(props.size)}>
+          <View style={[styles.priceTextContainer]}>
+            <AppText.SubCallout style={{color, opacity: selected ? 0.9 : 1}}>
+              Cỡ: {props.size}
+            </AppText.SubCallout>
+            <AppText.SubCallout style={{marginBottom: 5, color: themes.AppPricePickColor, fontWeight: 'bold'}}>
+              {props.price ? toMoneyString(props.price, 2) : '-'}
+            </AppText.SubCallout>
+          </View>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+  else {
+    return <View style={styles.priceBoxContainer}>
+      <View
+          style={[
+            styles.emptypriceBox,
+          ]}>
+          <View style={[styles.priceTextContainer]}>
+            <AppText.SubCallout style={{color, opacity: selected ? 0.9 : 1}}>
+            </AppText.SubCallout>
+            <AppText.SubCallout style={{marginBottom: 5, color: themes.AppPricePickColor, fontWeight: 'bold'}}>
+            </AppText.SubCallout>
+          </View>
         </View>
-      </TouchableOpacity>
-    </View>
-  );
+  </View>;
+  }
 };
 
 export const SizePricePicker = (props: {
@@ -70,15 +97,37 @@ export const SizePricePicker = (props: {
   onSizeSelected: (size: string) => void;
 }): JSX.Element => {
   const [selectedSize, setSelectedSize] = useState('');
+  var tempSizes = Array.from(props.sizes);
+  for (let item of tempSizes)
+  {
+    if (!props.priceMap.get(item))
+    {
+      tempSizes = tempSizes.filter(currItem => currItem !== item)
+    }
+  } 
+  if (tempSizes.length % 3 === 2)
+  {
+    tempSizes.push('50');
+  }
+  else if (tempSizes.length % 3 === 1)
+  {
+    tempSizes.push('50');
+    tempSizes.push('50');
+  }
+
 
   return (
     <FlatList
       style={{
-        marginTop: 24,
+        flex: 1,
+        marginTop: 0,
+        paddingTop: 8,
+        paddingLeft: 20,
+        paddingRight: 10,
         width: Dimensions.get('window').width,
         height: Dimensions.get('window').height,
       }}
-      data={props.sizes}
+      data={tempSizes}
       keyExtractor={(itm): string => itm}
       renderItem={({item}): JSX.Element => (
         <PriceBox
@@ -91,7 +140,7 @@ export const SizePricePicker = (props: {
           }}
         />
       )}
-      numColumns={4}
+      numColumns={3}
       columnWrapperStyle={styles.row}
     />
   );

@@ -12,6 +12,7 @@ export const themes = {
   DisabledColor: '#DADADA',
   AppPrimaryColor: '#E2603F',
   AppSecondaryColor: '#000',
+  AppPricePickColor: '#1ABC9C',
   HotOrange: '#FF9500',
   GreenSuccess: '#1ABC9C',
   LightGreenBlue: '#1ABC9C',
