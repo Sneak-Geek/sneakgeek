@@ -18,7 +18,7 @@ export class Migration_07232021 extends BaseMigration {
       const result = await this.inventoryRepository
         .deleteMany({
           createdAt: {
-            $lt: new Date(2021, 7, 17).toISOString(),
+            $lt: new Date(2021, 6, 17).toISOString(),
           },
         })
         .exec();
