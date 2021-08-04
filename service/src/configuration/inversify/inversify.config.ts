@@ -111,6 +111,8 @@ import {
   Migration_07272021,
 } from "../../infra/migrations";
 import { MigrationProvider } from "../../infra/providers/MigrationProvider/MigrationProvider";
+import { IFirebaseAuthService } from "../../infra/services/FirebaseAuthService/IFirebaseAuthService";
+import { FirebaseAuthService } from "../../infra/services/FirebaseAuthService/FirebaseAuthService";
 
 // Creating new container
 const container = new Container();
@@ -123,6 +125,7 @@ container
   .bind<IAppleAuthService>(Types.AppleAuthService)
   .to(AppleAuthService)
   .inSingletonScope();
+container.bind<IFirebaseAuthService>(Types.FirebaseAuthService).to(FirebaseAuthService);
 
 // Middlewares
 container.bind(Types.AzCdnMulterMiddlware).to(AzCdnMulterMiddlware);

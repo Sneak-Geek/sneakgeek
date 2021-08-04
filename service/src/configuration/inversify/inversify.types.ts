@@ -31,6 +31,7 @@ export const Types = {
   NotificationService: Symbol("NotificationService"),
   AppleAuthService: Symbol("AppleAuthService"),
   SearchService: Symbol("SearchService"),
+  FirebaseAuthService: Symbol("FirebaseAuthService"),
 
   // Provider
   BootstrapProvider: Symbol("BootstrapProvider"),
