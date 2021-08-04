@@ -1,13 +1,12 @@
 import { injectable } from "inversify";
 import { EnvironmentProvider, LogProvider } from "../../providers";
 import { IFirebaseAuthService } from "./IFirebaseAuthService";
-import * as firebase from "firebase-admin"; 
+import * as firebase from "firebase-admin";
 
 const serviceAccount = require(EnvironmentProvider.env.GoogleApplicationCredentials);
 
 @injectable()
 export class FirebaseAuthService implements IFirebaseAuthService {
-
   constructor() {
     firebase.initializeApp({
       credential: firebase.credential.cert(serviceAccount),
