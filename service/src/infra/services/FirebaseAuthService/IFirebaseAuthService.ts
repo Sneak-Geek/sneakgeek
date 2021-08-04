@@ -1,3 +1,5 @@
+import * as firebase from "firebase-admin"; 
+
 export interface IFirebaseAuthService {
-  getUserByUUID(uuid: string): any;
+  getUserByUUID(uuid: string): Promise<firebase.auth.UserRecord>;
 }

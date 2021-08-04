@@ -1,27 +1,25 @@
 import { injectable } from "inversify";
-import { EnvironmentProvider } from "../../providers";
+import { EnvironmentProvider, LogProvider } from "../../providers";
 import { IFirebaseAuthService } from "./IFirebaseAuthService";
+import * as firebase from "firebase-admin"; 
+
+const serviceAccount = require(EnvironmentProvider.env.GoogleApplicationCredentials);
 
 @injectable()
 export class FirebaseAuthService implements IFirebaseAuthService {
-  private admin;
-  private serviceAccount;
 
   constructor() {
-    console.log("HI");
-    this.admin = require("firebase-admin");
-    this.serviceAccount = require(EnvironmentProvider.env.GoogleApplicationCredentials);
-    this.admin.initializeApp({
-      credential: this.admin.credential.cert(this.serviceAccount),
+    firebase.initializeApp({
+      credential: firebase.credential.cert(serviceAccount),
     });
   }
 
-  public async getUserByUUID(uuid: string): Promise<any> {
-    let user;
+  public async getUserByUUID(uuid: string): Promise<firebase.auth.UserRecord> {
+    let user: firebase.auth.UserRecord;
     try {
-      user = await this.admin.auth().getUser(uuid);
+      user = await firebase.auth().getUser(uuid);
     } catch (error) {
-      console.log(error);
+      LogProvider.instance.error(error);
     }
     return user;
   }

@@ -21,7 +21,8 @@
     "emitDecoratorMetadata": true,
     "noUnusedLocals": false,
     "moduleResolution": "node",
-    "downlevelIteration": true
+    "downlevelIteration": true,
+    "resolveJsonModuletrue": true
   },
   "exclude": ["data", "test"],
   "include": ["src", "index.ts"]
