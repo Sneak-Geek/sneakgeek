@@ -1,3 +1,3 @@
 export interface IFirebaseAuthService {
-    getUserByUUID(uuid: string): any;
+  getUserByUUID(uuid: string): any;
 }
