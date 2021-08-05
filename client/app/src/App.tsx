@@ -4,7 +4,6 @@ import {
   ObjectFactory as Factory,
   FactoryKeys as Keys,
   IFacebookSDK,
-  IGoogleSDK,
   IEnvVar,
   ISettingsProvider,
   IAccountService,
@@ -24,14 +23,13 @@ import {
   InventoryService,
 } from 'business';
 import { Provider } from 'react-redux';
-import { SettingsProvider, FacebookSdk, KeyExtensions, GoogleSdk } from 'common';
+import { SettingsProvider, FacebookSdk, KeyExtensions} from 'common';
 import { AppStore } from 'store/AppStore';
 import { InAppNotification } from 'screens/InAppNotification';
 import { AppLoadingIndicator } from 'screens/AppLoadingIndicator';
 import { IDeviceInfoProvider, DeviceInfoProvider } from 'providers';
 import { AppleAuthSdk } from 'common/AppleAuthSdk';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import ErrorBoundary from 'ErrorBoundary';
 import { Platform, StatusBar } from 'react-native';
 import { themes } from 'resources';
 import Config from 'react-native-config';
@@ -51,7 +49,6 @@ export default function App(): JSX.Element {
       apiEndpoint: Config.API_ENDPOINT,
     });
     Factory.register<IFacebookSDK>(Keys.IFacebookSDK, new FacebookSdk());
-    Factory.register<IGoogleSDK>(Keys.IGoogleSDK, new GoogleSdk());
     Factory.register<IAppleAuthSdk>(Keys.IAppleAuthSdk, new AppleAuthSdk());
     Factory.register<IAccountService>(
       Keys.IAccountService,

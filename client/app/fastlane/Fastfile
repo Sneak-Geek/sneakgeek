@@ -17,22 +17,21 @@ platform :ios do
 		  build_number: ENV["IOS_BUILD_NUMBER"]
 	  )
 	end
-         
+
 	lane :archive_staging do
-    # Install pods
-	  cocoapods(
-      use_bundle_exec: false,
-	    clean_install: true,
-	    podfile: "./ios/Podfile"
-	  )
-    # Setup app_store_connect_api_key
-    app_store_connect_api_key(
-      key_id: ENV["APPSTORE_CONNECT_KEY_ID"],
-      issuer_id: ENV["APPSTORE_CONNECT_ISSUER_ID"],
-      key_filepath: "./fastlane/AuthKey_T3JM22TFR3.p8",
-      in_house: false
-    )
-    setup_ci()
+	  # cocoapods(
+    #   use_bundle_exec: false,
+	  #   clean_install: true,
+	  #   podfile: "./ios/Podfile"
+	  # )
+    # # Setup app_store_connect_api_key
+    # app_store_connect_api_key(
+    #   key_id: ENV["APPSTORE_CONNECT_KEY_ID"],
+    #   issuer_id: ENV["APPSTORE_CONNECT_ISSUER_ID"],
+    #   key_filepath: "./fastlane/AuthKey_T3JM22TFR3.p8",
+    #   in_house: false
+    # )
+    # setup_ci()
 	  # Setup provisioning profiles and certificates
 	  match(
 	    type: "adhoc", 
@@ -64,6 +63,7 @@ platform :ios do
         uploadBitcode: false,
         uploadSymbols: true,
         compileBitcode: false,
+        exportFormat: ENV["EXPORT_FORMAT"], 
       }
     )
     update_code_signing_settings(

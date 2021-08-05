@@ -130,7 +130,6 @@ export class LoginScreen extends React.Component<Props> {
               </TouchableOpacity>
               <View style={styles.buttonContainer}>
                 {FeatureFlags.enableFacebook && this._renderFacebookLogin()}
-                {FeatureFlags.enabledGoogle && this._renderGoogleLogin()}
                 {Platform.OS === 'ios' && this._renderAppleLogin()}
                 {this._renderEmailSignUp()}
                 {this._renderEmailLogin()}
