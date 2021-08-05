@@ -118,4 +118,12 @@ export class ProfileDao implements IProfileDao {
       )
       .exec();
   }
+
+  public async findByFirebaseAccountId(uid: string): Promise<UserProfile | undefined> {
+    return this.profileRepo.findOne({firebaseAccountId: uid}).exec();
+  }
+
+  public async createUserWithFirebaseAccountId(uid: string): Promise<UserProfile | undefined> {
+    return this.profileRepo.create({firebaseAccountId: uid});
+  }
 }

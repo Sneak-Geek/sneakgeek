@@ -23,6 +23,10 @@ export const UserProvidedBankAccount = new mongoose.Schema({
 
 export const UserProfileSchema = new mongoose.Schema(
   {
+    firebaseAccountId: {
+      type: mongoose.Schema.Types.ObjectId,
+      unique: true
+    },
     accountId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "UserAccount",
@@ -48,6 +52,7 @@ export const UserProfileSchema = new mongoose.Schema(
 );
 
 export type UserProfile = Document<{
+  firebaseAccountId: mongoose.Types.ObjectId;
   accountId: mongoose.Types.ObjectId;
   userProvidedName: UserName;
   userProvidedAddress: UserAddress;

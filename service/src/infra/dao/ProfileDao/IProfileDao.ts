@@ -42,4 +42,6 @@ export interface IProfileDao {
     profileId: string,
     update: ProfileUpdateInput
   ): Promise<UserProfile | undefined>;
+  findByFirebaseAccountId(uid: string): Promise<UserProfile | undefined>;
+  createUserWithFirebaseAccountId(uid: string): Promise<UserProfile | undefined>;
 }

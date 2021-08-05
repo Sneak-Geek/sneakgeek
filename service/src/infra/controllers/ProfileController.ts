@@ -16,10 +16,12 @@ import {
 } from "inversify-express-utils";
 import { UserAccount } from "../database";
 import { Types } from "../../configuration/inversify/inversify.types";
-import { AuthMiddleware, ValidationPassedMiddleware } from "../middlewares";
+import { AuthMiddleware, FirebaseAuthMiddleware, ValidationPassedMiddleware } from "../middlewares";
 import mongoose from "mongoose";
 import { IProfileDao, IAccountDao } from "../dao";
 import { INotificationService } from "../services";
+import { IFirebaseAuthService } from "../services/FirebaseAuthService";
+import { Http } from "winston/lib/winston/transports";
 
 @controller("/api/v1/profile")
 export class ProfileController {
@@ -31,6 +33,9 @@ export class ProfileController {
 
   @inject(Types.NotificationService)
   private readonly notificationService!: INotificationService;
+
+  @inject(Types.FirebaseAuthService)
+  private readonly firebaseService!: IFirebaseAuthService;
 
   @httpGet("/", AuthMiddleware)
   public async getProfile(
@@ -81,6 +86,31 @@ export class ProfileController {
       });
     } else {
       return res.status(HttpStatus.OK).send({ profile });
+    }
+  }
+
+  @httpGet(
+    "/auth/continue",
+    FirebaseAuthMiddleware
+  )
+  public async continue(@request() req: express.Request, @response() res: express.Response) {
+    const {user} = req;
+    return res.status(HttpStatus.OK).send({profile: user});
+  }
+
+  @httpPost(
+    "/auth/signup",
+    body("token").isString(),
+    ValidationPassedMiddleware
+  )
+  public async signup(@request() req: express.Request, @response() res: express.Response) {
+    const {token} = req.body;
+    try {
+      const {uid} = await this.firebaseService.verifyIdToken(token);
+      const profile = await this.profileDao.createUserWithFirebaseAccountId(uid);
+      return res.status(HttpStatus.OK).send({profile});
+    } catch (error) {
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({message: error});
     }
   }
 }

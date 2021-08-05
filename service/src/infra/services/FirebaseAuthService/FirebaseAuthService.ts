@@ -21,4 +21,8 @@ export class FirebaseAuthService implements IFirebaseAuthService {
     }
     return user;
   }
+
+  public verifyIdToken(idToken: string): Promise<firebase.auth.DecodedIdToken> {
+    return firebase.auth().verifyIdToken(idToken);
+  }
 }
