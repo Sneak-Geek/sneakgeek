@@ -5,6 +5,7 @@ import {IAppState} from 'store/AppStore';
 import {Account, getCurrentUser, NetworkRequestState} from 'business';
 import RouteNames from 'navigations/RouteNames';
 import RNSplashScreen from 'react-native-splash-screen';
+import {View} from 'react-native';
 
 type Props = {
   navigation: StackNavigationProp<any>;
@@ -45,6 +46,6 @@ export class SplashScreen extends React.Component<Props> {
   }
 
   public render(): JSX.Element {
-    return <></>;
+    return <View testID={'splash'}/>;
   }
 }

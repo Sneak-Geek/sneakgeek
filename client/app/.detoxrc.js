@@ -1,12 +1,19 @@
-{
+module.exports = {
   "testRunner": "jest",
   "runnerConfig": "e2e/config.json",
   "skipLegacyWorkersInjection": true,
   "apps": {
     "ios": {
       "type": "ios.app",
-      "build": "fastlane ios archive_staging",
-      "binaryPath": "ios/build/staging/SneakGeek.app"
+      "build": "export RCT_NO_LAUNCH_PACKAGER=true &&\
+        xcodebuild\
+        -workspace ios/app.xcworkspace\
+        -scheme app-staging\
+        -sdk iphonesimulator\
+        -configuration Release\
+        -derivedDataPath ios/build\
+      ",
+      "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/SneakGeek.app"
     }
   },
   "devices": {

@@ -173,7 +173,7 @@ export class HomeTabMain extends React.Component<Props, State> {
 
   public render(): JSX.Element {
     return (
-      <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
+      <SafeAreaView style={{flex: 1, backgroundColor: 'white'}} testID={'home'}>
         <StatusBar barStyle={'dark-content'} />
         <ScrollView
           showsVerticalScrollIndicator={false}

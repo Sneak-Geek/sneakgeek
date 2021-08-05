@@ -7,8 +7,6 @@ import { Types } from "./inversify.types";
 import {
   IEmailService,
   EmailService,
-  ICdnService,
-  AzBlobCdnService,
   IJwtService,
   JwtService,
   IShippingService,
@@ -80,7 +78,7 @@ import {
   IBalanceHistoryDao,
   BalanceHistoryDao,
 } from "../../infra/dao";
-import { AzCdnMulterMiddlware, IsSellerMiddleware } from "../../infra/middlewares";
+import { IsSellerMiddleware } from "../../infra/middlewares";
 import {
   INotificationChangeStreamExecutor,
   NotificationChangeStreamExecutor,
@@ -90,7 +88,6 @@ import {
 import "../../infra/controllers/AccountController";
 import "../../infra/controllers/ProfileController";
 import "../../infra/controllers/ShoeController";
-import "../../infra/controllers/ArticleController";
 import "../../infra/controllers/SettingsController";
 import "../../infra/controllers/ProductRequestController";
 import "../../infra/controllers/SupportTicketController";
@@ -98,7 +95,6 @@ import "../../infra/controllers/ReviewController";
 import "../../infra/controllers/CatalogueController";
 import "../../infra/controllers/OrderController";
 import "../../infra/controllers/TransactionController";
-import "../../infra/controllers/ImageController";
 import "../../infra/controllers/NotificationController";
 import "../../infra/controllers/BalanceHistoryController";
 import "../../infra/controllers/InventoryController";
@@ -119,7 +115,6 @@ const container = new Container();
 
 // Service
 container.bind<IEmailService>(Types.EmailService).to(EmailService);
-container.bind<ICdnService>(Types.CdnService).to(AzBlobCdnService);
 container.bind<IJwtService>(Types.JwtService).to(JwtService);
 container
   .bind<IAppleAuthService>(Types.AppleAuthService)
@@ -128,7 +123,6 @@ container
 container.bind<IFirebaseAuthService>(Types.FirebaseAuthService).to(FirebaseAuthService);
 
 // Middlewares
-container.bind(Types.AzCdnMulterMiddlware).to(AzCdnMulterMiddlware);
 container.bind(Types.IsSellerMiddleware).to(IsSellerMiddleware);
 
 container

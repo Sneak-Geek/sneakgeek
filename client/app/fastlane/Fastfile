@@ -63,7 +63,6 @@ platform :ios do
         uploadBitcode: false,
         uploadSymbols: true,
         compileBitcode: false,
-        exportFormat: ENV["EXPORT_FORMAT"], 
       }
     )
     update_code_signing_settings(
