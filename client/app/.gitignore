@@ -67,3 +67,6 @@ fastlane/screenshots
 
 # react-native-config codegen
 ios/tmp.xcconfig
+
+# react-native codegen for googleservice-info.plist
+ios/app/GoogleService-Info.plist
