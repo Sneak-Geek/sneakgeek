@@ -25,7 +25,7 @@ export const UserProfileSchema = new mongoose.Schema(
   {
     firebaseAccountId: {
       type: mongoose.Schema.Types.ObjectId,
-      unique: true
+      unique: true,
     },
     accountId: {
       type: mongoose.Schema.Types.ObjectId,
