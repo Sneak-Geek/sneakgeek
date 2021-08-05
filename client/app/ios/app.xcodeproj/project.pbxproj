@@ -13,9 +13,9 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		1C7AD14D4DBD436AA6B16B2D /* RobotoCondensed-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DADCA8F32A7D471F9735002E /* RobotoCondensed-BoldItalic.ttf */; };
-		2064B3442646E7BE0097F880 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2064B3432646E7BE0097F880 /* GoogleService-Info.plist */; };
 		415273B37D6245B19EC32C41 /* RobotoCondensed-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 73B8135B1F4D4A4290048004 /* RobotoCondensed-Light.ttf */; };
 		46C8FCDBD4CEF8A7BEFB8DF6 /* libPods-app.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DBC5E9EF9334E66D50AA917 /* libPods-app.a */; };
+		5829415F26BB9C0200CFB7E4 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5829415E26BB9C0200CFB7E4 /* GoogleService-Info.plist */; };
 		584065CB26A7DC2500521ED1 /* AppCenter-Config.plist in Resources */ = {isa = PBXBuildFile; fileRef = 584065CA26A7DC2500521ED1 /* AppCenter-Config.plist */; };
 		588BA02226B8C4B9005DD7DC /* GoogleService-Info-Staging.plist in Resources */ = {isa = PBXBuildFile; fileRef = 588BA02126B8C4B9005DD7DC /* GoogleService-Info-Staging.plist */; };
 		588BA02426B8C4C3005DD7DC /* GoogleService-Info-Prod.plist in Resources */ = {isa = PBXBuildFile; fileRef = 588BA02326B8C4C3005DD7DC /* GoogleService-Info-Prod.plist */; };
@@ -37,7 +37,6 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = app/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = app/main.m; sourceTree = "<group>"; };
 		19AD13EA0C9181CE9B83DAF6 /* Pods-app.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-app.release.xcconfig"; path = "Target Support Files/Pods-app/Pods-app.release.xcconfig"; sourceTree = "<group>"; };
-		2064B3432646E7BE0097F880 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		20DBBFC32454BE0300D18FED /* app.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = app.entitlements; path = app/app.entitlements; sourceTree = "<group>"; };
 		24A7A2E4E5DE74F2207D98A9 /* Pods-app-appTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-app-appTests.release.xcconfig"; path = "Target Support Files/Pods-app-appTests/Pods-app-appTests.release.xcconfig"; sourceTree = "<group>"; };
 		270C21C3AD1C413FBF169A49 /* Feather.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Feather.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Feather.ttf"; sourceTree = "<group>"; };
@@ -47,6 +46,7 @@
 		42F2227BB55845FBB7594318 /* RobotoCondensed-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "RobotoCondensed-Regular.ttf"; path = "../assets/fonts/RobotoCondensed-Regular.ttf"; sourceTree = "<group>"; };
 		444A06EDD63F5AB7F006DECA /* Pods-app-appTests.staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-app-appTests.staging.xcconfig"; path = "Target Support Files/Pods-app-appTests/Pods-app-appTests.staging.xcconfig"; sourceTree = "<group>"; };
 		463FFC1A7A814ADF8282A271 /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
+		5829415E26BB9C0200CFB7E4 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		584065CA26A7DC2500521ED1 /* AppCenter-Config.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "AppCenter-Config.plist"; sourceTree = "<group>"; };
 		585FA09B26A7EB500095E7FD /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		588BA02126B8C4B9005DD7DC /* GoogleService-Info-Staging.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Staging.plist"; sourceTree = "<group>"; };
@@ -108,7 +108,6 @@
 		13B07FAE1A68108700A75B9A /* app */ = {
 			isa = PBXGroup;
 			children = (
-				2064B3432646E7BE0097F880 /* GoogleService-Info.plist */,
 				20DBBFC32454BE0300D18FED /* app.entitlements */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
@@ -116,6 +115,7 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
 				13B07FB71A68108700A75B9A /* main.m */,
+				5829415E26BB9C0200CFB7E4 /* GoogleService-Info.plist */,
 			);
 			name = app;
 			sourceTree = "<group>";
@@ -283,9 +283,9 @@
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				584065CB26A7DC2500521ED1 /* AppCenter-Config.plist in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
-				2064B3442646E7BE0097F880 /* GoogleService-Info.plist in Resources */,
 				5D9D0FDC34454E39AA238932 /* RobotoCondensed-Bold.ttf in Resources */,
 				1C7AD14D4DBD436AA6B16B2D /* RobotoCondensed-BoldItalic.ttf in Resources */,
+				5829415F26BB9C0200CFB7E4 /* GoogleService-Info.plist in Resources */,
 				A398036BDC304B0DA4ED5162 /* RobotoCondensed-Italic.ttf in Resources */,
 				415273B37D6245B19EC32C41 /* RobotoCondensed-Light.ttf in Resources */,
 				588BA02426B8C4C3005DD7DC /* GoogleService-Info-Prod.plist in Resources */,
@@ -439,6 +439,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = VVPX9A83PB;
 				ENABLE_BITCODE = NO;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"FB_SONARKIT_ENABLED=1",
@@ -475,6 +476,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = VVPX9A83PB;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				INFOPLIST_FILE = app/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
