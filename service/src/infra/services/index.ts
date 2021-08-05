@@ -3,7 +3,6 @@
 //!
 
 export * from "./EmailService";
-export * from "./CdnService";
 export * from "./JwtService";
 export * from "./ShippingService";
 export * from "./PaymentService";

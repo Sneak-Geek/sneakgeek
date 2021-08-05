@@ -24,7 +24,6 @@ export const Types = {
 
   // Service
   EmailService: Symbol("EmailService"),
-  CdnService: Symbol("CdnService"),
   JwtService: Symbol("JwtService"),
   ShippingService: Symbol("ShippingService"),
   PaymentService: Symbol("PaymentService"),
@@ -49,7 +48,6 @@ export const Types = {
   ShoeDao: Symbol("ShoeDao"),
 
   // Middlewares
-  AzCdnMulterMiddlware: Symbol("AzCdnMulterMiddleware"),
   IsSellerMiddleware: Symbol("IsSellerMiddleware"),
 
   // Executor
