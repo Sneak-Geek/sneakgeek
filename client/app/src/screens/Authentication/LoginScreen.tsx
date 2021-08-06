@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
 export class LoginScreen extends React.Component<Props> {
   public render(): JSX.Element {
     return (
-      <ImageBackground source={images.Home} style={{flex: 1}}>
+      <ImageBackground source={images.Home} style={{flex: 1}} testID={'login'}>
         <SafeAreaView style={{flex: 1}}>
           <StatusBar barStyle={'light-content'} />
           {!this.props.accountState.account && (

@@ -8,6 +8,5 @@ export * from "./UserAccessLevelMiddleware";
 export * from "./ValidationPassedMiddleware";
 export * from "./AdminPermissionMiddleware";
 export * from "./AuthenticatorPermissionMiddleware";
-export * from "./AzCdnMulterMiddleware";
 export * from "./IsSellerMiddleware";
 export * from "./FirebaseAuthMiddleware";
