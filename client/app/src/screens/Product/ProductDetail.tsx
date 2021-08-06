@@ -192,6 +192,7 @@ export class ProductDetail extends React.Component<Props, State> {
       <SafeAreaConsumer>
         {(insets): JSX.Element => (
           <View
+            testID={'ProductDetail'}
             style={{
               ...styles.rootContainer,
             }}>
@@ -229,7 +230,7 @@ export class ProductDetail extends React.Component<Props, State> {
 
   private _renderProductTitle(): JSX.Element {
     return (
-      <AppText.Title2 style={styles.shoeTitle} numberOfLines={3}>
+      <AppText.Title2 style={styles.shoeTitle} numberOfLines={3} testID={'ProductTitle'}>
         {this._shoe.title}
       </AppText.Title2>
     );
@@ -241,7 +242,7 @@ export class ProductDetail extends React.Component<Props, State> {
     }
 
     return (
-      <AppText.Body style={styles.shoeDescription}>
+      <AppText.Body style={styles.shoeDescription} testID={'ProductDescription'}>
         {this._shoe.description}
       </AppText.Body>
     );
@@ -383,7 +384,8 @@ export class ProductDetail extends React.Component<Props, State> {
     return (
       <TouchableOpacity
         onPress={onPress}
-        disabled={!profile?.isSeller && this.state.lowestPrice === 0}>
+        disabled={!profile?.isSeller && this.state.lowestPrice === 0}
+        testID={'ProductActionButton'}>
         <View
           style={{
             backgroundColor,

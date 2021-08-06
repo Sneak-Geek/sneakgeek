@@ -1,5 +1,5 @@
 import React from 'react';
-import {AppText} from 'screens/Shared';
+import { AppText } from 'screens/Shared';
 import {
   StatusBar,
   SafeAreaView,
@@ -12,7 +12,7 @@ import {
   TouchableWithoutFeedback,
   RefreshControl,
 } from 'react-native';
-import {connect, getDependency, toCurrencyString} from 'utilities';
+import { connect, getDependency, toCurrencyString } from 'utilities';
 import {
   getHomeCatalogs,
   Shoe,
@@ -22,17 +22,17 @@ import {
   TrendingOrder,
   IOrderService,
 } from 'business';
-import {toggleIndicator} from 'actions';
-import {strings, themes} from 'resources';
-import {StackNavigationProp} from '@react-navigation/stack';
-import {RootStackParams} from 'navigations/RootStack';
+import { toggleIndicator } from 'actions';
+import { strings, themes } from 'resources';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParams } from 'navigations/RootStack';
 import RouteNames from 'navigations/RouteNames';
-import {TouchableOpacity} from 'react-native-gesture-handler';
-import {Avatar} from 'react-native-elements';
-import {IAppState} from 'store/AppStore';
-import {Catalog} from 'business/src';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { Avatar } from 'react-native-elements';
+import { IAppState } from 'store/AppStore';
+import { Catalog } from 'business/src';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   rootContainer: {
@@ -144,7 +144,7 @@ type State = {
   }),
   (dispatch: Function) => ({
     toggleLoadingIndicator: (isLoading: boolean, message: string): void => {
-      dispatch(toggleIndicator({isLoading, message}));
+      dispatch(toggleIndicator({ isLoading, message }));
     },
     getHomepageCatalogs: (): void => {
       dispatch(getHomeCatalogs());
@@ -173,11 +173,11 @@ export class HomeTabMain extends React.Component<Props, State> {
 
   public render(): JSX.Element {
     return (
-      <SafeAreaView style={{flex: 1, backgroundColor: 'white'}} testID={'home'}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }} testID={'home'}>
         <StatusBar barStyle={'dark-content'} />
         <ScrollView
           showsVerticalScrollIndicator={false}
-          style={{flex: 1, backgroundColor: themes.AppBackgroundColor}}
+          style={{ flex: 1, backgroundColor: themes.AppBackgroundColor }}
           refreshControl={
             <RefreshControl
               refreshing={this.state.isGettingData}
@@ -194,7 +194,7 @@ export class HomeTabMain extends React.Component<Props, State> {
   }
 
   private _getData() {
-    this.setState({isGettingData: true});
+    this.setState({ isGettingData: true });
     const inventoryService: IInventoryService = getDependency(
       FactoryKeys.IInventoryService,
     );
@@ -215,9 +215,9 @@ export class HomeTabMain extends React.Component<Props, State> {
   }
 
   private _renderTopTrending(): JSX.Element {
-    const {topTrending} = this.props;
+    const { topTrending } = this.props;
     return (
-      <View style={{display: 'flex', width}}>
+      <View style={{ display: 'flex', width }}>
         <AppText.Title2 style={styles.sectionTitle}>
           {strings.TopTrending}
         </AppText.Title2>
@@ -250,12 +250,12 @@ export class HomeTabMain extends React.Component<Props, State> {
                     }}
                   />
                   <Image
-                    source={{uri: shoe.media.imageUrl}}
-                    style={{width: 90, aspectRatio: 1, marginHorizontal: 20}}
+                    source={{ uri: shoe.media.imageUrl }}
+                    style={{ width: 90, aspectRatio: 1, marginHorizontal: 20 }}
                     resizeMode={'contain'}
                   />
                   <AppText.Subhead
-                    style={{flex: 1, flexWrap: 'wrap'}}
+                    style={{ flex: 1, flexWrap: 'wrap' }}
                     numberOfLines={2}>
                     {shoe.title}
                   </AppText.Subhead>
@@ -270,12 +270,12 @@ export class HomeTabMain extends React.Component<Props, State> {
 
   private _renderCurrentSelling(): JSX.Element {
     return (
-      <View style={{marginVertical: 20}}>
+      <View style={{ marginVertical: 20 }}>
         <View style={styles.brandTitleContainer}>
           <AppText.Title2>{strings.Selling}</AppText.Title2>
           {this.state.selling.length >= 4 && (
             <AppText.Footnote
-              style={{textDecorationLine: 'underline'}}
+              style={{ textDecorationLine: 'underline' }}
               onPress={() => {
                 this.props.navigation.push(RouteNames.Tab.HomeTab.SeeMore, {
                   inventories: this.state.selling,
@@ -285,25 +285,27 @@ export class HomeTabMain extends React.Component<Props, State> {
             </AppText.Footnote>
           )}
         </View>
-        <FlatList
-          horizontal={true}
-          keyExtractor={(itm): string => itm.shoe._id}
-          data={this.state.selling}
-          style={{marginVertical: 20, paddingLeft: 20, marginRight: 15}}
-          showsHorizontalScrollIndicator={false}
-          renderItem={({item}): JSX.Element => (
-            <CurrentInventory
-              currentInventory={item}
-              onPress={this._navigateToProductDetail.bind(this, item.shoe)}
-            />
-          )}
-        />
+        {this.state.selling.length > 0 ?
+          <FlatList
+            testID={'InventoryList'}
+            horizontal={true}
+            keyExtractor={(itm): string => itm.shoe._id}
+            data={this.state.selling}
+            style={{ marginVertical: 20, paddingLeft: 20, marginRight: 15 }}
+            showsHorizontalScrollIndicator={false}
+            renderItem={({ item }): JSX.Element => (
+              <CurrentInventory
+                currentInventory={item}
+                onPress={this._navigateToProductDetail.bind(this, item.shoe)}
+              />
+            )}
+          /> : <></>}
       </View>
     );
   }
 
   private _navigateToProductDetail(shoe: Shoe): void {
-    this.props.navigation.navigate(RouteNames.Product.Name, {shoe});
+    this.props.navigation.navigate(RouteNames.Product.Name, { shoe });
   }
 }
 
@@ -311,18 +313,18 @@ const CurrentInventory = ({
   currentInventory,
   onPress,
 }: CurrentInventoryProps): JSX.Element => (
-  <TouchableOpacity onPress={onPress}>
+  <TouchableOpacity testID={'inventory'} onPress={onPress}>
     <View style={styles.hotShoeRegularContainer}>
       <Image
-        source={{uri: currentInventory.shoe.media.imageUrl}}
-        style={{width: 140, height: 120}}
+        source={{ uri: currentInventory.shoe.media.imageUrl }}
+        style={{ width: 140, height: 120 }}
         resizeMode={'contain'}
       />
-      <View style={{marginTop: 25, marginHorizontal: 8, marginBottom: 10}}>
+      <View style={{ marginTop: 25, marginHorizontal: 8, marginBottom: 10 }}>
         <AppText.Subhead numberOfLines={2} ellipsizeMode={'tail'}>
           {currentInventory.shoe.title}
         </AppText.Subhead>
-        <AppText.Callout style={{marginTop: 10}}>
+        <AppText.Callout style={{ marginTop: 10 }}>
           {toCurrencyString(currentInventory.sellPrice)}
         </AppText.Callout>
       </View>
