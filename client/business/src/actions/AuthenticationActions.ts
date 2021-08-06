@@ -2,12 +2,13 @@ import { createAction } from "redux-actions";
 import { AuthenticationPayload, NetworkRequestState } from "../payload";
 import { ObjectFactory, FactoryKeys } from "../loader/kernel";
 import { IAccountService, ISettingsProvider, IFacebookSDK } from "../loader";
-import { SettingsKey, IGoogleSDK, IAppleAuthSdk } from "../loader/interfaces";
+import { SettingsKey, IGoogleSDK} from "../loader/interfaces";
 import { getUserProfile } from "./ProfileActions";
 //import {Account} from '../model';
 import { Dispatch } from "redux";
-import {auth, firebase} from '@react-native-firebase/auth';
+import {firebase} from '@react-native-firebase/auth';
 import { appleAuth } from '@invertase/react-native-apple-authentication';
+//import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
 export const AuthenticationActions = {
   UPDATE_AUTHENTICATION_STATE: "UPDATE_AUTHENTICATION_STATE",
@@ -185,11 +186,11 @@ export const authenticateWithFb = () => {
       } else {
         const accessToken = await fbSdk.getCurrentAccessToken();
         // Create a Firebase credential with the AccessToken
-        const facebookCredential = auth.FacebookAuthProvider.credential(accessToken);
-        auth().signInWithCredential(facebookCredential);
+        const facebookCredential = firebase.auth.FacebookAuthProvider.credential(accessToken);
+        firebase.auth().signInWithCredential(facebookCredential);
         await settings.setValue(
           SettingsKey.CurrentAccessToken,
-          accountPayload!.token? //accessToken
+          accessToken
         );
         dispatch(getUserProfile());
         dispatch(
@@ -219,6 +220,7 @@ export const authenticateWithGoogle = () => {
       FactoryKeys.ISettingsProvider
     );
     try {
+      /*const { idToken }*/
       const signInResult = await ggSdk.signIn();
       if (signInResult && signInResult.idToken) {
         const accessToken = signInResult.idToken;
@@ -226,6 +228,8 @@ export const authenticateWithGoogle = () => {
           accessToken as string,
           "google"
         );
+        /*const googleCredential = firebase.auth.GoogleAuthProvider.credential(idToken);
+        firebase.auth().signInWithCredential(googleCredential);*/
         await settings.setValue(
           SettingsKey.CurrentAccessToken,
           accountPayload?.token
@@ -234,7 +238,7 @@ export const authenticateWithGoogle = () => {
         dispatch(
           updateAuthenticationState({
             state: NetworkRequestState.SUCCESS,
-            data: accountPayload,
+            data: accountPayload, //userAccount: Account,
           })
         );
       }
@@ -262,11 +266,11 @@ export const authenticateWithApple = () => {
     }
 
     const { identityToken, nonce } = appleAuthRequestResponse;
-    const appleCredential = auth.AppleAuthProvider.credential(identityToken, nonce);
+    const appleCredential = firebase.auth.AppleAuthProvider.credential(identityToken, nonce);
 
-    const accountService = ObjectFactory.getObjectInstance<IAccountService>(
+    /*const accountService = ObjectFactory.getObjectInstance<IAccountService>(
       FactoryKeys.IAccountService
-    );
+    );*/
     const settings = ObjectFactory.getObjectInstance<ISettingsProvider>(
       FactoryKeys.ISettingsProvider
     );
@@ -274,7 +278,7 @@ export const authenticateWithApple = () => {
     try {
       /*const payload = await appleSdk.signIn();
       const accountPayload = await accountService.login(`${payload.email}+${payload.idToken}`, "apple");*/
-      auth().signInWithCredential(appleCredential);
+      firebase.auth().signInWithCredential(appleCredential);
       await settings.setValue(
         SettingsKey.CurrentAccessToken,
         identityToken //TODO Thinh 08/05/2021: is this the token we want?
