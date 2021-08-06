@@ -1,6 +1,6 @@
 import { by, device, expect, element } from 'detox';
 
-const timeout = 3000;
+const timeout = 10000;
 
 describe('Smoke test', () => {
   beforeAll(async () => {
@@ -11,10 +11,6 @@ describe('Smoke test', () => {
     await device.reloadReactNative();
   });
 
-  it('should have home screen', async () => {
-    await expect(element(by.id('home'))).toBeVisible();
-  });
-
   it('purchase flow (without login)', async () => {
     await waitFor(element(by.id('InventoryList')))
       .toBeVisible().withTimeout(timeout);
@@ -22,7 +18,6 @@ describe('Smoke test', () => {
 
     // Product detail and product title is visible
     await expect(element(by.id('ProductTitle'))).toBeVisible();
-    await expect(element(by.id('ProductDescription'))).toBeVisible();
 
     // Purchase flow
     await expect(element(by.id('ProductActionButton'))).toBeVisible();
