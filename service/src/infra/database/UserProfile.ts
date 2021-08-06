@@ -52,7 +52,7 @@ export const UserProfileSchema = new mongoose.Schema(
 );
 
 export type UserProfile = Document<{
-  firebaseAccountId: mongoose.Types.ObjectId;
+  firebaseAccountId: string;
   accountId: mongoose.Types.ObjectId;
   userProvidedName: UserName;
   userProvidedAddress: UserAddress;

@@ -39,7 +39,7 @@ export class ProfileController {
   private readonly notificationService!: INotificationService;
 
   @inject(Types.FirebaseAuthService)
-  private readonly firebaseService!: IFirebaseAuthService;
+  private readonly firebaseAuthService!: IFirebaseAuthService;
 
   @httpGet("/", AuthMiddleware)
   public async getProfile(
@@ -102,11 +102,11 @@ export class ProfileController {
     return res.status(HttpStatus.OK).send({ profile: user });
   }
 
-  @httpPost("/auth/signup", body("token").isString(), ValidationPassedMiddleware)
+  @httpPost("/auth/firebase-signup", body("token").isString(), ValidationPassedMiddleware)
   public async signup(@request() req: express.Request, @response() res: express.Response) {
     const { token } = req.body;
     try {
-      const { uid } = await this.firebaseService.verifyIdToken(token);
+      const { uid } = await this.firebaseAuthService.verifyIdToken(token);
       const profile = await this.profileDao.createUserWithFirebaseAccountId(uid);
       return res.status(HttpStatus.OK).send({ profile });
     } catch (error) {
