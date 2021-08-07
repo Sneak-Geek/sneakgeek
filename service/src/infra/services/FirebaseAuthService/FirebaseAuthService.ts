@@ -7,9 +7,7 @@ import * as firebase from "firebase-admin";
 export class FirebaseAuthService implements IFirebaseAuthService {
   constructor() {
     const serviceAccount = require(EnvironmentProvider.env.GoogleApplicationCredentials);
-    firebase.initializeApp({
-      credential: firebase.credential.cert(serviceAccount),
-    });
+    firebase.initializeApp();
   }
 
   public async getUserByUUID(uuid: string): Promise<firebase.auth.UserRecord> {
