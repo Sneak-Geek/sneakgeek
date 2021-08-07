@@ -81,7 +81,7 @@ export default class Server {
 
   public static async initAppAsync(): Promise<express.Application> {
     if (process.env.NODE_ENV !== "prod") {
-      DebugAgent.start({ serviceContext: { enableCanary: true }});
+      DebugAgent.start({ serviceContext: { enableCanary: true } });
     }
     if (!this._appInstance || !this._httpServer) {
       LogProvider.instance.info("Initializing application");
