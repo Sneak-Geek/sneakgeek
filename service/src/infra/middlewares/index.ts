@@ -9,3 +9,4 @@ export * from "./ValidationPassedMiddleware";
 export * from "./AdminPermissionMiddleware";
 export * from "./AuthenticatorPermissionMiddleware";
 export * from "./IsSellerMiddleware";
+export * from "./FirebaseAuthMiddleware";

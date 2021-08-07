@@ -81,7 +81,6 @@ export class EnvironmentProvider {
     this._checkAndSetEnv("APPLE_BUNDLE_IDENTIFIER", "AppleBundleId", validator.isAscii);
     this._checkAndSetEnv("APPLE_TEAM_ID", "AppleTeamId", validator.isAlphanumeric);
     this._checkAndSetEnv("APPLE_KEY_IDENTIFIER", "AppleKeyId", validator.isAlphanumeric);
-    this._checkAndSetEnv("GOOGLE_APPLICATION_CREDENTIALS", "GoogleApplicationCredentials", () => true);
   }
 
   private static _checkAndSetEnv<T>(
