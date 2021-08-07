@@ -25,5 +25,6 @@ describe('Smoke test', () => {
 
     await waitFor(element(by.id('SizePriceList'))).toBeVisible().withTimeout(timeout);
     await element(by.id('SizePriceItem')).atIndex(0).tap();
+    await element(by.id('BuyButton')).tap();
   });
 });

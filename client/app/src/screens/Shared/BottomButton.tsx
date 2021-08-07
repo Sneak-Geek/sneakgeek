@@ -33,6 +33,7 @@ const styles = StyleSheet.create({
 });
 
 type Props = {
+  testID?: string;
   title: string;
   onPress: () => void;
   style?: StyleProp<ViewStyle>;
