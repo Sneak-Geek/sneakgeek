@@ -120,7 +120,10 @@ container
   .bind<IAppleAuthService>(Types.AppleAuthService)
   .to(AppleAuthService)
   .inSingletonScope();
-container.bind<IFirebaseAuthService>(Types.FirebaseAuthService).to(FirebaseAuthService);
+container
+  .bind<IFirebaseAuthService>(Types.FirebaseAuthService)
+  .to(FirebaseAuthService)
+  .inSingletonScope();
 
 // Middlewares
 container.bind(Types.IsSellerMiddleware).to(IsSellerMiddleware);
