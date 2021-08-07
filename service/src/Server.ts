@@ -18,7 +18,7 @@ import path from "path";
 import { DbClient } from "./infra/database";
 import { ISearchService } from "./infra/services";
 import { MigrationProvider } from "./infra/providers/MigrationProvider/MigrationProvider";
-import DebugAgent from "@google-cloud/debug-agent";
+import * as DebugAgent from "@google-cloud/debug-agent";
 
 export default class Server {
   private static _appInstance: express.Application;
