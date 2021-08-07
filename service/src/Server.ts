@@ -18,6 +18,7 @@ import path from "path";
 import { DbClient } from "./infra/database";
 import { ISearchService } from "./infra/services";
 import { MigrationProvider } from "./infra/providers/MigrationProvider/MigrationProvider";
+import DebugAgent from "@google-cloud/debug-agent";
 
 export default class Server {
   private static _appInstance: express.Application;
@@ -79,6 +80,9 @@ export default class Server {
   }
 
   public static async initAppAsync(): Promise<express.Application> {
+    if (process.env.NODE_ENV !== "prod") {
+      DebugAgent.start({ serviceContext: { enableCanary: true } });
+    }
     if (!this._appInstance || !this._httpServer) {
       LogProvider.instance.info("Initializing application");
       this._appInstance = await this.buildAppContainerAsync();
