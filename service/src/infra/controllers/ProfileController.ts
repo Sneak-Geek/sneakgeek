@@ -100,17 +100,13 @@ export class ProfileController {
   ) {
     const { user } = req;
     return res.status(HttpStatus.OK).send({ profile: user });
-  }
-
-  @httpPost("/auth/firebase-signup", body("token").isString(), ValidationPassedMiddleware)
-  public async signup(@request() req: express.Request, @response() res: express.Response) {
-    const { token } = req.body;
+    /*const { token } = req.body;
     try {
       const { uid } = await this.firebaseAuthService.verifyIdToken(token);
       const profile = await this.profileDao.createUserWithFirebaseAccountId(uid);
       return res.status(HttpStatus.OK).send({ profile });
     } catch (error) {
       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: error });
-    }
+    }*/
   }
 }

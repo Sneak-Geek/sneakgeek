@@ -38,7 +38,7 @@ export class AccountService extends BaseService implements IAccountService {
     accessToken: string
   ): Promise<{ account: Account } | undefined> {
     const headers = { authorization: accessToken };
-    const response = await this.apiClient.getInstance().get(`/account`, { headers });
+    const response = await this.apiClient.getInstance().get("/profile/auth/continue", { headers });
 
     if (response && response.status === HttpStatus.OK) {
       return response.data;

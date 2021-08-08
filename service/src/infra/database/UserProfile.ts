@@ -24,7 +24,7 @@ export const UserProvidedBankAccount = new mongoose.Schema({
 export const UserProfileSchema = new mongoose.Schema(
   {
     firebaseAccountId: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: String,
       unique: true,
     },
     accountId: {
