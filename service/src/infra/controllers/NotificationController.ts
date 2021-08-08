@@ -3,7 +3,7 @@ import { controller, httpGet, request, response, httpPatch } from "inversify-exp
 import { inject } from "inversify";
 import { Types } from "../../configuration/inversify";
 import { UserAccount } from "../database";
-import { AuthMiddleware, ValidationPassedMiddleware } from "../middlewares";
+import { FirebaseAuthMiddleware, ValidationPassedMiddleware } from "../middlewares";
 import { body } from "express-validator";
 import { ObjectId } from "mongodb";
 import { INotificationDao } from "../dao";
@@ -16,7 +16,7 @@ export class NotificationController {
 
   @httpPatch(
     "/read",
-    AuthMiddleware,
+    FirebaseAuthMiddleware,
     body("notifications").isString(),
     ValidationPassedMiddleware
   )
@@ -35,7 +35,7 @@ export class NotificationController {
     return res.status(HttpStatus.OK);
   }
 
-  @httpGet("/", AuthMiddleware, ValidationPassedMiddleware)
+  @httpGet("/", FirebaseAuthMiddleware, ValidationPassedMiddleware)
   public async getNotification(
     @request() req: express.Request,
     @response() res: express.Response

@@ -17,7 +17,7 @@ describe("/api/v1/account", () => {
     sinon.stub(BootstrapProvider.prototype, "bootstrapUsersData").returns(null);
     sinon.stub(BootstrapProvider.prototype, "bootstrapShoesData").returns(null);
     authMiddlewareStub = sinon
-      .stub(middlewares, "AuthMiddleware")
+      .stub(middlewares, "FirebaseAuthMiddleware")
       .callsFake(async (req, res, next) => {
         req.user = {};
         return next();
@@ -39,7 +39,7 @@ describe("/api/v1/account", () => {
       expect(res.status).toEqual(HttpStatus.OK);
     });
 
-    it("AuthMiddleware should be called", () => {
+    it("FirebaseAuthMiddleware should be called", () => {
       expect(authMiddlewareStub.called).toBeTruthy();
     });
   });

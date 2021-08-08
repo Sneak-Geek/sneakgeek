@@ -7,7 +7,7 @@ import HttpStatus from "http-status";
 import { UserAccount, AccessLevel } from "../database";
 
 /**
- * This middleware should be used after AuthMiddleware
+ * This middleware should be used after FirebaseAuthMiddleware
  */
 export const AdminPermissionMiddleware = (
   req: Request,

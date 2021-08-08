@@ -11,7 +11,7 @@ import { IJwtService } from "../services";
 import { Repository, UserAccount } from "../database";
 import { JwtPayload } from "../../../types";
 
-export const AuthMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+export const FirebaseAuthMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   const jwtService = Server.container.get<IJwtService>(Types.JwtService);
   const accountRepo = Server.container.get<Repository<UserAccount>>(
     Types.AccountRepository

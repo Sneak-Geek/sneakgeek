@@ -22,7 +22,7 @@ describe(url, () => {
   const validMongoId = "5e534418a455d3df4524e3b1";
 
   beforeAll(async () => {
-    authMiddlewareStub = sinon.stub(middlewares, "AuthMiddleware").callsArgAsync(2); // call next()
+    authMiddlewareStub = sinon.stub(middlewares, "FirebaseAuthMiddleware").callsArgAsync(2); // call next()
     sinon.stub(BootstrapProvider.prototype, "bootstrapUsersData").returns(null);
     sinon.stub(BootstrapProvider.prototype, "bootstrapShoesData").returns(null);
     await Server.initAppAsync();
@@ -58,7 +58,7 @@ describe(url, () => {
       expect(res.status).toEqual(HttpStatus.OK);
     });
 
-    it("AuthMiddleware should be called", () => {
+    it("FirebaseAuthMiddleware should be called", () => {
       expect(authMiddlewareStub.called).toBeTruthy();
     });
   });
@@ -74,7 +74,7 @@ describe(url, () => {
       expect(res.status).toEqual(HttpStatus.BAD_REQUEST);
     });
 
-    it("AuthMiddleware should be called", () => {
+    it("FirebaseAuthMiddleware should be called", () => {
       expect(authMiddlewareStub.called).toBeTruthy();
     });
   });
@@ -92,7 +92,7 @@ describe(url, () => {
       expect(res.status).toEqual(HttpStatus.BAD_REQUEST);
     });
 
-    it("AuthMiddleware should be called", () => {
+    it("FirebaseAuthMiddleware should be called", () => {
       expect(authMiddlewareStub.called).toBeTruthy();
     });
   });
@@ -111,7 +111,7 @@ describe(url, () => {
       expect(res.status).toEqual(HttpStatus.BAD_REQUEST);
     });
 
-    it("AuthMiddleware should be called", () => {
+    it("FirebaseAuthMiddleware should be called", () => {
       expect(authMiddlewareStub.called).toBeTruthy();
     });
   });
@@ -129,7 +129,7 @@ describe(url, () => {
       expect(res.status).toEqual(HttpStatus.BAD_REQUEST);
     });
 
-    it("AuthMiddleware should be called", () => {
+    it("FirebaseAuthMiddleware should be called", () => {
       expect(authMiddlewareStub.called).toBeTruthy();
     });
   });
@@ -159,7 +159,7 @@ describe(url, () => {
       expect(res.status).toEqual(HttpStatus.NOT_FOUND);
     });
 
-    it("AuthMiddleware should be called", () => {
+    it("FirebaseAuthMiddleware should be called", () => {
       expect(authMiddlewareStub.called).toBeTruthy();
     });
   });

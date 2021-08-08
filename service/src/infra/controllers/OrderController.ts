@@ -18,7 +18,7 @@ import {
 import { Types } from "../../configuration/inversify";
 import {
   ValidationPassedMiddleware,
-  AuthMiddleware,
+  FirebaseAuthMiddleware,
   AccountVerifiedMiddleware,
 } from "../middlewares";
 import { PaymentMethod, TrackingStatus } from "../../assets/constants";
@@ -36,7 +36,7 @@ export class OrderController extends AsbtractOrderController {
     super();
   }
 
-  @httpGet("/", AuthMiddleware, AccountVerifiedMiddleware)
+  @httpGet("/", FirebaseAuthMiddleware, AccountVerifiedMiddleware)
   public async getOrderHistory(@request() req: Request, @response() res: Response) {
     const user = req.user as UserAccount;
     const profileId = (user.profile as mongoose.Types.ObjectId).toHexString();
@@ -79,7 +79,7 @@ export class OrderController extends AsbtractOrderController {
     body("addressLine2").optional().isString(),
     body("soldPrice").isInt(),
     body("shoeId").optional(),
-    AuthMiddleware,
+    FirebaseAuthMiddleware,
     AccountVerifiedMiddleware,
     ValidationPassedMiddleware
   )
@@ -141,7 +141,7 @@ export class OrderController extends AsbtractOrderController {
       TrackingStatus.SELLER_REJECTED_ORDER,
     ]),
     body("orderId").isMongoId(),
-    AuthMiddleware,
+    FirebaseAuthMiddleware,
     Types.IsSellerMiddleware,
     ValidationPassedMiddleware
   )

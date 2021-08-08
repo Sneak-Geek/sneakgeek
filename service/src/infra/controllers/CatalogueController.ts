@@ -16,7 +16,7 @@ import {
 } from "inversify-express-utils";
 import { Repository, Catalogue, CatalogType } from "../database";
 import { Types } from "../../configuration/inversify/inversify.types";
-import { AuthMiddleware, ValidationPassedMiddleware } from "../middlewares";
+import { FirebaseAuthMiddleware, ValidationPassedMiddleware } from "../middlewares";
 import HttpStatus from "http-status";
 import { ObjectId } from "mongodb";
 import mongoose from "mongoose";

@@ -6,7 +6,7 @@ import { Response } from "express";
 import * as HttpStatus from "http-status";
 import { controller, httpGet, response } from "inversify-express-utils";
 import * as Settings from "../../assets/settings";
-import { AuthMiddleware, ValidationPassedMiddleware } from "../middlewares";
+import { FirebaseAuthMiddleware, ValidationPassedMiddleware } from "../middlewares";
 import { FAQ } from "../../assets/constants";
 import { IShippingService } from "../services";
 import { inject } from "inversify";

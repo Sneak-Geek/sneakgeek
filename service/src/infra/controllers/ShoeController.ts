@@ -124,7 +124,7 @@ export class ShoeController {
     return res.status(HttpStatus.OK).send(result);
   }
 
-  @httpGet("/get", middlewares.AuthMiddleware)
+  @httpGet("/get", middlewares.FirebaseAuthMiddleware)
   public async getShoesByIds(@queryParam("ids") rawIds: string, @response() res: Response) {
     const ids = rawIds.split(",").map((t) => new ObjectId(t));
     const shoes: Array<Shoe> = await this.shoeRepo.find({ _id: { $in: ids } }).exec();
@@ -159,7 +159,7 @@ export class ShoeController {
 
   @httpPut(
     "/update",
-    middlewares.AuthMiddleware,
+    middlewares.FirebaseAuthMiddleware,
     middlewares.AccountVerifiedMiddleware,
     middlewares.AdminPermissionMiddleware,
     body("shoeId").isMongoId().exists(),
@@ -188,7 +188,7 @@ export class ShoeController {
     });
   }
 
-  @httpGet("brands", middlewares.AuthMiddleware, middlewares.ValidationPassedMiddleware)
+  @httpGet("brands", middlewares.FirebaseAuthMiddleware, middlewares.ValidationPassedMiddleware)
   public async getAllBrands(@response() res: Response) {
     try {
       const brands = await this.shoeRepo.distinct("brand").exec();

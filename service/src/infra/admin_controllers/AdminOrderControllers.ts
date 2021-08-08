@@ -15,7 +15,7 @@ import { Types } from "../../configuration/inversify";
 import { IOrderDao } from "../dao";
 import {
   AdminPermissionMiddleware,
-  AuthMiddleware,
+  FirebaseAuthMiddleware,
   ValidationPassedMiddleware,
 } from "../middlewares";
 import { TrackingStatus } from "../../assets/constants";
@@ -32,7 +32,7 @@ export class AdminOrderController extends AsbtractOrderController {
   @httpGet(
     "/",
     query("range").exists(),
-    AuthMiddleware,
+    FirebaseAuthMiddleware,
     AdminPermissionMiddleware,
     ValidationPassedMiddleware
   )
@@ -60,7 +60,7 @@ export class AdminOrderController extends AsbtractOrderController {
   @httpGet(
     "/:orderId",
     param("orderId").isMongoId(),
-    AuthMiddleware,
+    FirebaseAuthMiddleware,
     AdminPermissionMiddleware,
     ValidationPassedMiddleware
   )
@@ -82,7 +82,7 @@ export class AdminOrderController extends AsbtractOrderController {
   @httpPut(
     "/:orderId",
     body("lastTrackingStatus").isIn(Object.keys(TrackingStatus)),
-    AuthMiddleware,
+    FirebaseAuthMiddleware,
     AdminPermissionMiddleware,
     ValidationPassedMiddleware
   )

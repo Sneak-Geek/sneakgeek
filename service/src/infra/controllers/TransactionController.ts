@@ -22,7 +22,7 @@ import { query, body } from "express-validator";
 import {
   ValidationPassedMiddleware,
   AccountVerifiedMiddleware,
-  AuthMiddleware,
+  FirebaseAuthMiddleware,
   AuthenticatorPermissionMiddleware,
 } from "../middlewares";
 import {
@@ -109,7 +109,7 @@ export class TransactionController {
 
   @httpGet(
     "/pending-authentication-transactions",
-    AuthMiddleware,
+    FirebaseAuthMiddleware,
     AccountVerifiedMiddleware
   )
   public async getPendingAuthenticationTransaction(@response() res: Response) {
@@ -119,7 +119,7 @@ export class TransactionController {
 
   @httpPut(
     "/update-authentication-status",
-    AuthMiddleware,
+    FirebaseAuthMiddleware,
     AccountVerifiedMiddleware,
     AuthenticatorPermissionMiddleware,
     body("transactionId").exists().isMongoId(),

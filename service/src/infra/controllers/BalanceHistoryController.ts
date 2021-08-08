@@ -1,6 +1,6 @@
 import { controller, httpGet, request, response, httpPost } from "inversify-express-utils";
 import {
-  AuthMiddleware,
+  FirebaseAuthMiddleware,
   ValidationPassedMiddleware,
   AdminPermissionMiddleware,
 } from "../middlewares";
@@ -31,7 +31,7 @@ export class BalanceHistoryController {
     "/",
     query("status").isIn(Object.keys(BalanceHistoryStatus)).optional(),
     query("action").isIn(Object.keys(BalanceHistoryAction)).optional(),
-    AuthMiddleware,
+    FirebaseAuthMiddleware,
     ValidationPassedMiddleware
   )
   public async getBalancetHistories(
@@ -59,7 +59,7 @@ export class BalanceHistoryController {
     body("bankName").exists().isString(),
     body("accountNumber").exists().isString(),
     body("accountHolderName"),
-    AuthMiddleware,
+    FirebaseAuthMiddleware,
     ValidationPassedMiddleware
   )
   public async createWithdrawalHistory(
@@ -106,7 +106,7 @@ export class BalanceHistoryController {
     body("transactionId").exists().isString(),
     body("profileId").exists().isString(),
     body("shoeId").exists().isString(),
-    AuthMiddleware,
+    FirebaseAuthMiddleware,
     AdminPermissionMiddleware,
     ValidationPassedMiddleware
   )
@@ -132,7 +132,7 @@ export class BalanceHistoryController {
     "/update-balance-history",
     body("balanceHistoryId").exists().isMongoId(),
     body("status").exists().isIn(Object.keys(BalanceHistoryStatus)),
-    AuthMiddleware,
+    FirebaseAuthMiddleware,
     AdminPermissionMiddleware,
     ValidationPassedMiddleware
   )
