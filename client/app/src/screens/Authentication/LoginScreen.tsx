@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
 export class LoginScreen extends React.Component<Props> {
   public render(): JSX.Element {
     return (
-      <ImageBackground source={images.Home} style={{flex: 1}} testID={'login'}>
+      <ImageBackground source={images.Home} style={{flex: 1}} testID={'LoginScreen'}>
         <SafeAreaView style={{flex: 1}}>
           <StatusBar barStyle={'light-content'} />
           {!this.props.accountState.account && (
@@ -241,6 +241,7 @@ export class LoginScreen extends React.Component<Props> {
   private _renderEmailLogin() {
     return (
       <AppText.Subhead
+        testID={'EmailLogin'}
         style={styles.emailLoginStyle}
         onPress={(): void => {
           this.props.navigation.push(RouteNames.Auth.EmailLogin);
