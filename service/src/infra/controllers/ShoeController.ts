@@ -188,7 +188,11 @@ export class ShoeController {
     });
   }
 
-  @httpGet("brands", middlewares.FirebaseAuthMiddleware, middlewares.ValidationPassedMiddleware)
+  @httpGet(
+    "brands",
+    middlewares.FirebaseAuthMiddleware,
+    middlewares.ValidationPassedMiddleware
+  )
   public async getAllBrands(@response() res: Response) {
     try {
       const brands = await this.shoeRepo.distinct("brand").exec();

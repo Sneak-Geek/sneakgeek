@@ -16,10 +16,7 @@ import {
 } from "inversify-express-utils";
 import { UserAccount } from "../database";
 import { Types } from "../../configuration/inversify/inversify.types";
-import {
-  FirebaseAuthMiddleware,
-  ValidationPassedMiddleware,
-} from "../middlewares";
+import { FirebaseAuthMiddleware, ValidationPassedMiddleware } from "../middlewares";
 import mongoose from "mongoose";
 import { IProfileDao, IAccountDao } from "../dao";
 import { INotificationService } from "../services";
@@ -40,7 +37,7 @@ export class ProfileController {
   @inject(Types.FirebaseAuthService)
   private readonly firebaseAuthService!: IFirebaseAuthService;
 
-  @httpGet("/",FirebaseAuthMiddleware)
+  @httpGet("/", FirebaseAuthMiddleware)
   public async getProfile(
     @request() req: express.Request,
     @response() res: express.Response
