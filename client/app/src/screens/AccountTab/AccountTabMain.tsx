@@ -4,7 +4,6 @@ import {connect} from 'utilities/ReduxUtilities';
 import {IAppState} from 'store/AppStore';
 import {
   Profile,
-  Account,
   FactoryKeys,
   updateProfile,
   ObjectFactory,
@@ -24,7 +23,6 @@ import {
 import {firebase} from '@react-native-firebase/auth';
 
 type Props = {
-  account: Account;
   profile: Profile;
   navigation: StackNavigationProp<any>;
   toggleLoading: (isLoading: boolean) => void;
@@ -60,7 +58,6 @@ const styles = StyleSheet.create({
 
 @connect(
   (state: IAppState) => ({
-    account: state.UserState.accountState.account,
     profile: state.UserState.profileState.profile,
   }),
   (dispatch: Function) => ({
@@ -115,12 +112,8 @@ export class AccountTabMain extends React.Component<Props> {
   }
 
   private _isUserLoggedIn() {
-    const {account, profile} = this.props;
-    return Boolean(account && profile);
-  }
-
-  private _isSeller() {
-    return Boolean(this._isUserLoggedIn() && this.props.profile.isSeller);
+    const {profile} = this.props;
+    return Boolean(profile);
   }
 
   private _onClickWithAccountGuarded(action: () => void) {
@@ -179,9 +172,7 @@ export class AccountTabMain extends React.Component<Props> {
   }
 
   private _renderBottomActionButton(): JSX.Element {
-    const isAccountAvailable = Boolean(
-      this.props.account && this.props.profile,
-    );
+    const isAccountAvailable = Boolean(this.props.profile);
     const title = isAccountAvailable ? strings.LogOut : strings.SignIn;
     const iconTitle = isAccountAvailable ? 'logout' : 'login';
     return (

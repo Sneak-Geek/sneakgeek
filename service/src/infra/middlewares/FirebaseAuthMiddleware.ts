@@ -34,7 +34,11 @@ export const FirebaseAuthMiddleware = async (
       user = await profileDao.createUserWithFirebaseAccountId(decodedToken?.uid);
     }
 
-    req.user = { ...user, ...decodedToken };
+    req.user = {
+      ...user,
+      email: decodedToken.email,
+      emailVerified: decodedToken.email_verified,
+    };
   } catch (error) {
     LogProvider.instance.error(error);
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({

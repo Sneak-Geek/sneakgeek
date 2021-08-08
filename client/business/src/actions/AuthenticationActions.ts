@@ -3,11 +3,11 @@ import { AuthenticationPayload, NetworkRequestState } from "../payload";
 import { ObjectFactory, FactoryKeys } from "../loader/kernel";
 import { ISettingsProvider, IFacebookSDK, IAccountService} from "../loader";
 import { SettingsKey } from "../loader/interfaces";
-import { getUserProfile } from "./ProfileActions";
+import { getUserProfile, updateStateGetUserProfile } from "./ProfileActions";
 import { Dispatch } from "redux";
 import {firebase} from '@react-native-firebase/auth';
 import { appleAuth } from '@invertase/react-native-apple-authentication';
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
+// import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
 export const AuthenticationActions = {
   UPDATE_AUTHENTICATION_STATE: "UPDATE_AUTHENTICATION_STATE",
@@ -95,20 +95,18 @@ export const authenticateWithEmail = (
           : await firebase.auth().signInWithEmailAndPassword(email, password);
       if(response.user)
       {
-        const token = /*await firebase.auth().currentUser.getIdToken();*/await response.user.getIdToken();
-        const accountPayload = await accountService.getCurrentUser(token);
-        if (accountPayload) {
-          await settings.setValue(
-            SettingsKey.CurrentAccessToken,
-            token
-          );
+        const token = await response.user.getIdToken();
+        await settings.setValue(
+          SettingsKey.CurrentAccessToken,
+          token
+        );
+        const profile = await accountService.getUserProfile(token);
+        if (profile) {
           await settings.loadServerSettings();
-
-          await dispatch(getUserProfile());
           dispatch(
-            updateAuthenticationState({
+            updateStateGetUserProfile({
               state: NetworkRequestState.SUCCESS,
-              data: accountPayload,
+              data: { profile },
             })
           );
         }
@@ -117,7 +115,7 @@ export const authenticateWithEmail = (
     catch (error){
       console.error(error);
       dispatch(
-        updateAuthenticationState({
+        updateStateGetUserProfile({
           state: NetworkRequestState.FAILED,
           error: error,
         })
@@ -180,45 +178,45 @@ export const authenticateWithFb = () => {
   };
 };
 
-export const authenticateWithGoogle = () => {
-  return async (dispatch: Function) => {
-    const accountService = ObjectFactory.getObjectInstance<IAccountService>(
-      FactoryKeys.IAccountService
-    );
-    const settings = ObjectFactory.getObjectInstance<ISettingsProvider>(
-      FactoryKeys.ISettingsProvider
-    );
-    try {
-      const { idToken } = await GoogleSignin.signIn();
-      if (idToken) {
-        const googleCredential = firebase.auth.GoogleAuthProvider.credential(idToken);
-        const response = await firebase.auth().signInWithCredential(googleCredential);
-        if(response.user)
-        {
-          const token = await response.user.getIdToken();
-          const accountPayload = await accountService.getCurrentUser(token);
-          if (accountPayload) {
-            await settings.setValue(
-              SettingsKey.CurrentAccessToken,
-              token
-            );
-            dispatch(getUserProfile());
-            dispatch(
-              updateAuthenticationState({
-                state: NetworkRequestState.SUCCESS,
-                data: accountPayload
-              })
-            );
-          }
-        }
-      }
-    } catch (error) {
-      dispatch(
-        updateAuthenticationState({ state: NetworkRequestState.FAILED, error })
-      );
-    }
-  };
-};
+// export const authenticateWithGoogle = () => {
+//   return async (dispatch: Function) => {
+//     const accountService = ObjectFactory.getObjectInstance<IAccountService>(
+//       FactoryKeys.IAccountService
+//     );
+//     const settings = ObjectFactory.getObjectInstance<ISettingsProvider>(
+//       FactoryKeys.ISettingsProvider
+//     );
+//     try {
+//       const { idToken } = await GoogleSignin.signIn();
+//       if (idToken) {
+//         const googleCredential = firebase.auth.GoogleAuthProvider.credential(idToken);
+//         const response = await firebase.auth().signInWithCredential(googleCredential);
+//         if(response.user)
+//         {
+//           const token = await response.user.getIdToken();
+//           const accountPayload = await accountService.getCurrentUser(token);
+//           if (accountPayload) {
+//             await settings.setValue(
+//               SettingsKey.CurrentAccessToken,
+//               token
+//             );
+//             dispatch(getUserProfile());
+//             dispatch(
+//               updateAuthenticationState({
+//                 state: NetworkRequestState.SUCCESS,
+//                 data: accountPayload
+//               })
+//             );
+//           }
+//         }
+//       }
+//     } catch (error) {
+//       dispatch(
+//         updateAuthenticationState({ state: NetworkRequestState.FAILED, error })
+//       );
+//     }
+//   };
+// };
 
 export const authenticateWithApple = () => {
   return async (dispatch: Dispatch<any>) => {

@@ -126,6 +126,6 @@ export class ProfileDao implements IProfileDao {
   public async createUserWithFirebaseAccountId(
     uid: string
   ): Promise<UserProfile | undefined> {
-    return this.profileRepo.create({ firebaseAccountId: uid });
+    return (await this.profileRepo.create({ firebaseAccountId: uid }));
   }
 }

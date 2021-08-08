@@ -23,7 +23,9 @@
     "axios": "*",
     "redux": "*",
     "redux-actions": "*",
-    "redux-thunk": "*"
+    "redux-thunk": "*",
+    "@react-native-firebase/auth": "*",
+    "@invertase/react-antive-apple-authentication": "*"
   },
   "devDependencies": {
     "@types/redux-actions": "2.6.1",

@@ -7,7 +7,6 @@ import {
   FactoryKeys,
   OrderHistory,
   Profile,
-  Account,
   TrackingStatus,
 } from 'business';
 import {
@@ -21,7 +20,6 @@ import {
   toVnDateFormat,
 } from 'utilities';
 import {IAppState} from 'store/AppStore';
-import {FlatList} from 'react-native-gesture-handler';
 import {
   View,
   Image,
@@ -94,8 +92,7 @@ type Props = {
     orders: PopulatedSellOrder[];
     error?: unknown;
   };
-  account: Account;
-  userProfile: Profile;
+  profile: Profile;
   // dispatch props
   getUserPopulatedOrders: () => void;
 
@@ -117,8 +114,7 @@ type State = {
 @connect(
   (state: IAppState) => ({
     sellOrderHistoryState: state.OrderState.sellOrderHistoryState,
-    account: state.UserState.accountState.account,
-    userProfile: state.UserState.profileState.profile,
+    profile: state.UserState.profileState.profile,
   }),
   (dispatch: Function) => ({
     getUserPopulatedOrders: (): void =>
@@ -197,12 +193,12 @@ export class SellOrderHistory extends React.Component<Props, State> {
 
   private _renderOrders() {
     const {orders} = this.state;
-    const {account} = this.props;
-    if (orders.length === 0 || !account) {
+    const {profile} = this.props;
+    if (orders.length === 0 || !profile) {
       return <></>;
     }
 
-    if (account.accessLevel === 'User') {
+    if (profile.isSeller) {
       let waitingForBankTransferOrders = [];
       let numberOfWaitingForBankTransferOrders = 0;
       let otherOrders = [];
@@ -278,7 +274,7 @@ export class SellOrderHistory extends React.Component<Props, State> {
     }
 
     // TO DO (DUC): Duplicate codes
-    if (account.accessLevel === 'Seller') {
+    if (profile.isSeller) {
       let pendingOrders = [];
       let numberOfPendingOrders = 0;
       let otherOrders = [];

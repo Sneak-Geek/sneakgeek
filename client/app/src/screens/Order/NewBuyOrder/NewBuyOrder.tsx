@@ -23,6 +23,7 @@ import {SizeSelection} from '../';
 import {OrderSummary} from 'screens/Product/OrderSummary';
 import RouteNames from 'navigations/RouteNames';
 import {SizePriceMap} from 'business/src';
+import { firebase } from '@react-native-firebase/auth';
 
 type NewBuyOrderChild = {
   render: () => JSX.Element;
@@ -30,7 +31,6 @@ type NewBuyOrderChild = {
 };
 
 type Props = {
-  account: Account;
   profile: Profile;
   route: RouteProp<RootStackParams, 'NewBuyOrder'>;
   navigation: StackNavigationProp<RootStackParams, 'NewBuyOrder'>;
@@ -53,7 +53,6 @@ type State = {
 
 @connect(
   (state: IAppState) => ({
-    account: state.UserState.accountState.account,
     profile: state.UserState.profileState.profile,
   }),
   (dispatch: Function) => ({
@@ -279,7 +278,8 @@ export class NewBuyOrder extends React.Component<Props, State> {
   }
 
   private get _isMissingInfo() {
-    const account = this.props.account;
+    const currentUser = firebase.auth().currentUser;
+    const isNotVerified = !currentUser || !currentUser.emailVerified;
     const profile = this.props.profile;
     const isMissingInfo =
       !profile ||
@@ -288,7 +288,7 @@ export class NewBuyOrder extends React.Component<Props, State> {
       !profile.userProvidedName?.firstName ||
       !profile.userProvidedName.lastName;
 
-    return isMissingInfo || !account || !account.isVerified;
+    return isMissingInfo || isNotVerified;
   }
 
   private _purchaseProduct(): void {
@@ -326,10 +326,10 @@ export class NewBuyOrder extends React.Component<Props, State> {
     let message = '';
     let buttonText = '';
 
-    if (!this.props.account || !this.props.profile) {
+    if (!this.props.profile) {
       message = strings.NotAuthenticated;
       buttonText = strings.PleaseLogin;
-    } else if (!this.props.account.isVerified) {
+    } else if (firebase.auth().currentUser.emailVerified) {
       message = strings.NotVerified;
     } else {
       message = strings.MissingProfileInfo;
@@ -342,7 +342,7 @@ export class NewBuyOrder extends React.Component<Props, State> {
       textDisplay.push({
         text: buttonText,
         onPress: (): void => {
-          if (this.props.account) {
+          if (this.props.profile) {
             navigation.navigate(RouteNames.Tab.AccountTab.ViewProfile);
           } else {
             navigation.navigate(RouteNames.Auth.Name, {
@@ -353,7 +353,7 @@ export class NewBuyOrder extends React.Component<Props, State> {
         }
       );
     }
-    if (this.props.account && !this.props.account.isVerified)
+    if (this.props.profile && !firebase.auth().currentUser.emailVerified)
     {
       textDisplay.push({
         text: strings.Cancel,
