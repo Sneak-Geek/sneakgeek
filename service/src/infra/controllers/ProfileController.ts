@@ -41,27 +41,12 @@ export class ProfileController {
   @inject(Types.FirebaseAuthService)
   private readonly firebaseAuthService!: IFirebaseAuthService;
 
-  @httpGet("/", AuthMiddleware)
+  @httpGet("/", FirebaseAuthMiddleware)
   public async getProfile(
     @request() req: express.Request,
     @response() res: express.Response
   ) {
-    const account = req.user as UserAccount;
-    let profile = await this.profileDao.findByAccountId(account._id);
-    if (!profile) {
-      const session = await mongoose.startSession();
-      session.startTransaction();
-      try {
-        profile = await this.profileDao.createByUserAccount(account);
-        // Save profile ID to account
-        await this.accountDao.updateById(account._id, { profile: profile._id });
-      } catch (error) {
-        await session.abortTransaction();
-        throw error;
-      } finally {
-        session.endSession();
-      }
-    }
+    const profile = req.user as UserAccount;
     return res.status(HttpStatus.OK).send({ profile });
   }
 
