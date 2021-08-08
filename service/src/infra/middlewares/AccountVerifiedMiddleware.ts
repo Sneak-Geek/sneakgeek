@@ -22,7 +22,7 @@ export const AccountVerifiedMiddleware = async (
 
   try {
     const decodedToken = await firebase.verifyIdToken(idToken);
-    if (decodedToken?.email_verified) {
+    if (!decodedToken?.email_verified) {
       return res.status(HttpStatus.FORBIDDEN).send({
         message: "Forbidden. Account is not verified",
       });
