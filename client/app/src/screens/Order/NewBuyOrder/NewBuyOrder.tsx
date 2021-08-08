@@ -307,7 +307,7 @@ export class NewBuyOrder extends React.Component<Props, State> {
         getToken(),
         'BANK_TRANSFER',
         this.state.buyOrder.inventoryId,
-        profile.userProvidedAddress?.addressLine1,
+        profile.userProvidedAddress?.addresine1,
         profile.userProvidedAddress?.addressLine2,
         this.state.buyOrder.sellPrice,
       )
@@ -329,7 +329,7 @@ export class NewBuyOrder extends React.Component<Props, State> {
     if (!this.props.profile) {
       message = strings.NotAuthenticated;
       buttonText = strings.PleaseLogin;
-    } else if (firebase.auth().currentUser.emailVerified) {
+    } else if (!firebase.auth().currentUser.emailVerified) {
       message = strings.NotVerified;
     } else {
       message = strings.MissingProfileInfo;

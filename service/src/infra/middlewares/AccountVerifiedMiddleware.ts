@@ -4,9 +4,9 @@
 
 import { NextFunction, Request, Response } from "express";
 import HttpStatus from "http-status";
-import Server from "../../Server"
+import Server from "../../Server";
 import { IFirebaseAuthService } from "../services/FirebaseAuthService";
-import { Types } from "../../configuration/inversify/inversify.types"
+import { Types } from "../../configuration/inversify/inversify.types";
 import { LogProvider } from "../providers";
 
 /**
@@ -18,8 +18,8 @@ export const AccountVerifiedMiddleware = async (
   next: NextFunction
 ) => {
   const firebase = Server.container.get<IFirebaseAuthService>(Types.FirebaseAuthService);
-  const idToken = req?.headers?.authorization
-  
+  const idToken = req?.headers?.authorization;
+
   try {
     const decodedToken = await firebase.verifyIdToken(idToken);
     if (decodedToken?.email_verified) {
@@ -33,6 +33,6 @@ export const AccountVerifiedMiddleware = async (
       message: "Internal server errror",
     });
   }
-  
+
   return next();
 };
