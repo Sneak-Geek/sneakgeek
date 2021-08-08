@@ -50,7 +50,7 @@ export const BottomButton = (props: Props) => {
   return (
     <View style={[styles.containerStyle, props.style]}>
       <TouchableOpacity
-        testID={'BuyButton'}
+        testID={props.testID}
         style={styles.buttonStyle}
         onPress={buttonHandler}
         disabled={props.disabled}>

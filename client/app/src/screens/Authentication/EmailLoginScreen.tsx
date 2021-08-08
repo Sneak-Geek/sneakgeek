@@ -131,6 +131,7 @@ export class EmailLoginScreen extends React.Component<Props, State> {
     return (
       <View style={styles.inputContainer}>
         <TextInput
+          testID={'EmailInput'}
           placeholderTextColor={themes.AppDisabledColor}
           autoFocus={true}
           style={styles.input}
@@ -149,6 +150,7 @@ export class EmailLoginScreen extends React.Component<Props, State> {
     return (
       <View style={styles.inputContainer}>
         <TextInput
+          testID={'PasswordInput'}
           style={styles.input}
           placeholderTextColor={themes.AppDisabledColor}
           placeholder={strings.Password}
@@ -178,6 +180,7 @@ export class EmailLoginScreen extends React.Component<Props, State> {
 
     return (
       <BottomButton
+        testID={'LoginButton'}
         title={strings.SignIn}
         onPress={() => this.props.emailLogin(email, password)}
         style={{
