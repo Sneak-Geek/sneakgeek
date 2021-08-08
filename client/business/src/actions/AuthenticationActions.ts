@@ -95,11 +95,18 @@ export const authenticateWithEmail = (
           : await firebase.auth().signInWithEmailAndPassword(email, password);
       if(response.user)
       {
+        if (isSignUp)
+        {
+          /*var accountSetting : ActionCodeSettings;
+          accountSetting.handleCodeInApp = false;*/
+          await response.user.sendEmailVerification();
+        }
         const token = await response.user.getIdToken();
         await settings.setValue(
           SettingsKey.CurrentAccessToken,
           token
         );
+        console.log("Token: ", token);
         const profile = await accountService.getUserProfile(token);
         if (profile) {
           await settings.loadServerSettings();
