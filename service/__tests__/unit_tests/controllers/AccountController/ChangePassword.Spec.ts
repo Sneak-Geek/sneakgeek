@@ -25,7 +25,7 @@ describe(url, () => {
 
   beforeAll(async () => {
     authMiddlewareStub = sinon
-      .stub(middlewares, "AuthMiddleware")
+      .stub(middlewares, "FirebaseAuthMiddleware")
       .callsFake(async (req, res, next) => {
         req.user = { password: bcrypt.hashSync(seedPassword, saltRounds) };
         return next();
@@ -65,7 +65,7 @@ describe(url, () => {
       expect(res.status).toEqual(HttpStatus.OK);
     });
 
-    it("AuthMiddleware should be called once", () => {
+    it("FirebaseAuthMiddleware should be called once", () => {
       expect(authMiddlewareStub.called).toBeTruthy();
     });
   });
@@ -83,7 +83,7 @@ describe(url, () => {
       expect(res.status).toEqual(HttpStatus.UNAUTHORIZED);
     });
 
-    it("AuthMiddleware should be called once", () => {
+    it("FirebaseAuthMiddleware should be called once", () => {
       expect(authMiddlewareStub.called).toBeTruthy();
     });
   });
@@ -98,7 +98,7 @@ describe(url, () => {
       expect(res.status).toEqual(HttpStatus.BAD_REQUEST);
     });
 
-    it("AuthMiddleware should be called once", () => {
+    it("FirebaseAuthMiddleware should be called once", () => {
       expect(authMiddlewareStub.called).toBeTruthy();
     });
   });
@@ -116,7 +116,7 @@ describe(url, () => {
       expect(res.status).toEqual(HttpStatus.BAD_REQUEST);
     });
 
-    it("AuthMiddleware should be called once", () => {
+    it("FirebaseAuthMiddleware should be called once", () => {
       expect(authMiddlewareStub.called).toBeTruthy();
     });
   });
@@ -131,7 +131,7 @@ describe(url, () => {
       expect(res.status).toEqual(HttpStatus.BAD_REQUEST);
     });
 
-    it("AuthMiddleware should be called once", () => {
+    it("FirebaseAuthMiddleware should be called once", () => {
       expect(authMiddlewareStub.called).toBeTruthy();
     });
   });
@@ -149,7 +149,7 @@ describe(url, () => {
       expect(res.status).toEqual(HttpStatus.BAD_REQUEST);
     });
 
-    it("AuthMiddleware should be called once", () => {
+    it("FirebaseAuthMiddleware should be called once", () => {
       expect(authMiddlewareStub.called).toBeTruthy();
     });
   });

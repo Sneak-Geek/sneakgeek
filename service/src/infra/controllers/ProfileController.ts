@@ -16,11 +16,7 @@ import {
 } from "inversify-express-utils";
 import { UserAccount } from "../database";
 import { Types } from "../../configuration/inversify/inversify.types";
-import {
-  AuthMiddleware,
-  FirebaseAuthMiddleware,
-  ValidationPassedMiddleware,
-} from "../middlewares";
+import { FirebaseAuthMiddleware, ValidationPassedMiddleware } from "../middlewares";
 import mongoose from "mongoose";
 import { IProfileDao, IAccountDao } from "../dao";
 import { INotificationService } from "../services";
@@ -52,7 +48,7 @@ export class ProfileController {
 
   @httpPut(
     "/update",
-    AuthMiddleware,
+    FirebaseAuthMiddleware,
     body("userProvidedAddress.addressLine1").optional().isString(),
     body("userProvidedAddress.addressLine2").optional().isString(),
     body("userProvidedGender").optional().isString(),
@@ -85,13 +81,5 @@ export class ProfileController {
   ) {
     const { user } = req;
     return res.status(HttpStatus.OK).send({ profile: user });
-    /*const { token } = req.body;
-    try {
-      const { uid } = await this.firebaseAuthService.verifyIdToken(token);
-      const profile = await this.profileDao.createUserWithFirebaseAccountId(uid);
-      return res.status(HttpStatus.OK).send({ profile });
-    } catch (error) {
-      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: error });
-    }*/
   }
 }

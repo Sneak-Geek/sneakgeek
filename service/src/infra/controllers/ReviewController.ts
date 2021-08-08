@@ -14,7 +14,7 @@ import {
 } from "inversify-express-utils";
 import { Types } from "../../configuration/inversify/inversify.types";
 import { inject } from "inversify";
-import { AuthMiddleware, ValidationPassedMiddleware } from "../middlewares";
+import { FirebaseAuthMiddleware, ValidationPassedMiddleware } from "../middlewares";
 import { body, query } from "express-validator";
 import { ProductRating } from "../../assets/constants";
 import mongoose from "mongoose";
@@ -42,7 +42,7 @@ export class ReviewController {
 
   @httpPost(
     "/",
-    AuthMiddleware,
+    FirebaseAuthMiddleware,
     body("shoeId").isMongoId(),
     body("rating").isIn(ProductRating),
     body("description").isString(),

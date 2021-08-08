@@ -225,7 +225,7 @@ export class AccountController {
     return res.status(HttpStatus.OK).send({ account, token: jwtToken });
   }
 
-  @httpGet("/", middlewares.AuthMiddleware)
+  @httpGet("/", middlewares.FirebaseAuthMiddleware)
   public async getAccount(
     @request() req: express.Request,
     @response() res: express.Response
@@ -348,7 +348,7 @@ export class AccountController {
 
   @httpPatch(
     "/set-access-level",
-    middlewares.AuthMiddleware,
+    middlewares.FirebaseAuthMiddleware,
     middlewares.AccountVerifiedMiddleware,
     middlewares.AdminPermissionMiddleware,
     body("accessLevel").isIn(Object.keys(AccessLevel)),
@@ -374,7 +374,7 @@ export class AccountController {
 
   @httpPatch(
     "/change-password",
-    middlewares.AuthMiddleware,
+    middlewares.FirebaseAuthMiddleware,
     body("currentPassword").isString(),
     body("newPassword").isString(),
     middlewares.ValidationPassedMiddleware

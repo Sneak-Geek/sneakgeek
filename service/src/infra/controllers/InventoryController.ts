@@ -26,7 +26,7 @@ export class InventoryController {
 
   @httpGet(
     "/",
-    middlewares.AuthMiddleware,
+    middlewares.FirebaseAuthMiddleware,
     middlewares.AccountVerifiedMiddleware,
     Types.IsSellerMiddleware,
     query("shoeName").isString().optional(),
@@ -44,7 +44,7 @@ export class InventoryController {
 
   @httpPost(
     "/new",
-    middlewares.AuthMiddleware,
+    middlewares.FirebaseAuthMiddleware,
     middlewares.AccountVerifiedMiddleware,
     Types.IsSellerMiddleware,
     body("shoeId").isString(),
@@ -78,7 +78,7 @@ export class InventoryController {
 
   @httpPut(
     "/update",
-    middlewares.AuthMiddleware,
+    middlewares.FirebaseAuthMiddleware,
     middlewares.AccountVerifiedMiddleware,
     Types.IsSellerMiddleware,
     body("id").isMongoId(),

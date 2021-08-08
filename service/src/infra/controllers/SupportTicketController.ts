@@ -7,7 +7,7 @@ import * as HttpStatus from "http-status";
 import { controller, httpPost, httpGet, request, response } from "inversify-express-utils";
 import { Types } from "../../configuration/inversify/inversify.types";
 import { inject } from "inversify";
-import { AuthMiddleware, ValidationPassedMiddleware } from "../middlewares";
+import { FirebaseAuthMiddleware, ValidationPassedMiddleware } from "../middlewares";
 import { body } from "express-validator";
 import { Repository, SupportTicket, SupportTicketCategory } from "../database";
 import { ObjectId } from "mongodb";
@@ -34,7 +34,7 @@ export class SupportTicketController {
 
   @httpPost(
     "/",
-    AuthMiddleware,
+    FirebaseAuthMiddleware,
     body("category").isIn(Object.keys(SupportTicketCategory)),
     body("description").isString(),
     body("imageUrls").optional().isArray,
