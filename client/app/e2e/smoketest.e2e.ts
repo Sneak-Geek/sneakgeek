@@ -26,5 +26,8 @@ describe('Smoke test', () => {
     await waitFor(element(by.id('SizePriceList'))).toBeVisible().withTimeout(timeout);
     await element(by.id('SizePriceItem')).atIndex(0).tap();
     await element(by.id('BuyButton')).tap();
+    await expect(element(by.id('BuyerDisplayName'))).not.toBeVisible(); // user info missing
+    await element(by.id('BuyButton')).tap(); // tapping buy button when not logged in
+    await expect(element(by.id('PaymentScreen'))).not.toBeVisible(); // tapping button won't show payment screen
   });
 });

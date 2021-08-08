@@ -250,7 +250,6 @@ export class NewBuyOrder extends React.Component<Props, State> {
     return (
       <View>
         <BottomButton
-          testID={'BuyButton'}
           disabled={this.state.isPressed}
           title={(shouldBuyShoe
             ? this.state.isBuyNow

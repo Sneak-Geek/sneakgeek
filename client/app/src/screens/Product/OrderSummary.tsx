@@ -1,11 +1,11 @@
 import * as React from 'react';
-import {Dimensions, StyleSheet, View} from 'react-native';
-import {Divider} from 'react-native-elements';
-import {} from 'react-native-gesture-handler';
-import {AppText} from 'screens/Shared';
-import {toCurrencyString} from 'utilities';
-import {Profile} from 'business';
-import {strings} from 'resources';
+import { Dimensions, StyleSheet, View } from 'react-native';
+import { Divider } from 'react-native-elements';
+import { } from 'react-native-gesture-handler';
+import { AppText } from 'screens/Shared';
+import { toCurrencyString } from 'utilities';
+import { Profile } from 'business';
+import { strings } from 'resources';
 
 const styles = StyleSheet.create({
   sectionContainer: {
@@ -54,8 +54,8 @@ type Props = {
 export class OrderSummary extends React.Component<Props> {
   public render(): JSX.Element {
     return (
-      <View style={{flex: 1, width: Dimensions.get('screen').width}}>
-        <View style={{flex: 1, paddingHorizontal: 20}}>
+      <View style={{ flex: 1, width: Dimensions.get('screen').width }}>
+        <View style={{ flex: 1, paddingHorizontal: 20 }}>
           {this._renderSummaryDetail('Cỡ giày', this.props.shoeSize)}
           {this._renderSummaryDetail(
             'Giá bán',
@@ -112,7 +112,9 @@ export class OrderSummary extends React.Component<Props> {
         ? `${name.lastName || ''} ${name.firstName || ''}`
         : null;
     return displayName ? (
-      <AppText.Headline>{displayName}</AppText.Headline>
+      <AppText.Headline testID={'BuyerDisplayName'}>
+        {displayName}
+      </AppText.Headline>
     ) : (
       <></>
     );
