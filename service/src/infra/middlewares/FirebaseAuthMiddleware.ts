@@ -28,12 +28,10 @@ export const FirebaseAuthMiddleware = async (
         message: "Invalid token",
       });
     }
-    const user = await profileDao.findByFirebaseAccountId(decodedToken?.uid);
+    let user = await profileDao.findByFirebaseAccountId(decodedToken?.uid);
 
     if (!user) {
-      return res.status(HttpStatus.NOT_FOUND).send({
-        message: "Account not found",
-      });
+      user = await profileDao.createUserWithFirebaseAccountId(decodedToken?.uid);
     }
 
     req.user = { ...user, ...decodedToken };

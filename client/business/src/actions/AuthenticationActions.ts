@@ -98,7 +98,7 @@ export const authenticateWithEmail = (
       if(response.user)
       {
         console.log("Fail Inside response.user");
-        const token = await response.user.getIdToken();
+        const token = await firebase.auth().currentUser.getIdToken();//await response.user.getIdToken();
         console.log("Fail After getting token: ", token);
         const accountPayload = await accountService.getCurrentUser(token);
         console.log("Fail After getting account payload: ", token);

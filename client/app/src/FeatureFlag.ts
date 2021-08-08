@@ -1,4 +1,4 @@
 export const FeatureFlags = {
-  enabledGoogle: false,
-  enableFacebook: false,
+  enabledGoogle: true,
+  enableFacebook: true,
 };
