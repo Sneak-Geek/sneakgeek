@@ -17,17 +17,12 @@ import {
 import { UserAccount } from "../database";
 import { Types } from "../../configuration/inversify/inversify.types";
 import { FirebaseAuthMiddleware, ValidationPassedMiddleware } from "../middlewares";
-import mongoose from "mongoose";
-import { IProfileDao, IAccountDao } from "../dao";
+import { IProfileDao } from "../dao";
 import { INotificationService } from "../services";
 import { IFirebaseAuthService } from "../services/FirebaseAuthService";
-import { Http } from "winston/lib/winston/transports";
 
 @controller("/api/v1/profile")
 export class ProfileController {
-  @inject(Types.AccountDao)
-  private readonly accountDao!: IAccountDao;
-
   @inject(Types.ProfileDao)
   private readonly profileDao!: IProfileDao;
 
@@ -64,7 +59,8 @@ export class ProfileController {
     @request() req: express.Request,
     @response() res: express.Response
   ) {
-    const profile = await this.profileDao.updateById(req.user.profile, req.body);
+    console.log(req.user);
+    const profile = await this.profileDao.updateById(req.user._id, req.body);
     if (!profile) {
       return res.status(HttpStatus.NOT_FOUND).send({
         message: "Profile not found",

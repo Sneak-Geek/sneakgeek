@@ -101,7 +101,7 @@ export class OrderSummary extends React.Component<Props> {
   }
 
   private _renderName(): JSX.Element {
-    if (!this.props.userProfile) {
+    if (!this.props.userProfile || !this.props.userProfile.userProvidedName) {
       return <></>;
     }
 

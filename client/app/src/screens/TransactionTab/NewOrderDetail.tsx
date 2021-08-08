@@ -86,9 +86,6 @@ export const NewOrderDetail: React.FC<Props> = (props) => {
     true,
   );
   const [isActionAccept, setIsActionAccept] = React.useState<boolean>(false);
-  const account = useSelector(
-    (state: IAppState) => state.UserState.accountState.account,
-  );
   const profile = useSelector(
     (state: IAppState) => state.UserState.profileState.profile,
   );
@@ -126,7 +123,7 @@ export const NewOrderDetail: React.FC<Props> = (props) => {
       return <></>;
     }
 
-    if (!account || (account && account.accessLevel !== 'Seller')) {
+    if (!profile || !profile.isSeller) {
       return <></>;
     }
 
@@ -172,7 +169,7 @@ export const NewOrderDetail: React.FC<Props> = (props) => {
 
   const renderSellerShippingInfo = () => {
     if (
-      account.accessLevel === 'Seller' &&
+      profile.isSeller &&
       (isActionAccept || latestStatus === TrackingStatus.SELLER_APPROVED_ORDER)
     ) {
       return (
@@ -357,7 +354,7 @@ export const NewOrderDetail: React.FC<Props> = (props) => {
           );
         })}
         {renderLine()}
-        {account.accessLevel !== 'Seller' && renderShippingInfo()}
+        {profile.isSeller && renderShippingInfo()}
         {renderTrackingProgress()}
       </ScrollView>
     </View>

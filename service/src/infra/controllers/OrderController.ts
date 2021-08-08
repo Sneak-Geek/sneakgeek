@@ -100,7 +100,7 @@ export class OrderController extends AsbtractOrderController {
     //   parseInt(soldPrice, 10)
     // );
 
-    const user = req.user as UserAccount;
+    const user = req.user as UserProfile;
     const updatedInventory = await this.inventoryDao.updateInventoryWhenCreateOrder(
       inventoryId
     );
@@ -116,7 +116,7 @@ export class OrderController extends AsbtractOrderController {
     });
 
     const newOrder = {
-      buyerId: (user.profile as unknown) as string,
+      buyerId: (user?._id as unknown) as string,
       sellerId: updatedInventory.sellerId,
       inventoryId: (inventoryId as unknown) as string,
       shoeId: (updatedInventory.shoeId as unknown) as string,

@@ -31,6 +31,7 @@ import {connect, getDependency} from 'utilities';
 import {ISettingsProvider, SettingsKey} from 'business/src';
 import {styles} from './styles';
 import {IAppState} from 'store/AppStore';
+import { Profile } from 'business';
 
 const ListChoice = (props: {
   isMultiple: boolean;
@@ -85,7 +86,7 @@ const ListChoice = (props: {
 
 type Props = {
   navigation: StackNavigationProp<RootStackParams, 'SearchTabMain'>;
-  account: Account;
+  profile: Profile
 };
 
 type State = {
@@ -104,7 +105,7 @@ type State = {
 };
 
 @connect((appState: IAppState) => ({
-  account: appState.UserState.accountState.account,
+  profile: appState.UserState.profileState.profile,
   })
 )
 export class SearchTabMain extends React.Component<Props, State> {
@@ -131,7 +132,7 @@ export class SearchTabMain extends React.Component<Props, State> {
     },
   };
 
-  public async componentDidMount(): void {
+  public async componentDidMount() {
     this._keyboardHideListener = Keyboard.addListener('keyboardDidHide', () => {
       this.state.showDropDown && this.setState({showDropDown: false});
     });
@@ -367,7 +368,7 @@ export class SearchTabMain extends React.Component<Props, State> {
   }
 
   private _isSeller(): boolean {
-    return this.props.account && this.props.account.accessLevel === 'Seller';
+    return this.props.profile && this.props.profile.isSeller;
   }
 
   private async _searchForSeller(scrollEnd: boolean) {

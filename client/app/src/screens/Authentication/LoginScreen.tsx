@@ -26,9 +26,10 @@ import {IAppState} from 'store/AppStore';
 import {AppText} from 'screens/Shared';
 import {FeatureFlags} from 'FeatureFlag';
 import {toggleIndicator} from 'actions';
+import { Profile } from 'business';
 
 type Props = {
-  accountState: {account: Account; state: NetworkRequestState; error?: any};
+  profileState: {profile?: Profile, error?: any, state: NetworkRequestState};
   navigation: StackNavigationProp<any>;
   toggleLoading: (isLoading: boolean) => void;
   facebookLogin: () => void;
@@ -89,7 +90,7 @@ const styles = StyleSheet.create({
 
 @connect(
   (state: IAppState) => ({
-    accountState: state.UserState.accountState,
+    profileState: state.UserState.profileState,
   }),
   (dispatch: Function) => ({
     toggleLoading: (isLoading: boolean): void => {
@@ -112,7 +113,7 @@ export class LoginScreen extends React.Component<Props> {
       <ImageBackground source={images.Home} style={{flex: 1}} testID={'LoginScreen'}>
         <SafeAreaView style={{flex: 1}}>
           <StatusBar barStyle={'light-content'} />
-          {!this.props.accountState.account && (
+          {!this.props.profileState.profile && (
             <View style={{flex: 1, alignItems: 'center', marginBottom: 10}}>
               <TouchableOpacity
                 style={{
@@ -172,17 +173,17 @@ export class LoginScreen extends React.Component<Props> {
 
   public componentDidUpdate(prevProps: Props) {
     if (this.props.navigation.isFocused()) {
-      const {accountState, navigation} = this.props;
-      const currentError = accountState.error;
-      const prevError = prevProps.accountState.error;
+      const {profileState, navigation} = this.props;
+      const currentError = profileState.error;
+      const prevError = prevProps.profileState.error;
 
-      if (accountState.state === NetworkRequestState.REQUESTING) {
+      if (profileState.state === NetworkRequestState.REQUESTING) {
         this.props.toggleLoading(true);
       }
 
       if (
-        accountState.state === NetworkRequestState.SUCCESS &&
-        accountState.account
+        profileState.state === NetworkRequestState.SUCCESS &&
+        profileState.profile
       ) {
         this.props.toggleLoading(false);
         navigation.push(RouteNames.Tab.Name);

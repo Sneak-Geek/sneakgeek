@@ -24,7 +24,6 @@ import {
 } from 'utilities';
 import {IAppState} from 'store/AppStore';
 import {
-  Account,
   Profile,
   getShoeInfo,
   NetworkRequestState,
@@ -33,10 +32,8 @@ import {
 } from 'business';
 import RouteNames from 'navigations/RouteNames';
 import {FactoryKeys, InventoryService} from 'business/src';
-import { acc } from 'react-native-reanimated';
 
 type Props = {
-  account: Account;
   profile: Profile;
   route: RouteProp<RootStackParams, 'ProductDetail'>;
   navigation: StackNavigationProp<RootStackParams, 'ProductDetail'>;
@@ -146,7 +143,6 @@ const styles = StyleSheet.create({
 @connect(
   (state: IAppState) => ({
     shoeInfoState: state.ProductState.infoState,
-    account: state.UserState.accountState.account,
     profile: state.UserState.profileState.profile,
   }),
   (dispatch: Function) => ({
@@ -313,14 +309,9 @@ export class ProductDetail extends React.Component<Props, State> {
   }
 
   private _renderActionButtons(bottom: number): JSX.Element {
-    const {profile, account} = this.props;
-    const isSell = account && profile && profile.isSeller && account.isVerified;
-    if ((!account && profile) || (account && !profile))
-    {
-      return <></>;
-    }
-    else if (!account && !profile)
-    {
+    const {profile} = this.props;
+    const isSell = profile && profile.isSeller;
+   if (!profile) {
       return(<View style={{bottom, ...styles.bottomContainer}}>
         {
         this._renderSingleActionButton('Mua', () => {
@@ -335,6 +326,7 @@ export class ProductDetail extends React.Component<Props, State> {
       </View>
       )
     }
+    
     return (
       <View style={{bottom, ...styles.bottomContainer}}>
         {!isSell ?

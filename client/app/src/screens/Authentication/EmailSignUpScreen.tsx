@@ -11,7 +11,7 @@ import {StackNavigationProp} from '@react-navigation/stack';
 import {themes, strings} from 'resources';
 import {BottomButton, AppText, DismissKeyboardView} from 'screens/Shared';
 import {connect} from 'utilities/ReduxUtilities';
-import {authenticateWithEmail, NetworkRequestState, Account} from 'business';
+import {authenticateWithEmail, NetworkRequestState, Profile} from 'business';
 import {IAppState} from 'store/AppStore';
 import {showErrorNotification, toggleIndicator} from 'actions';
 import RouteNames from 'navigations/RouteNames';
@@ -22,10 +22,10 @@ type State = {
 };
 
 type Props = {
-  accountState: {
+  profileState: {
     state: NetworkRequestState;
     error?: any;
-    account?: Account;
+    profile?: Profile;
   };
   navigation: StackNavigationProp<any>;
 
@@ -36,7 +36,7 @@ type Props = {
 
 @connect(
   (state: IAppState) => ({
-    accountState: state.UserState.accountState,
+    profileState: state.UserState.profileState,
   }),
   (dispatch: Function) => ({
     toggleLoadingIndicator: (isLoading: boolean, message?: string): void => {
@@ -62,25 +62,25 @@ export class EmailSignUpScreen extends React.Component<Props, State> {
   public componentDidUpdate(prevProps: Props): void {
     if (this.props.navigation.isFocused()) {
       const {
-        accountState,
+        profileState,
         showErrorNotification,
         toggleLoadingIndicator,
       } = this.props;
-      const {state} = accountState;
-      if (state === prevProps.accountState.state) {
+      const {state} = profileState;
+      if (state === prevProps.profileState.state) {
         return;
       }
 
       if (
-        accountState.state === NetworkRequestState.SUCCESS &&
-        accountState.account
+        profileState.state === NetworkRequestState.SUCCESS &&
+        profileState.profile
       ) {
         this.props.navigation.push(RouteNames.Tab.Name);
       }
 
       toggleLoadingIndicator(state === NetworkRequestState.REQUESTING);
 
-      const errorMessage = accountState.error?.response?.data?.message;
+      const errorMessage = profileState.error?.response?.data?.message;
       switch (errorMessage) {
         case strings.EmailRegisteredEng:
           Alert.alert(strings.EmailRegisteredVN);

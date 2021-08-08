@@ -12,7 +12,7 @@ import {themes, strings} from 'resources';
 import {BottomButton, AppText, DismissKeyboardView} from 'screens/Shared';
 import RouteNames from 'navigations/RouteNames';
 import {connect} from 'utilities/ReduxUtilities';
-import {authenticateWithEmail, NetworkRequestState, Account} from 'business';
+import {authenticateWithEmail, NetworkRequestState, Profile} from 'business';
 import {IAppState} from 'store/AppStore';
 import {showErrorNotification, toggleIndicator} from 'actions';
 
@@ -22,10 +22,10 @@ type State = {
 };
 
 type StateProps = {
-  accountState: {
+  profileState: {
     state: NetworkRequestState;
     error?: any;
-    account?: Account;
+    profile?: Profile;
   };
 };
 
@@ -43,7 +43,7 @@ type Props = StateProps &
 @connect<StateProps, DispatchProps>(
   (state: IAppState) => {
     return {
-      accountState: state.UserState.accountState,
+      profileState: state.UserState.profileState,
     };
   },
   (dispatch: Function) => {
@@ -68,13 +68,13 @@ export class EmailLoginScreen extends React.Component<Props, State> {
 
   public componentDidUpdate(prevProps: Props) {
     if (this.props.navigation.isFocused()) {
-      const {navigation, accountState, toggleLoadingIndicator} = this.props;
-      const {state} = accountState;
-      if (state === prevProps.accountState.state) {
+      const {navigation, profileState, toggleLoadingIndicator} = this.props;
+      const {state} = profileState;
+      if (state === prevProps.profileState.state) {
         return;
       }
       toggleLoadingIndicator(state === NetworkRequestState.REQUESTING);
-      const currentError = this.props.accountState.error;
+      const currentError = this.props.profileState.error;
 
       if (state === NetworkRequestState.FAILED) {
         const provider = currentError?.response?.data?.provider;
