@@ -93,7 +93,7 @@ export class ProfileController {
     }
   }
 
-  @httpGet("/auth/continue", body("token").isString(), FirebaseAuthMiddleware, ValidationPassedMiddleware)
+  @httpGet("/auth/continue", FirebaseAuthMiddleware, ValidationPassedMiddleware)
   public async continue(
     @request() req: express.Request,
     @response() res: express.Response

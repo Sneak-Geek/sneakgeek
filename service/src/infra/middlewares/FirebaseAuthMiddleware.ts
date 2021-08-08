@@ -23,7 +23,7 @@ export const FirebaseAuthMiddleware = async (
 
   try {
     const decodedToken = await firebase.verifyIdToken(idToken);
-    if (!decodedToken || decodedToken.uid) {
+    if (!decodedToken || !decodedToken.uid) {
       return res.status(HttpStatus.UNAUTHORIZED).send({
         message: "Invalid token",
       });
