@@ -4,6 +4,7 @@ import { Types } from "../../configuration/inversify/inversify.types";
 import { IFirebaseAuthService } from "../services/FirebaseAuthService";
 import HttpStatus from "http-status";
 import { IProfileDao } from "../dao";
+import { LogProvider } from "../providers";
 
 export const FirebaseAuthMiddleware = async (
   req: Request,
@@ -22,23 +23,22 @@ export const FirebaseAuthMiddleware = async (
 
   try {
     const decodedToken = await firebase.verifyIdToken(idToken);
-    if (!decodedToken || decodedToken.uid) {
+    if (!decodedToken || !decodedToken.uid) {
       return res.status(HttpStatus.UNAUTHORIZED).send({
         message: "Invalid token",
       });
     }
-    const user = await profileDao.findByFirebaseAccountId(decodedToken?.uid);
+    let user = await profileDao.findByFirebaseAccountId(decodedToken?.uid);
 
     if (!user) {
-      return res.status(HttpStatus.NOT_FOUND).send({
-        message: "Account not found",
-      });
+      user = await profileDao.createUserWithFirebaseAccountId(decodedToken?.uid);
     }
 
     req.user = { ...user, ...decodedToken };
   } catch (error) {
+    LogProvider.instance.error(error);
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
-      message: "Internal server errror.",
+      message: "Internal server errror",
     });
   }
 

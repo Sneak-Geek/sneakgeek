@@ -21,6 +21,7 @@ import {
   showErrorNotification,
   reset,
 } from 'actions';
+import {firebase} from '@react-native-firebase/auth';
 
 type Props = {
   account: Account;
@@ -77,6 +78,7 @@ const styles = StyleSheet.create({
       dispatch(updateProfile(profile));
     },
     logout: (): void => {
+      firebase.auth().signOut().then(() => console.log('User signed out!'));
       dispatch(reset());
     },
   }),
