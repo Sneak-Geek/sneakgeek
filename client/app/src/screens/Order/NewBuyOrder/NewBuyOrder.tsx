@@ -286,7 +286,7 @@ export class NewBuyOrder extends React.Component<Props, State> {
       !profile.userProvidedEmail ||
       !profile.userProvidedAddress?.addressLine1 ||
       !profile.userProvidedName?.firstName ||
-      !profile.userProvidedName.lastName;
+      !profile.userProvidedName?.lastName;
 
     return isMissingInfo || isNotVerified;
   }
