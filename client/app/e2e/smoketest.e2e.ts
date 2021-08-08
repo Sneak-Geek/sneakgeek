@@ -1,4 +1,8 @@
-import { by, device, expect, element } from 'detox';
+import { by, device, expect, element} from 'detox';
+
+const AppStrings = {
+  PleaseLogin: 'Xin vui lòng đăng nhập'
+};
 
 const timeout = 10000;
 
@@ -12,6 +16,7 @@ describe('Smoke test', () => {
   });
 
   it('purchase flow (without login)', async () => {
+    // Wait for inventory list on home page
     await waitFor(element(by.id('InventoryList')))
       .toBeVisible().withTimeout(timeout);
     await element(by.id('inventory')).atIndex(0).tap();
@@ -22,5 +27,13 @@ describe('Smoke test', () => {
     // Purchase flow
     await expect(element(by.id('ProductActionButton'))).toBeVisible();
     await element(by.id('ProductActionButton')).tap();
+    
+    // Select size and price
+    await waitFor(element(by.id('SizePriceList'))).toBeVisible().withTimeout(timeout);
+    await element(by.id('SizePriceItem')).atIndex(0).tap();
+    await element(by.id('BuyButton')).tap();
+    await expect(element(by.id('BuyerDisplayName'))).not.toBeVisible(); // user info missing
+    await element(by.id('BuyButton')).tap(); // tapping buy button when not logged in
+    await element(by.label(AppStrings.PleaseLogin).and(by.type('_UIAlertControllerActionView'))).tap();
   });
 });

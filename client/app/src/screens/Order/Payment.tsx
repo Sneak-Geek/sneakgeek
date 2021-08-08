@@ -92,7 +92,7 @@ export const Payment: React.FC<any> = ({route}) => {
     });
   });
   return (
-    <SafeAreaView style={styles.root}>
+    <SafeAreaView style={styles.root} testID={'PaymentScreen'}>
       <ScrollView>
         <View style={styles.orderIdContainer}>
           <AppText.SubHeadline>Mã giao dịch</AppText.SubHeadline>

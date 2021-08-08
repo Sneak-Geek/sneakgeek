@@ -242,7 +242,7 @@ export class ProductDetail extends React.Component<Props, State> {
     }
 
     return (
-      <AppText.Body style={styles.shoeDescription} testID={'ProductDescription'}>
+      <AppText.Body style={styles.shoeDescription}>
         {this._shoe.description}
       </AppText.Body>
     );

@@ -57,6 +57,7 @@ const PriceBox = (props: {
     return (
       <View style={styles.priceBoxContainer}>
         <TouchableOpacity
+          testID={'SizePriceItem'}
           style={[
             styles.priceBox,
             selected ? {backgroundColor: themes.AppSecondaryColor} : {},
@@ -118,6 +119,7 @@ export const SizePricePicker = (props: {
 
   return (
     <FlatList
+      testID={'SizePriceList'}
       style={{
         flex: 1,
         marginTop: 0,
