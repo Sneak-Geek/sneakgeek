@@ -43,8 +43,11 @@ export interface IProfileDao {
     update: ProfileUpdateInput
   ): Promise<UserProfile | undefined>;
   findByFirebaseAccountId(uid: string): Promise<UserProfile | undefined>;
-  createUserWithFirebaseAccountId( {
+  createUserWithFirebaseAccountId({
     firebaseAccountId,
-    userProvidedEmail
-  } : {firebaseAccountId: string, userProvidedEmail?: string}): Promise<UserProfile | undefined>;
+    userProvidedEmail,
+  }: {
+    firebaseAccountId: string;
+    userProvidedEmail?: string;
+  }): Promise<UserProfile | undefined>;
 }

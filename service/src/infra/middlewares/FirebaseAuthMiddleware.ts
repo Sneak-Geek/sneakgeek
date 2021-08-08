@@ -31,7 +31,10 @@ export const FirebaseAuthMiddleware = async (
     let user = await profileDao.findByFirebaseAccountId(decodedToken?.uid);
 
     if (!user) {
-      user = await profileDao.createUserWithFirebaseAccountId({firebaseAccountId: decodedToken?.uid, userProvidedEmail: decodedToken?.email});
+      user = await profileDao.createUserWithFirebaseAccountId({
+        firebaseAccountId: decodedToken?.uid,
+        userProvidedEmail: decodedToken?.email,
+      });
     }
 
     req.user = user;
