@@ -118,6 +118,7 @@ export class EmailSignUpScreen extends React.Component<Props, State> {
     return (
       <View style={styles.inputContainer}>
         <TextInput
+          testID={'EmailSignUpInput'}
           autoFocus={true}
           style={styles.input}
           placeholderTextColor={themes.AppDisabledColor}
@@ -136,6 +137,7 @@ export class EmailSignUpScreen extends React.Component<Props, State> {
     return (
       <View style={styles.inputContainer}>
         <TextInput
+          testID={'EmailSignUpPasswordInput'}
           style={styles.input}
           placeholder={strings.Password}
           placeholderTextColor={themes.AppDisabledColor}
@@ -143,6 +145,7 @@ export class EmailSignUpScreen extends React.Component<Props, State> {
           onChangeText={(password): void => this.setState({password})}
           selectionColor={themes.AppPrimaryColor}
           secureTextEntry={true}
+          textContentType={'oneTimeCode'}
           autoCapitalize={'none'}
         />
       </View>
@@ -168,6 +171,7 @@ export class EmailSignUpScreen extends React.Component<Props, State> {
 
     return (
       <BottomButton
+        testID={'ConfirmSignUpButton'}
         title={strings.SignUp}
         onPress={() => this.props.emailSignUp(email, password)}
         style={{

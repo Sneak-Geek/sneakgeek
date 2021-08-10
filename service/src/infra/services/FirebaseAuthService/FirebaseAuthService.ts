@@ -33,4 +33,19 @@ export class FirebaseAuthService implements IFirebaseAuthService {
   public verifyIdToken(idToken: string): Promise<firebase.auth.DecodedIdToken> {
     return firebase.auth().verifyIdToken(idToken);
   }
+
+  public async deleteTestUser(): Promise<void> {
+    const testUser = await firebase.auth().getUserByEmail("sneakgeek.test+e2e@gmail.com");
+    if (testUser) {
+      return firebase.auth().deleteUser(testUser.uid);
+    }
+  }
+
+  public async createVerifiedUserWithEmailAndPassword(email: string, pass: string): Promise<firebase.auth.UserRecord> {
+    return firebase.auth().createUser({
+      email: email,
+      password: pass,
+      emailVerified: true
+    });
+  }
 }

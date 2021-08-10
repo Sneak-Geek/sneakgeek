@@ -158,6 +158,7 @@ export class EmailLoginScreen extends React.Component<Props, State> {
           onChangeText={(password) => this.setState({password})}
           selectionColor={themes.AppPrimaryColor}
           secureTextEntry={true}
+          textContentType={'oneTimeCode'}
           autoCapitalize={'none'}
         />
       </View>

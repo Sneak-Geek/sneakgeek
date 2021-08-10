@@ -17,10 +17,8 @@ import RouteNames from 'navigations/RouteNames';
 import {connect} from 'utilities/ReduxUtilities';
 import {
   authenticateWithFb,
-  authenticateWithGoogle,
   NetworkRequestState,
   authenticateWithApple,
-  Account,
 } from 'business';
 import {IAppState} from 'store/AppStore';
 import {AppText} from 'screens/Shared';
@@ -33,7 +31,6 @@ type Props = {
   navigation: StackNavigationProp<any>;
   toggleLoading: (isLoading: boolean) => void;
   facebookLogin: () => void;
-  googleLogin: () => void;
   appleLogin: () => void;
 };
 
@@ -99,9 +96,6 @@ const styles = StyleSheet.create({
     facebookLogin: (): void => {
       dispatch(authenticateWithFb());
     },
-    googleLogin: (): void => {
-      dispatch(authenticateWithGoogle());
-    },
     appleLogin: (): void => {
       dispatch(authenticateWithApple());
     },
@@ -154,19 +148,6 @@ export class LoginScreen extends React.Component<Props> {
           ...styles.button,
         }}
         onPress={this.props.facebookLogin.bind(this)}
-      />
-    );
-  }
-
-  private _renderGoogleLogin() {
-    return (
-      <Button
-        type={'outline'}
-        buttonStyle={{backgroundColor: 'white', ...styles.button}}
-        title={strings.ContinueGoogle}
-        icon={<Image source={images.Google} style={styles.iconStyle} />}
-        titleStyle={{...styles.titleStyle, color: 'black'}}
-        onPress={this.props.googleLogin.bind(this)}
       />
     );
   }
@@ -226,6 +207,7 @@ export class LoginScreen extends React.Component<Props> {
   private _renderEmailSignUp() {
     return (
       <Button
+        testID={'EmailSignUpButton'}
         type={'outline'}
         buttonStyle={{
           backgroundColor: themes.AppPrimaryColor,
