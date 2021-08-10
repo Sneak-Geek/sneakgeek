@@ -6,28 +6,17 @@ import * as express from "express";
 import { body } from "express-validator";
 import HttpStatus from "http-status";
 import { inject } from "inversify";
-import {
-  controller,
-  httpGet,
-  httpPut,
-  request,
-  response,
-  httpPost,
-} from "inversify-express-utils";
+import { controller, httpGet, httpPut, request, response } from "inversify-express-utils";
 import { UserAccount } from "../database";
 import { Types } from "../../configuration/inversify/inversify.types";
 import { FirebaseAuthMiddleware, ValidationPassedMiddleware } from "../middlewares";
 import { IProfileDao } from "../dao";
-import { INotificationService } from "../services";
 import { IFirebaseAuthService } from "../services/FirebaseAuthService";
 
 @controller("/api/v1/profile")
 export class ProfileController {
   @inject(Types.ProfileDao)
   private readonly profileDao!: IProfileDao;
-
-  @inject(Types.NotificationService)
-  private readonly notificationService!: INotificationService;
 
   @inject(Types.FirebaseAuthService)
   private readonly firebaseAuthService!: IFirebaseAuthService;
@@ -77,5 +66,11 @@ export class ProfileController {
   ) {
     const { user } = req;
     return res.status(HttpStatus.OK).send({ profile: user });
+  }
+
+  @httpGet("/auth/delete-test-user")
+  public async deleteTestUser(@response() res: express.Response) {
+    await this.firebaseAuthService.deleteTestUser();
+    return res.status(HttpStatus.OK);
   }
 }
