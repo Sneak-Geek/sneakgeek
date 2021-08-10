@@ -6,13 +6,7 @@ import * as express from "express";
 import { body } from "express-validator";
 import HttpStatus from "http-status";
 import { inject } from "inversify";
-import {
-  controller,
-  httpGet,
-  httpPut,
-  request,
-  response,
-} from "inversify-express-utils";
+import { controller, httpGet, httpPut, request, response } from "inversify-express-utils";
 import { UserAccount } from "../database";
 import { Types } from "../../configuration/inversify/inversify.types";
 import { FirebaseAuthMiddleware, ValidationPassedMiddleware } from "../middlewares";
@@ -23,7 +17,7 @@ import { IFirebaseAuthService } from "../services/FirebaseAuthService";
 export class ProfileController {
   @inject(Types.ProfileDao)
   private readonly profileDao!: IProfileDao;
-  
+
   @inject(Types.FirebaseAuthService)
   private readonly firebaseAuthService!: IFirebaseAuthService;
 
