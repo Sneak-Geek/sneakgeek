@@ -53,10 +53,10 @@ export class OrderController extends AsbtractOrderController {
         user.accessLevel === AccessLevel.Seller
       );
       return res.status(HttpStatus.OK).send(orders);
-    } catch(error) {
+    } catch (error) {
       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
         message: "Unexpected error!",
-      }); 
+      });
     }
   }
 
