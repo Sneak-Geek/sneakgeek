@@ -46,8 +46,8 @@ export const UserProfileSchema = new mongoose.Schema(
     accessLevel: {
       type: String,
       enum: Object.keys(AccessLevel),
-      default: AccessLevel.User
-    }
+      default: AccessLevel.User,
+    },
   },
   { timestamps: true, strict: true }
 );

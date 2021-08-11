@@ -48,7 +48,7 @@ export class FirebaseAuthService implements IFirebaseAuthService {
     let user: firebase.auth.UserRecord;
     try {
       user = await firebase.auth().getUserByEmail(email);
-    } catch (_error) { }
+    } catch (_error) {}
     if (!user) {
       user = await firebase.auth().createUser({
         email,
@@ -56,6 +56,6 @@ export class FirebaseAuthService implements IFirebaseAuthService {
         emailVerified: true,
       });
     }
-    return user; 
+    return user;
   }
 }

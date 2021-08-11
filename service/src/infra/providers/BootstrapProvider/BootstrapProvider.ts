@@ -12,20 +12,14 @@ import {
 import { AccessLevel } from "../../database/UserAccount";
 import { Types } from "../../../configuration/inversify";
 import mongoose, { Document } from "mongoose";
-import {
-  AdminFbProfile,
-  SellerFbProfile,
-  UserFbProfile,
-} from "../../../assets/seeds/dev";
+import { AdminFbProfile, SellerFbProfile, UserFbProfile } from "../../../assets/seeds/dev";
 import { LogProvider } from "../LogProvider";
 import path from "path";
 import fs from "fs";
 import _ from "lodash";
 import { PaymentMethod, TrackingStatus } from "../../../assets/constants";
 import * as csv from "fast-csv";
-import {
-  THCFbProfile,
-} from "../../../assets/seeds/prod";
+import { THCFbProfile } from "../../../assets/seeds/prod";
 import { IFirebaseAuthService } from "../../services/FirebaseAuthService";
 
 @injectable()
@@ -37,7 +31,7 @@ export class BootstrapProvider implements IBootstrapProvider {
     @inject(Types.InventoryRepository) private inventoryRepo: Repository<Inventory>,
     @inject(Types.OrderRepository) private orderRepo: Repository<Order>,
     @inject(Types.FirebaseAuthService) private firebaseAuthService: IFirebaseAuthService
-  ) { }
+  ) {}
 
   private readonly thcSeeds: string = path.join(
     process.cwd(),
@@ -47,21 +41,25 @@ export class BootstrapProvider implements IBootstrapProvider {
   );
 
   public async bootstrapDevUserData(): Promise<any> {
-    return Promise.all([
-      AdminFbProfile, UserFbProfile, SellerFbProfile
-    ].map(p => this._createUserDataWithFirebase(p)));
+    return Promise.all(
+      [AdminFbProfile, UserFbProfile, SellerFbProfile].map((p) =>
+        this._createUserDataWithFirebase(p)
+      )
+    );
   }
 
   public async bootstrapProdUserData(): Promise<any> {
-    return Promise.all([
-      THCFbProfile
-    ].map(p => this._createUserDataWithFirebase(p)));
+    return Promise.all([THCFbProfile].map((p) => this._createUserDataWithFirebase(p)));
   }
 
-  private async _createUserDataWithFirebase(profile: Partial<UserProfile> & { password: string }) {
-    const count = await this.profileRepository.countDocuments({
-      userProvidedEmail: profile.userProvidedEmail
-    }).exec();
+  private async _createUserDataWithFirebase(
+    profile: Partial<UserProfile> & { password: string }
+  ) {
+    const count = await this.profileRepository
+      .countDocuments({
+        userProvidedEmail: profile.userProvidedEmail,
+      })
+      .exec();
 
     if (count === 0) {
       const firebaseUser = await this.firebaseAuthService.createVerifiedUserWithEmailAndPassword(
@@ -77,7 +75,9 @@ export class BootstrapProvider implements IBootstrapProvider {
         userProvidedAddress: profile.userProvidedAddress,
       });
 
-      LogProvider.instance.info(`Create user data success for ${newProfile.userProvidedEmail}`);
+      LogProvider.instance.info(
+        `Create user data success for ${newProfile.userProvidedEmail}`
+      );
     }
   }
 

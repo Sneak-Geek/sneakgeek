@@ -10,4 +10,3 @@ export const THCFbProfile: FirebaseUser = {
     firstName: "The Hype Collector",
   },
 };
-

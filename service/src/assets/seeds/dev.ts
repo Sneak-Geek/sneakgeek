@@ -45,4 +45,4 @@ export const SellerFbProfile: FirebaseUser = {
     addressLine1: "1 Hoàng Minh Giám, Cầu Giấy, Hà Nội",
     addressLine2: "12 Lý 1",
   },
-}; 
+};

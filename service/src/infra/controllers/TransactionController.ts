@@ -2,18 +2,9 @@
 // ! Copyright (c) 2019 - SneakGeek. All rights reserved
 // !
 
-import {
-  controller,
-  httpGet,
-  request,
-  response,
-  httpPut,
-} from "inversify-express-utils";
+import { controller, httpGet, request, response, httpPut } from "inversify-express-utils";
 import { inject } from "inversify";
-import {
-  Transaction,
-  TrackingStatusEnum as TrackingStatus,
-} from "../database";
+import { Transaction, TrackingStatusEnum as TrackingStatus } from "../database";
 import { Types } from "../../configuration/inversify";
 import { Request, Response } from "express";
 import { query, body } from "express-validator";
@@ -23,9 +14,7 @@ import {
   FirebaseAuthMiddleware,
   AuthenticatorPermissionMiddleware,
 } from "../middlewares";
-import {
-  IPaymentService,
-} from "../services";
+import { IPaymentService } from "../services";
 import mongoose from "mongoose";
 import HttpStatus from "http-status";
 import { PaymentStatus, PaymentCallbackResponse } from "../../assets/constants";
