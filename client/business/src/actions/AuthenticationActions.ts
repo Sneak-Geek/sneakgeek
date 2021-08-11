@@ -20,7 +20,6 @@ export const getCurrentUser = () => {
   const accountService = ObjectFactory.getObjectInstance<IAccountService>(
     FactoryKeys.IAccountService
   );
-  console.log("Inside getCurrentUser");
   return async (dispatch: Dispatch<any>) => {
     dispatch(
       updateAuthenticationState({ state: NetworkRequestState.REQUESTING })
@@ -165,7 +164,6 @@ export const authenticateWithFb = () => {
 
           try {
             const profile = await accountService.getUserProfile(token);
-            console.log("Got user profile: ", profile);
             if (profile) {
               dispatch(updateStateGetUserProfile({
                 state: NetworkRequestState.SUCCESS,
