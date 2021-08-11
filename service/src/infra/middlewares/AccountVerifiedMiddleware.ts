@@ -28,6 +28,7 @@ export const AccountVerifiedMiddleware = async (
       });
     }
   } catch (error) {
+    LogProvider.instance.error(error);
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
       message: "Internal server errror",
     });

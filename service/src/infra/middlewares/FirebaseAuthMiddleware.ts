@@ -4,6 +4,7 @@ import { Types } from "../../configuration/inversify/inversify.types";
 import { IFirebaseAuthService } from "../services/FirebaseAuthService";
 import HttpStatus from "http-status";
 import { IProfileDao } from "../dao";
+import { LogProvider } from "../providers";
 
 export const FirebaseAuthMiddleware = async (
   req: Request,
@@ -38,6 +39,7 @@ export const FirebaseAuthMiddleware = async (
 
     req.user = user;
   } catch (error) {
+    LogProvider.instance.error(error);
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
       message: "Internal server errror",
     });
