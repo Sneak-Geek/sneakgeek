@@ -297,22 +297,15 @@ export class NewBuyOrder extends React.Component<Props, State> {
       this._alertMissingInfo();
       return;
     }
-    let savedToken = getToken();
-    let newToken = await firebase.auth().currentUser.getIdToken(true);
+    let token = await getToken();
     this.setState({isPressed: true});
 
     const profile = this.props.profile;
 
     // TO DO: Create new Order, return orderId
-    console.log("Purchase Product Saved Token: ", savedToken);
-    console.log("Purchase Product Current Token: ", newToken);
-    console.log("Purchase Product Inventory ID: ", this.state.buyOrder.inventoryId);
-    console.log("Purchase Product addressLine1: ", profile.userProvidedAddress?.addressLine1);
-    console.log("Purchase Product addressLine2: ", profile.userProvidedAddress?.addressLine2);
-    console.log("Purchase Product sellPrice: ", this.state.buyOrder.sellPrice);
     this._orderService
       .bankTransfer(
-        newToken,
+        token,
         'BANK_TRANSFER',
         this.state.buyOrder.inventoryId,
         profile.userProvidedAddress?.addressLine1,

@@ -22,15 +22,12 @@ export const AccountVerifiedMiddleware = async (
 
   try {
     const decodedToken = await firebase.verifyIdToken(idToken);
-    console.log("AccountVerifiedMiddleware: finished verify idToken: ", decodedToken);
     if (!decodedToken?.email_verified) {
-      console.log("AccountVerifiedMiddleware: Forbidden");
       return res.status(HttpStatus.FORBIDDEN).send({
         message: "Forbidden. Account is not verified",
       });
     }
   } catch (error) {
-    console.log("Error in Account Verified: ", error);
     LogProvider.instance.error(error);
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
       message: "Internal server errror",

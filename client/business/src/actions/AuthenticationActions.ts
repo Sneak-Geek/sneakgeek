@@ -17,10 +17,6 @@ export const updateAuthenticationState = createAction<AuthenticationPayload>(
 );
 
 export const getCurrentUser = () => {
-  const settings = ObjectFactory.getObjectInstance<ISettingsProvider>(
-    FactoryKeys.ISettingsProvider
-  );
-
   const accountService = ObjectFactory.getObjectInstance<IAccountService>(
     FactoryKeys.IAccountService
   );
@@ -31,11 +27,8 @@ export const getCurrentUser = () => {
     );
     
     try {
-      const token = settings.getValue(SettingsKey.CurrentAccessToken);
       const userProfile = await firebase.auth().currentUser;
       const firebaseToken = userProfile ? await userProfile.getIdToken() : undefined;
-      console.log("SettingsKey token: ", token);
-      console.log("Firebase token: ", firebaseToken);
       
       if (userProfile && firebaseToken) {
         try {
@@ -95,7 +88,6 @@ export const authenticateWithEmail = (
           : await firebase.auth().signInWithEmailAndPassword(email, password);
       if(response.user)
       {
-        //await response.user.reload();
         if (isSignUp)
         {
           await response.user.sendEmailVerification();
@@ -107,7 +99,6 @@ export const authenticateWithEmail = (
         );
         try {
           const profile = await accountService.getUserProfile(token);
-          console.log("Got user profile: ", profile);
           if (profile) {
             dispatch(updateStateGetUserProfile({
               state: NetworkRequestState.SUCCESS,
@@ -166,11 +157,6 @@ export const authenticateWithFb = () => {
         const response = await firebase.auth().signInWithCredential(facebookCredential);
         if(response.user)
         {
-          //response.user.reload();
-          /*if (!response.user.emailVerified)
-          {
-            await response.user.sendEmailVerification();
-          }*/
           const token = await response.user.getIdToken();
           await settings.setValue(
             SettingsKey.CurrentAccessToken,
@@ -255,39 +241,26 @@ export const authenticateWithApple = () => {
     );
 
     try {
-      console.log('Before Apple Login');
       const appleAuthRequestResponse = await appleAuth.performRequest({
         requestedOperation: appleAuth.Operation.LOGIN,
         requestedScopes: [appleAuth.Scope.EMAIL],
-      }); 
-      console.log('Finish Apple authentication');
+      });
       if (!appleAuthRequestResponse.identityToken) {
         console.error('Apple Sign-In failed - no identify token returned');
       }
       const { identityToken, nonce } = appleAuthRequestResponse;
       const appleCredential = firebase.auth.AppleAuthProvider.credential(identityToken, nonce);
-      console.log('Apple credentials');
   
       const response = await firebase.auth().signInWithCredential(appleCredential);
-      console.log('Finish signin with credential: ', response);
       if(response.user)
       {
-        console.log(response.user)
-        //response.user.reload();
-        /*if (!response.user.emailVerified)
-        {
-          await response.user.sendEmailVerification();
-        }*/
         const token = await response.user.getIdToken();
-        console.log("Token: ", token);
         await settings.setValue(
           SettingsKey.CurrentAccessToken,
           token
         );
         try {
-          console.log("Try to get user profile: ");
           const profile = await accountService.getUserProfile(token);
-          console.log("Got user profile: ", profile);
           if (profile) {
             dispatch(updateStateGetUserProfile({
               state: NetworkRequestState.SUCCESS,

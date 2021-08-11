@@ -5,11 +5,11 @@ import {
   SettingsKey,
 } from 'business';
 
-export function getToken() {
-  const settings = ObjectFactory.getObjectInstance<ISettingsProvider>(
-    FactoryKeys.ISettingsProvider,
-  );
-  return settings.getValue(SettingsKey.CurrentAccessToken);
+import { firebase } from '@react-native-firebase/auth';
+
+export async function getToken() {
+  const token = await firebase.auth().currentUser.getIdToken();
+  return token;
 }
 
 export function getDependency<T>(key: symbol): T {
