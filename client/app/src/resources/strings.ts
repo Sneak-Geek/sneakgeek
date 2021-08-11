@@ -1,6 +1,7 @@
 export const strings = {
   SignIn: 'Đăng nhập',
   SignUp: 'Đăng kí tài khoản',
+  EmailHeader: 'Email',
   ContinueFacebook: 'Tiếp tục với Facebook',
   ContinueGoogle: 'Tiếp tục với Google',
   ContinueApple: 'Tiếp tục với Apple',
@@ -27,7 +28,9 @@ export const strings = {
   AccountCreatedByFacebook:
     'Bạn đã tạo tài khoản bằng Facebook. Xin vui lòng tiếp tục với Facebook.',
   FillInEmail:
-    'Để khôi phục lại mật khẩu, bạn cần điền địa chỉ email của tài khoản đăng nhập:',
+    'Chúng tôi sẽ gửi link khôi phục mật khẩu tới hòm thư của tài khoản đăng nhập của bạn',
+  ResetPasswordLinkSent: 'Chúng tôi đã gửi link khôi phục mật khẩu tới hòm thư',
+  ResetPasswordInstructions: 'Mở hòm thư trên điện thoại và click vào link để khôi phục mật khẩu.',
   ForgotPasswordTokenVerification:
     'Email chứa mã code để đặt lại mật khẩu đã được gửi đến hòm thư của bạn.',
   FillInPasscode: 'Nhập mã code trong email của bạn vào đây:',

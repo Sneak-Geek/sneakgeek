@@ -270,3 +270,15 @@ export const authenticateWithApple = () => {
     }
   };
 };
+
+export const resetPassword = (email: string) => {
+  return async (dispatch: Dispatch<any>) => { 
+    try {
+      await firebase.auth().sendPasswordResetEmail(email);
+    } catch(error) {
+      dispatch(
+        updateAuthenticationState({ state: NetworkRequestState.FAILED, error })
+      );
+    }
+  }
+}

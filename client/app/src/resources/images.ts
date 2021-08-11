@@ -15,5 +15,6 @@ export const images = {
   GreenCheck: require('../../assets/icons/GreenCheck.png'),
   CopyIcon: require('../../assets/icons/CopyIcon.png'),
   SectionListUpArrow: require('../../assets/icons/SectionListUpArrow.png'),
-  SectionListDownArrow: require('../../assets/icons/SectionListDownArrow.png')
+  SectionListDownArrow: require('../../assets/icons/SectionListDownArrow.png'),
+  ForgotPasswordEmailSent: require('../../assets/icons/ForgotPasswordEmailSent.png')
 };

@@ -8,6 +8,7 @@ import {
   ForgotPasswordScreen,
 } from 'screens/Authentication';
 import {strings, themes} from 'resources';
+import { ForgotPasswordEmailSentScreen } from 'screens/Authentication/ForgotPasswordEmailSentScreen';
 
 const Stack = createStackNavigator();
 
@@ -44,6 +45,14 @@ export const AuthenticationStack = (): JSX.Element => (
         title: strings.ForgotPassword,
         ...themes.headerStyle,
       }}
+    />
+    <Stack.Screen 
+    name={RouteNames.Auth.ForgotPasswordEmailSent}
+    component={ForgotPasswordEmailSentScreen}
+    options={{
+      title: strings.ForgotPassword,
+      ...themes.headerStyle,
+    }} 
     />
   </Stack.Navigator>
 );

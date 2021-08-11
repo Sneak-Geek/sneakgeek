@@ -6,6 +6,7 @@ const RouteNames = {
     EmailSignUp: 'EmailSignUp',
     EmailLogin: 'EmailLogin',
     ForgotPassword: 'ForgotPassword',
+    ForgotPasswordEmailSent: 'ForgotPasswordEmailSent'
   },
   Product: {
     Name: 'Product',
