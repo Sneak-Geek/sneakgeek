@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
   textStyle: {
     letterSpacing: -0.02,
     marginLeft: 5,
-    color: themes.AppPrimaryColor,
+    color: themes.AppErrorColor,
     alignSelf: 'center',
   },
   errorContainer: {
@@ -29,8 +29,8 @@ export const WrongInputError = (props: Props) => {
       <View style={styles.errorContainer}>
         <Icon
           size={20}
-          name="close-circle-outline"
-          color={themes.AppPrimaryColor}
+          name="cancel"
+          color={themes.AppErrorColor}
         />
         <AppText.SubCallout style={styles.textStyle}>
           {props.errorDescription}
