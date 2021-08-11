@@ -16,18 +16,24 @@ export const updateStateGetUserProfile = createAction<GetUserProfilePayload>(
 export const updateProfile = createAction<Profile>(ProfileActions.SET_PROFILE);
 
 export const getUserProfile = () => {
+  console.log("Inside getUserProfile: ");
   return async (dispatch: Dispatch<AnyAction>) => {
+    console.log("Inside return async");
     const accountService = ObjectFactory.getObjectInstance<IAccountService>(
       FactoryKeys.IAccountService
     );
+    console.log("Got account service");
     const settings = ObjectFactory.getObjectInstance<ISettingsProvider>(
       FactoryKeys.ISettingsProvider
     );
-
+    console.log("Before updateStateGetUserProfile");
     dispatch(updateStateGetUserProfile({ state: NetworkRequestState.REQUESTING }));
+    console.log("Before Get Token");
     const token = settings.getValue(SettingsKey.CurrentAccessToken);
+    console.log("Token in getUserProfile: ", token);
     try {
       const profile: Profile | undefined = await accountService.getUserProfile(token);
+      console.log("Got user profile: ", profile);
       if (profile) {
         dispatch(updateStateGetUserProfile({
           state: NetworkRequestState.SUCCESS,

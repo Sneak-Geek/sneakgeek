@@ -7,7 +7,7 @@ import { body } from "express-validator";
 import HttpStatus from "http-status";
 import { inject } from "inversify";
 import { controller, httpGet, httpPut, request, response } from "inversify-express-utils";
-import { UserAccount } from "../database";
+import { UserProfile } from "../database";
 import { Types } from "../../configuration/inversify/inversify.types";
 import { FirebaseAuthMiddleware, ValidationPassedMiddleware } from "../middlewares";
 import { IProfileDao } from "../dao";
@@ -26,7 +26,7 @@ export class ProfileController {
     @request() req: express.Request,
     @response() res: express.Response
   ) {
-    const profile = req.user as UserAccount;
+    const profile = req.user as UserProfile;
     return res.status(HttpStatus.OK).send({ profile });
   }
 

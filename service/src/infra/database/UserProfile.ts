@@ -4,7 +4,6 @@
 
 import mongoose from "mongoose";
 import { Repository, Document } from "./Repository";
-import { AccessLevel } from "./UserAccount";
 
 const UserProvidedNameSchema = new mongoose.Schema({
   firstName: String,

@@ -279,6 +279,7 @@ export class NewBuyOrder extends React.Component<Props, State> {
 
   private get _isMissingInfo() {
     const currentUser = firebase.auth().currentUser;
+    currentUser.reload();
     const isNotVerified = !currentUser || !currentUser.emailVerified;
     const profile = this.props.profile;
     const isMissingInfo =
@@ -291,20 +292,27 @@ export class NewBuyOrder extends React.Component<Props, State> {
     return isMissingInfo || isNotVerified;
   }
 
-  private _purchaseProduct(): void {
+  private async _purchaseProduct(): Promise<void> {
     if (this._isMissingInfo) {
       this._alertMissingInfo();
       return;
     }
-
+    let savedToken = getToken();
+    let newToken = await firebase.auth().currentUser.getIdToken(true);
     this.setState({isPressed: true});
 
     const profile = this.props.profile;
 
     // TO DO: Create new Order, return orderId
+    console.log("Purchase Product Saved Token: ", savedToken);
+    console.log("Purchase Product Current Token: ", newToken);
+    console.log("Purchase Product Inventory ID: ", this.state.buyOrder.inventoryId);
+    console.log("Purchase Product addressLine1: ", profile.userProvidedAddress?.addressLine1);
+    console.log("Purchase Product addressLine2: ", profile.userProvidedAddress?.addressLine2);
+    console.log("Purchase Product sellPrice: ", this.state.buyOrder.sellPrice);
     this._orderService
       .bankTransfer(
-        getToken(),
+        newToken,
         'BANK_TRANSFER',
         this.state.buyOrder.inventoryId,
         profile.userProvidedAddress?.addressLine1,
@@ -312,6 +320,7 @@ export class NewBuyOrder extends React.Component<Props, State> {
         this.state.buyOrder.sellPrice,
       )
       .then((res) => {
+        console.log("Purchase Product Result: ", res);
         this.props.navigation.push(RouteNames.Order.Payment, {
           isDetailNotice: false,
           inventoryId: this.state.buyOrder.inventoryId,
@@ -325,11 +334,12 @@ export class NewBuyOrder extends React.Component<Props, State> {
   private _alertMissingInfo(): void {
     let message = '';
     let buttonText = '';
-
+    let firebaseUser = firebase.auth().currentUser;
+    firebaseUser.reload();
     if (!this.props.profile) {
       message = strings.NotAuthenticated;
       buttonText = strings.PleaseLogin;
-    } else if (!firebase.auth().currentUser.emailVerified) {
+    } else if (!firebaseUser.emailVerified) {
       message = strings.NotVerified;
     } else {
       message = strings.MissingProfileInfo;
@@ -353,7 +363,7 @@ export class NewBuyOrder extends React.Component<Props, State> {
         }
       );
     }
-    if (this.props.profile && !firebase.auth().currentUser.emailVerified)
+    if (this.props.profile && !firebaseUser.emailVerified)
     {
       textDisplay.push({
         text: strings.Cancel,
