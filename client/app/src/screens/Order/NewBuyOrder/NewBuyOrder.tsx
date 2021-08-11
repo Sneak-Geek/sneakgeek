@@ -313,7 +313,6 @@ export class NewBuyOrder extends React.Component<Props, State> {
         this.state.buyOrder.sellPrice,
       )
       .then((res) => {
-        console.log("Purchase Product Result: ", res);
         this.props.navigation.push(RouteNames.Order.Payment, {
           isDetailNotice: false,
           inventoryId: this.state.buyOrder.inventoryId,
