@@ -3,6 +3,7 @@
 // !
 
 import mongoose from "mongoose";
+import { AccessLevel } from ".";
 import { Repository, Document } from "./Repository";
 
 const UserProvidedNameSchema = new mongoose.Schema({
@@ -60,6 +61,7 @@ export type UserProfile = Document<{
   userProvidedEmail: string;
   userProvidedPhoneNumber: string;
   isSeller: boolean;
+  accessLevel: AccessLevel;
 }>;
 
 export type UserAddress = Document<{

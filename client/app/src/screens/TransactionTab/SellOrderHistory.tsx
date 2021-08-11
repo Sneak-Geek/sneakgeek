@@ -198,7 +198,7 @@ export class SellOrderHistory extends React.Component<Props, State> {
       return <></>;
     }
 
-    if (profile.isSeller) {
+    if (!profile.isSeller) {
       let waitingForBankTransferOrders = [];
       let numberOfWaitingForBankTransferOrders = 0;
       let otherOrders = [];

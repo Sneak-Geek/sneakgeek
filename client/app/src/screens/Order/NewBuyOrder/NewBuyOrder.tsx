@@ -307,7 +307,7 @@ export class NewBuyOrder extends React.Component<Props, State> {
         getToken(),
         'BANK_TRANSFER',
         this.state.buyOrder.inventoryId,
-        profile.userProvidedAddress?.addresine1,
+        profile.userProvidedAddress?.addressLine1,
         profile.userProvidedAddress?.addressLine2,
         this.state.buyOrder.sellPrice,
       )

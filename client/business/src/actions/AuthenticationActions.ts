@@ -7,7 +7,6 @@ import { getUserProfile, updateStateGetUserProfile } from "./ProfileActions";
 import { Dispatch } from "redux";
 import {firebase} from '@react-native-firebase/auth';
 import { appleAuth } from '@invertase/react-native-apple-authentication';
-// import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
 export const AuthenticationActions = {
   UPDATE_AUTHENTICATION_STATE: "UPDATE_AUTHENTICATION_STATE",
