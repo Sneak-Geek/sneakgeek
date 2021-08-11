@@ -7,7 +7,7 @@ flags.defineString("type", "", "Release type, either \"service\" or \"app\"");
 flags.parse();
 const releaseType = flags.get("type");
 
-if (releaseType !== "app" && releaseType !== "service") {
+if (!["app", "service", "cms"].some(t => t === releaseType)){
   console.error(`Wrong type input: ${releaseType}`);
   process.exit(1);
 }

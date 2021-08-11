@@ -6,5 +6,9 @@
   "service": {
     "version": "081021",
     "build": 1
+  },
+  "cms": {
+    "version": "081021",
+    "build": 0
   }
 }

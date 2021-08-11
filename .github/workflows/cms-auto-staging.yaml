@@ -1,54 +1,55 @@
-name: Backend service auto rollout (staging)
+name: CMS Auto Staging Deployment
 on:
   push:
     branches:
     - main
     paths:
-    - service/**
-    - .github/workflows/backend-auto-staging.yaml
+    - cms/**
+    - .github/workflows/cms-auto-staging.yaml
 jobs:
-  deploy_staging:
+  deploy:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: service
+        working-directory: cms
+    strategy:
+      matrix:
+        node-version: [12.x]
+    env:
+      GAE_SERVICE_ACCOUNT_PROD: ${{ secrets.GAE_STAGING_SERVICE_ACCOUNT }}
+      GAE_SERVICE_ACCOUNT_KEY_FILE_PROD: ${{ secrets.GAE_STAGING_SERVICE_ACCOUNT_KEY }}
     steps:
       - uses: actions/checkout@v2
-      - name: Setup NodeJS
+      - name: Setup Node JS ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
-          node-version: 12.x
+          node-version: ${{ matrix.node-version }}
       - name: Bump version number
         run: |
           cd ../
           yarn install
-          GIT_TAG=`node scripts/bump_version.js --type=service`
+          GIT_TAG=`node scripts/bump_version.js --type=cms`
           echo "GIT_TAG=$GIT_TAG" >> $GITHUB_ENV
           echo $GITHUB_ENV
       - name: Install packages
         run: yarn install --frozen-lockfile
-      - name: Build
+      - name: Build CMS
         run: yarn build
-      - name: Get current version
-        run: |
-          cat ../version.json
       - name: Setup gcloud CLI
         uses: google-github-actions/setup-gcloud@master
         with:
           service_account_email: ${{ secrets.GAE_STAGING_SERVICE_ACCOUNT }}
           service_account_key: ${{ secrets.GAE_STAGING_SERVICE_ACCOUNT_KEY }}
           project_id: ${{ secrets.STAGING_PROJECT_ID }}
-      - name: Deploy to Google App Engine (staging) 
+      - name: Deploy CMS to Google App Engine
         env:
           GAE_STAGING_SERVICE_ACCOUNT: ${{ secrets.GAE_STAGING_SERVICE_ACCOUNT }}
-          STAGING_PROJECT_ID: ${{ secrets.STAGING_PROJECT_ID }}
+          STAGING_PROJECT_ID: ${{ secrets.STAGING_PROJECT_ID }}    
         run: |
-          VERSION=`node -e "const v=require('../version.json');console.log(v.service.version+'-'+v.service.build)"`
-          gcloud app deploy ./app-dev.yaml \
-            --version=$VERSION \
-            --no-cache --promote --verbosity=info --quiet \
-            --account=$GAE_STAGING_SERVICE_ACCOUNT \
-            --project=$STAGING_PROJECT_ID
+          gcloud app deploy ./cms-dev.yaml \
+          --no-cache --promote --verbosity=info \
+          --quiet --account=${GAE_STAGING_SERVICE_ACCOUNT} 
+          --project=${STAGING_PROJECT_ID}
       - name: Commit new version and tag
         uses: EndBug/add-and-commit@v7.2.1
         with:
@@ -57,3 +58,4 @@ jobs:
           push: true
           signoff: false
           tag: ${{ env.GIT_TAG }}
+      
