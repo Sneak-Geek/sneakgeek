@@ -25,7 +25,6 @@ export const Types = {
   // Service
   EmailService: Symbol("EmailService"),
   JwtService: Symbol("JwtService"),
-  ShippingService: Symbol("ShippingService"),
   PaymentService: Symbol("PaymentService"),
   NotificationService: Symbol("NotificationService"),
   AppleAuthService: Symbol("AppleAuthService"),

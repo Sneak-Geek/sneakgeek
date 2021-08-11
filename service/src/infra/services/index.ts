@@ -4,7 +4,6 @@
 
 export * from "./EmailService";
 export * from "./JwtService";
-export * from "./ShippingService";
 export * from "./PaymentService";
 export * from "./NotificationService";
 export * from "./AppleAuthService";

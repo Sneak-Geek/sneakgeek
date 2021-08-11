@@ -43,12 +43,19 @@ export class FirebaseAuthService implements IFirebaseAuthService {
 
   public async createVerifiedUserWithEmailAndPassword(
     email: string,
-    pass: string
+    password: string
   ): Promise<firebase.auth.UserRecord> {
-    return firebase.auth().createUser({
-      email: email,
-      password: pass,
-      emailVerified: true,
-    });
+    let user: firebase.auth.UserRecord;
+    try {
+      user = await firebase.auth().getUserByEmail(email);
+    } catch (_error) {}
+    if (!user) {
+      user = await firebase.auth().createUser({
+        email,
+        password,
+        emailVerified: true,
+      });
+    }
+    return user;
   }
 }

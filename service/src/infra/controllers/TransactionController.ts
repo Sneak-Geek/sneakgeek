@@ -2,20 +2,9 @@
 // ! Copyright (c) 2019 - SneakGeek. All rights reserved
 // !
 
-import {
-  controller,
-  httpGet,
-  request,
-  response,
-  httpPut,
-  httpPost,
-} from "inversify-express-utils";
+import { controller, httpGet, request, response, httpPut } from "inversify-express-utils";
 import { inject } from "inversify";
-import {
-  Transaction,
-  TrackingStatusEnum as TrackingStatus,
-  GhnFailureCode,
-} from "../database";
+import { Transaction, TrackingStatusEnum as TrackingStatus } from "../database";
 import { Types } from "../../configuration/inversify";
 import { Request, Response } from "express";
 import { query, body } from "express-validator";
@@ -25,36 +14,19 @@ import {
   FirebaseAuthMiddleware,
   AuthenticatorPermissionMiddleware,
 } from "../middlewares";
-import {
-  IPaymentService,
-  IShippingService,
-  GhnWebhookCallbackDataType,
-  NotificationType,
-} from "../services";
+import { IPaymentService } from "../services";
 import mongoose from "mongoose";
 import HttpStatus from "http-status";
-import { AdminProfile } from "../../assets/seeds/dev";
-import { ObjectId } from "mongodb";
 import { PaymentStatus, PaymentCallbackResponse } from "../../assets/constants";
 import { ITransactionDao, INotificationDao, IProfileDao } from "../dao";
-import { LogProvider } from "../providers";
 
 @controller("/api/v1/transaction")
 export class TransactionController {
-  @inject(Types.ProfileDao)
-  private readonly profileDao!: IProfileDao;
-
   @inject(Types.PaymentService)
   private readonly paymentService!: IPaymentService;
 
-  @inject(Types.ShippingService)
-  private readonly shippingService!: IShippingService;
-
   @inject(Types.TransactionDao)
   private readonly transactionDao!: ITransactionDao;
-
-  @inject(Types.NotificationDao)
-  private readonly notificationDao!: INotificationDao;
 
   @httpGet(
     "/payment-callback",
@@ -151,56 +123,6 @@ export class TransactionController {
     }
   }
 
-  @httpPost("/ghnCallback")
-  public async onGhnHookCallback(@request() req: Request, @response() res: Response) {
-    const body = req.body as GhnWebhookCallbackDataType;
-
-    LogProvider.instance.info("GHN webhook callback", JSON.stringify(body));
-
-    const transactionId = body.ExternalCode;
-    const description = body.Note;
-    const transaction = await this.transactionDao.findById(transactionId);
-    const isDeliveringFromSeller =
-      body.OrderCode === transaction.tracking.ghnDeliverFromSellerCode;
-    let status = "";
-    let failureCode = undefined;
-
-    switch (body.CurrentStatus) {
-      case "Picking":
-        status = isDeliveringFromSeller
-          ? TrackingStatus.PENDING_PICKUP_FROM_SELLER
-          : TrackingStatus.PENDING_PICKUP_FROM_SNEAKGEEK;
-        break;
-      case "Delivering":
-        status = isDeliveringFromSeller
-          ? TrackingStatus.DELIVERING_TO_SNEAKGEEK
-          : TrackingStatus.DELIVERING_TO_BUYER;
-        break;
-      case "Delivered":
-        status = isDeliveringFromSeller
-          ? TrackingStatus.DELIVERED_TO_SNEAKGEEK
-          : TrackingStatus.DELIVERED_TO_BUYER;
-        break;
-      case "Cancel":
-      case "LostOrder":
-        status = TrackingStatus.DELIVER_FAILED;
-        failureCode =
-          body.CurrentStatus === "Cancel"
-            ? GhnFailureCode.ORDER_CANCELED
-            : GhnFailureCode.ORDER_LOST;
-        break;
-      default:
-        break;
-    }
-
-    this.transactionDao.updateTrackingStatusByTransactionId(
-      transactionId,
-      status,
-      description,
-      failureCode
-    );
-  }
-
   private _verifyPaymentCallbackStatus(query: any): boolean {
     const paymentType = query["paymentType"] as "intl" | "domestic";
     const onepayResponseCode = query["vpc_TxnResponseCode"] as string;
@@ -212,18 +134,6 @@ export class TransactionController {
     return (
       onepayResponseCode === "0" &&
       secureHash === this.paymentService.hashParams(paymentType, copiedQuery)
-    );
-  }
-
-  private async _createShippingOrderFromSellerToSnkg(
-    transactionId: string,
-    sellerId: ObjectId
-  ): Promise<any> {
-    const sellerProfile = await this.profileDao.findById(sellerId);
-    return await this.shippingService.createShippingOrder(
-      transactionId,
-      sellerProfile,
-      AdminProfile
     );
   }
 

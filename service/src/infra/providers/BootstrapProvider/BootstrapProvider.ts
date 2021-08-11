@@ -2,7 +2,6 @@ import { IBootstrapProvider } from "./IBootstrapProvider";
 import { injectable, inject } from "inversify";
 import {
   Shoe,
-  UserAccount,
   UserProfile,
   Repository,
   Catalogue,
@@ -13,144 +12,72 @@ import {
 import { AccessLevel } from "../../database/UserAccount";
 import { Types } from "../../../configuration/inversify";
 import mongoose, { Document } from "mongoose";
-import {
-  AdminAccount,
-  AdminCredential,
-  AdminProfile,
-  SeedCredential,
-  SellerAccount,
-  SellerCredential,
-  SellerProfile,
-  UserCredential,
-  UserRegularAccount,
-  UserRegularProfile,
-} from "../../../assets/seeds/dev";
+import { AdminFbProfile, SellerFbProfile, UserFbProfile } from "../../../assets/seeds/dev";
 import { LogProvider } from "../LogProvider";
 import path from "path";
 import fs from "fs";
 import _ from "lodash";
 import { PaymentMethod, TrackingStatus } from "../../../assets/constants";
 import * as csv from "fast-csv";
-import {
-  HeatFactoryAccount,
-  HeatFactoryCredential,
-  HeatFactoryProfile,
-  LuckyStarAccount,
-  LuckyStarCredential,
-  LuckystarProfile,
-  ProdAdminAccount,
-  ProdAdminCredential,
-  ProdAdminProfile,
-  THCAccount,
-  THCCredential,
-  THCProfile,
-} from "../../../assets/seeds/prod";
-
-type AccountInfo = {
-  accountId: mongoose.Types.ObjectId;
-  profileId: mongoose.Types.ObjectId;
-};
-
-type InventoryRowData = {
-  shop: string;
-  sku: string;
-  size: string | number;
-  price: string | number;
-  link: string;
-};
+import { THCFbProfile } from "../../../assets/seeds/prod";
+import { IFirebaseAuthService } from "../../services/FirebaseAuthService";
 
 @injectable()
 export class BootstrapProvider implements IBootstrapProvider {
   constructor(
     @inject(Types.ShoeRepository) private shoeRepository: Repository<Shoe>,
-    @inject(Types.AccountRepository) private accountRepository: Repository<UserAccount>,
     @inject(Types.ProfileRepository) private profileRepository: Repository<UserProfile>,
     @inject(Types.CatalogueRepository) private catalogRepository: Repository<Catalogue>,
     @inject(Types.InventoryRepository) private inventoryRepo: Repository<Inventory>,
-    @inject(Types.OrderRepository) private orderRepo: Repository<Order>
+    @inject(Types.OrderRepository) private orderRepo: Repository<Order>,
+    @inject(Types.FirebaseAuthService) private firebaseAuthService: IFirebaseAuthService
   ) {}
 
-  private levelToAccMap: Map<AccessLevel, AccountInfo> = new Map();
-  private shoeIds: Array<mongoose.Types.ObjectId>;
-  private readonly prodInventorySeeds: string = path.join(
-    process.cwd(),
-    "resources",
-    "seeds",
-    "inventories-07152021.csv"
-  );
   private readonly thcSeeds: string = path.join(
     process.cwd(),
     "resources",
     "seeds",
     "THC_08012021.csv"
   );
-  private readonly shops: Map<string, string> = new Map<string, string>();
 
   public async bootstrapDevUserData(): Promise<any> {
-    return Promise.all([
-      this._createUserData(AdminCredential, AdminAccount, AdminProfile, AccessLevel.Admin),
-      this._createUserData(
-        UserCredential,
-        UserRegularAccount,
-        UserRegularProfile,
-        AccessLevel.User
-      ),
-      this._createUserData(
-        SellerCredential,
-        SellerAccount,
-        SellerProfile,
-        AccessLevel.Seller
-      ),
-    ]);
+    return Promise.all(
+      [AdminFbProfile, UserFbProfile, SellerFbProfile].map((p) =>
+        this._createUserDataWithFirebase(p)
+      )
+    );
   }
 
   public async bootstrapProdUserData(): Promise<any> {
-    return Promise.all([
-      this._createUserData(
-        HeatFactoryCredential,
-        HeatFactoryAccount,
-        HeatFactoryProfile,
-        null
-      ),
-      this._createUserData(LuckyStarCredential, LuckyStarAccount, LuckystarProfile, null),
-      this._createUserData(ProdAdminCredential, ProdAdminAccount, ProdAdminProfile, null),
-      this._createUserData(THCCredential, THCAccount, THCProfile, null),
-    ]);
+    return Promise.all([THCFbProfile].map((p) => this._createUserDataWithFirebase(p)));
   }
 
-  private async _createUserData(
-    credential: SeedCredential,
-    account: any,
-    profile: any,
-    acl: AccessLevel
+  private async _createUserDataWithFirebase(
+    profile: Partial<UserProfile> & { password: string }
   ) {
-    const found = await this.accountRepository
-      .findOne({ accountEmailByProvider: credential.email })
+    const count = await this.profileRepository
+      .countDocuments({
+        userProvidedEmail: profile.userProvidedEmail,
+      })
       .exec();
-    if (!found) {
-      LogProvider.instance.info("Creating account");
 
-      const accountId = new mongoose.Types.ObjectId();
-      const profileId = new mongoose.Types.ObjectId();
+    if (count === 0) {
+      const firebaseUser = await this.firebaseAuthService.createVerifiedUserWithEmailAndPassword(
+        profile.userProvidedEmail,
+        profile.password
+      );
+      const newProfile = await this.profileRepository.create({
+        firebaseAccountId: firebaseUser.uid,
+        userProvidedEmail: firebaseUser.email,
+        isSeller: profile.accessLevel === AccessLevel.Seller,
+        accessLevel: profile.accessLevel,
+        userProvidedName: profile.userProvidedName,
+        userProvidedAddress: profile.userProvidedAddress,
+      });
 
-      await Promise.all([
-        this.accountRepository.create({
-          _id: accountId,
-          profile: profileId,
-          ...account,
-        }),
-        this.profileRepository.create({
-          _id: profileId,
-          accountId,
-          ...profile,
-        }),
-      ]);
-
-      if (acl) {
-        this.levelToAccMap.set(acl, { accountId, profileId });
-      } else {
-        this.shops.set(profile.userProvidedName.firstName, profileId.toHexString());
-      }
+      LogProvider.instance.info(
+        `Create user data success for ${newProfile.userProvidedEmail}`
+      );
     }
   }
 
@@ -163,8 +90,6 @@ export class BootstrapProvider implements IBootstrapProvider {
 
     const shoeCount = await this.shoeRepository.estimatedDocumentCount().exec();
     const shoes = this.getRawShoesData();
-    this.shoeIds = shoes.map((s) => s._id);
-
     if (shoeCount < shoes.length) {
       LogProvider.instance.info(`Inserting ${shoes.length} shoes`);
       try {
@@ -290,14 +215,14 @@ export class BootstrapProvider implements IBootstrapProvider {
   }
 
   private async _bootstrapInventory(): Promise<Inventory[]> {
-    const seller = await this.accountRepository
-      .findOne({ accountEmailByProvider: "sneakgeek.test+seller@gmail.com" })
+    const seller = await this.profileRepository
+      .findOne({ userProvidedEmail: "sneakgeek.test+seller@gmail.com" })
       .exec();
     const brands = ["Jordan", "Nike", "adidas"];
     const shoeIds = (
       await Promise.all(brands.map((b) => this._getShoeIdsByBrand(b)))
     ).reduce((prev, cur) => [...prev, ...cur]);
-    const sellerId = seller.profile as mongoose.Types.ObjectId;
+    const sellerId = seller._id as mongoose.Types.ObjectId;
     const rawInventories: Array<Partial<Inventory>> = shoeIds.map((s) => ({
       sellerId,
       shoeId: s,
@@ -316,15 +241,15 @@ export class BootstrapProvider implements IBootstrapProvider {
   }
 
   private async _bootstrapOrders(inventories: Array<Inventory>): Promise<any> {
-    const buyer = await this.accountRepository
-      .findOne({ accountEmailByProvider: "sneakgeek.test+user@gmail.com" })
+    const buyer = await this.profileRepository
+      .findOne({ userProvidedEmail: "sneakgeek.test+user@gmail.com" })
       .exec();
     const orders = inventories.slice(0, 10).map((inv) => ({
-      buyerId: buyer.profile as mongoose.Types.ObjectId,
+      buyerId: buyer._id as mongoose.Types.ObjectId,
       sellerId: inv.sellerId,
       shoeId: inv.shoeId,
       inventoryId: inv._id,
-      shippingAddress: UserRegularProfile.userProvidedAddress,
+      shippingAddress: UserFbProfile.userProvidedAddress,
       soldPrice: inv.sellPrice,
       trackingStatus: [
         {
@@ -381,45 +306,16 @@ export class BootstrapProvider implements IBootstrapProvider {
     );
   }
 
-  // TODO: temporary disable other stores inventories
-  private _getProdInventory(): Promise<Array<Partial<Inventory>>> {
-    const inventories: Array<Partial<Inventory>> = [];
-
-    return new Promise<Array<Partial<Inventory>>>((resolve, reject) => {
-      fs.createReadStream(this.prodInventorySeeds)
-        .pipe(csv.parse({ headers: true }))
-        .on("data", async (row) => {
-          const shopName = row["Shop"];
-          const sku = row["SKU"].toUpperCase();
-          const size = row["Size"];
-          const price = row["Price"].split(",").join("");
-          const link = row["Link"];
-
-          const invt = {
-            sellerId: new mongoose.Types.ObjectId(this.shops.get(shopName)),
-            shoeSize: size,
-            sellPrice: parseInt(price, 10),
-            quantity: 1,
-            note: link,
-            sku,
-          };
-          inventories.push(invt);
-        })
-        .on("error", (err) => {
-          LogProvider.instance.error(`Error bootstrapped inventory ${err}`);
-          reject(err);
-        })
-        .on("end", async () => {
-          resolve(inventories);
-        });
-    });
-  }
-
   private async _getTHCProdInventory(): Promise<Array<Partial<Inventory>>> {
     const inventories: Array<Partial<Inventory>> = [];
-    const thc = await this.accountRepository.findOne({
-      accountEmailByProvider: "dehype.duco@gmail.com",
+    const thc = await this.profileRepository.findOne({
+      userProvidedEmail: "dehype.duco@gmail.com",
     });
+
+    if (!thc) {
+      LogProvider.instance.error("Couldn't find THC account");
+      process.exit(1);
+    }
 
     return new Promise((resolve, reject) => {
       fs.createReadStream(this.thcSeeds)
