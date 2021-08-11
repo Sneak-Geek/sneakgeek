@@ -9,8 +9,6 @@ import {
   EmailService,
   IJwtService,
   JwtService,
-  IShippingService,
-  ShippingService,
   IPaymentService,
   PaymentService,
   INotificationService,
@@ -128,10 +126,6 @@ container
 // Middlewares
 container.bind(Types.IsSellerMiddleware).to(IsSellerMiddleware);
 
-container
-  .bind<IShippingService>(Types.ShippingService)
-  .to(ShippingService)
-  .inSingletonScope();
 container.bind<IPaymentService>(Types.PaymentService).to(PaymentService);
 
 container

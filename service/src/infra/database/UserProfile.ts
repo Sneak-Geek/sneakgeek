@@ -4,6 +4,7 @@
 
 import mongoose from "mongoose";
 import { Repository, Document } from "./Repository";
+import { AccessLevel } from "./UserAccount";
 
 const UserProvidedNameSchema = new mongoose.Schema({
   firstName: String,
@@ -27,11 +28,6 @@ export const UserProfileSchema = new mongoose.Schema(
       type: String,
       unique: true,
     },
-    accountId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "UserAccount",
-      unique: true,
-    },
     userProvidedName: UserProvidedNameSchema,
     userProvidedAddress: UserProvidedAddressSchema,
     userProvidedBankAccount: UserProvidedBankAccount,
@@ -47,19 +43,24 @@ export const UserProfileSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    accessLevel: {
+      type: String,
+      enum: Object.keys(AccessLevel),
+      default: AccessLevel.User
+    }
   },
   { timestamps: true, strict: true }
 );
 
 export type UserProfile = Document<{
   firebaseAccountId: string;
-  accountId: mongoose.Types.ObjectId;
-  userProvidedName: UserName;
-  userProvidedAddress: UserAddress;
+  userProvidedName: { firstName: string; middleName: string; lastName: string };
+  userProvidedAddress: { addressLine1: string; addressLine2: string };
   userProvidedGender: string;
   userProvidedEmail: string;
   userProvidedPhoneNumber: string;
   isSeller: boolean;
+  accessLevel: AccessLevel;
 }>;
 
 export type UserAddress = Document<{
