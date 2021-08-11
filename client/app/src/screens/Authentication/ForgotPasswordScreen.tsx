@@ -51,7 +51,7 @@ export const ForgotPasswordScreen: React.FC = () => {
     if (isValidEmail(email)) {
       setError(false);
       dispatch(resetPassword(email));
-      navigation.dispatch(StackActions.replace(RouteNames.Auth.ForgotPasswordEmailSent))
+      navigation.dispatch(StackActions.replace(RouteNames.Auth.ForgotPasswordEmailSent, {email}))
     } else {
       setError(true);
     }

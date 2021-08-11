@@ -1,3 +1,4 @@
+import { useRoute } from '@react-navigation/native';
 import React from 'react';
 import {View, StyleSheet, Image} from 'react-native';
 import { strings } from 'resources';
@@ -22,7 +23,9 @@ const styles = StyleSheet.create({
     }
 });
 
-export const ForgotPasswordEmailSentScreen: React.FC<OwnProps> = ({email} : OwnProps) => {
+export const ForgotPasswordEmailSentScreen: React.FC = () => {
+    const { email } = useRoute().params as OwnProps;
+    
     return (
         <View style={styles.root}>
             <AppText.Body style={styles.bodyTextStyle}>{strings.ResetPasswordLinkSent} {email}.</AppText.Body>
