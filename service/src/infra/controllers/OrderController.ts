@@ -38,20 +38,26 @@ export class OrderController extends AsbtractOrderController {
 
   @httpGet("/", FirebaseAuthMiddleware, AccountVerifiedMiddleware)
   public async getOrderHistory(@request() req: Request, @response() res: Response) {
-    const user = req.user as UserAccount;
-    const profileId = (user.profile as mongoose.Types.ObjectId).toHexString();
-
+    const user = req.user as UserProfile;
+    const profileId = req.user._id;
     // Check lai phan condition
-    if (user.accessLevel !== AccessLevel.User && user.accessLevel !== AccessLevel.Seller) {
+    if (user.isSeller) {
       return res.status(HttpStatus.BAD_REQUEST).send({
         message: "Not seller or buyer",
       });
     }
-    const orders = await this.orderDao.getUserHistory(
-      profileId,
-      user.accessLevel === AccessLevel.Seller
-    );
-    return res.status(HttpStatus.OK).send(orders);
+
+    try {
+      const orders = await this.orderDao.getUserHistory(
+        profileId,
+        user.accessLevel === AccessLevel.Seller
+      );
+      return res.status(HttpStatus.OK).send(orders);
+    } catch (error) {
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
+        message: "Unexpected error!",
+      });
+    }
   }
 
   @httpGet("/shoe-price-size-map", query("shoeId").isMongoId(), ValidationPassedMiddleware)

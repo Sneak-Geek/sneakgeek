@@ -3,6 +3,7 @@
 // !
 
 import mongoose from "mongoose";
+import { AccessLevel } from ".";
 import { Repository, Document } from "./Repository";
 import { AccessLevel } from "./UserAccount";
 
