@@ -86,7 +86,7 @@ export class OrderController extends AsbtractOrderController {
     body("soldPrice").isInt(),
     body("shoeId").optional(),
     FirebaseAuthMiddleware,
-    // AccountVerifiedMiddleware,
+    AccountVerifiedMiddleware,
     ValidationPassedMiddleware
   )
   public async bankTransfer(@request() req: Request, @response() res: Response) {
