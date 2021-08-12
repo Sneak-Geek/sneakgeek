@@ -122,7 +122,7 @@ export class SizeSelection extends React.Component<Props, State> {
 
     try {
       const priceMap: SizePriceMap[] = await orderService.getPriceSizeMap(
-        getToken(),
+        await getToken(),
         this.shoe._id,
       );
 

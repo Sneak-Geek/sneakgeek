@@ -262,7 +262,7 @@ export class NewSellOrder extends React.Component<Props, State> {
   }
 
   private async _sellShoe() {
-    const token = getToken();
+    const token = await getToken();
     const inventory = this.state.inventory;
     const inventoryService = getDependency<IInventoryService>(
       FactoryKeys.IInventoryService,

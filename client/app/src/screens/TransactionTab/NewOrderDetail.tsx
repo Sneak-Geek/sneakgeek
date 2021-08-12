@@ -109,7 +109,7 @@ export const NewOrderDetail: React.FC<Props> = (props) => {
 
   const sellerUpdateOrder = async (isRejection: boolean) => {
     await orderService.updateBySeller(
-      getToken(),
+      await getToken(),
       props.order._id,
       isRejection
         ? TrackingStatus.SELLER_REJECTED_ORDER

@@ -133,7 +133,7 @@ export class NewReview extends React.Component<Props, State> {
     } = this.props;
 
     const shoeService = getDependency<IShoeService>(FactoryKeys.IShoeService);
-    const token = getToken();
+    const token = await getToken();
 
     toggleLoadingIndicator(true);
     try {

@@ -235,7 +235,7 @@ export const AccountTabInventoryDetail: React.FC<{}> = () => {
         }}
         title={strings.Confirm}
         onPress={async () => {
-          const token = getToken();
+          const token = await getToken();
           const inventoryService = getDependency<IInventoryService>(
             FactoryKeys.IInventoryService,
           );
@@ -319,7 +319,6 @@ const InventoryItem: React.FC<{inventory: Inventory & {shoe: Shoe}}> = (
 };
 
 export const AccountTabInventory: React.FC<{}> = () => {
-  const token = getToken();
   const inventoryService = getDependency<IInventoryService>(
     FactoryKeys.IInventoryService,
   );
@@ -333,13 +332,18 @@ export const AccountTabInventory: React.FC<{}> = () => {
   // });
 
   const navigation = useNavigation();
+  var token;
   useEffect(() => {
+    async function getFirebaseToken(){
+      token = await getToken();
+    }
+    getFirebaseToken();
     inventoryService.getInventories(token, searchKey).then((i) => {
       setInventories(i);
     });
 
-    const unsubscribe = navigation.addListener('focus', () => {
-      inventoryService.getInventories(token, searchKey).then((i) => {
+    const unsubscribe = navigation.addListener('focus', async () => {
+      inventoryService.getInventories(await token, searchKey).then((i) => {
         setInventories(i);
       });
     });
