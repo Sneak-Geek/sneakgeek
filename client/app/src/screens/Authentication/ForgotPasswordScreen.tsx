@@ -13,6 +13,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flex: 1,
     paddingHorizontal: 16,
+    backgroundColor: 'white'
   },
   buttonStyle: {
     backgroundColor: themes.AppSecondaryColor,
