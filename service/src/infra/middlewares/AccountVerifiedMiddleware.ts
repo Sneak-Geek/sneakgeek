@@ -22,7 +22,7 @@ export const AccountVerifiedMiddleware = async (
 
   try {
     const decodedToken = await firebase.verifyIdToken(idToken);
-    if (decodedToken?.firebase.sign_in_provider === "apple.com"){ 
+    if (decodedToken?.firebase.sign_in_provider === "apple.com") {
       return next();
     }
     if (!decodedToken?.email_verified) {
