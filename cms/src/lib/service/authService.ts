@@ -1,43 +1,54 @@
 import axios, {AxiosResponse} from 'axios';
-import Account from '../../models/Account';
+import Profile from '../../models/Profile';
+import firebase from 'firebase';
+
 const {REACT_APP_SERVER_ENDPOINT} = process.env;
 
-console.log("server endpoint", REACT_APP_SERVER_ENDPOINT);
-
 export type IdentityPayload = {
-  account: Account;
+  profile: Profile;
 };
 
 type AuthPayload = IdentityPayload & {token: string};
 
-const login = (
-  username: string,
+const login = async (
+  email: string,
   password: string,
-): Promise<AxiosResponse<AuthPayload>> => {
-  return axios.post(`${REACT_APP_SERVER_ENDPOINT}/account/auth/email/login`, {
-    email: username,
-    password,
-  });
+): Promise<AxiosResponse<AuthPayload> | undefined> => {
+  const userCred = await firebase.auth().signInWithEmailAndPassword(email, password);
+  if (userCred) {
+    const token = await getUserToken();
+    return axios.get(`${REACT_APP_SERVER_ENDPOINT}/profile/auth/continue`, {
+      headers: {
+        authorization: token 
+      }
+    });
+  }
+  return undefined;
 };
 
-const logout = (): Promise<AxiosResponse<void>> => {
-  return axios.get(`${REACT_APP_SERVER_ENDPOINT}/account/logout`);
+const logout = (): Promise<void> => {
+  return firebase.auth().signOut();
 };
 
 const getIdentity = (
   token: string,
 ): Promise<AxiosResponse<IdentityPayload>> => {
-  return axios.get(`${REACT_APP_SERVER_ENDPOINT}/account`, {
+  return axios.get(`${REACT_APP_SERVER_ENDPOINT}/profile/auth/continue`, {
     headers: {
       authorization: token,
     },
   });
 };
 
+const getUserToken = () => {
+  return firebase.auth().currentUser?.getIdToken(true);
+}
+
 const authService = {
   login,
   logout,
   getIdentity,
+  getUserToken
 };
 
 export default authService;

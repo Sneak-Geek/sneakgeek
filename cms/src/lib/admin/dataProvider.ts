@@ -1,8 +1,8 @@
-import {DataProvider, fetchUtils} from 'react-admin';
+import { DataProvider, fetchUtils } from 'react-admin';
 import restProvider from 'ra-data-simple-rest';
-import {StorageKey} from './authProvider';
+import { StorageKey } from './authProvider';
 
-const {REACT_APP_SERVER_ENDPOINT} = process.env;
+const { REACT_APP_SERVER_ENDPOINT } = process.env;
 
 const defaultHttpClient = (url: string, options: any) => {
   options = options || {};
@@ -14,7 +14,7 @@ const defaultHttpClient = (url: string, options: any) => {
 
   (options.headers as any).set(
     'Authorization',
-    localStorage.getItem(StorageKey.token) || '',
+    localStorage.getItem(StorageKey.token)
   );
 
   return fetchUtils.fetchJson(url, options);

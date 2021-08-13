@@ -9,43 +9,44 @@ export const StorageKey = {
 
 const authProvider: AuthProvider = {
   login: async ({username, password}) => {
-    localStorage.removeItem(StorageKey.token);
     const res = await authService.login(username, password);
-
-    localStorage.setItem(StorageKey.token, res.data.token);
-    localStorage.setItem(
-      StorageKey.permission,
-      res.data.account.accessLevel.toString(),
-    );
+    if (res) {
+      localStorage.setItem(
+        StorageKey.permission,
+        res.data.profile.accessLevel.toString(),
+      );
+      const token = await authService.getUserToken();
+      localStorage.setItem(StorageKey.token, token as string);
+    } 
   },
   checkError: ({status}) => {
     return status === HttpStatus.UNAUTHORIZED || status === HttpStatus.FORBIDDEN
       ? Promise.reject()
       : Promise.resolve();
   },
-  checkAuth: () => {
-    if (localStorage.getItem(StorageKey.token)) {
+  checkAuth: async () => {
+    const token = localStorage.getItem(StorageKey.token);
+    if (token) {
       return Promise.resolve();
     }
     return Promise.reject({redirectTo: '/login'});
   },
   logout: async () => {
     await authService.logout();
-    localStorage.removeItem(StorageKey.token);
   },
   getIdentity: async () => {
-    const token = localStorage.getItem(StorageKey.token);
+    const token = await authService.getUserToken();
     if (!token) {
       return Promise.reject({redirectTo: '/login'});
     }
+    localStorage.setItem(StorageKey.token, token);
     const {
-      data: {account},
-    } = await authService.getIdentity(token!);
-    const {accountNameByProvider: name} = account;
+      data: {profile},
+    } = await authService.getIdentity(token);
+    const {userProvidedName: name} = profile;
     return Promise.resolve({
-      id: account.id,
-      fullName: `${name.givenName} ${name.familyName}`,
-      avatar: account.accountProfilePicByProvider,
+      id: profile.id,
+      fullName: `${name?.firstName || ''} ${name?.lastName || ''}`,
     });
   },
   getPermissions: () => {
