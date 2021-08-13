@@ -1,5 +1,5 @@
 import {AxiosResponse} from 'axios';
-import Account from '../../models/Account';
+import Profile, { AccessLevel } from '../../models/Profile';
 import authService, {IdentityPayload} from '../service/authService';
 import authProvider from './authProvider';
 
@@ -15,8 +15,8 @@ describe('authProvider', () => {
         data: {
           token: 'token',
           account: {
-            accessLevel: 1,
-          } as Account,
+            accessLevel: AccessLevel.Admin,
+          } as Profile,
         },
       } as AxiosResponse<any>),
     );
@@ -35,8 +35,7 @@ describe('authProvider', () => {
 
   test('authProvider: logout', async () => {
     jest
-      .spyOn(authService, 'logout')
-      .mockResolvedValue({data: null} as AxiosResponse<any>);
+      .spyOn(authService, 'logout');
     jest.spyOn(Storage.prototype, Storage.prototype.removeItem.name);
     await authProvider.logout(null);
 
@@ -53,15 +52,14 @@ describe('authProvider', () => {
     jest.spyOn(authService, 'getIdentity').mockReturnValue(
       Promise.resolve({
         data: {
-          account: {
+          profile: {
             id: 'id',
-            accountNameByProvider: {
-              familyName: 'lastName',
-              givenName: 'firstName',
+            userProvidedName: {
+              firstName: 'lastName',
+              lastName: 'firstName',
             },
-            accountProfilePicByProvider: 'profilePic',
-          },
-        } as IdentityPayload,
+          } as Profile,
+        },
       } as AxiosResponse<any>),
     );
 
