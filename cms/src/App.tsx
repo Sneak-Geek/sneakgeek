@@ -23,7 +23,7 @@ const App: React.FC = () => {
       });
       setIsInitialized(true);
     }
-  }, [firebase, isInitialized, setIsInitialized]);
+  }, [isInitialized, setIsInitialized]);
 
   return (
     <Admin
