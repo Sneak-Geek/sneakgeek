@@ -21,7 +21,6 @@ import {
   authenticateWithApple,
 } from 'business';
 import {IAppState} from 'store/AppStore';
-import {AppText} from 'screens/Shared';
 import {FeatureFlags} from 'FeatureFlag';
 import {toggleIndicator} from 'actions';
 import { Profile } from 'business';
@@ -41,7 +40,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   button: {
-    borderRadius: 70,//themes.ButtonBorderRadius,
+    borderRadius: themes.LoginButtonBorderRadius,
     height: themes.RegularButtonHeight,
     marginVertical: 5,
     alignItems: 'center',
@@ -135,7 +134,6 @@ export class LoginScreen extends React.Component<Props> {
     );
   }
 
-  /*{this._renderEmailSignUp()}*/
   private _renderFacebookLogin(): JSX.Element {
     return (
       <Button
@@ -220,35 +218,4 @@ export class LoginScreen extends React.Component<Props> {
       />
     );
   }
-
-  /*private _renderEmailSignUp() {
-    return (
-      <Button
-        testID={'EmailSignUpButton'}
-        type={'outline'}
-        buttonStyle={{
-          backgroundColor: themes.AppPrimaryColor,
-          ...styles.button,
-        }}
-        title={strings.SignUpEmail}
-        icon={<Image source={images.Email} style={styles.emailIconStyle} />}
-        titleStyle={styles.titleStyle}
-        onPress={() => this.props.navigation.push(RouteNames.Auth.EmailSignUp)}
-      />
-    );
-  }
-
-  private _renderEmailLogin() {
-    return (
-      <AppText.Subhead
-        testID={'EmailLogin'}
-        style={styles.emailLoginStyle}
-        onPress={(): void => {
-          this.props.navigation.push(RouteNames.Auth.EmailLogin);
-        }}>
-        {strings.MemberAlready}{' '}
-        <AppText.Callout>{strings.SignIn}</AppText.Callout>
-      </AppText.Subhead>
-    );
-  }*/
 }

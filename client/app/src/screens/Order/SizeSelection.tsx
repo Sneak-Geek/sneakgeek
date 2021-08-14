@@ -128,7 +128,6 @@ export class SizeSelection extends React.Component<Props, State> {
 
       this.setState({priceMap});
     } catch (error) {
-      console.log(error);
       const errorMessage =
         error.message.indexOf(403) >= 0
           ? strings.AccountNotVerifieid

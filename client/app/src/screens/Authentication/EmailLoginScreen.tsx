@@ -112,24 +112,7 @@ export class EmailLoginScreen extends React.Component<Props, State> {
       const currentError = this.props.profileState.error;
 
       if (state === NetworkRequestState.FAILED) {
-        /*const provider = currentError?.response?.data?.provider;
-        switch (provider) {
-          case strings.GoogleString:
-            Alert.alert(strings.AccountCreatedByGoogle);
-            break;
-          case strings.FacebookString:
-            Alert.alert(strings.AccountCreatedByFacebook);
-            break;
-          case strings.EmailString:
-            Alert.alert(strings.AccountCreatedByEmail);
-            break;
-          case undefined:
-            Alert.alert(strings.InvalidLogin);
-            break;
-          default:
-            break;*/
           const message = currentError?.message;
-          console.log(message);
           let newState;
           switch (message) {
             case 'auth/invalid-email':

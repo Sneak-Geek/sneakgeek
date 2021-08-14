@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
       dispatch(updateProfile(profile));
     },
     logout: (): void => {
-      firebase.auth().signOut().then(() => console.log('User signed out!'));
+      firebase.auth().signOut();
       dispatch(reset());
     },
   }),

@@ -23,9 +23,7 @@ export const verifyEmail = (email: string) => {
     );
     try
     {
-      console.log("Verifying Email: ");
       const response = await firebase.auth().fetchSignInMethodsForEmail(email);
-      console.log("Finish Verifying Email: ", response);
       if (response.length > 0)
       {
         dispatch(
