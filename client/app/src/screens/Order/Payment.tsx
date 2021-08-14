@@ -103,6 +103,7 @@ export const Payment: React.FC<any> = ({route}) => {
       </ScrollView>
       {!isDetailNotice && (
         <BottomButton
+          testID={'ConfirmTransfer'}
           title={'Xác nhận chuyển khoản'.toUpperCase()}
           style={styles.bottomButtonContainer}
           onPress={() => {
