@@ -66,8 +66,13 @@ describe('Smoke test', () => {
     await element(by.label(AppStrings.Account)).tap();
     await element(by.label(AppStrings.Login)).tap();
     await expect(element(by.id('LoginScreen'))).toBeVisible();
-    await expect(element(by.id('EmailSignUpButton'))).toBeVisible();
-    await element(by.id('EmailSignUpButton')).tap();
+    await expect(element(by.id('EmailVerifyButton'))).toBeVisible();
+    await element(by.id('EmailVerifyButton')).tap();
+    await expect(element(by.id('EmailInput'))).toBeVisible();
+    await element(by.id('EmailInput')).tap();
+    await element(by.id('EmailInput')).typeText('sneakgeek.test+e2e@gmail.com');
+    await expect(element(by.id('VerifyButton'))).toBeVisible();
+    await element(by.id('VerifyButton')).tap();
     await expect(element(by.id('EmailSignUpInput'))).toBeVisible();
     await element(by.id('EmailSignUpInput')).tap();
     await element(by.id('EmailSignUpInput')).typeText('sneakgeek.test+e2e@gmail.com');
@@ -82,7 +87,21 @@ describe('Smoke test', () => {
   });
 
   it('Login (with email)', async () => {
-    await login();
+    await element(by.label(AppStrings.Account)).tap();
+    await element(by.label(AppStrings.Login)).tap();
+    await expect(element(by.id('LoginScreen'))).toBeVisible();
+    await expect(element(by.id('EmailVerifyButton'))).toBeVisible();
+    await element(by.id('EmailVerifyButton')).tap();
+    await expect(element(by.id('EmailInput'))).toBeVisible();
+    await element(by.id('EmailInput')).tap();
+    await element(by.id('EmailInput')).typeText('sneakgeek.test+user@gmail.com');
+    await expect(element(by.id('VerifyButton'))).toBeVisible();
+    await element(by.id('VerifyButton')).tap();
+    await element(by.id('EmailInput')).typeText('sneakgeek.test+user@gmail.com');
+    await element(by.id('PasswordInput')).typeText('sneakgeek');
+    await element(by.id('LoginButton')).tap();
+    await waitFor(element(by.id('InventoryList')))
+      .toBeVisible().withTimeout(timeout); // homescreen is visible
   });
 
   it('Purchase flow (without login)', async () => {

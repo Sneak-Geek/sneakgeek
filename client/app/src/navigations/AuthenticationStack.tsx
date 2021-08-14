@@ -5,6 +5,7 @@ import {
   LoginScreen,
   EmailLoginScreen,
   EmailSignUpScreen,
+  EmailVerifyScreen,
   ForgotPasswordScreen,
 } from 'screens/Authentication';
 import {strings, themes} from 'resources';
@@ -20,6 +21,14 @@ export const AuthenticationStack = (): JSX.Element => (
       options={{
         header: () => null,
         gestureEnabled: false,
+      }}
+    />
+     <Stack.Screen
+      name={RouteNames.Auth.EmailVerify}
+      component={EmailVerifyScreen}
+      options={{
+        title: strings.SignUpEmail,
+        ...themes.headerStyle,
       }}
     />
     <Stack.Screen

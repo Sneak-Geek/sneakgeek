@@ -41,13 +41,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   button: {
-    borderRadius: themes.ButtonBorderRadius,
+    borderRadius: 70,//themes.ButtonBorderRadius,
     height: themes.RegularButtonHeight,
     marginVertical: 5,
     alignItems: 'center',
     justifyContent: 'center',
     borderColor: themes.AppSecondaryColor,
-    borderWidth: 0,
+    borderWidth: 1,
   },
   buttonContainer: {
     paddingHorizontal: 20,
@@ -126,8 +126,7 @@ export class LoginScreen extends React.Component<Props> {
               <View style={styles.buttonContainer}>
                 {FeatureFlags.enableFacebook && this._renderFacebookLogin()}
                 {Platform.OS === 'ios' && this._renderAppleLogin()}
-                {this._renderEmailSignUp()}
-                {this._renderEmailLogin()}
+                {this._renderEmailVerify()}
               </View>
             </View>
           )}
@@ -136,6 +135,7 @@ export class LoginScreen extends React.Component<Props> {
     );
   }
 
+  /*{this._renderEmailSignUp()}*/
   private _renderFacebookLogin(): JSX.Element {
     return (
       <Button
@@ -204,7 +204,24 @@ export class LoginScreen extends React.Component<Props> {
     );
   }
 
-  private _renderEmailSignUp() {
+  private _renderEmailVerify() {
+    return (
+      <Button
+        testID={'EmailVerifyButton'}
+        type={'outline'}
+        buttonStyle={{
+          backgroundColor: themes.AppPrimaryColor,
+          ...styles.button,
+        }}
+        title={strings.SignUpEmail}
+        icon={<Image source={images.Email} style={styles.emailIconStyle} />}
+        titleStyle={styles.titleStyle}
+        onPress={() => this.props.navigation.push(RouteNames.Auth.EmailVerify)}
+      />
+    );
+  }
+
+  /*private _renderEmailSignUp() {
     return (
       <Button
         testID={'EmailSignUpButton'}
@@ -233,5 +250,5 @@ export class LoginScreen extends React.Component<Props> {
         <AppText.Callout>{strings.SignIn}</AppText.Callout>
       </AppText.Subhead>
     );
-  }
+  }*/
 }

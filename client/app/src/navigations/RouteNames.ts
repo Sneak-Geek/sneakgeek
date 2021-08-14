@@ -3,6 +3,7 @@ const RouteNames = {
   Auth: {
     Name: 'Authentication',
     Login: 'Login',
+    EmailVerify: 'EmailVerify',
     EmailSignUp: 'EmailSignUp',
     EmailLogin: 'EmailLogin',
     ForgotPassword: 'ForgotPassword',

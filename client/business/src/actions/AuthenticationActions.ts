@@ -16,6 +16,37 @@ export const updateAuthenticationState = createAction<AuthenticationPayload>(
   AuthenticationActions.UPDATE_AUTHENTICATION_STATE
 );
 
+export const verifyEmail = (email: string) => {
+  return async (dispatch: Dispatch<any>) => {
+    dispatch(
+      updateStateGetUserProfile({ state: NetworkRequestState.REQUESTING })
+    );
+    try
+    {
+      console.log("Verifying Email: ");
+      const response = await firebase.auth().fetchSignInMethodsForEmail(email);
+      console.log("Finish Verifying Email: ", response);
+      if (response.length > 0)
+      {
+        dispatch(
+        updateStateGetUserProfile({ state: NetworkRequestState.FAILED, error: new Error("Has Signin Method") })
+        );
+      }
+      else
+      {
+        dispatch(
+        updateStateGetUserProfile({ state: NetworkRequestState.FAILED, error: new Error("No Signin Method") })
+        );
+      }
+    }
+    catch (error){
+      dispatch(
+      updateStateGetUserProfile({ state: NetworkRequestState.FAILED, error })
+      );
+    }
+  };
+};
+
 export const getCurrentUser = () => {
   const accountService = ObjectFactory.getObjectInstance<IAccountService>(
     FactoryKeys.IAccountService
