@@ -23,7 +23,6 @@ export const getUserProfile = () => {
     const settings = ObjectFactory.getObjectInstance<ISettingsProvider>(
       FactoryKeys.ISettingsProvider
     );
-
     dispatch(updateStateGetUserProfile({ state: NetworkRequestState.REQUESTING }));
     const token = settings.getValue(SettingsKey.CurrentAccessToken);
     try {

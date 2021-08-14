@@ -279,7 +279,8 @@ export class NewBuyOrder extends React.Component<Props, State> {
 
   private get _isMissingInfo() {
     const currentUser = firebase.auth().currentUser;
-    const isNotVerified = !currentUser || !currentUser.emailVerified;
+    currentUser.reload();
+    const isNotVerified = !currentUser || (!currentUser.emailVerified && currentUser.email);
     const profile = this.props.profile;
     const isMissingInfo =
       !profile ||
@@ -291,12 +292,12 @@ export class NewBuyOrder extends React.Component<Props, State> {
     return isMissingInfo || isNotVerified;
   }
 
-  private _purchaseProduct(): void {
+  private async _purchaseProduct(): Promise<void> {
     if (this._isMissingInfo) {
       this._alertMissingInfo();
       return;
     }
-
+    let token = await getToken();
     this.setState({isPressed: true});
 
     const profile = this.props.profile;
@@ -304,7 +305,7 @@ export class NewBuyOrder extends React.Component<Props, State> {
     // TO DO: Create new Order, return orderId
     this._orderService
       .bankTransfer(
-        getToken(),
+        token,
         'BANK_TRANSFER',
         this.state.buyOrder.inventoryId,
         profile.userProvidedAddress?.addressLine1,
@@ -325,11 +326,12 @@ export class NewBuyOrder extends React.Component<Props, State> {
   private _alertMissingInfo(): void {
     let message = '';
     let buttonText = '';
-
+    let firebaseUser = firebase.auth().currentUser;
+    firebaseUser.reload();
     if (!this.props.profile) {
       message = strings.NotAuthenticated;
       buttonText = strings.PleaseLogin;
-    } else if (!firebase.auth().currentUser.emailVerified) {
+    } else if (!firebaseUser.emailVerified && firebaseUser.email) {
       message = strings.NotVerified;
     } else {
       message = strings.MissingProfileInfo;
@@ -353,7 +355,7 @@ export class NewBuyOrder extends React.Component<Props, State> {
         }
       );
     }
-    if (this.props.profile && !firebase.auth().currentUser.emailVerified)
+    if (this.props.profile && !firebaseUser.emailVerified && firebaseUser.email)
     {
       textDisplay.push({
         text: strings.Cancel,

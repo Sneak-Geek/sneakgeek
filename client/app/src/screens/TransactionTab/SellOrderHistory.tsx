@@ -148,10 +148,11 @@ export class SellOrderHistory extends React.Component<Props, State> {
     }
   }
 
-  private _getOrders() {
+  private async _getOrders() {
+    let token = await getToken();
     this.setState({refreshing: true}, () =>
       this.orderService
-        .getOrderHistory(getToken())
+        .getOrderHistory(token)
         .then((orders) => this.setState({orders, refreshing: false})),
     );
   }

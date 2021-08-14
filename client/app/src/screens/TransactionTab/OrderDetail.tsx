@@ -317,7 +317,7 @@ export class OrderDetail extends React.Component<Props, State> {
     this.props.toggleLoading(true);
     try {
       await orderService.cancelSellOrder(
-        getToken(),
+        await getToken(),
         this.state.currentOrder._id,
       );
       this.props.navigation.goBack();
@@ -337,7 +337,7 @@ export class OrderDetail extends React.Component<Props, State> {
     );
     this.props.toggleLoading(true);
     try {
-      await orderService.updateSellOrder(getToken(), updatedOrder);
+      await orderService.updateSellOrder(await getToken(), updatedOrder);
       const newOrder = await this._getPopulatedOrder();
       this.setState({
         currentOrder: newOrder,
@@ -358,7 +358,7 @@ export class OrderDetail extends React.Component<Props, State> {
     if (this.orderType === 'BuyOrder') {
     } else {
       return await orderService.getPopulatedSellOrderById(
-        getToken(),
+        await getToken(),
         this.orderId,
       );
     }
