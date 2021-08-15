@@ -78,11 +78,17 @@ export class EmailVerifyScreen extends React.Component<Props, State> {
           case 'Has Signin Method':
             navigation.navigate(RouteNames.Auth.Name, {
               screen: RouteNames.Auth.EmailLogin,
+              params: {
+                email: this.state.email
+              }
             });
             break;
           default:
             navigation.navigate(RouteNames.Auth.Name, {
               screen: RouteNames.Auth.EmailSignUp,
+              params: {
+                email: this.state.email
+              }
             });
             break;
         }
