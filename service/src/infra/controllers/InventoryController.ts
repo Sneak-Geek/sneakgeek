@@ -33,7 +33,7 @@ export class InventoryController {
     middlewares.ValidationPassedMiddleware
   )
   public async getInventories(@request() req: Request, @response() res: Response) {
-    const profileId = req.user.profile;
+    const profileId = req.user.id;
     const { shoeName } = req.query;
     const inventoryWithShoe = await this.inventoryDao.findByUserId(
       profileId,
