@@ -119,20 +119,23 @@ export class ShoeController {
       .split(",")
       .filter((t) => t.length > 0);
 
-    const query: mongoose.FilterQuery<mongoose.DocumentDefinition<Shoe>>[] =
-      [{ title: { $regex: new RegExp(`${title}`, "i") } }];
+    const query: mongoose.FilterQuery<mongoose.DocumentDefinition<Shoe>>[] = [
+      { title: { $regex: new RegExp(`${title}`, "i") } },
+    ];
     if (gender) {
       query.push({ gender: gender });
     }
     if (brand.length > 0) {
       query.push({ brand: { $in: brand } });
     }
-    const rawResult = await this.shoeRepo.find({
-      $and: query
-    }).skip(page * limit)
+    const rawResult = await this.shoeRepo
+      .find({
+        $and: query,
+      })
+      .skip(page * limit)
       .limit(limit)
       .exec();
-    const result = rawResult.map(t => t.toObject());
+    const result = rawResult.map((t) => t.toObject());
     return res.status(HttpStatus.OK).send({ shoes: result });
   }
 
