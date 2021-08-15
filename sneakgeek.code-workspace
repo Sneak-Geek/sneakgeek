@@ -11,6 +11,9 @@
     },
     {
       "path": "client/business"
+    },
+    {
+      "path": ".github/workflows"
     }
   ]
 }
