@@ -44,6 +44,7 @@ type DispatchProps = {
 type Props = StateProps &
   DispatchProps & {
     navigation: StackNavigationProp<any>;
+    route: any;
   };
 
 @connect<StateProps, DispatchProps>(
@@ -75,6 +76,12 @@ export class EmailLoginScreen extends React.Component<Props, State> {
     errorEmail: '',
     errorPassword: '',
   };
+
+  componentDidMount() {
+    if (this.props.route?.params?.email) {
+      this.setState({ email: this.props.route.params.email });
+    }
+  }
 
   private showPassword = () => {
     let newState;

@@ -34,6 +34,7 @@ type Props = {
     profile?: Profile;
   };
   navigation: StackNavigationProp<any>;
+  route: any;
 
   toggleLoadingIndicator: (isLoading: boolean, message?: string) => void;
   showErrorNotification: (message: string) => void;
@@ -67,6 +68,12 @@ export class EmailSignUpScreen extends React.Component<Props, State> {
       errorEmail: '',
       errorPassword: '',
     };
+  }
+
+  componentDidMount() {
+    this.setState({
+      email: this.props.route?.params?.email || '',
+    })
   }
 
   private showPassword = () => {
