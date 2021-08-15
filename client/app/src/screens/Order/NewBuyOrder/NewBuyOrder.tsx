@@ -297,7 +297,7 @@ export class NewBuyOrder extends React.Component<Props, State> {
       this._alertMissingInfo();
       return;
     }
-    let token = await getToken();
+    let token = await getToken(true);
     this.setState({isPressed: true});
 
     const profile = this.props.profile;
