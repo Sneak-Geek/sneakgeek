@@ -21,7 +21,6 @@ import {
   authenticateWithApple,
 } from 'business';
 import {IAppState} from 'store/AppStore';
-import {AppText} from 'screens/Shared';
 import {FeatureFlags} from 'FeatureFlag';
 import {toggleIndicator} from 'actions';
 import { Profile } from 'business';
@@ -41,13 +40,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   button: {
-    borderRadius: themes.ButtonBorderRadius,
+    borderRadius: themes.LoginButtonBorderRadius,
     height: themes.RegularButtonHeight,
     marginVertical: 5,
     alignItems: 'center',
     justifyContent: 'center',
     borderColor: themes.AppSecondaryColor,
-    borderWidth: 0,
+    borderWidth: 1,
   },
   buttonContainer: {
     paddingHorizontal: 20,
@@ -126,8 +125,7 @@ export class LoginScreen extends React.Component<Props> {
               <View style={styles.buttonContainer}>
                 {FeatureFlags.enableFacebook && this._renderFacebookLogin()}
                 {Platform.OS === 'ios' && this._renderAppleLogin()}
-                {this._renderEmailSignUp()}
-                {this._renderEmailLogin()}
+                {this._renderEmailVerify()}
               </View>
             </View>
           )}
@@ -204,10 +202,10 @@ export class LoginScreen extends React.Component<Props> {
     );
   }
 
-  private _renderEmailSignUp() {
+  private _renderEmailVerify() {
     return (
       <Button
-        testID={'EmailSignUpButton'}
+        testID={'EmailVerifyButton'}
         type={'outline'}
         buttonStyle={{
           backgroundColor: themes.AppPrimaryColor,
@@ -216,22 +214,8 @@ export class LoginScreen extends React.Component<Props> {
         title={strings.SignUpEmail}
         icon={<Image source={images.Email} style={styles.emailIconStyle} />}
         titleStyle={styles.titleStyle}
-        onPress={() => this.props.navigation.push(RouteNames.Auth.EmailSignUp)}
+        onPress={() => this.props.navigation.push(RouteNames.Auth.EmailVerify)}
       />
-    );
-  }
-
-  private _renderEmailLogin() {
-    return (
-      <AppText.Subhead
-        testID={'EmailLogin'}
-        style={styles.emailLoginStyle}
-        onPress={(): void => {
-          this.props.navigation.push(RouteNames.Auth.EmailLogin);
-        }}>
-        {strings.MemberAlready}{' '}
-        <AppText.Callout>{strings.SignIn}</AppText.Callout>
-      </AppText.Subhead>
     );
   }
 }

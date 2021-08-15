@@ -7,6 +7,7 @@ export const themes = {
   RegularButtonHeight: 54,
   MediumButtonHeigt: 40,
   ButtonBorderRadius: 4,
+  LoginButtonBorderRadius: 70,
   LargeBorderRadius: 64,
   ListItemBackGroundColor: 'rgba(196,196,196,0.1)',
   DisabledColor: '#DADADA',

@@ -1,8 +1,10 @@
 import * as React from 'react';
+import {Icon} from 'react-native-elements';
 import {
   SafeAreaView,
   StyleSheet,
   TextInput,
+  Text,
   View,
   StatusBar,
   Alert,
@@ -19,6 +21,10 @@ import {showErrorNotification, toggleIndicator} from 'actions';
 type State = {
   email: string;
   password: string;
+  showPassword: boolean;
+  icon: string;
+  errorEmail: string;
+  errorPassword: string;
 };
 
 type StateProps = {
@@ -64,6 +70,35 @@ export class EmailLoginScreen extends React.Component<Props, State> {
   state = {
     email: '',
     password: '',
+    showPassword: true,
+    icon: 'visibility-off',
+    errorEmail: '',
+    errorPassword: '',
+  };
+
+  private showPassword = () => {
+    let newState;
+    if (this.state.showPassword) {
+        newState = {
+            icon: 'visibility',
+            showPassword: false,
+            email: this.state.email,
+            password: this.state.password,
+            errorEmail: this.state.errorEmail,
+            errorPassword: this.state.errorPassword
+        }
+    } else {
+        newState = {
+            icon: 'visibility-off',
+            showPassword: true,
+            email: this.state.email,
+            password: this.state.password,
+            errorEmail: this.state.errorEmail,
+            errorPassword: this.state.errorPassword
+        }
+    }
+    // set new state value
+    this.setState(newState)
   };
 
   public componentDidUpdate(prevProps: Props) {
@@ -77,23 +112,31 @@ export class EmailLoginScreen extends React.Component<Props, State> {
       const currentError = this.props.profileState.error;
 
       if (state === NetworkRequestState.FAILED) {
-        const provider = currentError?.response?.data?.provider;
-        switch (provider) {
-          case strings.GoogleString:
-            Alert.alert(strings.AccountCreatedByGoogle);
-            break;
-          case strings.FacebookString:
-            Alert.alert(strings.AccountCreatedByFacebook);
-            break;
-          case strings.EmailString:
-            Alert.alert(strings.AccountCreatedByEmail);
-            break;
-          case undefined:
-            Alert.alert(strings.InvalidLogin);
-            break;
-          default:
-            break;
-        }
+          const message = currentError?.message;
+          let newState;
+          switch (message) {
+            case 'auth/invalid-email':
+              newState = {
+                icon: this.state.icon,
+                showPassword: this.state.showPassword,
+                email: this.state.email,
+                password: this.state.password,
+                errorEmail: strings.InvalidEmail,
+                errorPassword: ''
+              }
+              break;
+            default:
+              newState = {
+                icon: this.state.icon,
+                showPassword: this.state.showPassword,
+                email: this.state.email,
+                password: this.state.password,
+                errorEmail: '',
+                errorPassword: strings.InvalidLogin
+              }
+              break;
+          }
+          this.setState(newState);
       } else if (state === NetworkRequestState.SUCCESS) {
         try {
             navigation.navigate(RouteNames.Order.Name, {
@@ -113,12 +156,23 @@ export class EmailLoginScreen extends React.Component<Props, State> {
       <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
         <StatusBar barStyle={'dark-content'} />
         <DismissKeyboardView style={styles.container}>
+        <AppText.Body style={styles.bodyTextStyle}>
+          {strings.WelcomeAndLogin}
+        </AppText.Body>
+        <AppText.Body style={styles.emailTextStyle}>
+          Email:
+        </AppText.Body>
           <View style={{flex: 1}}>
-            <View style={{paddingHorizontal: 40}}>
+            <View style={{paddingHorizontal: 16}}>
               {this._renderEmail()}
+              <Text style={{ color: 'red' }}>{this.state.errorEmail}</Text>
+              <AppText.Body style={styles.passwordTextStyle}>
+                Mật Khẩu:
+              </AppText.Body>
               {this._renderPassword()}
+              <Text style={{ color: 'red' }}>{this.state.errorPassword}</Text>
               {this._renderForgot()}
-            </View>
+              </View>
           </View>
           {this._renderButton()}
         </DismissKeyboardView>
@@ -157,9 +211,15 @@ export class EmailLoginScreen extends React.Component<Props, State> {
           value={password}
           onChangeText={(password) => this.setState({password})}
           selectionColor={themes.AppPrimaryColor}
-          secureTextEntry={true}
+          secureTextEntry={this.state.showPassword}
           textContentType={'oneTimeCode'}
           autoCapitalize={'none'}
+        />
+        <Icon containerStyle={{position: 'absolute', right: 15, top: 15}}
+              name={this.state.icon}
+              size={themes.IconSize}
+              color={this.state.showPassword ? themes.AppDisabledColor : themes.AppSecondaryColor}
+              onPress={this.showPassword}
         />
       </View>
     );
@@ -185,7 +245,7 @@ export class EmailLoginScreen extends React.Component<Props, State> {
         title={strings.SignIn}
         onPress={() => this.props.emailLogin(email, password)}
         style={{
-          backgroundColor: themes.AppPrimaryColor,
+          backgroundColor: (email && password) ? themes.AppSecondaryColor : themes.AppDisabledColor,
           borderRadius: themes.LargeBorderRadius,
         }}
       />
@@ -222,9 +282,27 @@ const styles = StyleSheet.create({
     ...themes.TextStyle.callout,
     flex: 1,
   },
+  bodyTextStyle: {
+    marginLeft: 16,
+    marginRight: 16,
+    marginTop: 0,
+  },
+  emailTextStyle: {
+    marginLeft: 16,
+    marginRight: 16,
+    marginTop: 37,
+    marginBottom: 8,
+  },
+  passwordTextStyle: {
+    marginLeft: 0,
+    marginRight: 0,
+    marginTop: 16,
+    marginBottom: 8,
+  },
   forgotContainer: {
-    marginTop: 25,
-    textAlign: 'center',
+    marginTop: 0,
+    textAlign: 'left',
+    marginLeft: 0,
     textDecorationLine: 'underline',
   },
 });

@@ -4,8 +4,8 @@ export const strings = {
   EmailHeader: 'Email',
   ContinueFacebook: 'Tiếp tục với Facebook',
   ContinueGoogle: 'Tiếp tục với Google',
-  ContinueApple: 'Tiếp tục với Apple',
-  SignUpEmail: 'Đăng kí bằng email',
+  ContinueApple: 'Tiếp Tục Với Apple',
+  SignUpEmail: 'Tiếp Tục Bằng Email',
   EmailRegisteredEng: 'This email has been registered.',
   EmailRegisteredVN:
     'Tài khoản với email này đã tồn tại. Xin vui lòng đăng nhập.',
@@ -16,11 +16,15 @@ export const strings = {
   ReenterPassword: 'Mật khẩu chưa chính xác. Xin vui lòng thử lại.',
   Passcode: 'Mã Code',
   ForgotPassword: 'Quên mật khẩu',
-  InvalidLogin: 'Email hoặc mật khẩu không đúng',
+  InvalidEmail: 'Email không hợp lệ',
+  InvalidLogin: 'Email hoặc mật khẩu chưa chính xác',
   GoogleString: 'google',
   FacebookString: 'facebook',
   EmailString: 'email',
   EmailStringCap: 'Email',
+  PleaseEnterEmail: 'Xin chào, vui lòng điền thông tin email của bạn để tiếp tục.',
+  WelcomeAndSignup: 'Xin chào, email của bạn chưa đăng ký, mời bạn điền mật khẩu để tạo tài khoản mới.',
+  WelcomeAndLogin: 'Xin chào, điền thông tin và mật khẩu của bạn để đăng nhập',
   AccountCreatedByEmail:
     'Bạn đã tạo tài khoản bằng email. Xin vui lòng ấn đăng nhập.',
   AccountCreatedByGoogle:
@@ -50,7 +54,9 @@ export const strings = {
   InvalidPasswordErrorType5:
     'Mật khẩu cần ít nhất 10 ký tự, trong đó có ít nhất 1 chữ in hoa, 1 chữ in thường, 1 chữ số, và 1 ký tự đặc biệt.',
   TermsOfServiceAgreement:
-    'Khi đăng nhập, bạn đã đồng ý với điều khoản sử dụng của chúng tôi',
+    'Khi đăng ký tài khoản với SneakGeek, bạn đã đồng ý với ',
+  ViewTermsOfServiceAgreement:
+    'điều khoản sử dụng của chúng tôi',
   SeeMore: 'Xem thêm',
   Notification: 'Thông báo',
   HomeTab: 'Trang chủ',
