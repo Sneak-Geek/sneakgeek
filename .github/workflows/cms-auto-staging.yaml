@@ -47,11 +47,7 @@ jobs:
           STAGING_PROJECT_ID: ${{ secrets.STAGING_PROJECT_ID }}    
         run: |
           VERSION=`node -e "const v=require('../version.json');console.log(v.cms.version+'-'+v.cms.build)"`
-          gcloud app deploy --appyaml=./cms-dev.yaml \
-          --version=$VERSION \
-          --no-cache --promote --verbosity=info --quiet \
-          --account=$GAE_STAGING_SERVICE_ACCOUNT \ 
-          --project=$STAGING_PROJECT_ID
+          gcloud app deploy cms-dev.yaml --version=$VERSION --no-cache --promote --verbosity=info --quiet --account=$GAE_STAGING_SERVICE_ACCOUNT --project=$STAGING_PROJECT_ID
       - name: Commit new version and tag
         uses: EndBug/add-and-commit@v7.2.1
         with:
