@@ -5,3 +5,4 @@ export * from './BusinessUtilities';
 export * from './OrderStatusUtils';
 export * from './OrderUtil';
 export * from './FunctionUtilities';
+export * from './ProfileUtilities';
