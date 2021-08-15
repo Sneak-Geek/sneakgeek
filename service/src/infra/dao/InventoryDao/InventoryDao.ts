@@ -193,7 +193,7 @@ export class InventoryDao implements IInventoryDao {
       {
         $match: {
           "shoeInfo.title": {
-            $regex: new RegExp(`^${title}`, "i"),
+            $regex: new RegExp(`${title}`, "i"),
           },
         },
       },

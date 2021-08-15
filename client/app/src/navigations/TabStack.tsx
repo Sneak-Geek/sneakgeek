@@ -22,7 +22,6 @@ import {
   ISettingsProvider,
   FactoryKeys as Keys,
   Profile,
-  Account,
 } from 'business';
 import {NotificationsScreen} from 'screens/HomeTab';
 import {ProductRequest} from 'screens/SearchTab';
@@ -205,9 +204,6 @@ export const TabStack: React.FC<RootTabProps> = () => {
 
   const profile: Profile = useSelector(
     (state: IAppState) => state?.UserState?.profileState?.profile,
-  );
-  const account: Account = useSelector(
-    (state: IAppState) => state?.UserState?.accountState?.account,
   );
   const showInventory = Boolean(profile) && profile?.isSeller;
 

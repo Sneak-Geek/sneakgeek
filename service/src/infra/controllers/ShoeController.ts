@@ -119,9 +119,24 @@ export class ShoeController {
       .split(",")
       .filter((t) => t.length > 0);
 
-    const result = await this.searchService.search(page, limit, title, brand, gender);
-
-    return res.status(HttpStatus.OK).send(result);
+    const query: mongoose.FilterQuery<mongoose.DocumentDefinition<Shoe>>[] = [
+      { title: { $regex: new RegExp(`${title}`, "i") } },
+    ];
+    if (gender) {
+      query.push({ gender: gender });
+    }
+    if (brand.length > 0) {
+      query.push({ brand: { $in: brand } });
+    }
+    const rawResult = await this.shoeRepo
+      .find({
+        $and: query,
+      })
+      .skip(page * limit)
+      .limit(limit)
+      .exec();
+    const result = rawResult.map((t) => t.toObject());
+    return res.status(HttpStatus.OK).send({ shoes: result });
   }
 
   @httpGet("/get", middlewares.FirebaseAuthMiddleware)

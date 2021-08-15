@@ -140,7 +140,7 @@ export const AccountTabEditProfile: FC<AccountTabEditProfileProp> = (
         },
       };
       const res = await _accountService.updateProfile(
-        getToken(),
+        await getToken(),
         updatedProfile,
       );
       showNotification('Cập nhật thông tin cá nhân thành công');

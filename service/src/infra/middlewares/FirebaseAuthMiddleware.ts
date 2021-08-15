@@ -36,7 +36,6 @@ export const FirebaseAuthMiddleware = async (
         userProvidedEmail: decodedToken?.email,
       });
     }
-
     req.user = user;
   } catch (error) {
     LogProvider.instance.error(error);
