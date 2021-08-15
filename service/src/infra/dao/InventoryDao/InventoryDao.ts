@@ -66,7 +66,7 @@ export class InventoryDao implements IInventoryDao {
   public async create(inventoryDto: CreateInventoryDto) {
     const shoe: Shoe = await this.shoeRepository.findOne({
       _id: mongoose.Types.ObjectId(inventoryDto.shoeId),
-    });
+    }).exec();
 
     return this.inventoryRepository.create({
       sellerId: mongoose.Types.ObjectId(inventoryDto.sellerId),

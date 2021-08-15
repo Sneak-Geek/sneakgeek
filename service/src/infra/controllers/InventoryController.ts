@@ -15,7 +15,7 @@ import {
 import { Types } from "../../configuration/inversify";
 import { IInventoryDao } from "../dao";
 import { CreateInventoryDto } from "../dao/InventoryDao/CreateInventoryDto";
-import { UserAccount } from "../database";
+import { UserAccount, UserProfile } from "../database";
 import * as middlewares from "../middlewares";
 import mongoose from "mongoose";
 
@@ -33,10 +33,10 @@ export class InventoryController {
     middlewares.ValidationPassedMiddleware
   )
   public async getInventories(@request() req: Request, @response() res: Response) {
-    const profileId = req.user.profile as mongoose.Types.ObjectId;
+    const profileId = req.user.profile;
     const { shoeName } = req.query;
     const inventoryWithShoe = await this.inventoryDao.findByUserId(
-      profileId.toHexString(),
+      profileId,
       shoeName as string
     );
     return res.status(HttpStatus.OK).send(inventoryWithShoe);
@@ -58,11 +58,11 @@ export class InventoryController {
     @requestBody() inventoryBody: CreateInventoryDto,
     @response() res: Response
   ) {
-    const user = req.user as UserAccount;
-    const profileId = user.profile as mongoose.Types.ObjectId;
+    const user = req.user as UserProfile;
+    const profileId = user?._id;
     if (
       await this.inventoryDao.isDuplicate(
-        profileId.toHexString(),
+        profileId,
         inventoryBody.shoeId,
         inventoryBody.shoeSize
       )

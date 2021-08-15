@@ -13,7 +13,7 @@ export class IsSellerMiddleware extends BaseMiddleware {
 
   public async handler(req: Request, res: Response, next: NextFunction) {
     const user = req.user as UserAccount;
-    const profile = await this.profileDao.findByAccountId(user.id);
+    const profile = await this.profileDao.findById(user.id);
 
     if (!profile) {
       return res.status(HttpStatus.NOT_FOUND).send({
