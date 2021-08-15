@@ -15,9 +15,6 @@ jobs:
     strategy:
       matrix:
         node-version: [12.x]
-    env:
-      GAE_SERVICE_ACCOUNT_PROD: ${{ secrets.GAE_STAGING_SERVICE_ACCOUNT }}
-      GAE_SERVICE_ACCOUNT_KEY_FILE_PROD: ${{ secrets.GAE_STAGING_SERVICE_ACCOUNT_KEY }}
     steps:
       - uses: actions/checkout@v2
       - name: Setup Node JS ${{ matrix.node-version }}
