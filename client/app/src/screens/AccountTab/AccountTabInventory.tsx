@@ -332,15 +332,15 @@ export const AccountTabInventory: React.FC<{}> = () => {
   // });
 
   const navigation = useNavigation();
-  var token;
+  let token;
   useEffect(() => {
     async function getFirebaseToken(){
       token = await getToken();
+      inventoryService.getInventories(token, searchKey).then((i) => {
+        setInventories(i);
+      });
     }
     getFirebaseToken();
-    inventoryService.getInventories(token, searchKey).then((i) => {
-      setInventories(i);
-    });
 
     const unsubscribe = navigation.addListener('focus', async () => {
       inventoryService.getInventories(await token, searchKey).then((i) => {
