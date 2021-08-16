@@ -28,6 +28,9 @@ jobs:
           GIT_TAG=`node scripts/bump_version.js --type=cms`
           echo "GIT_TAG=$GIT_TAG" >> $GITHUB_ENV
           echo $GITHUB_ENV
+      - name: Copy environment
+        run: |
+          cp src/env/dev .env.production
       - name: Install packages
         run: yarn install --frozen-lockfile
       - name: Build CMS
