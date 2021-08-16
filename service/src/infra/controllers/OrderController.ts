@@ -42,10 +42,7 @@ export class OrderController extends AsbtractOrderController {
     const profileId = req.user.id;
 
     try {
-      const orders = await this.orderDao.getUserHistory(
-        profileId,
-        user.isSeller
-      );
+      const orders = await this.orderDao.getUserHistory(profileId, user.isSeller);
       return res.status(HttpStatus.OK).send(orders);
     } catch (error) {
       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
