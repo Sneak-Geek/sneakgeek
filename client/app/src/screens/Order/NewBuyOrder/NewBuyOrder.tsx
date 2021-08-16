@@ -279,8 +279,16 @@ export class NewBuyOrder extends React.Component<Props, State> {
 
   private get _isMissingInfo() {
     const currentUser = firebase.auth().currentUser;
-    currentUser.reload();
-    const isNotVerified = !currentUser || (!currentUser.emailVerified && currentUser.email);
+    let isNotVerified;
+    if (currentUser)
+    {
+      currentUser.reload();
+      isNotVerified = !currentUser || (!currentUser.emailVerified && currentUser.email);
+    }
+    else
+    {
+      isNotVerified = false;
+    }
     const profile = this.props.profile;
     const isMissingInfo =
       !profile ||
@@ -327,15 +335,23 @@ export class NewBuyOrder extends React.Component<Props, State> {
     let message = '';
     let buttonText = '';
     let firebaseUser = firebase.auth().currentUser;
-    firebaseUser.reload();
-    if (!this.props.profile) {
+    if (!firebaseUser)
+    {
       message = strings.NotAuthenticated;
       buttonText = strings.PleaseLogin;
-    } else if (!firebaseUser.emailVerified && firebaseUser.email) {
-      message = strings.NotVerified;
-    } else {
-      message = strings.MissingProfileInfo;
-      buttonText = strings.AddInfoForReview;
+    }
+    else
+    {
+      firebaseUser.reload();
+      if (!this.props.profile) {
+        message = strings.NotAuthenticated;
+        buttonText = strings.PleaseLogin;
+      } else if (!firebaseUser.emailVerified && firebaseUser.email) {
+        message = strings.NotVerified;
+      } else {
+        message = strings.MissingProfileInfo;
+        buttonText = strings.AddInfoForReview;
+      }
     }
 
     var textDisplay = [];
@@ -355,7 +371,7 @@ export class NewBuyOrder extends React.Component<Props, State> {
         }
       );
     }
-    if (this.props.profile && !firebaseUser.emailVerified && firebaseUser.email)
+    if (this.props.profile && (firebaseUser && !firebaseUser.emailVerified && firebaseUser.email))
     {
       textDisplay.push({
         text: strings.Cancel,
