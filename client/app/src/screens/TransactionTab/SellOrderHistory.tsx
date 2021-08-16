@@ -143,17 +143,15 @@ export class SellOrderHistory extends React.Component<Props, State> {
   );
 
   public async componentDidMount(): Promise<void> {
-    if (this.state.orders.length === 0) {
-      this._getOrders();
-    }
+    this._getOrders();
   }
 
   private async _getOrders() {
     let token = await getToken();
     this.setState({refreshing: true}, () =>
-      this.orderService
-        .getOrderHistory(token)
-        .then((orders) => this.setState({orders, refreshing: false})),
+      this.orderService.getOrderHistory(token).then((orders) => {
+        this.setState({orders, refreshing: false});
+      }),
     );
   }
 
@@ -167,7 +165,7 @@ export class SellOrderHistory extends React.Component<Props, State> {
       selectedOrder: undefined,
       minimizeOtherOrders: false,
       minimizePendingOrders: false,
-      minimizeWaitingForBankTransferOrders: false
+      minimizeWaitingForBankTransferOrders: false,
     };
   }
 
@@ -205,45 +203,68 @@ export class SellOrderHistory extends React.Component<Props, State> {
       let otherOrders = [];
       let numberOfOtherOrders = 0;
 
-      orders.forEach(o => {
+      orders.forEach((o) => {
         if (getLastestStatus(o) === TrackingStatus.WAITING_FOR_BANK_TRANSFER) {
           numberOfWaitingForBankTransferOrders++;
           waitingForBankTransferOrders.push(o);
-        }
-        else {
+        } else {
           numberOfOtherOrders++;
           otherOrders.push(o);
         }
       });
 
-      if (numberOfOtherOrders === 0 && numberOfWaitingForBankTransferOrders === 0)
-      return (
-        <View style={styles.noOrderContainer}>
-          <AppText.Body>Hiện chưa có đơn mua nào</AppText.Body>
-        </View>
-      );
+      if (
+        numberOfOtherOrders === 0 &&
+        numberOfWaitingForBankTransferOrders === 0
+      )
+        return (
+          <View style={styles.noOrderContainer}>
+            <AppText.Body>Hiện chưa có đơn mua nào</AppText.Body>
+          </View>
+        );
 
       if (this.state.minimizeWaitingForBankTransferOrders) {
-        waitingForBankTransferOrders = []
+        waitingForBankTransferOrders = [];
       }
 
       if (this.state.minimizeOtherOrders) {
-        otherOrders = []
+        otherOrders = [];
       }
 
       const listData = [
-        {title: `Chờ thanh toán (${numberOfWaitingForBankTransferOrders})`, data: waitingForBankTransferOrders, id: 1},
-        {title: `Các đơn còn lại (${numberOfOtherOrders})`, data: otherOrders, id: 2},
+        {
+          title: `Chờ thanh toán (${numberOfWaitingForBankTransferOrders})`,
+          data: waitingForBankTransferOrders,
+          id: 1,
+        },
+        {
+          title: `Các đơn còn lại (${numberOfOtherOrders})`,
+          data: otherOrders,
+          id: 2,
+        },
       ];
 
       let ImgContent: React.FC<{id: number}> = (props: {id: number}) => {
         const {id} = props;
 
-        if (id === 1 && !this.state.minimizeWaitingForBankTransferOrders || id === 2 && !this.state.minimizeOtherOrders)
-          return <Image source={images.SectionListUpArrow} style={{width: 32, height: 32, margin: 15}}/>
-       
-        return <Image source={images.SectionListDownArrow} style={{width: 32, height: 32, margin: 15}}/>
-      }
+        if (
+          (id === 1 && !this.state.minimizeWaitingForBankTransferOrders) ||
+          (id === 2 && !this.state.minimizeOtherOrders)
+        )
+          return (
+            <Image
+              source={images.SectionListUpArrow}
+              style={{width: 32, height: 32, margin: 15}}
+            />
+          );
+
+        return (
+          <Image
+            source={images.SectionListDownArrow}
+            style={{width: 32, height: 32, margin: 15}}
+          />
+        );
+      };
 
       return (
         <SectionList
@@ -257,16 +278,29 @@ export class SellOrderHistory extends React.Component<Props, State> {
           keyExtractor={(item) => item._id}
           renderItem={({item}) => this._renderOrder(item)}
           renderSectionHeader={({section: {title, id}}) => (
-            <View style={{backgroundColor: 'white', flexDirection: 'row', justifyContent: 'space-between'}}>
-              <AppText.Title2 style={{margin: 15}}>{title}</AppText.Title2>
-              <TouchableOpacity onPress={() => {
-                if (id === 1) {
-                  this.setState({...this.state, minimizeWaitingForBankTransferOrders: !this.state.minimizeWaitingForBankTransferOrders})
-                } else {
-                  this.setState({...this.state, minimizeOtherOrders: !this.state.minimizeOtherOrders})
-                }
+            <View
+              style={{
+                backgroundColor: 'white',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
               }}>
-                <ImgContent id={id}/>
+              <AppText.Title2 style={{margin: 15}}>{title}</AppText.Title2>
+              <TouchableOpacity
+                onPress={() => {
+                  if (id === 1) {
+                    this.setState({
+                      ...this.state,
+                      minimizeWaitingForBankTransferOrders:
+                        !this.state.minimizeWaitingForBankTransferOrders,
+                    });
+                  } else {
+                    this.setState({
+                      ...this.state,
+                      minimizeOtherOrders: !this.state.minimizeOtherOrders,
+                    });
+                  }
+                }}>
+                <ImgContent id={id} />
               </TouchableOpacity>
             </View>
           )}
@@ -287,7 +321,6 @@ export class SellOrderHistory extends React.Component<Props, State> {
           numberOfPendingOrders++;
         } else if (
           ![
-            TrackingStatus.WAITING_FOR_BANK_TRANSFER,
             TrackingStatus.NOT_RECEIVED_BANK_TRANSFER,
             TrackingStatus.REFUND_TO_BUYER,
           ].find((s) => getLastestStatus(o) === s)
@@ -306,26 +339,47 @@ export class SellOrderHistory extends React.Component<Props, State> {
       }
 
       if (this.state.minimizePendingOrders) {
-        pendingOrders = []
+        pendingOrders = [];
       }
 
       if (this.state.minimizeOtherOrders) {
-        otherOrders = []
+        otherOrders = [];
       }
 
       const listData = [
-        {title: `Cần xác nhận (${numberOfPendingOrders})`, data: pendingOrders, id: 1},
-        {title: `Các đơn còn lại (${numberOfOtherOrders})`, data: otherOrders, id: 2},
+        {
+          title: `Cần xác nhận (${numberOfPendingOrders})`,
+          data: pendingOrders,
+          id: 1,
+        },
+        {
+          title: `Các đơn còn lại (${numberOfOtherOrders})`,
+          data: otherOrders,
+          id: 2,
+        },
       ];
 
       let ImgContent: React.FC<{id: number}> = (props: {id: number}) => {
         const {id} = props;
 
-        if (id === 1 && !this.state.minimizePendingOrders || id === 2 && !this.state.minimizeOtherOrders)
-          return <Image source={images.SectionListUpArrow} style={{width: 32, height: 32, margin: 15}}/>
-       
-        return <Image source={images.SectionListDownArrow} style={{width: 32, height: 32, margin: 15}}/>
-      }
+        if (
+          (id === 1 && !this.state.minimizePendingOrders) ||
+          (id === 2 && !this.state.minimizeOtherOrders)
+        )
+          return (
+            <Image
+              source={images.SectionListUpArrow}
+              style={{width: 32, height: 32, margin: 15}}
+            />
+          );
+
+        return (
+          <Image
+            source={images.SectionListDownArrow}
+            style={{width: 32, height: 32, margin: 15}}
+          />
+        );
+      };
 
       return (
         <SectionList
@@ -339,16 +393,28 @@ export class SellOrderHistory extends React.Component<Props, State> {
           keyExtractor={(item) => item._id}
           renderItem={({item}) => this._renderOrder(item)}
           renderSectionHeader={({section: {title, id}}) => (
-            <View style={{backgroundColor: 'white', flexDirection: 'row', justifyContent: 'space-between'}}>
-              <AppText.Title2 style={{margin: 15}}>{title}</AppText.Title2>
-              <TouchableOpacity onPress={() => {
-                if (id === 1) {
-                  this.setState({...this.state, minimizePendingOrders: !this.state.minimizePendingOrders})
-                } else {
-                  this.setState({...this.state, minimizeOtherOrders: !this.state.minimizeOtherOrders})
-                }
+            <View
+              style={{
+                backgroundColor: 'white',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
               }}>
-                <ImgContent id={id}/>
+              <AppText.Title2 style={{margin: 15}}>{title}</AppText.Title2>
+              <TouchableOpacity
+                onPress={() => {
+                  if (id === 1) {
+                    this.setState({
+                      ...this.state,
+                      minimizePendingOrders: !this.state.minimizePendingOrders,
+                    });
+                  } else {
+                    this.setState({
+                      ...this.state,
+                      minimizeOtherOrders: !this.state.minimizeOtherOrders,
+                    });
+                  }
+                }}>
+                <ImgContent id={id} />
               </TouchableOpacity>
             </View>
           )}

@@ -39,18 +39,12 @@ export class OrderController extends AsbtractOrderController {
   @httpGet("/", FirebaseAuthMiddleware, AccountVerifiedMiddleware)
   public async getOrderHistory(@request() req: Request, @response() res: Response) {
     const user = req.user as UserProfile;
-    const profileId = req.user._id;
-    // Check lai phan condition
-    if (user.isSeller) {
-      return res.status(HttpStatus.BAD_REQUEST).send({
-        message: "Not seller or buyer",
-      });
-    }
+    const profileId = req.user.id;
 
     try {
       const orders = await this.orderDao.getUserHistory(
         profileId,
-        user.accessLevel === AccessLevel.Seller
+        user.isSeller
       );
       return res.status(HttpStatus.OK).send(orders);
     } catch (error) {
