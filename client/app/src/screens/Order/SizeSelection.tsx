@@ -119,10 +119,18 @@ export class SizeSelection extends React.Component<Props, State> {
     );
 
     this.props.toggleLoading(true);
+    var token;
+    try{
+      token = await getToken();
+    }
+    catch
+    {
+      token = undefined;
+    }
 
     try {
       const priceMap: SizePriceMap[] = await orderService.getPriceSizeMap(
-        await getToken(),
+        token,
         this.shoe._id,
       );
 
