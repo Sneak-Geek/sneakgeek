@@ -198,4 +198,5 @@ export const strings = {
   CustomerSupportPOCName: 'Trần Quang Đại',
   TransactionInfo: 'Lịch sử giao dịch',
   OutOfStock: 'Hết hàng',
+  SkipLogin: 'Bỏ qua đăng nhập',
 };

@@ -216,12 +216,13 @@ export class SearchTabMain extends React.Component<Props, State> {
           />
           <Icon
             name={'sort'}
-            size={themes.IconSize}
+            size={this._isFiltered() ? themes.IconSize / 3 * 2 : themes.IconSize}
             color={
               this._isFiltered()
                 ? themes.AppPrimaryColor
                 : themes.AppSecondaryColor
             }
+            reverse={this._isFiltered()}
             onPress={(): void => this.setState({filterVisible: true})}
           />
         </View>
@@ -464,7 +465,7 @@ export class SearchTabMain extends React.Component<Props, State> {
                 )
               }
               title={'Xem kết quả'}
-              style={{backgroundColor: themes.AppPrimaryColor}}
+              style={{backgroundColor: themes.AppPrimaryColor, borderRadius: themes.LargeBorderRadius}}
             />
           </View>
         </SafeAreaView>
@@ -511,16 +512,16 @@ export class SearchTabMain extends React.Component<Props, State> {
     const brands = settings.getValue(SettingsKey.RemoteSettings).shoeBrands;
 
     return (
-      <View style={{marginBottom: themes.RegularButtonHeight, backgroundColor: 'red'}}>
+      <View style={{marginBottom: themes.RegularButtonHeight}}> 
         <AppText.Title2 style={styles.filterTitle}>
           {strings.Brand}
         </AppText.Title2>
         <FlatList
-          style={{marginBottom: 5, display: 'flex', flex: 1, backgroundColor: 'red'}}
+          style={{marginBottom: 5, display: 'flex', flex: 1}}
           horizontal={true}
           data={this.state.filter.brand}
           showsHorizontalScrollIndicator={false}
-          keyExtractor={(item, index): string => index.toString()}
+          keyExtractor={(_, index): string => index.toString()}
           renderItem={({item}): JSX.Element => (
             <TouchableWithoutFeedback
               onPress={(): void =>
