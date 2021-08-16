@@ -10,23 +10,24 @@ import {
   TouchableOpacity,
   Platform,
 } from 'react-native';
-import {Button, Icon} from 'react-native-elements';
-import {strings, themes, images} from 'resources';
-import {StackNavigationProp} from '@react-navigation/stack';
+import { Button, Icon } from 'react-native-elements';
+import { strings, themes, images } from 'resources';
+import { StackNavigationProp } from '@react-navigation/stack';
 import RouteNames from 'navigations/RouteNames';
-import {connect} from 'utilities/ReduxUtilities';
+import { connect } from 'utilities/ReduxUtilities';
 import {
   authenticateWithFb,
   NetworkRequestState,
   authenticateWithApple,
 } from 'business';
-import {IAppState} from 'store/AppStore';
-import {FeatureFlags} from 'FeatureFlag';
-import {toggleIndicator} from 'actions';
+import { IAppState } from 'store/AppStore';
+import { FeatureFlags } from 'FeatureFlag';
+import { toggleIndicator } from 'actions';
 import { Profile } from 'business';
+import { AppText } from 'screens/Shared';
 
 type Props = {
-  profileState: {profile?: Profile, error?: any, state: NetworkRequestState};
+  profileState: { profile?: Profile, error?: any, state: NetworkRequestState };
   navigation: StackNavigationProp<any>;
   toggleLoading: (isLoading: boolean) => void;
   facebookLogin: () => void;
@@ -90,7 +91,7 @@ const styles = StyleSheet.create({
   }),
   (dispatch: Function) => ({
     toggleLoading: (isLoading: boolean): void => {
-      dispatch(toggleIndicator({isLoading, message: ''}));
+      dispatch(toggleIndicator({ isLoading, message: '' }));
     },
     facebookLogin: (): void => {
       dispatch(authenticateWithFb());
@@ -103,29 +104,16 @@ const styles = StyleSheet.create({
 export class LoginScreen extends React.Component<Props> {
   public render(): JSX.Element {
     return (
-      <ImageBackground source={images.Home} style={{flex: 1}} testID={'LoginScreen'}>
-        <SafeAreaView style={{flex: 1}}>
+      <ImageBackground source={images.Home} style={{ flex: 1 }} testID={'LoginScreen'}>
+        <SafeAreaView style={{ flex: 1 }}>
           <StatusBar barStyle={'light-content'} />
           {!this.props.profileState.profile && (
-            <View style={{flex: 1, alignItems: 'center', marginBottom: 10}}>
-              <TouchableOpacity
-                style={{
-                  position: 'absolute',
-                  top: 10,
-                  right: 10,
-                }}>
-                <Icon
-                  name={'close'}
-                  size={themes.IconSize * 2}
-                  color={'white'}
-                  onPress={() => this.props.navigation.goBack()}
-                  containerStyle={{backgroundColor: 'transparent'}}
-                />
-              </TouchableOpacity>
+            <View style={{ flex: 1, alignItems: 'center', marginBottom: 10 }}>
               <View style={styles.buttonContainer}>
                 {FeatureFlags.enableFacebook && this._renderFacebookLogin()}
                 {Platform.OS === 'ios' && this._renderAppleLogin()}
                 {this._renderEmailVerify()}
+                {this._renderSkipLogin()}
               </View>
             </View>
           )}
@@ -152,7 +140,7 @@ export class LoginScreen extends React.Component<Props> {
 
   public componentDidUpdate(prevProps: Props) {
     if (this.props.navigation.isFocused()) {
-      const {profileState, navigation} = this.props;
+      const { profileState, navigation } = this.props;
       const currentError = profileState.error;
       const prevError = prevProps.profileState.error;
 
@@ -193,10 +181,10 @@ export class LoginScreen extends React.Component<Props> {
     return (
       <Button
         type={'outline'}
-        buttonStyle={[{backgroundColor: 'white'}, styles.button]}
+        buttonStyle={[{ backgroundColor: 'white' }, styles.button]}
         title={strings.ContinueApple}
         icon={<Image source={images.Apple} style={styles.iconStyle} />}
-        titleStyle={{...styles.titleStyle, color: 'black'}}
+        titleStyle={{ ...styles.titleStyle, color: 'black' }}
         onPress={this.props.appleLogin.bind(this)}
       />
     );
@@ -217,5 +205,14 @@ export class LoginScreen extends React.Component<Props> {
         onPress={() => this.props.navigation.push(RouteNames.Auth.EmailVerify)}
       />
     );
+  }
+
+  private _renderSkipLogin() {
+    return (
+      <AppText.Body onPress={() => this.props.navigation.goBack()} 
+        style={{ textAlign: 'center', marginTop: 8, textDecorationLine: 'underline' }}>
+        {strings.SkipLogin}
+      </AppText.Body>
+    )
   }
 }
