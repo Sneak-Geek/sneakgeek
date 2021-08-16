@@ -24,7 +24,7 @@ const App: React.FC = () => {
       setIsInitialized(true);
     }
   }, [isInitialized, setIsInitialized]);
-
+  console.log("Environment:", process.env.NODE_ENV);
   return (
     <Admin
       dataProvider={getDataProvider()}
