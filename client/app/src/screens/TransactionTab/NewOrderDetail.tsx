@@ -82,9 +82,8 @@ type Props = {
 };
 
 export const NewOrderDetail: React.FC<Props> = (props) => {
-  const [shouldRenderAction, setShouldRenderAction] = React.useState<boolean>(
-    true,
-  );
+  const [shouldRenderAction, setShouldRenderAction] =
+    React.useState<boolean>(true);
   const [isActionAccept, setIsActionAccept] = React.useState<boolean>(false);
   const profile = useSelector(
     (state: IAppState) => state.UserState.profileState.profile,
@@ -201,7 +200,7 @@ export const NewOrderDetail: React.FC<Props> = (props) => {
     const phoneNumber = profile?.userProvidedPhoneNumber;
     const {addressLine1, addressLine2} = props.order.shippingAddress;
 
-    const name = `${profile?.userProvidedName.lastName} ${profile?.userProvidedName.firstName}`;
+    const name = `${profile?.userProvidedName?.lastName} ${profile?.userProvidedName?.firstName}`;
     return (
       <>
         <AppText.SubHeadline style={{color: 'rgba(0,0,0,0.6)'}}>

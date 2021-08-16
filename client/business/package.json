@@ -18,14 +18,14 @@
     "typescript": "3.7.2"
   },
   "peerDependencies": {
+    "@invertase/react-antive-apple-authentication": "*",
     "@react-native-community/push-notification-ios": "^1.1.1",
+    "@react-native-firebase/auth": "*",
     "@types/redux-actions": "*",
     "axios": "*",
     "redux": "*",
     "redux-actions": "*",
-    "redux-thunk": "*",
-    "@react-native-firebase/auth": "*",
-    "@invertase/react-antive-apple-authentication": "*"
+    "redux-thunk": "*"
   },
   "devDependencies": {
     "@types/redux-actions": "2.6.1",
