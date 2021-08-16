@@ -126,7 +126,7 @@ const BankInfo: React.FC<BankInfoProp> = (props: BankInfoProp) => {
     {
       type: BankInfoComponentType.TEXT_ONLY,
       header: 'Chi nhánh ngân hàng',
-      content: 'Ngân hàng TMCP Việt Nam Thịnh Vượng (VPBank)',
+      content: 'Ngân hàng TMCP Kỹ thương Việt Nam (Techcombank)',
     },
     {
       type: BankInfoComponentType.TEXT_AND_COPY_BUTTON,
@@ -197,7 +197,7 @@ const BankInfoComponent: React.FC<BankInfoComponentProp> = (
       component = (
         <View
           style={[styles.textBoxContainer, styles.textAndCopyButtonContainer]}>
-          <AppText.Body style={{maxWidth: 355}}>{content}</AppText.Body>
+          <AppText.Body style={{maxWidth: 320}}>{content}</AppText.Body>
           <CopyButton text={content} />
         </View>
       );
@@ -225,7 +225,7 @@ const CopyButton: React.FC<CopyButtonProp> = (props: CopyButtonProp) => {
 
   const copyToClipboard = () => {
     Clipboard.setString(text);
-    Toast.showWithGravity('Sao chép thành công',Toast.SHORT, Toast.BOTTOM);
+    Toast.showWithGravity('Sao chép thành công', Toast.SHORT, Toast.BOTTOM);
   };
 
   return (
