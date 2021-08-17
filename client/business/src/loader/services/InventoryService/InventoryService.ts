@@ -40,8 +40,15 @@ export class InventoryService extends BaseService implements IInventoryService {
     return data.price;
   }
 
-  public async search(query: string, page: number) {
-    const { data } = await this.apiClient.getInstance().get(`/inventory/search?title=${query}&page=${page}`);
+  public async search(query: string, page: number, gender?: string, brands?: Array<string>) {
+    let q = `/inventory/search?title=${query}&page=${page}`;
+    if (brands && brands?.length > 0) {
+      q = `${q}&brands=${brands?.join(",")}`;
+    }
+    if (gender) {
+      q = `${q}&gender=${gender}`;
+    }
+    const { data } = await this.apiClient.getInstance().get(q);
     return data;
   }
 }

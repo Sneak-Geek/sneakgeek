@@ -188,16 +188,25 @@ export class InventoryDao implements IInventoryDao {
 
   public async findShoeInventoryWithPrice(
     page: number,
-    title: string
+    title: string,
+    brands?: Array<string>,
+    gender?: string
   ): Promise<InventorySearchResult[]> {
     const pageSize = 20;
+    const matchQuery: Array<any> = [
+      {
+        "shoeInfo.title": { $regex: new RegExp(`${title}`, "i") },
+      },
+    ];
+    if (brands && brands.length > 0) {
+      matchQuery.push({ "shoeInfo.brand": { $in: brands } });
+    }
+    if (gender) {
+      matchQuery.push({ "shoeInfo.gender": gender });
+    }
     const query: any[] = [
       {
-        $match: {
-          "shoeInfo.title": {
-            $regex: new RegExp(`${title}`, "i"),
-          },
-        },
+        $match: { $and: matchQuery },
       },
       {
         $group: {
