@@ -407,6 +407,8 @@ export class SearchTabMain extends React.Component<Props, State> {
     const result = await this._inventoryService.search(
       searchText,
       currentSearchPage + (scrollEnd ? 1 : 0),
+      this._getStandardizedGender(),
+      this.state.filter.brand
     );
     this.setState({isSearching:false, shoes: []});
 
@@ -460,7 +462,7 @@ export class SearchTabMain extends React.Component<Props, State> {
             <BottomButton
               onPress={(): void =>
                 this.setState(
-                  {filterVisible: false, showDropDown: false},
+                  {filterVisible: false, showDropDown: false, shoes: []},
                   (): any => this._search(),
                 )
               }
