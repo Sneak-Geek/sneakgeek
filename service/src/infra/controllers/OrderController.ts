@@ -23,8 +23,7 @@ import {
 } from "../middlewares";
 import { PaymentMethod, TrackingStatus } from "../../assets/constants";
 import { IOrderDao } from "../dao";
-import { AccessLevel, Order, UserAccount, UserProfile } from "../database";
-import mongoose from "mongoose";
+import { UserProfile } from "../database";
 import { AsbtractOrderController } from "./AbstractOrderController";
 
 @controller("/api/v1/order")
@@ -41,14 +40,8 @@ export class OrderController extends AsbtractOrderController {
     const user = req.user as UserProfile;
     const profileId = req.user.id;
 
-    try {
-      const orders = await this.orderDao.getUserHistory(profileId, user.isSeller);
-      return res.status(HttpStatus.OK).send(orders);
-    } catch (error) {
-      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
-        message: "Unexpected error!",
-      });
-    }
+    const orders = await this.orderDao.getUserHistory(profileId, user.isSeller);
+    return res.status(HttpStatus.OK).send(orders);
   }
 
   @httpGet("/shoe-price-size-map", query("shoeId").isMongoId(), ValidationPassedMiddleware)

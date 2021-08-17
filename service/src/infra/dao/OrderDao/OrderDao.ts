@@ -119,11 +119,20 @@ export class OrderDao implements IOrderDao {
 
   public async getUserHistory(profileId: string, isSeller: boolean): Promise<Order[]> {
     const matchField = isSeller ? "sellerId" : "buyerId";
-    const matchQuery = { [matchField]: mongoose.Types.ObjectId(profileId) };
+    const matchQuery: Array<any> = [{ [matchField]: mongoose.Types.ObjectId(profileId) }];
+    if (isSeller) {
+      // if trackingStatus is a single item list, the item will always be
+      // WAITING_FOR_BANK_TRANSFER. We don't want seller to see such items.
+      matchQuery.push({
+        $expr: { $gt: [{ $size: "$trackingStatus" }, 1] },
+      });
+    }
     return this.orderRepo
       .aggregate([
         {
-          $match: matchQuery,
+          $match: {
+            $and: matchQuery,
+          },
         },
         {
           $lookup: {
