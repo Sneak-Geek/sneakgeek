@@ -131,7 +131,7 @@ const BankInfo: React.FC<BankInfoProp> = (props: BankInfoProp) => {
     {
       type: BankInfoComponentType.TEXT_AND_COPY_BUTTON,
       header: 'Số tài khoản',
-      content: '19024705183012',
+      content: '19031706102888',
     },
     {
       type: BankInfoComponentType.TEXT_ONLY,
