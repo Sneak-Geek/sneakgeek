@@ -7,10 +7,9 @@ import {
   ImageBackground,
   StatusBar,
   Alert,
-  TouchableOpacity,
   Platform,
 } from 'react-native';
-import { Button, Icon } from 'react-native-elements';
+import { Button } from 'react-native-elements';
 import { strings, themes, images } from 'resources';
 import { StackNavigationProp } from '@react-navigation/stack';
 import RouteNames from 'navigations/RouteNames';
@@ -25,6 +24,7 @@ import { FeatureFlags } from 'FeatureFlag';
 import { toggleIndicator } from 'actions';
 import { Profile } from 'business';
 import { AppText } from 'screens/Shared';
+import analytics from '@react-native-firebase/analytics';
 
 type Props = {
   profileState: { profile?: Profile, error?: any, state: NetworkRequestState };
@@ -85,6 +85,10 @@ const styles = StyleSheet.create({
   },
 });
 
+type State = {
+  loginMethod: 'apple' | 'facebook' | 'google'
+}
+
 @connect(
   (state: IAppState) => ({
     profileState: state.UserState.profileState,
@@ -101,7 +105,7 @@ const styles = StyleSheet.create({
     },
   }),
 )
-export class LoginScreen extends React.Component<Props> {
+export class LoginScreen extends React.Component<Props, State> {
   public render(): JSX.Element {
     return (
       <ImageBackground source={images.Home} style={{ flex: 1 }} testID={'LoginScreen'}>
@@ -152,6 +156,9 @@ export class LoginScreen extends React.Component<Props> {
         profileState.state === NetworkRequestState.SUCCESS &&
         profileState.profile
       ) {
+        if (this.state.loginMethod) {
+          analytics().logLogin({ method: this.state.loginMethod });
+        }
         this.props.toggleLoading(false);
         navigation.push(RouteNames.Tab.Name);
       }
@@ -185,7 +192,10 @@ export class LoginScreen extends React.Component<Props> {
         title={strings.ContinueApple}
         icon={<Image source={images.Apple} style={styles.iconStyle} />}
         titleStyle={{ ...styles.titleStyle, color: 'black' }}
-        onPress={this.props.appleLogin.bind(this)}
+        onPress={() => {
+          this.setState({ loginMethod: 'apple' });
+          this.props.appleLogin();
+        }}
       />
     );
   }
