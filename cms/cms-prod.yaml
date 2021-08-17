@@ -1,0 +1,7 @@
+# app.yaml
+service: cms
+runtime: nodejs12
+
+env_variables:
+  ENABLE_CLOUD_LOGGING: true
+  NODE_ENV: production
