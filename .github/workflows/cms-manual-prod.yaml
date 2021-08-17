@@ -1,16 +1,19 @@
-name: Backend prod workflow deployment
-on: 
+name: CMS Manual Prod Deployment
+on:
   workflow_dispatch:
     inputs:
       service_tag:
-        description: "Service release tag, more info at: https://github.com/Sneak-Geek/sneakgeek/tags"
+        description: "CMS release tag, more info at: https://github.com/Sneak-Geek/sneakgeek/tags"
         required: true
 jobs:
-  deploy_prod:
+  deploy:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: service
+        working-directory: cms
+    strategy:
+      matrix:
+        node-version: [12.x]
     steps:
       - uses: actions/checkout@v2
       - name: Checkout branch with tags
@@ -23,13 +26,16 @@ jobs:
         run: git branch --show-current
       - name: Check release version
         run: cat ../version.json
-      - name: Setup NodeJS
+      - name: Setup Node JS ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
-          node-version: 12.x
+          node-version: ${{ matrix.node-version }}
+      - name: Copy environment
+        run: |
+          cp src/env/prod .env.production
       - name: Install packages
         run: yarn install --frozen-lockfile
-      - name: Build
+      - name: Build CMS
         run: yarn build
       - name: Setup gcloud CLI
         uses: google-github-actions/setup-gcloud@master
@@ -37,15 +43,14 @@ jobs:
           service_account_email: ${{ secrets.GAE_PROD_SERVICE_ACCOUNT }}
           service_account_key: ${{ secrets.GAE_PROD_SERVICE_ACCOUNT_KEY }}
           project_id: ${{ secrets.PROD_PROJECT_ID }}
-      - name: Deploy service to Google App Engine prod
+      - name: Deploy CMS to Google App Engine
         env:
           GAE_PROD_SERVICE_ACCOUNT: ${{ secrets.GAE_PROD_SERVICE_ACCOUNT }}
           PROD_PROJECT_ID: ${{ secrets.PROD_PROJECT_ID }}
         run: |
-          export VERSION=`node -e "const v=require('../version.json');console.log(v.service.version+'-'+v.service.build)"`  
-          gcloud app deploy ./app-prod.yaml \
-            --version=$VERSION \
-            --no-cache --promote --verbosity=info --quiet \
+          export VERSION=`node -e "const v=require('../version.json');console.log(v.cms.version+'-'+v.cms.build)"`
+          gcloud app deploy cms-prod.yaml \
+            --version=$VERSION --no-cache --promote --verbosity=info --quiet \
             --account=$GAE_PROD_SERVICE_ACCOUNT \
             --project=$PROD_PROJECT_ID
       - name: Delete build branch
@@ -54,3 +59,4 @@ jobs:
           TAG: ${{ github.event.inputs.service_tag }}
         run: |
           git branch -d build/$TAG
+      
