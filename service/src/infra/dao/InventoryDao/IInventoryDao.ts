@@ -39,5 +39,10 @@ export interface IInventoryDao {
   getLowestPrice(shoeId: string): Promise<number>;
   updateInventoryWhenCreateOrder(inventoryId: string): Promise<Inventory>;
   getMatchingInventory(shoeId: string | ObjectId, price: number): Promise<Inventory>;
-  findShoeInventoryWithPrice(page: number, title: string): Promise<InventorySearchResult[]>;
+  findShoeInventoryWithPrice(
+    page: number,
+    title: string,
+    brands?: Array<string>,
+    gender?: string
+  ): Promise<InventorySearchResult[]>;
 }

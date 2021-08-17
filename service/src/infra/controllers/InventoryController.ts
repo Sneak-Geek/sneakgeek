@@ -18,6 +18,7 @@ import { CreateInventoryDto } from "../dao/InventoryDao/CreateInventoryDto";
 import { UserAccount, UserProfile } from "../database";
 import * as middlewares from "../middlewares";
 import mongoose from "mongoose";
+import { Gender } from "../../assets";
 
 @controller("/api/v1/inventory")
 export class InventoryController {
@@ -119,16 +120,27 @@ export class InventoryController {
   @httpGet(
     "/search",
     query("page").exists().isInt({ min: 0 }),
-    query("title").optional().isString()
+    query("title").optional().isString(),
+    query("brands").optional().isString(),
+    query("gender")
+      .optional()
+      .isIn([Object.keys(Gender)])
   )
   public async search(
     @queryParam("page") page: number | string,
     @queryParam("title") title: string,
+    @queryParam("brands") brands: string,
+    @queryParam("gender") gender: Gender,
     @response() res: Response
   ) {
     page = typeof page === "string" ? parseInt(page, 10) : page;
-
-    const rawResult = await this.inventoryDao.findShoeInventoryWithPrice(page, title);
+    const parsedBrands = brands ? brands.split(",") : [];
+    const rawResult = await this.inventoryDao.findShoeInventoryWithPrice(
+      page,
+      title,
+      parsedBrands,
+      gender
+    );
     const result = rawResult.map((r) => ({
       ...r.shoe,
       sellPrice: r.sellPrice,
