@@ -17,6 +17,7 @@ import {connect} from 'utilities/ReduxUtilities';
 import {authenticateWithEmail, NetworkRequestState, Profile} from 'business';
 import {IAppState} from 'store/AppStore';
 import {showErrorNotification, toggleIndicator} from 'actions';
+import analytics from '@react-native-firebase/analytics';
 
 type State = {
   email: string;
@@ -145,6 +146,7 @@ export class EmailLoginScreen extends React.Component<Props, State> {
           }
           this.setState(newState);
       } else if (state === NetworkRequestState.SUCCESS) {
+        analytics().logLogin({ method: 'email' });
         try {
             navigation.navigate(RouteNames.Order.Name, {
               screen: RouteNames.Order.BuyConfirmation,

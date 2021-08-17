@@ -17,6 +17,7 @@ import {IAppState} from 'store/AppStore';
 import {showErrorNotification, toggleIndicator} from 'actions';
 import RouteNames from 'navigations/RouteNames';
 import {Icon} from 'react-native-elements';
+import analytics from '@react-native-firebase/analytics';
 
 type State = {
   email: string;
@@ -105,7 +106,6 @@ export class EmailSignUpScreen extends React.Component<Props, State> {
     if (this.props.navigation.isFocused()) {
       const {
         profileState,
-        showErrorNotification,
         toggleLoadingIndicator,
       } = this.props;
       const {state} = profileState;
@@ -116,6 +116,7 @@ export class EmailSignUpScreen extends React.Component<Props, State> {
       if (profileState.state === NetworkRequestState.SUCCESS &&
         profileState.profile
       ) {
+        analytics().logSignUp({ method: 'email' });
         this.props.navigation.push(RouteNames.Tab.Name);
       }
 
