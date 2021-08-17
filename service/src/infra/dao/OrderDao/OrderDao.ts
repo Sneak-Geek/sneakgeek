@@ -121,17 +121,17 @@ export class OrderDao implements IOrderDao {
     const matchField = isSeller ? "sellerId" : "buyerId";
     const matchQuery: Array<any> = [{ [matchField]: mongoose.Types.ObjectId(profileId) }];
     if (isSeller) {
-      // if trackingStatus is a single item list, the item will always be 
+      // if trackingStatus is a single item list, the item will always be
       // WAITING_FOR_BANK_TRANSFER. We don't want seller to see such items.
       matchQuery.push({
-        $expr: { $gt: [{ $size: "$trackingStatus" }, 1] }
+        $expr: { $gt: [{ $size: "$trackingStatus" }, 1] },
       });
     }
     return this.orderRepo
       .aggregate([
         {
           $match: {
-            $and: matchQuery
+            $and: matchQuery,
           },
         },
         {

@@ -44,7 +44,6 @@ export class OrderController extends AsbtractOrderController {
     return res.status(HttpStatus.OK).send(orders);
   }
 
-
   @httpGet("/shoe-price-size-map", query("shoeId").isMongoId(), ValidationPassedMiddleware)
   public async getShoePriceSizeMap(
     @queryParam("shoeId") shoeId: string,
