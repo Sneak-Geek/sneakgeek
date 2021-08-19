@@ -24,6 +24,7 @@ import {OrderSummary} from 'screens/Product/OrderSummary';
 import RouteNames from 'navigations/RouteNames';
 import {SizePriceMap} from 'business/src';
 import { firebase } from '@react-native-firebase/auth';
+import analytics from '@react-native-firebase/analytics';
 
 type NewBuyOrderChild = {
   render: () => JSX.Element;
@@ -301,6 +302,16 @@ export class NewBuyOrder extends React.Component<Props, State> {
   }
 
   private async _purchaseProduct(): Promise<void> {
+    analytics().logBeginCheckout({
+      currency: 'VND',
+      value: this.state.buyOrder.sellPrice,
+      items: [{ 
+        price: this.state.buyOrder.sellPrice,
+        item_name: this._shoe.title,
+        item_brand: this._shoe.brand,
+        item_id: this._shoe._id,
+      }],
+    });
     if (this._isMissingInfo) {
       this._alertMissingInfo();
       return;

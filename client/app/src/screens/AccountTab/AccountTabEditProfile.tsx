@@ -15,6 +15,7 @@ import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete'
 import {Icon} from 'react-native-elements';
 import {strings, themes} from 'resources';
 import {useNavigation} from '@react-navigation/core';
+import analytics from '@react-native-firebase/analytics';
 
 const styles = StyleSheet.create({
   root: {
@@ -123,6 +124,7 @@ export const AccountTabEditProfile: FC<AccountTabEditProfileProp> = (
   );
 
   const updateProfile = useCallback(async () => {
+    analytics().logAddShippingInfo({});
     try {
       const updatedProfile: Partial<Profile> = {
         userProvidedName: {

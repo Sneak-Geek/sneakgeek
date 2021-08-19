@@ -32,6 +32,7 @@ import {
 } from 'business';
 import RouteNames from 'navigations/RouteNames';
 import {FactoryKeys, InventoryService} from 'business/src';
+import analytics from '@react-native-firebase/analytics';
 
 type Props = {
   profile: Profile;
@@ -156,13 +157,20 @@ export class ProductDetail extends React.Component<Props, State> {
     FactoryKeys.IInventoryService,
   );
 
-  private prevIsSell = true;
-
   state = {
     lowestPrice: 0,
   };
 
   public componentDidMount(): void {
+    if (this._shoe) {
+      analytics().logViewItem({
+        items: [{
+          item_name: this._shoe.title,
+          item_brand: this._shoe.brand,
+          item_id: this._shoe._id
+        }],
+      });
+    }
     this._getShoeData();
     this._getLowestPrice();
     this._getCurrentUser();
