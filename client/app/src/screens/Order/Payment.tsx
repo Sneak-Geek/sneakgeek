@@ -13,6 +13,7 @@ import {useNavigation} from '@react-navigation/native';
 import {images, themes} from 'resources';
 import Clipboard from '@react-native-clipboard/clipboard';
 import Toast from 'react-native-simple-toast';
+import analytics from '@react-native-firebase/analytics';
 
 const styles = StyleSheet.create({
   root: {
@@ -107,6 +108,11 @@ export const Payment: React.FC<any> = ({route}) => {
           title={'Xác nhận chuyển khoản'.toUpperCase()}
           style={styles.bottomButtonContainer}
           onPress={() => {
+            analytics().logPurchase({
+              value: sellPrice,
+              currency: 'VND',
+              transaction_id: orderId
+            });
             navigation.navigate('OrderConfirmation');
           }}
         />

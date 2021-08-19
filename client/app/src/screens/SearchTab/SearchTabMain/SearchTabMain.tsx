@@ -20,7 +20,6 @@ import {
   Shoe,
   Gender,
   IInventoryService,
-  Account,
   InventorySearchResult,
 } from 'business';
 import {ScrollView, FlatList} from 'react-native-gesture-handler';
@@ -32,6 +31,7 @@ import {ISettingsProvider, SettingsKey} from 'business/src';
 import {styles} from './styles';
 import {IAppState} from 'store/AppStore';
 import { Profile } from 'business';
+import analytics from '@react-native-firebase/analytics';
 
 const ListChoice = (props: {
   isMultiple: boolean;
@@ -353,6 +353,13 @@ export class SearchTabMain extends React.Component<Props, State> {
     const {shoes, shouldSearchScrollEnd} = this.state;
     const shouldSearch =
       this.state.searchText.length >= 3 || this._isFiltered();
+
+    const {searchText, filter} = this.state;
+    const analyticsSearchTerm = `text:${searchText};brands=${filter.brand.join(",")};gender=${filter.gender}`;
+
+    analytics().logSearch({
+      search_term: analyticsSearchTerm,
+    });
 
     this.setState({
       shoes: scrollEnd ? shoes : [],
