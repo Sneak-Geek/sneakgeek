@@ -144,15 +144,10 @@ platform :ios do
     )
 	end
 
-  lane :upload_appstore do
-    deliver(
-      submit_for_review: true,
-      force: true,
-      automatic_release: true,
+  lane :upload_testflight do
+    upload_to_testflight(
+      skip_submission: true,
       ipa: "./ios/build/prod/SneakGeek.ipa",
-      submission_information: "{\"export_compliance_uses_encryption\": false, \"add_id_info_uses_idfa\": false }",
-      skip_screenshots: true,
-      skip_metadata: true, 
     )
   end
 end

@@ -46,9 +46,9 @@ fastlane ios add_device
 fastlane ios archive_prod
 ```
 
-### ios upload_appstore
+### ios upload_testflight
 ```
-fastlane ios upload_appstore
+fastlane ios upload_testflight
 ```
 
 

@@ -436,7 +436,7 @@
 				CODE_SIGN_ENTITLEMENTS = app/app.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = VVPX9A83PB;
 				ENABLE_BITCODE = NO;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
@@ -456,9 +456,9 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = app.sneakgeek.mobile.staging;
+				PRODUCT_BUNDLE_IDENTIFIER = app.sneakgeek.mobile.prod;
 				PRODUCT_NAME = SneakGeek;
-				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc app.sneakgeek.mobile.staging";
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore app.sneakgeek.mobile.prod";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -474,7 +474,7 @@
 				CODE_SIGN_ENTITLEMENTS = app/app.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = VVPX9A83PB;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				INFOPLIST_FILE = app/Info.plist;
@@ -489,9 +489,9 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = app.sneakgeek.mobile.staging;
+				PRODUCT_BUNDLE_IDENTIFIER = app.sneakgeek.mobile.prod;
 				PRODUCT_NAME = SneakGeek;
-				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc app.sneakgeek.mobile.staging";
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore app.sneakgeek.mobile.prod";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
