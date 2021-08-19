@@ -102,6 +102,7 @@ type State = {
     brand: string[];
     gender: string;
   };
+  shoeEmptyState:(Shoe | InventorySearchResult)[]; 
 };
 
 @connect((appState: IAppState) => ({
@@ -130,6 +131,7 @@ export class SearchTabMain extends React.Component<Props, State> {
       gender: '',
       brand: [],
     },
+    shoeEmptyState: []
   };
 
   public async componentDidMount() {
@@ -146,7 +148,7 @@ export class SearchTabMain extends React.Component<Props, State> {
           sellPrice: inventory.sellPrice
         }
       });
-      this.setState({shoes: shoes});
+      this.setState({shoes: shoes, shoeEmptyState: shoes});
     } else {
       this.setState({searchText: 'Nike'});
       this._searchForSeller(false);
@@ -208,7 +210,7 @@ export class SearchTabMain extends React.Component<Props, State> {
             onClear={(): void =>
               this.setState({
                 showDropDown: false,
-                shoes: [],
+                shoes: this.state.shoeEmptyState,
                 shouldSearchScrollEnd: true,
               })
             }
