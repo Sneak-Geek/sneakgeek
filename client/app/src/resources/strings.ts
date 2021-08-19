@@ -1,4 +1,5 @@
 export const strings = {
+  WelcomeToSneakGeek: 'Chào bạn tới SneakGeek',
   SignIn: 'Đăng nhập',
   SignUp: 'Đăng kí tài khoản',
   EmailHeader: 'Email',
