@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {FlatList, Image, StyleSheet, View, TextInput} from 'react-native';
+import {FlatList, Image, StyleSheet, View, TextInput, TouchableOpacity, Linking} from 'react-native';
 import {getDependency, getToken, toCurrencyString} from 'utilities';
 import {
   IInventoryService,
@@ -7,7 +7,10 @@ import {
   Inventory,
   ISettingsProvider,
   SettingsKey,
+  Profile,
 } from 'business';
+import {useSelector} from 'react-redux';
+import {IAppState} from 'store/AppStore';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {
   AppText,
@@ -45,6 +48,32 @@ const styles = StyleSheet.create({
   },
   searchInputContainer: {
     backgroundColor: 'rgba(0, 0, 0, 0.03)',
+  },
+  logInButtonContainerStyle: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 128,
+    borderRadius: 8,
+    backgroundColor: themes.AppSecondaryColor,
+    paddingTop: 24,
+    marginBottom: 16,
+  },
+  logInButtonStyle: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: themes.AppPrimaryColor,
+    width: 153,
+    height: 52,
+    borderRadius: 30,
+    marginTop: 16,
+    marginBottom: 16,
+  },
+  logInTextStyle: {
+    color: 'white',
   },
 });
 
@@ -235,7 +264,7 @@ export const AccountTabInventoryDetail: React.FC<{}> = () => {
         }}
         title={strings.Confirm}
         onPress={async () => {
-          const token = await getToken();
+          const token = await getToken(true);
           const inventoryService = getDependency<IInventoryService>(
             FactoryKeys.IInventoryService,
           );
@@ -327,15 +356,17 @@ export const AccountTabInventory: React.FC<{}> = () => {
   );
   const [searchKey, setSearchKey] = useState<string>('');
 
-  // inventoryService.getInventories(token, searchKey).then((i) => {
-  //   setInventories(i);
-  // });
+  const profile: Profile = useSelector(
+    (state: IAppState) => state?.UserState?.profileState?.profile,
+  );
+
+  const showInventory = Boolean(profile) && profile?.isSeller;
 
   const navigation = useNavigation();
   let token;
   useEffect(() => {
     async function getFirebaseToken(){
-      token = await getToken();
+      token = await getToken(true);
       inventoryService.getInventories(token, searchKey).then((i) => {
         setInventories(i);
       });
@@ -351,32 +382,65 @@ export const AccountTabInventory: React.FC<{}> = () => {
     return unsubscribe;
   }, [inventoryService, token, searchKey, navigation]);
 
-  return (
+  if (showInventory){
+    return (
+      <SafeAreaView
+        style={{
+          flex: 1,
+          backgroundColor: 'white',
+          paddingTop: 0,
+          paddingBottom: 0,
+        }}>
+        <SearchBar
+          lightTheme={true}
+          round={true}
+          containerStyle={styles.searchContainer}
+          inputContainerStyle={styles.searchInputContainer}
+          inputStyle={themes.TextStyle.body}
+          value={searchKey}
+          searchIcon={{size: themes.IconSize, name: 'search'}}
+          onChangeText={(text: string): void => {
+            setSearchKey(text);
+          }}
+        />
+        <FlatList
+          style={{flex: 1}}
+          data={inventories}
+          keyExtractor={(item) => item.id}
+          renderItem={({item}) => <InventoryItem inventory={item} />}
+        />
+      </SafeAreaView>
+    );
+  } else{
+    return (
     <SafeAreaView
-      style={{
-        flex: 1,
-        backgroundColor: 'white',
-        paddingTop: 0,
-        paddingBottom: 0,
-      }}>
-      <SearchBar
-        lightTheme={true}
-        round={true}
-        containerStyle={styles.searchContainer}
-        inputContainerStyle={styles.searchInputContainer}
-        inputStyle={themes.TextStyle.body}
-        value={searchKey}
-        searchIcon={{size: themes.IconSize, name: 'search'}}
-        onChangeText={(text: string): void => {
-          setSearchKey(text);
-        }}
-      />
-      <FlatList
-        style={{flex: 1}}
-        data={inventories}
-        keyExtractor={(item) => item.id}
-        renderItem={({item}) => <InventoryItem inventory={item} />}
-      />
-    </SafeAreaView>
+    style={{
+      flex: 1,
+      backgroundColor: 'white',
+      paddingTop: 0,
+      paddingBottom: 0,
+    }}>
+    <View style={styles.logInButtonContainerStyle}>
+        <AppText.Body style={styles.logInTextStyle}>
+          Đăng ký bán hàng trên SneakGeek
+        </AppText.Body>
+        <TouchableOpacity
+          style={styles.logInButtonStyle}
+          onPress={async () =>  {
+            let url = 'https://www.landing.sneakgeek.io/seller';
+            const supported = await Linking.canOpenURL(url);
+            if (supported) {
+              // Opening the link with some app, if the URL scheme is "http" the web link should be opened
+              // by some browser in the mobile
+              await Linking.openURL(url);
+            }
+          }}>
+          <AppText.Body style={[styles.logInTextStyle, {fontWeight: '700'}]}>
+            ĐĂNG KÝ NGAY
+          </AppText.Body>
+        </TouchableOpacity>
+      </View>
+  </SafeAreaView>
   );
+  }
 };

@@ -205,7 +205,7 @@ export const TabStack: React.FC<RootTabProps> = () => {
   const profile: Profile = useSelector(
     (state: IAppState) => state?.UserState?.profileState?.profile,
   );
-  const showInventory = Boolean(profile) && profile?.isSeller;
+  //const showInventory = Boolean(profile) && profile?.isSeller;
 
   return (
     <Tab.Navigator
@@ -238,7 +238,6 @@ export const TabStack: React.FC<RootTabProps> = () => {
           title: strings.TransactionTab,
         }}
       />
-      {showInventory && (
         <Tab.Screen
           name={RouteNames.Tab.InventoryTab.Name}
           component={InventoryTab}
@@ -247,7 +246,6 @@ export const TabStack: React.FC<RootTabProps> = () => {
             title: strings.Inventory,
           }}
         />
-      )}
       <Tab.Screen
         name={RouteNames.Tab.AccountTab.Name}
         component={AccountTab}
