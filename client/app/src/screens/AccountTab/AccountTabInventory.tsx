@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import {FlatList, Image, StyleSheet, View, TextInput, TouchableOpacity, Linking} from 'react-native';
+import {FlatList, Image, StyleSheet, View, TextInput, TouchableOpacity} from 'react-native';
+import { WebView } from 'react-native-webview'
 import {getDependency, getToken, toCurrencyString} from 'utilities';
 import {
   IInventoryService,
@@ -28,7 +29,6 @@ import {DismissKeyboardView} from 'screens/Shared';
 import {SNKGKPickerRow} from './AccountTabEditProfile';
 import {useDispatch} from 'react-redux';
 import {showSuccessNotification} from 'actions';
-import {useCallback} from 'react';
 import {TextInputMask} from 'react-native-masked-text';
 
 const styles = StyleSheet.create({
@@ -84,6 +84,28 @@ type PickerState = {
 
 type TextInputState = {
   displayTextPrice: string
+}
+
+export const AccountTabInventoryWebView: React.FC<{}> = () => {
+  let url = "https://www.landing.sneakgeek.io/seller";
+  const navigation = useNavigation();
+    return(
+      <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: 'white',
+        paddingTop: 0,
+        paddingBottom: 0,
+      }}>
+      <View style={{flex:1}}>
+      <WebView
+        source={{
+          uri: url
+        }}
+        style={{ flex: 1}} />
+      </View>
+      </SafeAreaView>
+    );
 }
 
 export const AccountTabInventoryDetail: React.FC<{}> = () => {
@@ -426,14 +448,8 @@ export const AccountTabInventory: React.FC<{}> = () => {
         </AppText.Body>
         <TouchableOpacity
           style={styles.logInButtonStyle}
-          onPress={async () =>  {
-            let url = 'https://www.landing.sneakgeek.io/seller';
-            const supported = await Linking.canOpenURL(url);
-            if (supported) {
-              // Opening the link with some app, if the URL scheme is "http" the web link should be opened
-              // by some browser in the mobile
-              await Linking.openURL(url);
-            }
+          onPress={() =>  {
+            navigation.navigate(RouteNames.Tab.InventoryTab.InventoryWebView);
           }}>
           <AppText.Body style={[styles.logInTextStyle, {fontWeight: '700'}]}>
             ĐĂNG KÝ NGAY

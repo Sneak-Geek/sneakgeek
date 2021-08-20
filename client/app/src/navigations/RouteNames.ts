@@ -47,6 +47,7 @@ const RouteNames = {
       Name: 'InventoryTab',
       Inventory: 'Inventory',
       InventoryDetail: 'InventoryDetail',
+      InventoryWebView: 'InventoryWebView',
     },
     AccountTab: {
       Name: 'AccountTab',
