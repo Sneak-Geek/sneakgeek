@@ -205,7 +205,6 @@ export const TabStack: React.FC<RootTabProps> = () => {
   const profile: Profile = useSelector(
     (state: IAppState) => state?.UserState?.profileState?.profile,
   );
-  //const showInventory = Boolean(profile) && profile?.isSeller;
 
   return (
     <Tab.Navigator
