@@ -16,5 +16,6 @@ export const images = {
   CopyIcon: require('../../assets/icons/CopyIcon.png'),
   SectionListUpArrow: require('../../assets/icons/SectionListUpArrow.png'),
   SectionListDownArrow: require('../../assets/icons/SectionListDownArrow.png'),
-  ForgotPasswordEmailSent: require('../../assets/icons/ForgotPasswordEmailSent.png')
+  ForgotPasswordEmailSent: require('../../assets/icons/ForgotPasswordEmailSent.png'),
+  AvatarWhite: require('../../assets/icons/AvatarWhite.png')
 };
