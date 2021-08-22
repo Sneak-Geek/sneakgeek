@@ -24,22 +24,22 @@ import { IFirebaseAuthService } from "../../services/FirebaseAuthService";
 
 @injectable()
 export class BootstrapProvider implements IBootstrapProvider {
-  @inject(Types.ShoeRepository) 
+  @inject(Types.ShoeRepository)
   private shoeRepository: Repository<Shoe>;
 
-  @inject(Types.ProfileRepository) 
+  @inject(Types.ProfileRepository)
   private profileRepository: Repository<UserProfile>;
 
-  @inject(Types.CatalogueRepository) 
+  @inject(Types.CatalogueRepository)
   private catalogRepository: Repository<Catalogue>;
 
-  @inject(Types.InventoryRepository) 
+  @inject(Types.InventoryRepository)
   private inventoryRepo: Repository<Inventory>;
 
-  @inject(Types.OrderRepository) 
+  @inject(Types.OrderRepository)
   private orderRepo: Repository<Order>;
 
-  @inject(Types.FirebaseAuthService) 
+  @inject(Types.FirebaseAuthService)
   private firebaseAuthService: IFirebaseAuthService;
 
   private readonly thcSeeds: string = path.join(
