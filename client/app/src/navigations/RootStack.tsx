@@ -19,7 +19,7 @@ import { OrderStack } from './OrderStack';
 import { SplashScreen } from 'screens/SplashScreen';
 import { ProductDetail } from 'screens/Product';
 import { strings, themes } from 'resources';
-import { AccountTabViewProfile, AccountTabEditProfile, AccountTabInventoryDetail } from 'screens/AccountTab';
+import { AccountTabViewProfile, AccountTabEditProfile, AccountTabInventoryDetail, AccountTabInventoryWebView } from 'screens/AccountTab';
 import { SeeMore } from 'screens/HomeTab';
 import { Payment } from 'screens/Order';
 import { OrderConfirmation } from 'screens/Order/OrderConfirmation';
@@ -152,6 +152,17 @@ const RootStack = (): JSX.Element => {
             ...themes.headerStyle,
             title: strings.Inventory,
             headerLeft: () => <View />,
+          }}
+        />
+        <Stack.Screen
+          name={RouteNames.Tab.InventoryTab.InventoryWebView}
+          component={AccountTabInventoryWebView}
+          options={{
+            gestureEnabled: null,
+            ...themes.headerStyle,
+            title: strings.Inventory,
+            headerTransparent: false,
+            headerShown: true,
           }}
         />
         <Stack.Screen
