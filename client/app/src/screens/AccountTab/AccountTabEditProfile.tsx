@@ -16,7 +16,7 @@ import {Icon} from 'react-native-elements';
 import {strings, themes} from 'resources';
 import {useNavigation} from '@react-navigation/core';
 import analytics from '@react-native-firebase/analytics';
-import KeyboardAwareScrollView from 'react-native-keyboard-aware-scroll-view';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 const styles = StyleSheet.create({
   root: {
@@ -245,9 +245,8 @@ export const AccountTabEditProfile: FC<AccountTabEditProfileProp> = (
   return (
     <SafeAreaView style={styles.root}>
       <Header title={'Thông tin cá nhân'} topInset={2} leftIcon={true} />
-      <KeyboardAwareScrollView 
-        ref="scroller"
-        keyboardShouldPersistTaps={true} 
+      <KeyboardAwareScrollView
+        keyboardShouldPersistTaps={'never'} 
         >
       <ScrollView style={{marginHorizontal: 20, flex: 1, marginTop: 34}}>
         {components.map((c) => {

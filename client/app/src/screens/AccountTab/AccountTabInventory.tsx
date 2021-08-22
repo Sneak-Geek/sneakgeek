@@ -382,8 +382,9 @@ export const AccountTabInventory: React.FC<{}> = () => {
     (state: IAppState) => state?.UserState?.profileState?.profile,
   );
 
+  
   const showInventory = Boolean(profile) && profile?.isSeller;
-  console.log("ShowInventory Is: " + profile.isSeller);
+  console.log("ShowInventory Is: " + profile?.isSeller);
 
   const navigation = useNavigation();
   let token;
