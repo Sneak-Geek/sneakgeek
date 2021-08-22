@@ -92,17 +92,6 @@ export default class Server {
 
       // Migrating database
       await this._migrateDatabaseAsync();
-
-      try {
-        // Index data for search
-        await this._initializeIndex();
-      } catch (error) {
-        console.log(error);
-        LogProvider.instance.error(
-          "[ElasticSearch] Error initializing ElasticSearch service",
-          JSON.stringify(error, null, 2)
-        );
-      }
     }
 
     return this._appInstance;

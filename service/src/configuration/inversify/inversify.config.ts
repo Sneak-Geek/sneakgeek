@@ -19,10 +19,12 @@ import {
   ISearchService,
 } from "../../infra/services";
 import {
-  IBootstrapProvider,
-  BootstrapProvider,
   EnvironmentProvider,
 } from "../../infra/providers";
+import {
+  IBootstrapProvider,
+} from "../../infra/providers/BootstrapProvider/IBootstrapProvider";
+import { BootstrapProvider } from "../../infra/providers/BootstrapProvider/BootstrapProvider";
 import {
   UserAccountRepository,
   UserAccount,
