@@ -1,5 +1,5 @@
 import React, {FC, useCallback, useState} from 'react';
-import {StyleSheet, StyleProp, ViewStyle, Modal, View} from 'react-native';
+import {StyleSheet, StyleProp, ViewStyle, Modal, View, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {IAppState} from 'store/AppStore';
 import {Input} from 'react-native-elements';
@@ -16,6 +16,7 @@ import {Icon} from 'react-native-elements';
 import {strings, themes} from 'resources';
 import {useNavigation} from '@react-navigation/core';
 import analytics from '@react-native-firebase/analytics';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 const styles = StyleSheet.create({
   root: {
@@ -24,6 +25,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   bottomButtonStyle: {
+    marginTop: 20,
     backgroundColor: '#1E2330',
     borderRadius: 40,
     bottom: 10,
@@ -239,10 +241,13 @@ export const AccountTabEditProfile: FC<AccountTabEditProfileProp> = (
       containerStyle: {},
     },
   ];
-
+  
   return (
     <SafeAreaView style={styles.root}>
       <Header title={'Thông tin cá nhân'} topInset={2} leftIcon={true} />
+      <KeyboardAwareScrollView
+        keyboardShouldPersistTaps={'never'} 
+        >
       <ScrollView style={{marginHorizontal: 20, flex: 1, marginTop: 34}}>
         {components.map((c) => {
           let content: JSX.Element = <></>;
@@ -318,6 +323,7 @@ export const AccountTabEditProfile: FC<AccountTabEditProfileProp> = (
           />
         ) : null}
       </ScrollView>
+      </KeyboardAwareScrollView>
       <AddressModal
         addressModalVisible={profileState.addressModalVisible}
         iconOnPress={() => {
