@@ -12,7 +12,6 @@
     "preserveConstEnums": true,
     "experimentalDecorators": true,
     "noStrictGenericChecks": true,
-    "inlineSourceMap": true,
     "sourceRoot": ".",
     "outDir": "build",
     "allowSyntheticDefaultImports": true,
