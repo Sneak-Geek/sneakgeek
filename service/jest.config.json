@@ -1,9 +1,9 @@
 {
   "preset": "ts-jest",
   "verbose": true,
-  "testMatch": ["**/__tests__/integration_tests/**/*.Spec.ts"],
+  "testMatch": ["<rootDir>/**/*.e2e.spec.ts"],
   "testEnvironment": "node",
-  "setupFiles": ["<rootDir>/__tests__/integration_tests/config/setup.ts"],
+  "setupFiles": ["<rootDir>/test_setup.ts"],
   "forceExit": true,
   "testTimeout": 30000,
   "moduleDirectories": ["node_modules", "src"]

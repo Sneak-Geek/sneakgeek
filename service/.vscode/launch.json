@@ -13,7 +13,7 @@
         "${workspaceRoot}/node_modules/.bin/jest",
         "--runInBand",
         "-c",
-        "${workspaceRoot}/jest-int.config.json"
+        "${workspaceRoot}/jest.config.json"
       ],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",

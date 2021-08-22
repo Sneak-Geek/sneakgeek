@@ -4,10 +4,10 @@
 
 import "reflect-metadata";
 import path from "path";
-import { EnvironmentProvider } from "../src/infra/providers";
+import { EnvironmentProvider } from "./src/infra/providers";
 
 jest.setTimeout(30000);
 
 EnvironmentProvider.loadEnvironment(
-  path.join(__dirname, "..", "src/configuration/env/.env.test")
+  path.join(__dirname, "resources/environment/.env.test")
 );
