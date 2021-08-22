@@ -456,9 +456,9 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = app.sneakgeek.mobile.prod;
+				PRODUCT_BUNDLE_IDENTIFIER = app.sneakgeek.mobile.staging;
 				PRODUCT_NAME = SneakGeek;
-				PROVISIONING_PROFILE_SPECIFIER = "match AppStore app.sneakgeek.mobile.prod";
+				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc app.sneakgeek.mobile.staging";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -489,9 +489,9 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = app.sneakgeek.mobile.prod;
+				PRODUCT_BUNDLE_IDENTIFIER = app.sneakgeek.mobile.staging;
 				PRODUCT_NAME = SneakGeek;
-				PROVISIONING_PROFILE_SPECIFIER = "match AppStore app.sneakgeek.mobile.prod";
+				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc app.sneakgeek.mobile.staging";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};

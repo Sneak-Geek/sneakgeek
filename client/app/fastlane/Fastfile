@@ -18,21 +18,8 @@ platform :ios do
 	  )
 	end
 
-	lane :archive_staging do
-	  cocoapods(
-      use_bundle_exec: false,
-	    clean_install: true,
-	    podfile: "./ios/Podfile"
-	  )
-    # # Setup app_store_connect_api_key
-    app_store_connect_api_key(
-      key_id: ENV["APPSTORE_CONNECT_KEY_ID"],
-      issuer_id: ENV["APPSTORE_CONNECT_ISSUER_ID"],
-      key_filepath: "./fastlane/AuthKey_T3JM22TFR3.p8",
-      in_house: false
-    )
-    setup_ci()
-	  # Setup provisioning profiles and certificates
+  lane :staging_code_sign_setup do
+    # Setup provisioning profiles and certificates
 	  match(
 	    type: "adhoc", 
 	    app_identifier: "app.sneakgeek.mobile.staging", 
@@ -47,6 +34,28 @@ platform :ios do
       bundle_identifier: "app.sneakgeek.mobile.staging",
       profile_name: "match AdHoc app.sneakgeek.mobile.staging",
     )
+  end
+
+	lane :archive_staging do
+	  # cocoapods(
+    #   use_bundle_exec: false,
+	  #   clean_install: true,
+	  #   podfile: "./ios/Podfile"
+	  # )
+    # Setup app_store_connect_api_key
+    # app_store_connect_api_key(
+    #   key_id: ENV["APPSTORE_CONNECT_KEY_ID"],
+    #   issuer_id: ENV["APPSTORE_CONNECT_ISSUER_ID"],
+    #   key_filepath: "./fastlane/AuthKey_T3JM22TFR3.p8",
+    #   in_house: false
+    # )
+
+    # Setup for CI
+    # setup_ci()
+
+    # Code sign for staging
+	  staging_code_sign_setup()
+    
     # Build
 	  gym(
 	    workspace: "ios/app.xcworkspace",
