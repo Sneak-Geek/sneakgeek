@@ -26,6 +26,11 @@ Fastlane for iOS
 fastlane ios bump_build_number
 ```
 
+### ios staging_code_sign_setup
+```
+fastlane ios staging_code_sign_setup
+```
+
 ### ios archive_staging
 ```
 fastlane ios archive_staging

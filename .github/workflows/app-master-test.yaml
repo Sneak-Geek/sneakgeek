@@ -1,0 +1,61 @@
+name: App test on push 
+on:
+  push:
+    branches:
+    - main
+    paths:
+    - .github/workflows/app-auto-staging.yaml
+    - client/app/**
+    - client/business/**
+jobs:
+  master_test:
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: client/app
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup NodeJS
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+      - name: Install packages
+        run: yarn install --frozen-lockfile
+      - name: Setup scheme
+        run: |
+          echo "CI_SCHEME=app-staging" >> $GITHUB_ENV
+      - name: Bump version number
+        run: |
+          cd ../../
+          yarn install
+          GIT_TAG=`node scripts/bump_version.js --type=app`
+          echo "GIT_TAG=$GIT_TAG" >> $GITHUB_ENV
+      - name: Get current version
+        run: cat ../../version.json
+      - name: Run fastlane to bump iOS version
+        run: |
+          export IOS_VERSION_NUMBER=`node -e "const v=require('../../version.json');console.log(v.app.version)"`
+          export IOS_BUILD_NUMBER=`node -e "const v=require('../../version.json');console.log(v.app.build)"`
+          fastlane ios bump_version_number
+          fastlane ios bump_build_number
+      - name: Setup CI and match
+        run: |
+          fastlane run setup_ci
+          fastlane ios staging_code_sign_setup
+      - name: Detox buid
+        run: yarn detox build -c ios
+      - name: Install iOS detox dependencies
+        run: |
+          brew tap wix/brew
+          brew install applesimutils
+      - name: Run detox iOS test
+        run: | 
+          yarn detox test --configuration ios
+      - name: Commit new version and tag after successful run
+        uses: EndBug/add-and-commit@v7.2.1
+        with:
+          add: '.'
+          default_author: github_actor
+          push: true
+          signoff: false
+          tag: ${{ env.GIT_TAG }}
