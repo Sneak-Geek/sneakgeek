@@ -10,3 +10,14 @@ export const THCFbProfile: FirebaseUser = {
     firstName: "The Hype Collector",
   },
 };
+
+export const AdminProdProfile: FirebaseUser = {
+  userProvidedEmail: "admin@sneakgeek.io",
+  password: "sneakgeek",
+  accessLevel: AccessLevel.Admin,
+  userProvidedName: {
+    firstName: "Trần",
+    middleName: "Quang",
+    lastName: "Đại",
+  },
+};

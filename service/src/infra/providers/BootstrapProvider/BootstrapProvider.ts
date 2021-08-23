@@ -19,7 +19,7 @@ import fs from "fs";
 import _ from "lodash";
 import { PaymentMethod, TrackingStatus } from "../../../assets/constants";
 import * as csv from "fast-csv";
-import { THCFbProfile } from "../../../assets/seeds/prod";
+import { AdminProdProfile, THCFbProfile } from "../../../assets/seeds/prod";
 import { IFirebaseAuthService } from "../../services/FirebaseAuthService";
 
 @injectable()
@@ -58,7 +58,9 @@ export class BootstrapProvider implements IBootstrapProvider {
   }
 
   public async bootstrapProdUserData(): Promise<any> {
-    return Promise.all([THCFbProfile].map((p) => this._createUserDataWithFirebase(p)));
+    return Promise.all(
+      [THCFbProfile, AdminProdProfile].map((p) => this._createUserDataWithFirebase(p))
+    );
   }
 
   private async _createUserDataWithFirebase(
