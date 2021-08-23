@@ -58,7 +58,9 @@ export class BootstrapProvider implements IBootstrapProvider {
   }
 
   public async bootstrapProdUserData(): Promise<any> {
-    return Promise.all([THCFbProfile, AdminProdProfile].map((p) => this._createUserDataWithFirebase(p)));
+    return Promise.all(
+      [THCFbProfile, AdminProdProfile].map((p) => this._createUserDataWithFirebase(p))
+    );
   }
 
   private async _createUserDataWithFirebase(

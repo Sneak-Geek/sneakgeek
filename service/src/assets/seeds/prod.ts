@@ -18,6 +18,6 @@ export const AdminProdProfile: FirebaseUser = {
   userProvidedName: {
     firstName: "Trần",
     middleName: "Quang",
-    lastName: "Đại"
-  }
+    lastName: "Đại",
+  },
 };
