@@ -101,6 +101,7 @@ import {
   Migration_1624492681744,
   Migration_07232021,
   Migration_07272021,
+  Migration_08242021,
 } from "../../infra/migrations";
 import { MigrationProvider } from "../../infra/providers/MigrationProvider/MigrationProvider";
 import { IFirebaseAuthService } from "../../infra/services/FirebaseAuthService/IFirebaseAuthService";
@@ -218,6 +219,7 @@ container
   .to(Migration_1624492681744);
 container.bind<Migration_07232021>(Migration_07232021.name).to(Migration_07232021);
 container.bind<Migration_07272021>(Migration_07272021.name).to(Migration_07272021);
+container.bind<Migration_08242021>(Migration_08242021.name).to(Migration_08242021);
 
 // Asynchronous bindings
 const asyncBindings = new AsyncContainerModule(async (bind) => {
