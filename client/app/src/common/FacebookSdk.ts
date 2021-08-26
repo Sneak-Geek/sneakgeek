@@ -1,5 +1,5 @@
 import {IFacebookSDK, LoginResult, Permissions} from 'business';
-import {LoginManager, AccessToken} from 'react-native-fbsdk';
+import {LoginManager, AccessToken} from 'react-native-fbsdk-next';
 
 export class FacebookSdk implements IFacebookSDK {
   public async loginWithPermission(
@@ -9,7 +9,6 @@ export class FacebookSdk implements IFacebookSDK {
 
     return {
       isCancelled: result.isCancelled,
-      error: result.error,
       declinedPermissions: result.declinedPermissions,
       grantedPermissions: result.grantedPermissions,
     };
