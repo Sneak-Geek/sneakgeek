@@ -18,6 +18,7 @@ import {
   authenticateWithFb,
   NetworkRequestState,
   authenticateWithApple,
+  authenticateWithGoogle,
 } from 'business';
 import { IAppState } from 'store/AppStore';
 import { FeatureFlags } from 'FeatureFlag';
@@ -32,6 +33,7 @@ type Props = {
   toggleLoading: (isLoading: boolean) => void;
   facebookLogin: () => void;
   appleLogin: () => void;
+  googleLogin: () => void;
 };
 
 const styles = StyleSheet.create({
@@ -86,7 +88,7 @@ const styles = StyleSheet.create({
 });
 
 type State = {
-  loginMethod: 'apple' | 'facebook' | 'google'
+  loginMethod?: 'apple' | 'facebook' | 'google'
 }
 
 @connect(
@@ -103,9 +105,17 @@ type State = {
     appleLogin: (): void => {
       dispatch(authenticateWithApple());
     },
+    googleLogin: (): void => {
+      dispatch(authenticateWithGoogle());
+    }
   }),
 )
 export class LoginScreen extends React.Component<Props, State> {
+  constructor(props) {
+    super(props);
+    this.state = {}
+  }
+
   public render(): JSX.Element {
     return (
       <ImageBackground source={images.Home} style={{ flex: 1 }} testID={'LoginScreen'}>
@@ -115,6 +125,7 @@ export class LoginScreen extends React.Component<Props, State> {
             <View style={{ flex: 1, alignItems: 'center', marginBottom: 10 }}>
               <View style={styles.buttonContainer}>
                 {FeatureFlags.enableFacebook && this._renderFacebookLogin()}
+                {FeatureFlags.enabledGoogle && this._renderGoogleLogin()}
                 {Platform.OS === 'ios' && this._renderAppleLogin()}
                 {this._renderEmailVerify()}
                 {this._renderSkipLogin()}
@@ -142,9 +153,28 @@ export class LoginScreen extends React.Component<Props, State> {
     );
   }
 
+  private _renderGoogleLogin(): JSX.Element {
+    return (
+      <Button
+        type={'solid'}
+        title={strings.ContinueGoogle}
+        icon={<Image source={images.Google} style={styles.iconStyle} />}
+        titleStyle={styles.titleStyle}
+        buttonStyle={{
+          backgroundColor: themes.AppPrimaryColor,
+          ...styles.button,
+        }}
+        onPress={this.props.googleLogin.bind(this)}
+      />
+    ); 
+  }
+
   public componentDidUpdate(prevProps: Props) {
     if (this.props.navigation.isFocused()) {
       const { profileState, navigation } = this.props;
+      if (!profileState) {
+        return;
+      }
       const currentError = profileState.error;
       const prevError = prevProps.profileState.error;
 
@@ -206,7 +236,7 @@ export class LoginScreen extends React.Component<Props, State> {
         testID={'EmailVerifyButton'}
         type={'outline'}
         buttonStyle={{
-          backgroundColor: themes.AppPrimaryColor,
+          backgroundColor: themes.AppSecondaryColor,
           ...styles.button,
         }}
         title={strings.SignUpEmail}

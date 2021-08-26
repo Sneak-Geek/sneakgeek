@@ -21,6 +21,7 @@
     "@invertase/react-antive-apple-authentication": "*",
     "@react-native-community/push-notification-ios": "^1.1.1",
     "@react-native-firebase/auth": "*",
+    "@react-native-google-signin/google-signin": "*",
     "@types/redux-actions": "*",
     "axios": "*",
     "redux": "*",

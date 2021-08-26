@@ -56,7 +56,7 @@ export type Permissions =
 // End type definition for reacct-native-fbsdk
 
 export interface LoginResult {
-  error: any;
+  error?: any;
   isCancelled: boolean;
   grantedPermissions?: Permissions[];
   declinedPermissions?: Permissions[];

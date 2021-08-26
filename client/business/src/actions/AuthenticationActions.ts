@@ -1,12 +1,15 @@
 import { createAction } from "redux-actions";
 import { AuthenticationPayload, NetworkRequestState } from "../payload";
 import { ObjectFactory, FactoryKeys } from "../loader/kernel";
-import {  IAccountService, ISettingsProvider, IFacebookSDK} from "../loader";
+import { IAccountService, ISettingsProvider, IFacebookSDK } from "../loader";
 import { SettingsKey } from "../loader/interfaces";
 import { updateStateGetUserProfile } from "./ProfileActions";
 import { Dispatch } from "redux";
-import {firebase} from '@react-native-firebase/auth';
+import { firebase } from '@react-native-firebase/auth';
 import { appleAuth } from '@invertase/react-native-apple-authentication';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+
+GoogleSignin.configure();
 
 export const AuthenticationActions = {
   UPDATE_AUTHENTICATION_STATE: "UPDATE_AUTHENTICATION_STATE",
@@ -21,25 +24,22 @@ export const verifyEmail = (email: string) => {
     dispatch(
       updateStateGetUserProfile({ state: NetworkRequestState.REQUESTING })
     );
-    try
-    {
+    try {
       const response = await firebase.auth().fetchSignInMethodsForEmail(email);
-      if (response.length > 0)
-      {
+      if (response.length > 0) {
         dispatch(
-        updateStateGetUserProfile({ state: NetworkRequestState.FAILED, error: new Error("Has Signin Method") })
+          updateStateGetUserProfile({ state: NetworkRequestState.FAILED, error: new Error("Has Signin Method") })
         );
       }
-      else
-      {
+      else {
         dispatch(
-        updateStateGetUserProfile({ state: NetworkRequestState.FAILED, error: new Error("No Signin Method") })
+          updateStateGetUserProfile({ state: NetworkRequestState.FAILED, error: new Error("No Signin Method") })
         );
       }
     }
-    catch (error){
+    catch (error) {
       dispatch(
-      updateStateGetUserProfile({ state: NetworkRequestState.FAILED, error })
+        updateStateGetUserProfile({ state: NetworkRequestState.FAILED, error })
       );
     }
   };
@@ -53,11 +53,11 @@ export const getCurrentUser = () => {
     dispatch(
       updateAuthenticationState({ state: NetworkRequestState.REQUESTING })
     );
-    
+
     try {
       const userProfile = await firebase.auth().currentUser;
       const firebaseToken = userProfile ? await userProfile.getIdToken() : undefined;
-      
+
       if (userProfile && firebaseToken) {
         try {
           await userProfile.reload();
@@ -110,14 +110,11 @@ export const authenticateWithEmail = (
       updateStateGetUserProfile({ state: NetworkRequestState.REQUESTING })
     );
 
-    try
-    {
+    try {
       const response = isSignUp ? await firebase.auth().createUserWithEmailAndPassword(email, password)
-          : await firebase.auth().signInWithEmailAndPassword(email, password);
-      if(response.user)
-      {
-        if (isSignUp)
-        {
+        : await firebase.auth().signInWithEmailAndPassword(email, password);
+      if (response.user) {
+        if (isSignUp) {
           await response.user.sendEmailVerification();
         }
         const token = await response.user.getIdToken();
@@ -143,7 +140,7 @@ export const authenticateWithEmail = (
         }
       }
     }
-    catch (error){
+    catch (error) {
       console.error(error);
       dispatch(
         updateStateGetUserProfile({
@@ -183,8 +180,7 @@ export const authenticateWithFb = () => {
         // Create a Firebase credential with the AccessToken
         const facebookCredential = firebase.auth.FacebookAuthProvider.credential(accessToken);
         const response = await firebase.auth().signInWithCredential(facebookCredential);
-        if(response.user)
-        {
+        if (response.user) {
           const token = await response.user.getIdToken();
           await settings.setValue(
             SettingsKey.CurrentAccessToken,
@@ -217,45 +213,44 @@ export const authenticateWithFb = () => {
   };
 };
 
-// export const authenticateWithGoogle = () => {
-//   return async (dispatch: Function) => {
-//     const accountService = ObjectFactory.getObjectInstance<IAccountService>(
-//       FactoryKeys.IAccountService
-//     );
-//     const settings = ObjectFactory.getObjectInstance<ISettingsProvider>(
-//       FactoryKeys.ISettingsProvider
-//     );
-//     try {
-//       const { idToken } = await GoogleSignin.signIn();
-//       if (idToken) {
-//         const googleCredential = firebase.auth.GoogleAuthProvider.credential(idToken);
-//         const response = await firebase.auth().signInWithCredential(googleCredential);
-//         if(response.user)
-//         {
-//           const token = await response.user.getIdToken();
-//           const accountPayload = await accountService.getCurrentUser(token);
-//           if (accountPayload) {
-//             await settings.setValue(
-//               SettingsKey.CurrentAccessToken,
-//               token
-//             );
-//             dispatch(getUserProfile());
-//             dispatch(
-//               updateAuthenticationState({
-//                 state: NetworkRequestState.SUCCESS,
-//                 data: accountPayload
-//               })
-//             );
-//           }
-//         }
-//       }
-//     } catch (error) {
-//       dispatch(
-//         updateAuthenticationState({ state: NetworkRequestState.FAILED, error })
-//       );
-//     }
-//   };
-// };
+export const authenticateWithGoogle = () => {
+  return async (dispatch: Function) => {
+    const accountService = ObjectFactory.getObjectInstance<IAccountService>(
+      FactoryKeys.IAccountService
+    );
+    try {
+      const { idToken } = await GoogleSignin.signIn();
+      if (idToken) {
+        const googleCredential = firebase.auth.GoogleAuthProvider.credential(idToken);
+        const response = await firebase.auth().signInWithCredential(googleCredential);
+        if(response.user)
+        {
+          const token = await response.user.getIdToken();
+          try {
+            const profile = await accountService.getUserProfile(token);
+            if (profile) {
+              dispatch(updateStateGetUserProfile({
+                state: NetworkRequestState.SUCCESS,
+                data: { profile }
+              }));
+            } else {
+              dispatch(updateStateGetUserProfile({
+                state: NetworkRequestState.FAILED,
+                error: new Error("Empty profile ")
+              }));
+            }
+          } catch (error) {
+            updateStateGetUserProfile({ state: NetworkRequestState.FAILED, error });
+          }
+        }
+      }
+    } catch (error) {
+      dispatch(
+        updateAuthenticationState({ state: NetworkRequestState.FAILED, error })
+      );
+    }
+  };
+};
 
 export const authenticateWithApple = () => {
   return async (dispatch: Dispatch<any>) => {
@@ -277,10 +272,9 @@ export const authenticateWithApple = () => {
       }
       const { identityToken, nonce } = appleAuthRequestResponse;
       const appleCredential = firebase.auth.AppleAuthProvider.credential(identityToken, nonce);
-  
+
       const response = await firebase.auth().signInWithCredential(appleCredential);
-      if(response.user)
-      {
+      if (response.user) {
         const token = await response.user.getIdToken();
         await settings.setValue(
           SettingsKey.CurrentAccessToken,

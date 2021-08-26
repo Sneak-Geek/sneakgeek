@@ -6429,10 +6429,10 @@ react-native-elements@3.4.1:
     react-native-ratings "^7.3.0"
     react-native-size-matters "^0.3.1"
 
-react-native-fbsdk@^1.1.2:
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/react-native-fbsdk/-/react-native-fbsdk-1.1.2.tgz#4264903add869d05b84ef55ade9ff720c2957781"
-  integrity sha512-Sp+oja868QVsB5vpEFbwZkEcCJOSBuZgh7UGJzUhaoTCs/zwSUHA6b4QichM7GiTxtQyKfT/F31DtvLj2N/qAQ==
+react-native-fbsdk-next@^4.3.0:
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/react-native-fbsdk-next/-/react-native-fbsdk-next-4.3.0.tgz#750952a9c2159a7eed830846a3814ab8ce03ba0c"
+  integrity sha512-wJUSgM6hq/gImnp/HflTI5750GNADtxCEEhDD6lXJDPuNfAPfAXi54XcAVa5nbijJMCBr+z3wFZ/gF8PrqdxTQ==
 
 react-native-gesture-handler@^1.10.3:
   version "1.10.3"

@@ -33,7 +33,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.660034538610-pv8d3rq25j7jm6ga6cmg0p7v8g57mv2g</string>
+				<string>$(GOOGLE_URL_SCHEME)</string>
 			</array>
 		</dict>
 	</array>
