@@ -87,8 +87,7 @@ type TextInputState = {
 }
 
 export const AccountTabInventoryWebView: React.FC<{}> = () => {
-  let url = "https://www.landing.sneakgeek.io/seller";
-  const navigation = useNavigation();
+  let url = "https://www.landing.sneakgeek.io/seller"
     return(
       <SafeAreaView
       style={{
