@@ -14,4 +14,5 @@ export interface IInventoryService {
   getSelling(): Promise<SellingInventory[]>;
   getLowestSellPrice(shoeId: string): Promise<number>;
   search(query: string, page: number, gender?: string, brand?: Array<string>): Promise<InventorySearchResult[]>;
+  deleteInventory(token: string, inventoryId: string): Promise<void>;
 }

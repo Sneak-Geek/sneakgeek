@@ -51,4 +51,10 @@ export class InventoryService extends BaseService implements IInventoryService {
     const { data } = await this.apiClient.getInstance().get(q);
     return data;
   }
+
+  public async deleteInventory(token: string, inventoryId: string): Promise<void> {
+    return await this.apiClient.getInstance().delete(`/inventory/${inventoryId}`, {
+      headers: { authorization: token }
+    });
+  }
 }
