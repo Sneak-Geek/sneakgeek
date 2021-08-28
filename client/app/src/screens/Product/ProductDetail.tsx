@@ -1,7 +1,7 @@
 import React from 'react';
-import {StackNavigationProp} from '@react-navigation/stack';
-import {RootStackParams} from 'navigations/RootStack';
-import {RouteProp} from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParams } from 'navigations/RootStack';
+import { RouteProp } from '@react-navigation/native';
 import {
   View,
   Image,
@@ -10,10 +10,11 @@ import {
   FlatList,
   TouchableOpacity,
   ScrollView,
+  Modal,
 } from 'react-native';
-import {SafeAreaConsumer} from 'react-native-safe-area-context';
-import {AppText, LiteShoeCard} from 'screens/Shared';
-import {strings, themes} from 'resources';
+import { SafeAreaConsumer } from 'react-native-safe-area-context';
+import { AppText, LiteShoeCard } from 'screens/Shared';
+import { strings, themes } from 'resources';
 import {
   connect,
   toVnDateFormat,
@@ -22,7 +23,7 @@ import {
   getDependency,
   translateGenderToVnms,
 } from 'utilities';
-import {IAppState} from 'store/AppStore';
+import { IAppState } from 'store/AppStore';
 import {
   Profile,
   getShoeInfo,
@@ -31,8 +32,9 @@ import {
   getCurrentUser,
 } from 'business';
 import RouteNames from 'navigations/RouteNames';
-import {FactoryKeys, InventoryService} from 'business/src';
+import { FactoryKeys, InventoryService } from 'business/src';
 import analytics from '@react-native-firebase/analytics';
+import ZoomableImage from 'react-native-image-zoom-viewer';
 
 type Props = {
   profile: Profile;
@@ -50,6 +52,7 @@ type Props = {
 
 type State = {
   lowestPrice: number;
+  imageClicked: boolean;
 };
 
 const styles = StyleSheet.create({
@@ -159,6 +162,7 @@ export class ProductDetail extends React.Component<Props, State> {
 
   state = {
     lowestPrice: 0,
+    imageClicked: false
   };
 
   public componentDidMount(): void {
@@ -188,7 +192,7 @@ export class ProductDetail extends React.Component<Props, State> {
     const lowestPrice = await this.inventoryService.getLowestSellPrice(
       this._shoe._id,
     );
-    this.setState({lowestPrice});
+    this.setState({ lowestPrice });
   }
 
   public render(): JSX.Element {
@@ -200,7 +204,7 @@ export class ProductDetail extends React.Component<Props, State> {
             style={{
               ...styles.rootContainer,
             }}>
-            <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
+            <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
               <View
                 style={{
                   ...styles.pageContainer,
@@ -214,6 +218,7 @@ export class ProductDetail extends React.Component<Props, State> {
               </View>
             </ScrollView>
             {this._renderActionButtons(insets.bottom)}
+            {this._renderProductImageViewer()}
           </View>
         )}
       </SafeAreaConsumer>
@@ -222,14 +227,32 @@ export class ProductDetail extends React.Component<Props, State> {
 
   private _renderProductImage(): JSX.Element {
     return (
-      <View style={styles.shoeImageContainer}>
+      <View style={styles.shoeImageContainer}
+        onTouchStart={() => this.setState({ imageClicked: true })}>
         <Image
-          source={{uri: this._shoe.media.imageUrl}}
-          style={{width: '100%', aspectRatio: 2}}
+          source={{ uri: this._shoe.media.imageUrl }}
+          style={{ width: '100%', aspectRatio: 2 }}
           resizeMode={'contain'}
         />
       </View>
     );
+  }
+
+  private _renderProductImageViewer(): JSX.Element {
+    return (
+      <Modal visible={this.state.imageClicked}
+        transparent
+        onRequestClose={this._toggleImageViewer.bind(this)}
+        animationType='fade'>
+        <ZoomableImage imageUrls={[{ url: this._shoe.media.thumbUrl }]}
+          onCancel={this._toggleImageViewer.bind(this)}
+          enableSwipeDown />
+      </Modal>
+    )
+  }
+
+  private _toggleImageViewer() {
+    this.setState({ imageClicked: !this.state.imageClicked });
   }
 
   private _renderProductTitle(): JSX.Element {
@@ -277,19 +300,19 @@ export class ProductDetail extends React.Component<Props, State> {
         </View>,
       ),
     );
-    return <View style={{paddingHorizontal: 20}}>{views}</View>;
+    return <View style={{ paddingHorizontal: 20 }}>{views}</View>;
   }
 
   private _renderRelatedShoes(): JSX.Element {
-    const {shoeInfoState} = this.props;
+    const { shoeInfoState } = this.props;
     let content: JSX.Element = (
       <FlatList
         horizontal={true}
         showsHorizontalScrollIndicator={false}
-        style={{marginBottom: 20, paddingBottom: 10}}
+        style={{ marginBottom: 20, paddingBottom: 10 }}
         data={shoeInfoState.relatedShoes}
         keyExtractor={(itm): string => itm._id}
-        renderItem={({item}): JSX.Element => (
+        renderItem={({ item }): JSX.Element => (
           <LiteShoeCard
             shoe={item}
             onPress={(): void =>
@@ -298,14 +321,14 @@ export class ProductDetail extends React.Component<Props, State> {
                 shoe: item,
               })
             }
-            style={{marginRight: 20, paddingBottom: 8}}
+            style={{ marginRight: 20, paddingBottom: 8 }}
           />
         )}
       />
     );
 
     return (
-      <View style={{flex: 1, paddingHorizontal: 20}}>
+      <View style={{ flex: 1, paddingHorizontal: 20 }}>
         <View style={styles.ratingHeaderContainer}>
           <AppText.Headline>
             {strings.RelatedProducts.toUpperCase()}
@@ -317,26 +340,26 @@ export class ProductDetail extends React.Component<Props, State> {
   }
 
   private _renderActionButtons(bottom: number): JSX.Element {
-    const {profile} = this.props;
+    const { profile } = this.props;
     const isSell = profile && profile.isSeller;
-   if (!profile) {
-      return(<View style={{bottom, ...styles.bottomContainer}}>
+    if (!profile) {
+      return (<View style={{ bottom, ...styles.bottomContainer }}>
         {
-        this._renderSingleActionButton('Mua', () => {
-        // @ts-ignore
-        this.props.navigation.push(RouteNames.Order.Name, {
-          screen: RouteNames.Order.NewBuyOrder,
-          params: {
-            shoe: this._shoe,
-          },
-        });
-      })}
+          this._renderSingleActionButton('Mua', () => {
+            // @ts-ignore
+            this.props.navigation.push(RouteNames.Order.Name, {
+              screen: RouteNames.Order.NewBuyOrder,
+              params: {
+                shoe: this._shoe,
+              },
+            });
+          })}
       </View>
       )
     }
-    
+
     return (
-      <View style={{bottom, ...styles.bottomContainer}}>
+      <View style={{ bottom, ...styles.bottomContainer }}>
         {!isSell ?
           this._renderSingleActionButton('Mua', () => {
             // @ts-ignore
@@ -346,7 +369,7 @@ export class ProductDetail extends React.Component<Props, State> {
                 shoe: this._shoe,
               },
             });
-          }): this._renderSingleActionButton('Bán', () => {
+          }) : this._renderSingleActionButton('Bán', () => {
             // @ts-ignore
             this.props.navigation.push(RouteNames.Order.Name, {
               screen: RouteNames.Order.NewSellOrder,
@@ -363,7 +386,7 @@ export class ProductDetail extends React.Component<Props, State> {
     actionType: string,
     onPress: () => void,
   ): JSX.Element {
-    const {profile} = this.props;
+    const { profile } = this.props;
 
     let backgroundColor: string;
     switch (actionType) {
@@ -392,13 +415,13 @@ export class ProductDetail extends React.Component<Props, State> {
             ...styles.bottomButtonStyle,
             ...themes.ButtonShadow,
           }}>
-          <View style={{flex: 1, alignItems: 'center', marginVertical: 15}}>
-            <AppText.Title3 style={{color: themes.AppAccentColor}}>
+          <View style={{ flex: 1, alignItems: 'center', marginVertical: 15 }}>
+            <AppText.Title3 style={{ color: themes.AppAccentColor }}>
               {actionType.toUpperCase()}
             </AppText.Title3>
             {shouldRenderPrice && (
               <AppText.SubCallout
-                style={{color: themes.AppAccentColor, alignSelf: 'center'}}>
+                style={{ color: themes.AppAccentColor, alignSelf: 'center' }}>
                 {strings.Price}: {toCurrencyString(this.state.lowestPrice)}
               </AppText.SubCallout>
             )}
