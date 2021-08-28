@@ -1,7 +1,8 @@
 import { Shoe } from "./Shoe";
 
 export type Inventory = {
-  id: string;
+  _id: string;
+  id?: string;
   sellerId: string;
   shoeId: string;
   shoeSize: string;

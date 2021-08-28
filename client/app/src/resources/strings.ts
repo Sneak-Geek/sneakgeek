@@ -200,4 +200,5 @@ export const strings = {
   TransactionInfo: 'Lịch sử giao dịch',
   OutOfStock: 'Hết hàng',
   SkipLogin: 'Bỏ qua đăng nhập',
+  DeleteInventory: 'Xoá',
 };

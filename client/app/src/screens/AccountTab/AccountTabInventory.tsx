@@ -1,7 +1,7 @@
-import React, {useEffect, useState} from 'react';
-import {FlatList, Image, StyleSheet, View, TextInput, TouchableOpacity} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { FlatList, Image, StyleSheet, View, TextInput, TouchableOpacity } from 'react-native';
 import { WebView } from 'react-native-webview'
-import {getDependency, getToken, toCurrencyString} from 'utilities';
+import { getDependency, getToken, toCurrencyString } from 'utilities';
 import {
   IInventoryService,
   FactoryKeys,
@@ -10,26 +10,27 @@ import {
   SettingsKey,
   Profile,
 } from 'business';
-import {useSelector} from 'react-redux';
-import {IAppState} from 'store/AppStore';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import { useSelector } from 'react-redux';
+import { IAppState } from 'store/AppStore';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   AppText,
   BottomButton,
   BottomPicker,
   ShoeHeaderSummary,
 } from 'screens/Shared';
-import {strings, themes} from 'resources';
-import {Shoe} from 'business/src';
-import {SearchBar} from 'react-native-elements';
-import {useNavigation, useRoute} from '@react-navigation/native';
-import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
+import { strings, themes } from 'resources';
+import { Shoe } from 'business/src';
+import { SearchBar } from 'react-native-elements';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import RouteNames from 'navigations/RouteNames';
-import {DismissKeyboardView} from 'screens/Shared';
-import {SNKGKPickerRow} from './AccountTabEditProfile';
-import {useDispatch} from 'react-redux';
-import {showSuccessNotification} from 'actions';
-import {TextInputMask} from 'react-native-masked-text';
+import { DismissKeyboardView } from 'screens/Shared';
+import { SNKGKPickerRow } from './AccountTabEditProfile';
+import { useDispatch } from 'react-redux';
+import { showSuccessNotification } from 'actions';
+import { TextInputMask } from 'react-native-masked-text';
+import RightSwipeableRow from 'components/SwipeableRow';
 
 const styles = StyleSheet.create({
   inventoryContainer: {
@@ -88,28 +89,28 @@ type TextInputState = {
 
 export const AccountTabInventoryWebView: React.FC<{}> = () => {
   let url = "https://www.landing.sneakgeek.io/seller"
-    return(
-      <SafeAreaView
+  return (
+    <SafeAreaView
       style={{
         flex: 1,
         backgroundColor: 'white',
         paddingTop: 0,
         paddingBottom: 0,
       }}>
-      <View style={{flex:1}}>
-      <WebView
-        source={{
-          uri: url
-        }}
-        style={{ flex: 1}} />
+      <View style={{ flex: 1 }}>
+        <WebView
+          source={{
+            uri: url
+          }}
+          style={{ flex: 1 }} />
       </View>
-      </SafeAreaView>
-    );
+    </SafeAreaView>
+  );
 }
 
 export const AccountTabInventoryDetail: React.FC<{}> = () => {
   const route = useRoute();
-  const inventory: Inventory & {shoe: Shoe} = (route.params as any).inventory;
+  const inventory: Inventory & { shoe: Shoe } = (route.params as any).inventory;
   var moneyField: TextInputMask;
 
   const [quantity, setQuantity] = useState<number>(inventory.quantity);
@@ -123,11 +124,11 @@ export const AccountTabInventoryDetail: React.FC<{}> = () => {
 
   const [price, setPrice] = useState<number>(inventory.sellPrice);
   const navigation = useNavigation();
-  
+
   const [inputState, setInputState] = useState<TextInputState>({
     displayTextPrice: toCurrencyString(inventory.sellPrice),
   });
-  
+
   const items = [
     {
       title: strings.Size,
@@ -147,7 +148,7 @@ export const AccountTabInventoryDetail: React.FC<{}> = () => {
       editable: true,
       onUpdate: (text: string) => {
         setPrice(parseInt(moneyField.getRawValue(), 10) * 10);
-        setInputState({...inputState, displayTextPrice: text});
+        setInputState({ ...inputState, displayTextPrice: text });
       },
     },
   ];
@@ -182,58 +183,58 @@ export const AccountTabInventoryDetail: React.FC<{}> = () => {
 
   return (
     <DismissKeyboardView
-      style={{flex: 1, backgroundColor: 'white', paddingTop: 0}}>
+      style={{ flex: 1, backgroundColor: 'white', paddingTop: 0 }}>
       <ShoeHeaderSummary shoe={inventory.shoe} />
-      <View style={{padding: 20, flex: 1, flexDirection: 'column'}}>
+      <View style={{ padding: 20, flex: 1, flexDirection: 'column' }}>
         {items.map((t) => {
           switch (t.title) {
             case strings.ShoeSize:
               // TO DO (DUC): Combine Picker Row with Picker Modal in AccountTabEditProfile
               return (
                 <SNKGKPickerRow
-                  style={{marginBottom: 20}}
+                  style={{ marginBottom: 20 }}
                   title={t.title}
                   value={pickerState.pickerValue}
                   onPress={() =>
-                    setPickerState({...pickerState, pickerVisible: true})
+                    setPickerState({ ...pickerState, pickerVisible: true })
                   }
                 />
               );
             case strings.Price:
               return (
-              <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}>
-              <AppText.SubHeadline>{t.title}</AppText.SubHeadline>
-              <TextInputMask
-                placeholderTextColor={themes.AppDisabledColor}
-                placeholder={t.title}
-                numberOfLines={1}
-                keyboardType={'number-pad'}
-                type= 'money'
-                options={
-                  {
-                    precision: 0,
-                    separator: '.',
-                    delimiter: '.',
-                    unit: '',
-                    suffixUnit: '',
-                  }
-                }
-                value={inputState.displayTextPrice}
-                editable={t.editable}
-                onChangeText={(text) => t.onUpdate(text)}
-                style={{
-                  ...themes.TextStyle.body,
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}>
+                  <AppText.SubHeadline>{t.title}</AppText.SubHeadline>
+                  <TextInputMask
+                    placeholderTextColor={themes.AppDisabledColor}
+                    placeholder={t.title}
+                    numberOfLines={1}
+                    keyboardType={'number-pad'}
+                    type='money'
+                    options={
+                      {
+                        precision: 0,
+                        separator: '.',
+                        delimiter: '.',
+                        unit: '',
+                        suffixUnit: '',
+                      }
+                    }
+                    value={inputState.displayTextPrice}
+                    editable={t.editable}
+                    onChangeText={(text) => t.onUpdate(text)}
+                    style={{
+                      ...themes.TextStyle.body,
 
-                  textAlign: 'right',
-                }}
-                ref={(ref) => {moneyField = ref;}}
-              />
-              </View>);
+                      textAlign: 'right',
+                    }}
+                    ref={(ref) => { moneyField = ref; }}
+                  />
+                </View>);
             default:
               return (
                 <View
@@ -270,7 +271,7 @@ export const AccountTabInventoryDetail: React.FC<{}> = () => {
           alignSelf: 'flex-end',
         }}
         title={'Huỷ'}
-        titleStyle={{color: themes.AppPrimaryColor}}
+        titleStyle={{ color: themes.AppPrimaryColor }}
         onPress={() => {
           navigation.goBack();
         }}
@@ -327,7 +328,7 @@ export const AccountTabInventoryDetail: React.FC<{}> = () => {
   );
 };
 
-const InventoryItem: React.FC<{inventory: Inventory & {shoe: Shoe}}> = (
+const InventoryItem: React.FC<{ key: string; inventory: Inventory & { shoe: Shoe }; onDeleteInventory: (id: string) => void }> = (
   props,
 ) => {
   const inventory = props.inventory;
@@ -336,35 +337,39 @@ const InventoryItem: React.FC<{inventory: Inventory & {shoe: Shoe}}> = (
   const navigation = useNavigation();
 
   return (
-    <TouchableWithoutFeedback
-      style={styles.inventoryContainer}
-      onPress={() => {
-        navigation.navigate(RouteNames.Tab.InventoryTab.InventoryDetail, {
-          inventory,
-        });
-      }}>
-      <Image
-        source={{uri: inventory.shoe.media.thumbUrl}}
-        style={{width: 100, aspectRatio: 1}}
-        resizeMode={'contain'}
-      />
-      <View style={{marginLeft: 15, flexDirection: 'column', flex: 1}}>
-        <AppText.SubHeadline style={{flexWrap: 'wrap', marginBottom: 10}}>
-          {shoe.title}
-        </AppText.SubHeadline>
-        <AppText.Subhead style={{marginBottom: 5}}>
-          {strings.Price}:{' '}
-          <AppText.Body>{toCurrencyString(inventory.sellPrice)}</AppText.Body>
-        </AppText.Subhead>
-        <AppText.Subhead style={{marginBottom: 5}}>
-          {strings.ShoeSize}: <AppText.Body>{inventory.shoeSize}</AppText.Body>
-        </AppText.Subhead>
-        <AppText.Subhead style={{marginBottom: 5}}>
-          {strings.InventoryQuantity}:{' '}
-          <AppText.Body>{inventory.quantity}</AppText.Body>
-        </AppText.Subhead>
-      </View>
-    </TouchableWithoutFeedback>
+    <RightSwipeableRow actionColor={themes.AppPrimaryColor}
+      actionName={strings.DeleteInventory}
+      onActionClicked={() => props.onDeleteInventory(props.inventory._id)}>
+      <TouchableWithoutFeedback
+        style={styles.inventoryContainer}
+        onPress={() => {
+          navigation.navigate(RouteNames.Tab.InventoryTab.InventoryDetail, {
+            inventory,
+          });
+        }}>
+        <Image
+          source={{ uri: inventory.shoe.media.thumbUrl }}
+          style={{ width: 100, aspectRatio: 1 }}
+          resizeMode={'contain'}
+        />
+        <View style={{ marginLeft: 15, flexDirection: 'column', flex: 1 }}>
+          <AppText.SubHeadline style={{ flexWrap: 'wrap', marginBottom: 10 }}>
+            {shoe.title}
+          </AppText.SubHeadline>
+          <AppText.Subhead style={{ marginBottom: 5 }}>
+            {strings.Price}:{' '}
+            <AppText.Body>{toCurrencyString(inventory.sellPrice)}</AppText.Body>
+          </AppText.Subhead>
+          <AppText.Subhead style={{ marginBottom: 5 }}>
+            {strings.ShoeSize}: <AppText.Body>{inventory.shoeSize}</AppText.Body>
+          </AppText.Subhead>
+          <AppText.Subhead style={{ marginBottom: 5 }}>
+            {strings.InventoryQuantity}:{' '}
+            <AppText.Body>{inventory.quantity}</AppText.Body>
+          </AppText.Subhead>
+        </View>
+      </TouchableWithoutFeedback>
+    </RightSwipeableRow>
   );
 };
 
@@ -372,7 +377,7 @@ export const AccountTabInventory: React.FC<{}> = () => {
   const inventoryService = getDependency<IInventoryService>(
     FactoryKeys.IInventoryService,
   );
-  const [inventories, setInventories] = useState<(Inventory & {shoe: Shoe})[]>(
+  const [inventories, setInventories] = useState<(Inventory & { shoe: Shoe })[]>(
     [],
   );
   const [searchKey, setSearchKey] = useState<string>('');
@@ -381,14 +386,13 @@ export const AccountTabInventory: React.FC<{}> = () => {
     (state: IAppState) => state?.UserState?.profileState?.profile,
   );
 
-  
+
   const showInventory = Boolean(profile) && profile?.isSeller;
-  console.log("ShowInventory Is: " + profile?.isSeller);
 
   const navigation = useNavigation();
   let token;
   useEffect(() => {
-    async function getFirebaseToken(){
+    async function getFirebaseToken() {
       token = await getToken(true);
       inventoryService.getInventories(token, searchKey).then((i) => {
         setInventories(i);
@@ -405,7 +409,14 @@ export const AccountTabInventory: React.FC<{}> = () => {
     return unsubscribe;
   }, [inventoryService, token, searchKey, navigation]);
 
-  if (showInventory){
+  const _removeInventory = async (id: string) => {
+    const newInventories = inventories.filter(i => i._id !== id);
+    const token = await getToken(true);
+    setInventories(newInventories);
+    inventoryService.deleteInventory(token, id);
+  }
+
+  if (showInventory) {
     return (
       <SafeAreaView
         style={{
@@ -421,43 +432,47 @@ export const AccountTabInventory: React.FC<{}> = () => {
           inputContainerStyle={styles.searchInputContainer}
           inputStyle={themes.TextStyle.body}
           value={searchKey}
-          searchIcon={{size: themes.IconSize, name: 'search'}}
+          searchIcon={{ size: themes.IconSize, name: 'search' }}
           onChangeText={(text: string): void => {
             setSearchKey(text);
           }}
         />
         <FlatList
-          style={{flex: 1}}
+          style={{ flex: 1 }}
           data={inventories}
-          keyExtractor={(item) => item.id}
-          renderItem={({item}) => <InventoryItem inventory={item} />}
+          keyExtractor={(item) => item._id}
+          renderItem={({ item }) => (
+            <InventoryItem key={item._id}
+              inventory={item}
+              onDeleteInventory={(id: string) => _removeInventory(id)} />
+          )}
         />
       </SafeAreaView>
     );
-  } else{
+  } else {
     return (
-    <SafeAreaView
-    style={{
-      flex: 1,
-      backgroundColor: 'white',
-      paddingTop: 0,
-      paddingBottom: 0,
-    }}>
-    <View style={styles.logInButtonContainerStyle}>
-        <AppText.Body style={styles.logInTextStyle}>
-          Đăng ký bán hàng trên SneakGeek
-        </AppText.Body>
-        <TouchableOpacity
-          style={styles.logInButtonStyle}
-          onPress={() =>  {
-            navigation.navigate(RouteNames.Tab.InventoryTab.InventoryWebView);
-          }}>
-          <AppText.Body style={[styles.logInTextStyle, {fontWeight: '700'}]}>
-            ĐĂNG KÝ NGAY
+      <SafeAreaView
+        style={{
+          flex: 1,
+          backgroundColor: 'white',
+          paddingTop: 0,
+          paddingBottom: 0,
+        }}>
+        <View style={styles.logInButtonContainerStyle}>
+          <AppText.Body style={styles.logInTextStyle}>
+            Đăng ký bán hàng trên SneakGeek
           </AppText.Body>
-        </TouchableOpacity>
-      </View>
-  </SafeAreaView>
-  );
+          <TouchableOpacity
+            style={styles.logInButtonStyle}
+            onPress={() => {
+              navigation.navigate(RouteNames.Tab.InventoryTab.InventoryWebView);
+            }}>
+            <AppText.Body style={[styles.logInTextStyle, { fontWeight: '700' }]}>
+              ĐĂNG KÝ NGAY
+            </AppText.Body>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
   }
 };

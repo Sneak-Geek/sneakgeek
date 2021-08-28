@@ -45,4 +45,5 @@ export interface IInventoryDao {
     brands?: Array<string>,
     gender?: string
   ): Promise<InventorySearchResult[]>;
+  deleteInventory(profileId: string, inventoryId: string): Promise<void>;
 }

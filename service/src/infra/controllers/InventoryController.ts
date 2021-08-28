@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
-import { body, query } from "express-validator";
+import { body, param, query } from "express-validator";
 import HttpStatus from "http-status";
 import { inject } from "inversify";
 import {
   controller,
+  httpDelete,
   httpGet,
   httpPost,
   httpPut,
@@ -11,13 +12,13 @@ import {
   request,
   requestBody,
   response,
+  requestParam,
 } from "inversify-express-utils";
 import { Types } from "../../configuration/inversify";
 import { IInventoryDao } from "../dao";
 import { CreateInventoryDto } from "../dao/InventoryDao/CreateInventoryDto";
-import { UserAccount, UserProfile } from "../database";
+import { UserProfile } from "../database";
 import * as middlewares from "../middlewares";
-import mongoose from "mongoose";
 import { Gender } from "../../assets";
 
 @controller("/api/v1/inventory")
@@ -147,5 +148,22 @@ export class InventoryController {
       quantity: r.quantity,
     }));
     return res.status(HttpStatus.OK).send(result);
+  }
+
+  @httpDelete(
+    "/",
+    middlewares.FirebaseAuthMiddleware,
+    Types.IsSellerMiddleware,
+    param("inventoryId").exists().isMongoId(),
+    middlewares.ValidationPassedMiddleware
+  )
+  public async deleteInventory(
+    @request() req: Request,
+    @response() res: Response,
+    @requestParam("inventoryId") inventoryId: string
+  ) {
+    const profileId = (req.user as UserProfile)._id;
+    await this.inventoryDao.deleteInventory(profileId, inventoryId);
+    return res.status(HttpStatus.OK);
   }
 }
