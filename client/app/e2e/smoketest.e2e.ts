@@ -45,7 +45,7 @@ const logout = async () => {
   await element(by.label(AppStrings.Logout)).tap();
 }
 
-describe('Smoke test', () => {
+test.skip('Smoke test', () => {
   beforeAll(async () => {
     await device.launchApp();
   });
@@ -62,7 +62,7 @@ describe('Smoke test', () => {
     }
   })
 
-  it('Sign up (with email)', async () => {
+  test.skip('Sign up (with email)', async () => {
     await element(by.label(AppStrings.Account)).tap();
     await element(by.label(AppStrings.Login)).tap();
     await expect(element(by.id('LoginScreen'))).toBeVisible();
@@ -86,7 +86,7 @@ describe('Smoke test', () => {
     await fetch(`https://dev.sneakgeek.io/api/v1/profile/auth/delete-test-user`);
   });
 
-  it('Login (with email)', async () => {
+  test.skip('Login (with email)', async () => {
     await element(by.label(AppStrings.Account)).tap();
     await element(by.label(AppStrings.Login)).tap();
     await expect(element(by.id('LoginScreen'))).toBeVisible();
@@ -110,7 +110,7 @@ describe('Smoke test', () => {
     await element(by.label(AppStrings.PleaseLogin).and(by.type('_UIAlertControllerActionView'))).tap();
   });
 
-  it('Purchase flow with verified account', async () => {
+  test.skip('Purchase flow with verified account', async () => {
     await login();
     await purchase();
     await waitFor(element(by.id('BuyButton')))
