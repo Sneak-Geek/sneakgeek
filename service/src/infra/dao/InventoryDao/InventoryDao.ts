@@ -253,4 +253,8 @@ export class InventoryDao implements IInventoryDao {
 
     return this.inventoryRepository.aggregate(query);
   }
+
+  public async deleteInventory(profileId: string, inventoryId: string): Promise<void> {
+    this.inventoryRepository.findOneAndDelete({ sellerId: profileId, _id: inventoryId }).exec();
+  }
 }
