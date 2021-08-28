@@ -255,6 +255,8 @@ export class InventoryDao implements IInventoryDao {
   }
 
   public async deleteInventory(profileId: string, inventoryId: string): Promise<void> {
-    this.inventoryRepository.findOneAndDelete({ sellerId: profileId, _id: inventoryId }).exec();
+    this.inventoryRepository
+      .findOneAndDelete({ sellerId: profileId, _id: inventoryId })
+      .exec();
   }
 }

@@ -12,7 +12,7 @@ import {
   request,
   requestBody,
   response,
-  requestParam
+  requestParam,
 } from "inversify-express-utils";
 import { Types } from "../../configuration/inversify";
 import { IInventoryDao } from "../dao";
@@ -150,13 +150,18 @@ export class InventoryController {
     return res.status(HttpStatus.OK).send(result);
   }
 
-  @httpDelete("/",
+  @httpDelete(
+    "/",
     middlewares.FirebaseAuthMiddleware,
     Types.IsSellerMiddleware,
     param("inventoryId").exists().isMongoId(),
     middlewares.ValidationPassedMiddleware
   )
-  public async deleteInventory(@request() req: Request, @response() res: Response, @requestParam("inventoryId") inventoryId: string) {
+  public async deleteInventory(
+    @request() req: Request,
+    @response() res: Response,
+    @requestParam("inventoryId") inventoryId: string
+  ) {
     const profileId = (req.user as UserProfile)._id;
     await this.inventoryDao.deleteInventory(profileId, inventoryId);
     return res.status(HttpStatus.OK);
