@@ -40,6 +40,8 @@ jobs:
           fastlane ios bump_build_number
       - name: Setup CI and match
         env:
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }} 
+          FASTLANE_PASSWORD: ${{ secrets.IOS_FASTLANE_PWD }}
           GIT_BASIC_AUTH: ${{ secrets.GIT_BASIC_AUTH }}
         run: |
           fastlane ios staging_code_sign_setup
