@@ -46,7 +46,9 @@ jobs:
         run: |
           fastlane ios staging_code_sign_setup
       - name: Detox buid
-        run: yarn detox build -c ios
+        run: |
+          npx pod-install
+          yarn detox build -c ios
       - name: Install iOS detox dependencies
         run: |
           brew tap wix/brew
