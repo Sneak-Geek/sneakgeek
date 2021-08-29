@@ -28,7 +28,7 @@ platform :ios do
 	    app_identifier: "app.sneakgeek.mobile.staging", 
 	    username: "huyhoang.pham95@gmail.com", 
 	    team_id: "VVPX9A83PB",
-		  git_basic_authorization: ENV["GIT_BASIC_AUTH"],
+		  git_basic_authorization: Base64.encode64("hoangpham95:" + ENV["GIT_PERSONAL_ACCESS_TOKEN"]),
 	  )
 	  update_code_signing_settings(
       use_automatic_signing: false,
