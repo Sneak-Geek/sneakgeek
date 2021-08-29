@@ -38,7 +38,7 @@ jobs:
         env:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }} 
           FASTLANE_PASSWORD: ${{ secrets.IOS_FASTLANE_PWD }}
-          GIT_PERSONAL_ACCESS_TOKEN: ${{ secrets.GIT_PERSONAL_ACCESS_TOKEN }}
+          GIT_BASIC_AUTH: ${{ secrets.GIT_BASIC_AUTH }}
           GIT_TERMINAL_PROMPT: 1
           APPSTORE_CONNECT_KEY_ID: ${{ secrets.APPSTORE_CONNECT_KEY_ID }}
           APPSTORE_CONNECT_ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_ISSUER_ID }}

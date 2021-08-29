@@ -40,7 +40,7 @@ jobs:
           fastlane ios bump_build_number
       - name: Setup CI and match
         env:
-          GIT_PERSONAL_ACCESS_TOKEN: ${{ secrets.GIT_PERSONAL_ACCESS_TOKEN }}
+          GIT_BASIC_AUTH: ${{ secrets.GIT_BASIC_AUTH }}
         run: |
           fastlane ios staging_code_sign_setup
       - name: Detox buid
