@@ -4,7 +4,7 @@ on:
     branches:
     - main
     paths:
-    - .github/workflows/app-auto-staging.yaml
+    - .github/workflows/app-master-test.yaml
     - client/app/**
     - client/business/**
 jobs:
