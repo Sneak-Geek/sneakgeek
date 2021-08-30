@@ -22,7 +22,7 @@ jobs:
       - name: Get current git branch
         run: git branch --show-current
       - name: Check version
-        run: cat ../version.json
+        run: cat ../../version.json
       - name: Setup NodeJS
         uses: actions/setup-node@v1
         with:
