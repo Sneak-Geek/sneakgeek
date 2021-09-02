@@ -102,12 +102,11 @@ export class InventoryController {
     return res.status(HttpStatus.OK).send();
   }
 
-  @httpGet(
-    "/selling",
-    query("pageNum").exists().isInt({ min: 0 }))
+  @httpGet("/selling", query("pageNum").exists().isInt({ min: 0 }))
   public async getCurrentlySelling(
     @queryParam("pageNum") pageNum: number,
-    @response() res: Response) {
+    @response() res: Response
+  ) {
     const result = await this.inventoryDao.getCurrentlySelling(pageNum);
     return res.status(HttpStatus.OK).send(result);
   }
