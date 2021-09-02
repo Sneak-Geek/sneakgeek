@@ -6,7 +6,6 @@ import { IProfileDao, ProfileUpdateInput } from "./IProfileDao";
 import { UserProfile, UserAccount, Repository } from "../../database";
 import { inject, injectable } from "inversify";
 import { Types } from "../../../configuration/inversify";
-import { INotificationService } from "../../services";
 import mongoose from "mongoose";
 import { ObjectId } from "mongodb";
 

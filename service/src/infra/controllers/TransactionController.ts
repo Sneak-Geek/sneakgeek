@@ -18,7 +18,7 @@ import { IPaymentService } from "../services";
 import mongoose from "mongoose";
 import HttpStatus from "http-status";
 import { PaymentStatus, PaymentCallbackResponse } from "../../assets/constants";
-import { ITransactionDao, INotificationDao, IProfileDao } from "../dao";
+import { ITransactionDao } from "../dao";
 
 @controller("/api/v1/transaction")
 export class TransactionController {

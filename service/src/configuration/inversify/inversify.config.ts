@@ -11,8 +11,6 @@ import {
   JwtService,
   IPaymentService,
   PaymentService,
-  INotificationService,
-  EmptyNotificationService,
   IAppleAuthService,
   AppleAuthService,
   SearchService,
@@ -46,8 +44,6 @@ import {
   InventoryRepository,
   Transaction,
   TransactionRepository,
-  Notification,
-  NotificationRepository,
   getDbClient,
   DbClient,
   Repository,
@@ -67,18 +63,12 @@ import {
   ProfileDao,
   IAccountDao,
   AccountDao,
-  INotificationDao,
-  NotificationDao,
   IShoeDao,
   ShoeDao,
   IBalanceHistoryDao,
   BalanceHistoryDao,
 } from "../../infra/dao";
 import { IsSellerMiddleware } from "../../infra/middlewares";
-import {
-  INotificationChangeStreamExecutor,
-  NotificationChangeStreamExecutor,
-} from "../../infra/executor";
 
 // import @controller meta-data tag
 import "../../infra/controllers/AccountController";
@@ -91,7 +81,6 @@ import "../../infra/controllers/ReviewController";
 import "../../infra/controllers/CatalogueController";
 import "../../infra/controllers/OrderController";
 import "../../infra/controllers/TransactionController";
-import "../../infra/controllers/NotificationController";
 import "../../infra/controllers/BalanceHistoryController";
 import "../../infra/controllers/InventoryController";
 import "../../infra/admin_controllers/AdminOrderControllers";
@@ -121,16 +110,13 @@ container
   .bind<IFirebaseAuthService>(Types.FirebaseAuthService)
   .to(FirebaseAuthService)
   .inSingletonScope();
+container
+  .bind<IPaymentService>(Types.PaymentService)
+  .to(PaymentService)
+  .inSingletonScope();
 
 // Middlewares
 container.bind(Types.IsSellerMiddleware).to(IsSellerMiddleware);
-
-container.bind<IPaymentService>(Types.PaymentService).to(PaymentService);
-
-container
-  .bind<INotificationService>(Types.NotificationService)
-  .to(EmptyNotificationService)
-  .inSingletonScope();
 
 // Providers
 container
@@ -141,12 +127,6 @@ container.bind<ISearchService>(Types.SearchService).to(SearchService);
 container
   .bind<MigrationProvider>(Types.MigrationProvider)
   .to(MigrationProvider)
-  .inSingletonScope();
-
-// Executor
-container
-  .bind<INotificationChangeStreamExecutor>(Types.NotificationChangeStreamExecutor)
-  .to(NotificationChangeStreamExecutor)
   .inSingletonScope();
 
 // Repositories
@@ -195,10 +175,6 @@ container
   .toConstantValue(TransactionRepository);
 
 container
-  .bind<Repository<Notification>>(Types.NotificationRepository)
-  .toConstantValue(NotificationRepository);
-
-container
   .bind<Repository<BalanceHistory>>(Types.BalanceHistoryRepository)
   .toConstantValue(BalanceHistoryRepository);
 
@@ -209,7 +185,6 @@ container.bind<IInventoryDao>(Types.InventoryDao).to(InventoryDao);
 container.bind<ITransactionDao>(Types.TransactionDao).to(TransactionDao);
 container.bind<IProfileDao>(Types.ProfileDao).to(ProfileDao);
 container.bind<IAccountDao>(Types.AccountDao).to(AccountDao);
-container.bind<INotificationDao>(Types.NotificationDao).to(NotificationDao);
 container.bind<IBalanceHistoryDao>(Types.BalanceHistoryDao).to(BalanceHistoryDao);
 container.bind<IShoeDao>(Types.ShoeDao).to(ShoeDao);
 
