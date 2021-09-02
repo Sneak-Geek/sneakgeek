@@ -110,10 +110,7 @@ container
   .bind<IFirebaseAuthService>(Types.FirebaseAuthService)
   .to(FirebaseAuthService)
   .inSingletonScope();
-container
-  .bind<IPaymentService>(Types.PaymentService)
-  .to(PaymentService)
-  .inSingletonScope();
+container.bind<IPaymentService>(Types.PaymentService).to(PaymentService).inSingletonScope();
 
 // Middlewares
 container.bind(Types.IsSellerMiddleware).to(IsSellerMiddleware);
