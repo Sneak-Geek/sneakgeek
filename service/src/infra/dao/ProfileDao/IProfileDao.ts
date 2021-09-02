@@ -2,7 +2,7 @@
 // ! Copyright (c) 2019 - SneakGeek. All rights reserved
 // !
 
-import { UserProfile, Notification, UserAccount } from "../../database";
+import { UserProfile, UserAccount } from "../../database";
 import { ObjectId } from "mongodb";
 
 export interface ProfileUpdateInput {

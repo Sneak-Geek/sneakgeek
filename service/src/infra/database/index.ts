@@ -11,6 +11,5 @@ export * from "./ProductRequest";
 export * from "./SupportTicket";
 export * from "./Review";
 export * from "./Order";
-export * from "./Notification";
 export * from "./BalanceHistory";
 export * from "./Inventory";
