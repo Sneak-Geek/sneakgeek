@@ -35,7 +35,7 @@ export interface IInventoryDao {
   reduceByOne(inventoryId: string): Promise<Inventory>;
   create(inventoryDto: CreateInventoryDto): Promise<Inventory>;
   getPriceBySize(shoeId: string): Promise<PriceSizeAgg>;
-  getCurrentlySelling(): Promise<CurrentlySellData>;
+  getCurrentlySelling(pageNum: number): Promise<CurrentlySellData>;
   getLowestPrice(shoeId: string): Promise<number>;
   updateInventoryWhenCreateOrder(inventoryId: string): Promise<Inventory>;
   getMatchingInventory(shoeId: string | ObjectId, price: number): Promise<Inventory>;

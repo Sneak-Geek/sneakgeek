@@ -1,5 +1,5 @@
 import React from 'react';
-import {AppText} from 'screens/Shared';
+import {AppText, ColumnShoeCard} from 'screens/Shared';
 import {
   StatusBar,
   SafeAreaView,
@@ -134,8 +134,10 @@ type CurrentInventoryProps = {
 
 type State = {
   isGettingData: boolean;
+  shoes: Shoe[];
   selling: SellingInventory[];
   trendingOrders: TrendingOrder[];
+  inventoryPageNum: Number;
 };
 
 @connect(
@@ -154,11 +156,14 @@ type State = {
 export class HomeTabMain extends React.Component<Props, State> {
   state = {
     isGettingData: false,
+    shoes:  new Array<Shoe>(),
     selling: new Array<SellingInventory>(),
     trendingOrders: new Array<TrendingOrder>(),
+    inventoryPageNum: 0,
   };
 
   _unsubscribe = undefined;
+  onEndReachedCalledDuringMomentum = true;
 
   public async componentDidMount(): Promise<void> {
     await this.props.getHomepageCatalogs();
@@ -187,11 +192,68 @@ export class HomeTabMain extends React.Component<Props, State> {
           <View style={styles.rootContainer}>
             {this._renderCurrentSelling()}
             {this._renderTopTrending()}
+            {this._renderSearchResults()}
           </View>
         </ScrollView>
       </SafeAreaView>
     );
   }
+
+  private _goToProduct(shoe: Shoe): void {
+    this.props.navigation.navigate(RouteNames.Product.Name, {
+      shoe,
+    });
+  }
+
+  private _renderSearchResults(): JSX.Element {
+    /*if (this.state.showDropDown) {
+      return null;
+    }*/
+
+    return (
+      //<View onTouchStart={(): void => Keyboard.dismiss()}>
+      <View style={{display: 'flex', width, marginVertical: 20}}>
+        <AppText.Title2 style={styles.sectionTitle}>
+          Đang Hot 🔥
+        </AppText.Title2>
+        <FlatList
+          data={this.state.shoes}
+          keyExtractor={(item: Shoe, index: number): string =>
+            `${index}${item._id}`
+          }
+          renderItem={({item}): JSX.Element => (
+            <ColumnShoeCard
+              shoe={item}
+              onPress={(): void => this._goToProduct(item)}
+            />
+          )}
+          columnWrapperStyle={{flex: 1, justifyContent: 'space-around'}}
+          numColumns={2}
+          //onEndReached={(): Promise<void> => this._search(true)
+          //}
+          onEndReachedThreshold={0.8}
+          onEndReached= {({ distanceFromEnd }) => {
+            //if(!this.onEndReachedCalledDuringMomentum){
+                this.state.inventoryPageNum += 1;
+                this._getData();
+                //this._search(true);
+                this.onEndReachedCalledDuringMomentum = true;
+            //}
+          }}
+          onMomentumScrollBegin={() => { this.onEndReachedCalledDuringMomentum = false; }}
+          style={{marginHorizontal: 5}}
+        />
+      </View>
+        
+        //{this.state.isSearching && <ActivityIndicator size={'small'} />}
+      //</View>
+    );
+  }
+
+  private _union = (arr1, arr2, key) => [... // spread to an array
+    arr1.concat(arr2) // concat the arrays
+    .reduce((m, o) => m.has(o[key]) ? m : m.set(o[key], o), new Map) // reduce to a map by value of key
+    .values()]; // get the values iterator
 
   private _getData() {
     this.setState({isGettingData: true});
@@ -203,11 +265,25 @@ export class HomeTabMain extends React.Component<Props, State> {
     );
 
     Promise.all([
-      inventoryService.getSelling(),
+      inventoryService.getSelling(this.state.inventoryPageNum),
       orderService.getTrendingOrder(10),
     ]).then(([inventories, orders]) => {
+      this.state.selling = this.state.selling.filter(val => inventories.filter((item)=>{return item.shoe.name === val.shoe.name;}).length === 0)
+      let updatedInventories = this.state.selling.concat(inventories);
+      this.state.shoes = updatedInventories.map(inventory => {
+        return {
+          ...inventory.shoe,
+          sellPrice: inventory.sellPrice
+        }
+      });
       this.setState({
-        selling: inventories,
+        shoes: updatedInventories.map(inventory => {
+          return {
+            ...inventory.shoe,
+            sellPrice: inventory.sellPrice
+          }
+        }),
+        selling: updatedInventories,
         trendingOrders: orders,
         isGettingData: false,
       });
@@ -292,6 +368,21 @@ export class HomeTabMain extends React.Component<Props, State> {
             keyExtractor={(itm): string => itm.shoe._id}
             data={this.state.selling}
             style={{marginVertical: 20, paddingLeft: 20, marginRight: 15}}
+            onEndReachedThreshold={0.9}
+            onEndReached= {({ distanceFromEnd }) => {
+              if(!this.onEndReachedCalledDuringMomentum){
+                  this.state.inventoryPageNum += 1;
+                  this._getData();
+                  this.onEndReachedCalledDuringMomentum = true;
+              }
+            }}
+            onMomentumScrollBegin={() => { this.onEndReachedCalledDuringMomentum = false; }}
+            onScrollToTop={(event) => {
+              if (event.nativeEvent.contentOffset.y){
+                this.state.inventoryPageNum = this.state.inventoryPageNum > 0 ? this.state.inventoryPageNum - 1 : 0;
+                this._getData();
+              }
+            }}
             showsHorizontalScrollIndicator={false}
             renderItem={({item}): JSX.Element => (
               <CurrentInventory
