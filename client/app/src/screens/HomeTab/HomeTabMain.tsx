@@ -206,12 +206,7 @@ export class HomeTabMain extends React.Component<Props, State> {
   }
 
   private _renderSearchResults(): JSX.Element {
-    /*if (this.state.showDropDown) {
-      return null;
-    }*/
-
     return (
-      //<View onTouchStart={(): void => Keyboard.dismiss()}>
       <View style={{display: 'flex', width, marginVertical: 20}}>
         <AppText.Title2 style={styles.sectionTitle}>
           Đang Hot 🔥
@@ -227,26 +222,22 @@ export class HomeTabMain extends React.Component<Props, State> {
               onPress={(): void => this._goToProduct(item)}
             />
           )}
+          showsVerticalScrollIndicator={true}
           columnWrapperStyle={{flex: 1, justifyContent: 'space-around'}}
           numColumns={2}
-          //onEndReached={(): Promise<void> => this._search(true)
-          //}
-          onEndReachedThreshold={0.8}
+          onEndReachedThreshold={0.2}
           onEndReached= {({ distanceFromEnd }) => {
-            //if(!this.onEndReachedCalledDuringMomentum){
+            console.log("Search List Reaching End");
+            if(!this.onEndReachedCalledDuringMomentum){
                 this.state.inventoryPageNum += 1;
                 this._getData();
-                //this._search(true);
                 this.onEndReachedCalledDuringMomentum = true;
-            //}
+            }
           }}
           onMomentumScrollBegin={() => { this.onEndReachedCalledDuringMomentum = false; }}
           style={{marginHorizontal: 5}}
         />
       </View>
-        
-        //{this.state.isSearching && <ActivityIndicator size={'small'} />}
-      //</View>
     );
   }
 
@@ -270,12 +261,7 @@ export class HomeTabMain extends React.Component<Props, State> {
     ]).then(([inventories, orders]) => {
       this.state.selling = this.state.selling.filter(val => inventories.filter((item)=>{return item.shoe.name === val.shoe.name;}).length === 0)
       let updatedInventories = this.state.selling.concat(inventories);
-      this.state.shoes = updatedInventories.map(inventory => {
-        return {
-          ...inventory.shoe,
-          sellPrice: inventory.sellPrice
-        }
-      });
+
       this.setState({
         shoes: updatedInventories.map(inventory => {
           return {
@@ -377,12 +363,6 @@ export class HomeTabMain extends React.Component<Props, State> {
               }
             }}
             onMomentumScrollBegin={() => { this.onEndReachedCalledDuringMomentum = false; }}
-            onScrollToTop={(event) => {
-              if (event.nativeEvent.contentOffset.y){
-                this.state.inventoryPageNum = this.state.inventoryPageNum > 0 ? this.state.inventoryPageNum - 1 : 0;
-                this._getData();
-              }
-            }}
             showsHorizontalScrollIndicator={false}
             renderItem={({item}): JSX.Element => (
               <CurrentInventory

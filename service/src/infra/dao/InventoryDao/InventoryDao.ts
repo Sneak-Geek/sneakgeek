@@ -134,10 +134,10 @@ export class InventoryDao implements IInventoryDao {
           },
         },
         {
-          $limit: 8,
+          $limit: 20,
         },
         {
-          $skip: pageNum * 8,
+          $skip: pageNum * 20,
         },
         {
           $lookup: {
