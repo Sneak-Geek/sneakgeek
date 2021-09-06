@@ -59,19 +59,14 @@ export const getHomeCatalogs = () => {
     dispatch(updateGetHomeCatalogsState({ state: NetworkRequestState.REQUESTING }));
 
     try {
-      const [Nike, Jordan, adidas, hot, ranking, toppick, buynow] = await Promise.all([
-        catalogService.getCatalogByTag("nike"),
-        catalogService.getCatalogByTag("jordan"),
-        catalogService.getCatalogByTag("adidas"),
+      const [hot, top20] = await Promise.all([
         catalogService.getCatalogByTag("hot"),
-        catalogService.getCatalogByTag("ranking"),
-        catalogService.getCatalogByTag("toppick"),
-        catalogService.getCatalogByTag("buynow")
+        catalogService.getCatalogByTag("top20"),
       ]);
 
       dispatch(updateGetHomeCatalogsState({
         state: NetworkRequestState.SUCCESS,
-        data: { Nike, Jordan, adidas, hot, ranking, toppick, buynow }
+        data: { hot, top20 }
       }));
     } catch (err) {
       dispatch(updateGetHomeCatalogsState({

@@ -180,4 +180,9 @@ export class OrderService extends BaseService implements IOrderService {
       }
     })
   }
+
+  public async getShoeOrderHistory(shoeId: string, window: number) {
+    const { data } = await this.apiClient.getInstance().get(`/order/history/${shoeId}?window=${window}`);
+    return data;
+  }
 }

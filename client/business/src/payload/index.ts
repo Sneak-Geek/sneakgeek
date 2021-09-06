@@ -24,13 +24,8 @@ export type GetShoeInfoPayload = NetworkPayload<{
   highestBuyOrder?: BuyOrder;
 }>;
 export type HomePageCatalogsPayload = NetworkPayload<{
-  Nike: Catalog;
-  Jordan: Catalog;
-  adidas: Catalog;
   hot: Catalog;
-  ranking: Catalog;
-  toppick: Catalog;
-  buynow: Catalog;
+  [key: string]: Catalog;
 }>;
 export type NotificationsPayload = NetworkPayload<{ notifications: Notification[] }>;
 export type GetSellOrderHistoryPayload = NetworkPayload<PopulatedSellOrder[]>;

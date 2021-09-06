@@ -4,6 +4,7 @@
 
 import { OrderStatus, PaymentMethod, TrackingStatus } from "../../../assets";
 import { Inventory, Order, Shoe } from "../../database";
+import mongoose from "mongoose";
 
 export type TrendingOrder = {
   status: OrderStatus;
@@ -39,4 +40,8 @@ export interface IOrderDao {
   getPendingOrdersCount(): Promise<number>;
   getAllPendingOrders(start: number, end: number): Promise<OrderHistory[]>;
   getOrderById(orderId: string): Promise<OrderHistory>;
+  getOrderHistoryByWindow(
+    shoeId: mongoose.Types.ObjectId,
+    window?: number
+  ): Promise<Object[]>;
 }

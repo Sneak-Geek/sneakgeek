@@ -294,4 +294,81 @@ export class OrderDao implements IOrderDao {
 
     return result[0];
   }
+
+  public async getOrderHistoryByWindow(
+    shoeId: mongoose.Types.ObjectId,
+    window: number = 5
+  ): Promise<Object[]> {
+    return this.orderRepo.aggregate([
+      {
+        $match: {
+          // Only check for order that received bank transfer
+          $and: [
+            {
+              $expr: { $gt: [{ $size: "$trackingStatus" }, 1] },
+            },
+            {
+              "trackingStatus.1.status": TrackingStatus.RECEIVED_BANK_TRANSFER,
+            },
+            { shoeId: shoeId },
+          ],
+        },
+      },
+      {
+        $group: {
+          _id: {
+            month: {
+              $month: "$createdAt",
+            },
+            day: {
+              $dayOfMonth: "$createdAt",
+            },
+            year: {
+              $year: "$createdAt",
+            },
+          },
+          price: {
+            $min: "$soldPrice",
+          },
+        },
+      },
+      {
+        $project: {
+          date: {
+            $concat: [
+              {
+                $toString: "$_id.year",
+              },
+              "-",
+              {
+                $toString: "$_id.month",
+              },
+              "-",
+              {
+                $toString: "$_id.day",
+              },
+            ],
+          },
+          price: 1,
+          _id: 0,
+        },
+      },
+      {
+        $project: {
+          price: 1,
+          soldOn: {
+            $toDate: "$date",
+          },
+        },
+      },
+      {
+        $sort: {
+          soldOn: -1,
+        },
+      },
+      {
+        $limit: window,
+      },
+    ]);
+  }
 }

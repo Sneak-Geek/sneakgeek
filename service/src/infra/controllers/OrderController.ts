@@ -3,7 +3,7 @@
 // !
 
 import { Request, Response } from "express";
-import { body, query } from "express-validator";
+import { body, param, query } from "express-validator";
 import HttpStatus from "http-status";
 import { inject } from "inversify";
 import {
@@ -14,6 +14,7 @@ import {
   queryParam,
   httpPost,
   httpPut,
+  requestParam,
 } from "inversify-express-utils";
 import { Types } from "../../configuration/inversify";
 import {
@@ -25,6 +26,7 @@ import { PaymentMethod, TrackingStatus } from "../../assets/constants";
 import { IOrderDao } from "../dao";
 import { UserProfile } from "../database";
 import { AsbtractOrderController } from "./AbstractOrderController";
+import { ObjectId } from "mongodb";
 
 @controller("/api/v1/order")
 export class OrderController extends AsbtractOrderController {
@@ -36,7 +38,7 @@ export class OrderController extends AsbtractOrderController {
   }
 
   @httpGet("/", FirebaseAuthMiddleware, AccountVerifiedMiddleware)
-  public async getOrderHistory(@request() req: Request, @response() res: Response) {
+  public async getOrderHistoryByUser(@request() req: Request, @response() res: Response) {
     const user = req.user as UserProfile;
     const profileId = req.user.id;
 
@@ -151,5 +153,23 @@ export class OrderController extends AsbtractOrderController {
         message: "Unexpected error!",
       });
     }
+  }
+
+  @httpGet(
+    "/history/:shoeId",
+    param("shoeId").exists().isMongoId(),
+    query("window").exists().isNumeric(),
+    ValidationPassedMiddleware
+  )
+  public async getOrderHistoryByShoe(
+    @response() res: Response,
+    @requestParam("shoeId") shoeId: string,
+    @queryParam("window") window: string
+  ) {
+    const result = await this.orderDao.getOrderHistoryByWindow(
+      new ObjectId(shoeId),
+      parseInt(window, 10)
+    );
+    return res.status(HttpStatus.OK).send(result);
   }
 }

@@ -59,4 +59,5 @@ export interface IOrderService {
   getOrderHistory: (token: string) => Promise<OrderHistory[]>;
   updateBySeller: (token: string, orderId: string, status: TrackingStatus) => Promise<void>;
   bankTransfer: (token: string, paymentType: string, inventoryId: string, addressLine1: string, addressLine2: string, soldPrice: number) => Promise<any>;
+  getShoeOrderHistory: (shoeId: string, window: number) => Promise<Array<{price: number, soldOn: Date}>>;
 }

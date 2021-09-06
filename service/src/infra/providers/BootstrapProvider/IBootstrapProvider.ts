@@ -12,4 +12,5 @@ export interface IBootstrapProvider {
   bootstrapCatalogData: () => Promise<any>;
   bootstrapDevInventoryAndOrder: () => Promise<void>;
   bootstrapProdInventory: () => Promise<void>;
+  bootstrapProdOrderHistory: () => Promise<void>;
 }

@@ -135,6 +135,7 @@ export const strings = {
   SellHistory: 'Lịch sử bán',
   History: 'Lịch sử',
   Selling: 'Đang bán',
+  Top20: 'SneakGeek Top 20',
   Buying: 'Đang mua',
   Pending: 'Chờ duyệt',
   Sold: 'Đã bán',
@@ -201,4 +202,5 @@ export const strings = {
   OutOfStock: 'Hết hàng',
   SkipLogin: 'Bỏ qua đăng nhập',
   DeleteInventory: 'Xoá',
+  PriceHistory: 'Lịch sử giá'
 };
