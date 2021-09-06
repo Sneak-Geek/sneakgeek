@@ -17,10 +17,16 @@ import { LogProvider } from "../LogProvider";
 import path from "path";
 import fs from "fs";
 import _ from "lodash";
-import { PaymentMethod, TrackingStatus } from "../../../assets/constants";
+import { OrderStatus, PaymentMethod, TrackingStatus } from "../../../assets/constants";
 import * as csv from "fast-csv";
-import { AdminProdProfile, THCFbProfile } from "../../../assets/seeds/prod";
+import {
+  AdminProdProfile,
+  THCFbProfile,
+  FakeSellerProfile,
+  FakeBuyerProfile,
+} from "../../../assets/seeds/prod";
 import { IFirebaseAuthService } from "../../services/FirebaseAuthService";
+import { ObjectId } from "mongodb";
 
 @injectable()
 export class BootstrapProvider implements IBootstrapProvider {
@@ -51,15 +57,21 @@ export class BootstrapProvider implements IBootstrapProvider {
 
   public async bootstrapDevUserData(): Promise<any> {
     return Promise.all(
-      [AdminFbProfile, UserFbProfile, SellerFbProfile].map((p) =>
-        this._createUserDataWithFirebase(p)
-      )
+      [
+        AdminFbProfile,
+        UserFbProfile,
+        SellerFbProfile,
+        FakeBuyerProfile,
+        FakeSellerProfile,
+      ].map((p) => this._createUserDataWithFirebase(p))
     );
   }
 
   public async bootstrapProdUserData(): Promise<any> {
     return Promise.all(
-      [THCFbProfile, AdminProdProfile].map((p) => this._createUserDataWithFirebase(p))
+      [THCFbProfile, AdminProdProfile, FakeBuyerProfile, FakeSellerProfile].map((p) =>
+        this._createUserDataWithFirebase(p)
+      )
     );
   }
 
@@ -157,9 +169,58 @@ export class BootstrapProvider implements IBootstrapProvider {
 
   public async bootstrapCatalogData(): Promise<any> {
     const count = await this.catalogRepository.countDocuments({}).exec();
-
     if (count > 0) {
       return;
+    }
+
+    const topInventoryName = "SneakGeek top 20";
+    if (!(await this._isCatalogExist(topInventoryName))) {
+      const seller = await this.profileRepository
+        .findOne({
+          userProvidedEmail: FakeSellerProfile.userProvidedEmail,
+        })
+        .exec();
+      const topPricedShoes = await this.orderRepo
+        .aggregate([
+          {
+            $match: {
+              sellerId: new ObjectId(seller._id),
+            },
+          },
+          {
+            $group: {
+              _id: "$shoeId",
+              price: {
+                $max: "$soldPrice",
+              },
+            },
+          },
+          {
+            $sort: {
+              soldPrice: -1,
+            },
+          },
+          {
+            $limit: 20,
+          },
+          {
+            $project: {
+              price: 0,
+            },
+          },
+        ])
+        .exec();
+      LogProvider.instance.info("Bootstrap top 20 inventories catalogue");
+      const catalog = {
+        title: topInventoryName,
+        description: topInventoryName,
+        productIds: topPricedShoes.map((s) => new ObjectId(s._id)),
+        tags: ["top20"],
+        showOnHomepagePriority: 0,
+        catalogType: CatalogType.REGULAR,
+      } as Catalogue;
+
+      await this.catalogRepository.create(catalog);
     }
 
     // this is assuming that shoe data is bootstrapped
@@ -212,6 +273,11 @@ export class BootstrapProvider implements IBootstrapProvider {
         "https://sneakgeek.blob.core.windows.net/catalog-images/thumbnail2.jpg"
       ),
     ]);
+  }
+
+  private async _isCatalogExist(name: string) {
+    const exists = await this.catalogRepository.findOne({ title: name }).exec();
+    return Boolean(exists);
   }
 
   public async bootstrapDevInventoryAndOrder(): Promise<void> {
@@ -275,7 +341,16 @@ export class BootstrapProvider implements IBootstrapProvider {
   }
 
   public async bootstrapProdInventory(): Promise<void> {
-    const count = await this.inventoryRepo.countDocuments().exec();
+    const thcProfile = await this.profileRepository
+      .findOne({
+        userProvidedEmail: THCFbProfile.userProvidedEmail,
+      })
+      .exec();
+    const count = await this.inventoryRepo
+      .countDocuments({
+        sellerId: mongoose.Types.ObjectId(thcProfile._id),
+      })
+      .exec();
     if (count > 0) {
       return;
     }
@@ -361,5 +436,138 @@ export class BootstrapProvider implements IBootstrapProvider {
           resolve(inventories);
         });
     });
+  }
+
+  private _getRandomRange(max = 250000) {
+    const isPositive = new Date().getTime() % 17 === 0;
+    const value = Math.floor(Math.random() * max);
+    return isPositive ? value : -value;
+  }
+
+  public async bootstrapProdOrderHistory(): Promise<void> {
+    LogProvider.instance.info("Bootstrap prod order history");
+    const buyer = await this.profileRepository
+      .findOne({
+        userProvidedEmail: FakeBuyerProfile.userProvidedEmail,
+      })
+      .exec();
+    const seller = await this.profileRepository
+      .findOne({
+        userProvidedEmail: FakeSellerProfile.userProvidedEmail,
+      })
+      .exec();
+
+    const count = await this.orderRepo.countDocuments({ buyerId: buyer._id }).exec();
+
+    if (count > 0) {
+      return;
+    }
+    const thcProfile = await this.profileRepository
+      .findOne({ userProvidedEmail: THCFbProfile.userProvidedEmail })
+      .exec();
+
+    const top20MostExpensive = await this.inventoryRepo
+      .aggregate([
+        {
+          $match: {
+            sellerId: mongoose.Types.ObjectId(thcProfile._id),
+          },
+        },
+        { $sort: { sellPrice: -1 } },
+        {
+          $group: {
+            _id: "$shoeId",
+            inventoryId: { $first: "$_id" },
+            sellPrice: { $max: "$sellPrice" },
+            shoeSize: { $first: "$shoeSize" },
+          },
+        },
+        { $limit: 20 },
+        {
+          $project: {
+            shoeId: "$_id",
+            _id: "$inventoryId",
+            sellPrice: 1,
+            shoeSize: 1,
+          },
+        },
+      ])
+      .exec();
+    const inventories = [];
+    const orders = [];
+
+    top20MostExpensive.forEach((inv) => {
+      const inventoryId = new mongoose.Types.ObjectId();
+      const price = this._getRandomRange() + inv.sellPrice;
+      const inventory = {
+        _id: inventoryId,
+        sellerId: seller._id,
+        sellPrice: price,
+        quantity: 0,
+        shoeSize: inv.shoeSize,
+        shoeId: inv.shoeId,
+        note: "demo",
+      } as Inventory;
+      inventories.push(inventory);
+
+      // Create fake order
+      for (let i = 0; i < 30; i++) {
+        const startDate = new Date(2021, 7, i);
+        const unroundedSoldPrice = this._getRandomRange() + inv.sellPrice;
+        const soldPrice = Math.ceil(unroundedSoldPrice / 10000) * 10000;
+        const order = {
+          buyerId: buyer._id,
+          sellerId: seller._id,
+          inventoryId: inventoryId,
+          shippingAddress: FakeBuyerProfile.userProvidedAddress,
+          soldPrice: soldPrice,
+          shoeId: inv.shoeId,
+          trackingStatus: [
+            {
+              status: TrackingStatus.WAITING_FOR_BANK_TRANSFER,
+              date: startDate,
+            },
+            {
+              status: TrackingStatus.RECEIVED_BANK_TRANSFER,
+              date: new Date(startDate.getDate() + 1),
+            },
+            {
+              status: TrackingStatus.SELLER_APPROVED_ORDER,
+              date: new Date(startDate.getDate() + 2),
+            },
+            {
+              status: TrackingStatus.ORDER_BEING_SENT_TO_SNKGK_FOR_AUTHENTICATION,
+              date: new Date(startDate.getDate() + 2),
+            },
+            {
+              status: TrackingStatus.SHOE_VERIFIED,
+              date: new Date(startDate.getDate() + 3),
+            },
+            {
+              status: TrackingStatus.DELIVERING_TO_BUYER,
+              date: new Date(startDate.getDate() + 4),
+            },
+            {
+              status: TrackingStatus.BUYER_RECEIVED,
+              date: new Date(startDate.getDate() + 5),
+            },
+          ],
+          paymentMethod: PaymentMethod.BANK_TRANSFER,
+          createdAt: startDate,
+          updatedAt: new Date(startDate.getDate() + 2),
+          status: OrderStatus.COMPLETED,
+        };
+
+        orders.push(order);
+      }
+    });
+
+    const [insertInventoryRes, insertOrderRes] = await Promise.all([
+      this.inventoryRepo.insertMany(inventories),
+      this.orderRepo.insertMany(orders),
+    ]);
+    LogProvider.instance.info(
+      `Inserted ${insertInventoryRes.length} inventories, ${insertOrderRes.length} orders`
+    );
   }
 }

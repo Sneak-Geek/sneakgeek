@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Modal,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import { SafeAreaConsumer } from 'react-native-safe-area-context';
 import { AppText, LiteShoeCard } from 'screens/Shared';
@@ -30,11 +31,13 @@ import {
   NetworkRequestState,
   Shoe,
   getCurrentUser,
+  OrderService,
 } from 'business';
 import RouteNames from 'navigations/RouteNames';
 import { FactoryKeys, InventoryService } from 'business/src';
 import analytics from '@react-native-firebase/analytics';
 import ZoomableImage from 'react-native-image-zoom-viewer';
+import { LineChart } from 'react-native-chart-kit';
 
 type Props = {
   profile: Profile;
@@ -50,9 +53,13 @@ type Props = {
   getCurrentUser: () => void;
 };
 
+type PriceHistoryPoint = { price: number, soldOn: Date };
+
 type State = {
   lowestPrice: number;
   imageClicked: boolean;
+  priceHistory: Array<PriceHistoryPoint>;
+  chartPointClicked?: { index: number, value: PriceHistoryPoint, x: number, y: number };
 };
 
 const styles = StyleSheet.create({
@@ -159,10 +166,13 @@ export class ProductDetail extends React.Component<Props, State> {
   private inventoryService: InventoryService = getDependency(
     FactoryKeys.IInventoryService,
   );
+  private orderService: OrderService = getDependency(FactoryKeys.IOrderService);
 
   state = {
     lowestPrice: 0,
-    imageClicked: false
+    imageClicked: false,
+    priceHistory: [],
+    chartPointClicked: null
   };
 
   public componentDidMount(): void {
@@ -177,6 +187,7 @@ export class ProductDetail extends React.Component<Props, State> {
     }
     this._getShoeData();
     this._getLowestPrice();
+    this._getPriceHistory();
     this._getCurrentUser();
   }
 
@@ -195,6 +206,11 @@ export class ProductDetail extends React.Component<Props, State> {
     this.setState({ lowestPrice });
   }
 
+  private async _getPriceHistory() {
+    const priceHistory = await this.orderService.getShoeOrderHistory(this._shoe._id, 5);
+    this.setState({ priceHistory });
+  }
+
   public render(): JSX.Element {
     return (
       <SafeAreaConsumer>
@@ -205,23 +221,117 @@ export class ProductDetail extends React.Component<Props, State> {
               ...styles.rootContainer,
             }}>
             <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
-              <View
-                style={{
-                  ...styles.pageContainer,
-                  marginBottom: insets.bottom + themes.RegularButtonHeight,
-                }}>
-                {this._renderProductImage()}
-                {this._renderProductTitle()}
-                {this._renderProductDescription()}
-                {this._renderProductDetail()}
-                {this._renderRelatedShoes()}
-              </View>
+              <TouchableWithoutFeedback onPress={() => this.setState({ chartPointClicked: null })}>
+                <View
+                  style={{
+                    ...styles.pageContainer,
+                    marginBottom: insets.bottom + themes.RegularButtonHeight,
+                  }}>
+                  {this._renderProductImage()}
+                  {this._renderProductTitle()}
+                  {this._renderProductDescription()}
+                  {this._renderProductDetail()}
+                  {this._renderPriceChart()}
+                  {this._renderRelatedShoes()}
+                </View>
+              </TouchableWithoutFeedback>
             </ScrollView>
             {this._renderActionButtons(insets.bottom)}
             {this._renderProductImageViewer()}
           </View>
         )}
       </SafeAreaConsumer>
+    );
+  }
+
+  private _renderPriceChart(): JSX.Element {
+    if (this.state.priceHistory.length === 0) {
+      return <></>;
+    }
+    const unprocessedData = this.state.priceHistory
+      .sort((a, b) => new Date(a.soldOn).getTime() - new Date(b.soldOn).getTime())
+      .map(p => p.price);
+    const lowestPrice = this.state
+      .priceHistory.sort((a, b) => a.price - b.price)[0]
+      .price;
+
+    const labels = [];
+    const datasets = [{
+      data: [lowestPrice - 100000, ...unprocessedData]
+    }];
+    return (
+      <View>
+        <AppText.Title2 style={{ marginHorizontal: 20, marginVertical: 30 }}>
+          {strings.PriceHistory.toUpperCase()}
+        </AppText.Title2>
+        <LineChart data={{ labels, datasets }}
+          width={Dimensions.get('screen').width}
+          height={200}
+          chartConfig={{
+            backgroundColor: "white",
+            backgroundGradientFrom: "white",
+            backgroundGradientTo: "white",
+            color: () => themes.AppPricePickColor,
+            labelColor: () => 'black',
+            style: {
+              borderRadius: 16
+            },
+            propsForDots: {
+              r: "3",
+              strokeWidth: "0.5",
+              stroke: "transparent"
+            },
+            propsForBackgroundLines: {
+              strokeWidth: 0
+            },
+            propsForLabels: themes.TextStyle.footnote
+          }}
+          formatYLabel={(label) => `${(parseInt(label, 10) / 1000000).toFixed(2)}M`}
+          yAxisInterval={100000}
+          hidePointsAtIndex={[0]}
+          segments={3}
+          onDataPointClick={data => {
+            const soldOn = this.state.priceHistory[data.index - 1].soldOn;
+            this.setState({
+              chartPointClicked: {
+                index: data.index,
+                value: {
+                  price: data.value,
+                  soldOn,
+                },
+                x: data.x,
+                y: data.y
+              }
+            })
+          }}
+          decorator={() => {
+            const tooltipPos = this.state.chartPointClicked;
+            if (!tooltipPos) return <></>;
+            const position = tooltipPos.x > Dimensions.get('screen').width - 100
+              ? { right: Dimensions.get('screen').width - tooltipPos.x }
+              : { left: tooltipPos.x };
+            return (
+              <View style={{
+                position: 'absolute',
+                top: tooltipPos.y,
+                ...position,
+                backgroundColor: 'white',
+                borderWidth: 1,
+                borderRadius: 4,
+                borderColor: 'black',
+                padding: 12,
+                alignItems: 'center',
+              }}>
+                <AppText.Body>
+                  {toCurrencyString(tooltipPos.value.price)}
+                </AppText.Body>
+                <AppText.Footnote>
+                  {toVnDateFormat(tooltipPos.value.soldOn)}
+                </AppText.Footnote>
+              </View>
+            )
+          }} />
+      </View>
     );
   }
 

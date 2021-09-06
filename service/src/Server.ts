@@ -127,6 +127,7 @@ export default class Server {
     // Bootstrap prod data so we can test parser
     await bootstrapProvider.bootstrapProdUserData();
     await bootstrapProvider.bootstrapProdInventory();
+    await bootstrapProvider.bootstrapProdOrderHistory();
     await bootstrapProvider.bootstrapCatalogData();
 
     LogProvider.instance.info("Bootstrap data completed");
@@ -139,22 +140,6 @@ export default class Server {
     LogProvider.instance.info("Migrating database...");
     await migrationProvider.run();
     LogProvider.instance.info("Complete database migration...");
-  }
-
-  private static async _initializeIndex(): Promise<void> {
-    LogProvider.instance.info("Initializing search index");
-
-    const searchProvider = this.container.get<ISearchService>(Types.SearchService);
-    const bootstrapProvider: IBootstrapProvider = this.container.get<IBootstrapProvider>(
-      Types.BootstrapProvider
-    );
-
-    await searchProvider.initialize();
-    const isPopulated = await searchProvider.isPopulated();
-    if (!isPopulated) {
-      await searchProvider.indexShoes(bootstrapProvider.getRawShoesData());
-    }
-    LogProvider.instance.info("ElasticSearch index initialized and populated");
   }
 
   private static _setupAppConfig(app: express.Application) {

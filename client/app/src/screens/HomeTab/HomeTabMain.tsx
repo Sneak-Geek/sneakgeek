@@ -1,5 +1,5 @@
 import React from 'react';
-import {AppText, ColumnShoeCard} from 'screens/Shared';
+import {AppText, ColumnShoeCard, LiteShoeCard} from 'screens/Shared';
 import {
   StatusBar,
   SafeAreaView,
@@ -121,6 +121,7 @@ const styles = StyleSheet.create({
 
 type Props = {
   topTrending: Catalog;
+  top20: Catalog;
   navigation: StackNavigationProp<RootStackParams, 'HomeTabMain'>;
 
   toggleLoadingIndicator: (isLoading: boolean, message: string) => void;
@@ -143,6 +144,7 @@ type State = {
 @connect(
   (state: IAppState) => ({
     topTrending: state.CatalogState.homepageCatalogState?.catalogs?.hot,
+    top20: state.CatalogState.homepageCatalogState?.catalogs?.['top20'],
   }),
   (dispatch: Function) => ({
     toggleLoadingIndicator: (isLoading: boolean, message: string): void => {
@@ -191,6 +193,7 @@ export class HomeTabMain extends React.Component<Props, State> {
           }>
           <View style={styles.rootContainer}>
             {this._renderCurrentSelling()}
+            {this._renderTop20()}
             {this._renderTopTrending()}
             {this._renderSearchResults()}
           </View>
@@ -368,6 +371,36 @@ export class HomeTabMain extends React.Component<Props, State> {
               <CurrentInventory
                 currentInventory={item}
                 onPress={this._navigateToProductDetail.bind(this, item.shoe)}
+              />
+            )}
+          />
+        ) : (
+          <></>
+        )}
+      </View>
+    );
+  }
+
+  private _renderTop20(): JSX.Element {
+    return (
+      <View style={{marginVertical: 20}}>
+        <View style={styles.brandTitleContainer}>
+          <AppText.Title2>{strings.Top20}</AppText.Title2>
+        </View>
+        {this.props.topTrending?.products?.length > 0 ? (
+          <FlatList
+            testID={'InventoryList'}
+            horizontal={true}
+            keyExtractor={(itm): string => itm._id}
+            data={this.props.top20.products}
+            style={{marginVertical: 20, paddingLeft: 20, marginRight: 15}}
+            showsHorizontalScrollIndicator={false}
+            renderItem={({item}): JSX.Element => (
+              <LiteShoeCard
+                style={{ marginRight: 8 }}
+                price={0}
+                shoe={item}
+                onPress={this._navigateToProductDetail.bind(this, item)}
               />
             )}
           />

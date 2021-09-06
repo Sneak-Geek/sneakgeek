@@ -21,3 +21,29 @@ export const AdminProdProfile: FirebaseUser = {
     lastName: "Đại",
   },
 };
+
+export const FakeSellerProfile: FirebaseUser = {
+  userProvidedEmail: "sneakgeek.test+fakeprodseller@gmail.com",
+  password: "password",
+  accessLevel: AccessLevel.Seller,
+  //@ts-ignore
+  userProvidedName: {
+    firstName: "Test",
+    lastName: "Seller",
+  },
+};
+
+export const FakeBuyerProfile: FirebaseUser = {
+  userProvidedEmail: "sneakgeek.test+fakeprodbuyer@gmail.com",
+  password: "password",
+  accessLevel: AccessLevel.User,
+  //@ts-ignore
+  userProvidedName: {
+    firstName: "Test",
+    lastName: "Buyer",
+  },
+  userProvidedAddress: {
+    addressLine1: "Ngách 12/2, 12 Chùa Bộc, Đống Đa, Hà Nội",
+    addressLine2: "424 G2",
+  },
+};
