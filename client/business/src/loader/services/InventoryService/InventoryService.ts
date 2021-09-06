@@ -28,9 +28,8 @@ export class InventoryService extends BaseService implements IInventoryService {
     return data;
   }
 
-  public async getSelling() {
-    const { data } = await this.apiClient.getInstance().get("/inventory/selling");
-
+  public async getSelling(pageNum: number) {
+    const { data } = await this.apiClient.getInstance().get(`/inventory/selling?pagenum=${pageNum}`);
     return data;
   }
 

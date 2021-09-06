@@ -19,6 +19,7 @@ import {
   FactoryKeys,
   Shoe,
   Gender,
+  SellingInventory,
   IInventoryService,
   InventorySearchResult,
 } from 'business';
@@ -92,6 +93,7 @@ type Props = {
 type State = {
   searchText: string;
   isSearching: boolean;
+  selling: SellingInventory[];
   shoes: (Shoe | InventorySearchResult)[];
   showDropDown: boolean;
   currentSearchPage: number;
@@ -103,6 +105,8 @@ type State = {
     gender: string;
   };
   shoeEmptyState:(Shoe | InventorySearchResult)[]; 
+  isGettingData: boolean;
+  inventoryPageNum: number;
 };
 
 @connect((appState: IAppState) => ({
@@ -118,20 +122,24 @@ export class SearchTabMain extends React.Component<Props, State> {
   );
   private _keyboardHideListener: EmitterSubscription;
   private _hotKeyWords = ['Nike', 'adidas', 'Jordan', 'Off-White'];
+  onEndReachedCalledDuringMomentum = true;
 
   state: State = {
     searchText: '',
     isSearching: false,
+    selling: [],
     shoes: [],
     showDropDown: false,
     currentSearchPage: 0,
     shouldSearchScrollEnd: true,
     filterVisible: false,
+    isGettingData: false,
     filter: {
       gender: '',
       brand: [],
     },
-    shoeEmptyState: []
+    shoeEmptyState: [],
+    inventoryPageNum: 0
   };
 
   public async componentDidMount() {
@@ -140,7 +148,7 @@ export class SearchTabMain extends React.Component<Props, State> {
     });
     if (!this._isSeller()) {
       this.setState({isSearching: true});
-      const inventories = await this._inventoryService.getSelling();
+      const inventories = await this._inventoryService.getSelling(this.state.inventoryPageNum);
       this.setState({isSearching: false});
       const shoes = inventories.map(inventory => {
         return {
@@ -275,6 +283,41 @@ export class SearchTabMain extends React.Component<Props, State> {
     );
   }
 
+  private _union = (arr1, arr2, key) => [... // spread to an array
+    arr1.concat(arr2) // concat the arrays
+    .reduce((m, o) => m.has(o[key]) ? m : m.set(o[key], o), new Map) // reduce to a map by value of key
+    .values()]; // get the values iterator
+
+  private _getData() {
+    this.setState({isGettingData: true});
+    const inventoryService: IInventoryService = getDependency(
+      FactoryKeys.IInventoryService,
+    );
+
+    Promise.all([
+      inventoryService.getSelling(this.state.inventoryPageNum),
+    ]).then(([inventories]) => {
+      this.state.selling.filter(val => inventories.filter((item)=>{return item.shoe.name === val.shoe.name;}).length === 0)
+      let updatedInventories = this.state.selling.concat(inventories);
+      this.setState({
+        selling: updatedInventories,
+        isGettingData: false,
+      });
+      if (!this._isSeller()) {
+        const shoes = this.state.selling.map(inventory => {
+          return {
+            ...inventory.shoe,
+            sellPrice: inventory.sellPrice
+          }
+        });
+        this.setState({shoes: shoes, shoeEmptyState: shoes});
+      } else {
+        this.setState({searchText: 'Nike'});
+        this._searchForSeller(false);
+      }
+    });
+  }
+
   private _renderSearchDropDown(topInset: number): JSX.Element {
     if (!this.state.showDropDown || !this.state.searchBarYLocation) {
       return null;
@@ -289,6 +332,11 @@ export class SearchTabMain extends React.Component<Props, State> {
         resizeMode={'contain'}
       />
     );
+    const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
+      const paddingToBottom = 6;
+      return layoutMeasurement.height + contentOffset.y >=
+        contentSize.height - paddingToBottom;
+    };
 
     return (
       <View
@@ -302,7 +350,11 @@ export class SearchTabMain extends React.Component<Props, State> {
           </View>
         )}
         {this.state.shoes.length > 0 && (
-          <ScrollView keyboardShouldPersistTaps={'always'}>
+          <ScrollView keyboardShouldPersistTaps={'always'}
+            scrollEventThrottle={1000}
+            onScroll={({nativeEvent}) => {if (isCloseToBottom(nativeEvent)) {
+              this._getData();
+            }}}>
             {this.state.shoes.map((s: Shoe) => (
               <ListItem
                 key={s._id}
@@ -342,8 +394,16 @@ export class SearchTabMain extends React.Component<Props, State> {
           )}
           columnWrapperStyle={{flex: 1, justifyContent: 'space-around'}}
           numColumns={2}
-          onEndReached={(): Promise<void> => this._search(true)
-          }
+          onEndReachedThreshold={0.5}
+          onEndReached= {({ distanceFromEnd }) => {
+            if(!this.onEndReachedCalledDuringMomentum){
+                this.state.inventoryPageNum += 1;
+                this._getData();
+                //this._search(true);
+                this.onEndReachedCalledDuringMomentum = true;
+            }
+          }}
+          onMomentumScrollBegin={() => { this.onEndReachedCalledDuringMomentum = false; }}
           style={{marginHorizontal: 5}}
         />
         {this.state.isSearching && <ActivityIndicator size={'small'} />}

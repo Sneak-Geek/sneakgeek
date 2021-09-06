@@ -115,7 +115,7 @@ export class InventoryDao implements IInventoryDao {
       .exec();
   }
 
-  public async getCurrentlySelling() {
+  public async getCurrentlySelling(pageNum: number) {
     // TO DO: quantity of an individual seller can be 0 => return error when create order.
     return this.inventoryRepository
       .aggregate([
@@ -132,6 +132,12 @@ export class InventoryDao implements IInventoryDao {
             stock: { $gt: 0 },
             quantity: { $gt: 0 },
           },
+        },
+        {
+          $limit: 20,
+        },
+        {
+          $skip: pageNum * 20,
         },
         {
           $lookup: {
