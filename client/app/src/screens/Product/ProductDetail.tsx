@@ -11,7 +11,6 @@ import {
   TouchableOpacity,
   ScrollView,
   Modal,
-  ,
   TouchableWithoutFeedback,
 } from 'react-native';
 import { SafeAreaConsumer } from 'react-native-safe-area-context';
