@@ -207,7 +207,7 @@ export class ProductDetail extends React.Component<Props, State> {
   }
 
   private async _getPriceHistory() {
-    const priceHistory = await this.orderService.getShoeOrderHistory(this._shoe._id, 5);
+    const priceHistory = await this.orderService.getShoeOrderHistory(this._shoe._id, 7);
     this.setState({ priceHistory });
   }
 
@@ -261,9 +261,9 @@ export class ProductDetail extends React.Component<Props, State> {
     }];
     return (
       <View>
-        <AppText.Title2 style={{ marginHorizontal: 20, marginVertical: 30 }}>
+        <AppText.Headline style={{ marginHorizontal: 20, marginVertical: 30 }}>
           {strings.PriceHistory.toUpperCase()}
-        </AppText.Title2>
+        </AppText.Headline>
         <LineChart data={{ labels, datasets }}
           width={Dimensions.get('screen').width}
           height={200}
@@ -288,6 +288,7 @@ export class ProductDetail extends React.Component<Props, State> {
           }}
           formatYLabel={(label) => `${(parseInt(label, 10) / 1000000).toFixed(2)}M`}
           yAxisInterval={100000}
+          fromZero={true}
           hidePointsAtIndex={[0]}
           segments={3}
           onDataPointClick={data => {
