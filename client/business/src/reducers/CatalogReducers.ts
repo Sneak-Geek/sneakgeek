@@ -14,10 +14,8 @@ export type ICatalogState = {
     state: NetworkRequestState;
     error?: any;
     catalogs?: {
-      Nike: Catalog;
-      Jordan: Catalog;
-      adidas: Catalog;
       hot: Catalog;
+      [key: string]: Catalog;
     };
   };
 };
