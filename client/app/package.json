@@ -29,7 +29,7 @@
     "appcenter": "^4.2.0",
     "appcenter-analytics": "^4.2.0",
     "appcenter-crashes": "^4.2.0",
-    "axios": "^0.19.2",
+    "axios": "^0.21.2",
     "business": "file:../business",
     "detox": "^18.20.1",
     "humanize-plus": "^1.8.2",
